@@ -1,13 +1,134 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Kubernetes</title>
+    <meta charset="UTF-8">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="style/style.css">
+    <link rel="stylesheet" href="style/print.css">
+    <link rel="stylesheet" href="style/tablet.css">
+    <link rel="stylesheet" href="style/desktop.css">
+    <link rel="stylesheet" href="style/big-screens.css">
+    <link rel="stylesheet" href="style/anim-glitchop-.css">
+    <link rel="shortcut icon" href="imagens/icons/icon-notes.png">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compsatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        Yoh.
+    </title>
 </head>
 <body>
-  <h1>Hello Kubernetes!!!</h1>
-  <p>Atualizando...</p>
+<header>
+    <div>
+        <h1 id="title" onmouseover="HoverShowTitle()" onmouseout="HoverHideTitle()">
+            Yohrannes Santos Bigoli
+        </h1>
+    </div>
+    <div id="foto1"></div>
+    <div id="foto2"></div>
+    <img id="foto" src="imagens/pictures/foto.jpg" alt="">
+    <div id="typewrite" onmouseover="HoverShowTitle()" onmouseout="HoverHideTitle()">
+            <h1>
+                <a href="" class="typewrite" data-period="2000" data-type='[ "Hi...", "be welcome!", "bye..." ]'>
+                  <span class="wrap"></span>
+                </a>
+            </h1>
+    </div>
+    <nav>
+        <menu id="menunav">
+            <h2 id="social" class="menuclick" onclick="clickSocial()">Social</h2>
+            <h2 id="social1" class="animbackmenu1" onclick="clickSocial()">Social</h2>
+            <h2 id="social2" class="animbackmenu2" onclick="clickSocial()">Social</h2>
+            <h2 id="social3" class="animbackmenu3" onclick="clickSocial()">Social</h2>
+            <menu id="menusocial" class="firstmenu">
+                <ul>
+                    <li>
+                        <a href="https://www.linkedin.com/in/yohrannes-santos-bigoli-46076ab3/" target="_blank" rel="external">Linkedin</a>
+                        <a href="https://github.com/yohrannes" target="_blank" rel="external">Github</a>
+                        <a href="https://gitlab.com/yohrannes" target="_blank" rel="external">Gitlab</a>
+                        <a href="https://hub.docker.com/u/yohrannes" target="_blank" rel="external">DockerHub</a>
+                        <a href="https://www.instagram.com/yohrannes_tribal/" target="_blank" rel="external">Instagram</a>
+                    </li>
+                </ul>
+            </menu>
+            <h2 id="develop" class="menuclick" onclick="clickDevelop()">Projects</h2>
+            <h2 id="develop1" class="animbackmenu1" onclick="clickDevelop()">Projects</h2>
+            <h2 id="develop2" class="animbackmenu2" onclick="clickDevelop()">Projects</h2>
+            <h2 id="develop3" class="animbackmenu3" onclick="clickDevelop()">Projects</h2>
+            <menu id="menudevelop" class="firstmenu">
+                <ul>
+                    <li>
+                        <a href="https://github.com/yohrannes/accesshub" target="_blank" rel="external">AccessHub - ssh manager</a>
+                        <a href="https://github.com/yohrannes/mysql-pizzariadb" target="_blank" rel="external">Pizzeria - Database</a>
+                        <a href="https://github.com/yohrannes/docker-mine" target="_blank" rel="external">Minecraft server - Docker</a>
+                    </li>
+                </ul>
+            </menu>
+            <h2 id="tasksandguides" class="menuclick" onclick="clickTasksandguides()">Tasks and guides</h2>
+            <h2 id="tasksandguides1" class="animbackmenu1" onclick="clickTasksandguides()">Task nd g..</h2>
+            <h2 id="tasksandguides2" class="animbackmenu2" onclick="clickTasksandguides()">Task nd g..</h2>
+            <h2 id="tasksandguides3" class="animbackmenu3" onclick="clickTasksandguides()">Task nd g..</h2>
+            <menu id="menutasksandguides" class="firstmenu">
+                <ul>
+                    <li>
+                        <a href="guide-goodcoexistence.html" target="_blank" rel="external">Good coexistence - Guide (en-us)</a>
+                        <a href="https://www.evernote.com/shard/s397/sh/871246a0-c0c2-1900-fb9e-90db7903e84d/sX6KUo6D65rFSxTLDJQk54Wk-YkHILNMaRJR1E1XgWG3lQ1u3BMSyA-DWg" target="_blank" rel="external">Minecraft server - Step by step (pt-br)</a>
+                        <a href="https://www.evernote.com/shard/s397/sh/90161548-c163-e825-6e9b-0b37e8d00475/JS5JcHSNIBsqtKcPNKenkbWmx7ZYQRSvzaS1uS4ZFDwx1OlR0QfHulWvyA" target="_blank" rel="external">Delist tutorial SORBS Spam Blacklist (pt-br)</a>
+                        <a href="https://www.evernote.com/shard/s397/sh/37c0780f-5120-283e-e205-98d288c82980/DFlDmuSfGrN8KCIJ-JhFp_HZxlFexBs7KzLSxtgQ_ICwN06hKhYG6eYT7g" target="_blank" rel="external">VS code SFTP Virtuozzo to windows (en-us)</a>
+                        <a href="https://www.evernote.com/shard/s397/sh/aa4feff3-a081-da4c-9b4e-a40deb96238a/PNS2uRwM66Rhrd13QBkiaaqef6WPfmfw31ltM8_5GnXn7qWZ7dV_BIA7zQ" target="_blank" rel="external">How to block email contacts in CWP panel</a>
+                    </li>
+                </ul>
+            </menu>
+            <h2 id="forum" class="menuclick" onclick="clickForum()">Forum</h2>
+            <h2 id="forum1" class="animbackmenu1" onclick="clickForum()">Forum</h2>
+            <h2 id="forum2" class="animbackmenu2" onclick="clickForum()">Forum</h2>
+            <h2 id="forum3" class="animbackmenu3" onclick="clickForum()">Forum</h2>
+            <menu id="menuforum" class="firstmenu">
+                <ul>
+                    <li>
+                        <a href="https://stackoverflow.com/users/19536006/yohrannes-santos-bigoli" target="_blank" rel="external">Stack Overflow</a>
+                        <a href="https://social.msdn.microsoft.com/Profile/yohrannes%20santos%20bigoli/activity" target="_blank" rel="external">Forum Microsoft</a>
+                    </li>
+                </ul>
+            </menu>
+            <h2 id="design" class="menuclick" onclick="clickDesign()">Design</h2>
+            <h2 id="design1" class="animbackmenu1" onclick="clickDesign()">Design</h2>
+            <h2 id="design2" class="animbackmenu2" onclick="clickDesign()">Design</h2>
+            <h2 id="design3" class="animbackmenu3" onclick="clickDesign()">Design</h2>
+            <menu id="menudesign" class="firstmenu">
+                <ul>
+                    <li>
+                        <a href="http://pinterest.com/catnoeditor/edição/" target="_blank" rel="external">Pinterest</a>
+                    </li>
+                </ul>
+            </menu>
+            <h2 id="bootcamp" class="menuclick" onclick="clickBootcamp()">Bootcamps</h2>
+            <h2 id="bootcamp1" class="animbackmenu1" onclick="clickBootcamp()">Bootcamps</h2>
+            <h2 id="bootcamp2" class="animbackmenu2" onclick="clickBootcamp()">Bootcamps</h2>
+            <h2 id="bootcamp3" class="animbackmenu3" onclick="clickBootcamp()">Bootcamps</h2>
+            <menu id="menubootcamp" class="firstmenu">
+                <ul>
+                    <li>
+                        <a href="https://www.linkedin.com/posts/yohrannes_cloud-aws-google-activity-7075804666545999872-H4xU?utm_source=share&utm_medium=member_desktop" target="_blank" rel="external">Imersão Cloud na prática</a>
+                    </li>
+                </ul>
+            </menu>
+            <h2 id="aboutme" class="menuclick" onclick="clickAboutme()">About me</h2>
+            <h2 id="aboutme1" class="animbackmenu1" onclick="clickAboutme()">About me</h2>
+            <h2 id="aboutme2" class="animbackmenu2" onclick="clickAboutme()">About me</h2>
+            <h2 id="aboutme3" class="animbackmenu3" onclick="clickAboutme()">About me</h2>
+            <menu id="menuaboutme" class="firstmenu">
+                <ul>
+                    <li>
+                        <a href="getintouch.html">Get in touch</a>
+                    </li>
+                </ul>
+            </menu>
+        </menu>
+    </nav>
+    <script src="js/anim-menu.js"></script>
+    <script src="js/anim-titulo.js"></script>
+    <script src="js/anim-typewriter.js"></script>
+</header>
 </body>
 </html>

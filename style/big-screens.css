@@ -1,0 +1,39 @@
+@charset "UTF-8";
+@media screen and (min-width: 1200px) { /* GRANDES TELAS */
+    header::before {
+        background-image: url(../imagens/metropainel/metropainel-1920.webp);
+    }
+
+    header > div > h1 {
+        display: block;
+    }
+
+    img#foto, div#foto1, div#foto2 {
+        top: 9vw;
+        left: 11vw;
+        width: 12vw;
+        height: 12vw;
+    }
+
+    div#typewrite {
+        position: absolute;
+        top: 12vw;
+        left: 7vw;
+        width: 65vw;
+        height: 10vw;
+    }
+    
+    .typewrite {
+        font-size: 0.8em;
+    }
+
+    nav {
+        width: 50vw;
+        padding-left: 0vw;
+    }
+    
+    menu#menunav {
+        margin-left: 5%;
+    }
+
+}

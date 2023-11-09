@@ -1,0 +1,202 @@
+@charset "UTF-8";
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import 'sass:math';
+@import url(animations/anim-glitch.css);
+@import url(animations/anim-glitchop-.css);
+@import url(animations/typewriter.css);
+
+/* Mobile First Method */
+
+* {
+  margin: 0px;
+  padding: 0px;
+  font-size: 1em;
+}
+
+:root { /*Working with variables*/
+  --fonte-del: 'Raleway', sans-serif;
+}
+
+body {
+  display: block;
+  background-color: rgb(0, 0, 0);
+}
+
+header {
+  position: relative;
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+header::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-image: url(../imagens/metropainel/metropainel-300.webp);
+  opacity: 0.5;
+  z-index: -1;
+}
+
+header > div > h1 {
+  display: none;
+
+  font-family: 'Raleway';
+  color: white;
+  font-weight: 200;
+  font-size: 1.5em;
+  overflow-wrap: break-word;
+  /* word-break: break-all;  Break letters */
+
+  opacity: 1;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.301);
+
+  cursor: pointer;
+
+  margin-left: 20vw;
+}
+
+header > div > div > h1 {
+  font-family: 'Raleway';
+  color: white;
+  font-weight: 200;
+  font-size: 1.5em;
+}
+
+div#typewrite {
+  display: none;
+}
+
+img#foto, div#foto1, div#foto2 {
+  top: 6vw;
+  left: 5vw;
+  width: 13vw;
+  height: 13vw;
+}
+
+img#foto {
+  position: absolute;
+  display: none; /* Change to none */
+
+  animation: glitchop- 2.5s infinite;
+}
+
+div#foto1 {
+  display: none;
+  position: absolute;
+  background-color: rgba(51, 255, 0, 0.479);
+
+  animation: glitch2 0.2s infinite;
+}
+
+div#foto2 {
+  display: none;
+  position: absolute;
+  background-color: rgba(255, 0, 0, 0.479);
+  
+  animation: glitch3 0.2s infinite;
+}
+
+nav {
+  display: flex;
+  font-size: 1.5em;
+  width: 100vw;
+  position: relative;
+  padding-left: 10vw;
+}
+
+menu#menunav {
+  cursor: pointer;
+}
+
+nav > menu > h2 {
+  display: block;
+  padding-left: 10px;
+  cursor: pointer;
+}
+
+h2, a {
+  font-family: 'Raleway';
+  font-weight: 200;
+  color: rgb(230, 230, 230);
+  text-decoration: none;
+}
+
+menu > ul {
+  list-style-type: none;
+}
+
+menu > ul > li > a {
+  display: block;
+}
+
+.firstmenu > ul > li > a:hover {
+  color: #6aff65c9;
+  animation: glitch1 1s ;
+}
+
+.firstmenu {
+  display: none;
+  margin-left: 25px;
+  margin-top: 30px;
+}
+
+menu > ul {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.menuclick:hover {
+  font-weight: 600;
+  animation: glitch1 2.5s infinite;
+}
+
+.animbackmenu1, .animbackmenu2, .animbackmenu3 {
+  display: none;
+  position: absolute;
+  left: 10px;
+}
+
+.animbackmenu::after {
+  content: '-_';
+}
+
+.animbackmenu:hover {
+  font-weight: bolder;
+}
+
+.animbackmenu1 {
+  animation: glitch1 2.5s infinite;
+  color: #ecebff;
+}
+
+.animbackmenu2 {
+  color: #6ef169;
+  animation: glitch2 2.5s infinite;
+}
+
+.animbackmenu3 {
+  color: #f16f6f;
+  animation: glitch3 2.5s infinite;
+}
+
+main {
+  display: none;
+}
+
+.getintouch {
+  font-family: var(--fonte-del);
+  font-weight: 500;
+  font-size: x-large;
+  color: white;
+}

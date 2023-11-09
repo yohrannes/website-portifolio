@@ -1,0 +1,42 @@
+@charset "UTF-8";
+
+@media screen and (min-width: 992px) and (max-width: 1200px){ /* DESKTOP */
+
+    header::before {
+        background-image: url(../imagens/metropainel/metropainel-1024.webp);
+    }
+
+    header > div > h1 {
+        display: block;
+        margin-left: 15vw
+    }
+
+    img#foto, div#foto1, div#foto2 {
+        top: 9vw;
+        left: 9vw;
+        width: 19vw;
+        height: 19vw;
+      }
+
+    div#typewrite {
+        position: absolute;
+        top: 12vw;
+        left: 17vw;
+        width: 65vw;
+        height: 13vw;
+    }
+
+        .typewrite {
+        font-size: 0.8em;
+    }
+
+    nav {
+        width: 50vw;
+        padding-left: 0vw;
+    }
+
+    menu#menunav {
+        margin-left: 5%;
+    }
+
+}
