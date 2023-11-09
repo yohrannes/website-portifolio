@@ -15,6 +15,7 @@ COPY . .
 RUN yum install gcc openssl-devel bzip2-devel libffi-devel -y
 RUN sudo yum install -y python3 python3-pip
 RUN pip3 install Flask requests
+RUN set FLASK_ENV=developmennt
 EXPOSE 5000
 
 CMD [ "python3", "/root/app.py"]
