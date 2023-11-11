@@ -1,7 +1,7 @@
 @charset "UTF-8";
 @media screen and (min-width: 768px) and (max-width: 992px) { /* TABLET */
   header::before {
-    background-image: url(../imagens/metropainel/metropainel-600.webp);
+    background-image: url(../images/metropainel/metropainel-600.webp);
   }
 
   header > div > h1 {
