@@ -3,7 +3,7 @@
 @media screen and (min-width: 992px) and (max-width: 1200px){ /* DESKTOP */
 
     header::before {
-        background-image: url(../imagens/metropainel/metropainel-1024.webp);
+        background-image: url(../images/metropainel/metropainel-1024.webp);
     }
 
     header > div > h1 {

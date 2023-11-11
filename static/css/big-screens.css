@@ -1,7 +1,7 @@
 @charset "UTF-8";
 @media screen and (min-width: 1200px) { /* GRANDES TELAS */
     header::before {
-        background-image: url(../imagens/metropainel/metropainel-1920.webp);
+        background-image: url(../images/metropainel/metropainel-1920.webp);
     }
 
     header > div > h1 {
