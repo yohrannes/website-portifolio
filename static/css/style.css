@@ -161,6 +161,15 @@ menu > ul {
   animation: glitch1 2.5s infinite;
 }
 
+.menuclick2:hover {
+  font-weight: 600;
+  animation: glitch1 2.5s infinite;
+}
+
+.menuclick2 {
+  display: none;
+}
+
 .animbackmenu1, .animbackmenu2, .animbackmenu3 {
   display: none;
   position: absolute;
