@@ -21,23 +21,54 @@
   }
 
   function clickSocial() {
-    toggleDisplay(menusocial, 'block');
-    resetDisplay([menuforum, menudevelop, menudesign, menutasksandguides, menubootcamp, menuaboutme]);
+    toggleDisplay(menuprofessionalnetworks, 'none');
+    toggleDisplay(menusocialcircles, 'none');
+    resetDisplay([menuforum, menudevelop, menudesign, menutasksandguides, menubootcamp, menuaboutme, menusocialcircles, menuprofessionalnetworks, social, social1]);
 
-    if (menusocial.style.display === 'block') {
-      hideElements([social, forum, develop, tasksandguides, design, bootcamp, aboutme]);
-      showElements([social1, social2, social3]);
+  if (menuprofessionalnetworks.style.display === 'none' && menusocialcircles.style.display === 'none') { // SE FOR NONE
+
+    hideElements([social, forum, develop, tasksandguides, design, bootcamp, aboutme, professionalnetworks, socialcircles, menusocialcircles, menuprofessionalnetworks]);
+
+    showElements([social1, social2, social3, professionalnetworks, socialcircles]);
+
+  } else {
+
+    showElements([social, forum, develop, tasksandguides, design, bootcamp, aboutme, professionalnetworks, socialcircles, menusocialcircles, menuprofessionalnetworks]);
+
+    hideElements([social1, social2, social3, professionalnetworks, socialcircles]);
+
+  }
+  if (social1.style.display === 'block') { // SE FOR BLOCK
+
+    hideElements([social, forum, develop, design, tasksandguides, bootcamp, aboutme, menusocialcircles, menuprofessionalnetworks]);
+    showElements([social1, social2, social3, professionalnetworks, socialcircles]);
+
+  } else {
+
+    showElements([social, forum, develop, design, tasksandguides, bootcamp, aboutme, menusocialcircles, menuprofessionalnetworks]);
+    hideElements([social1, social2, social3, professionalnetworks, socialcircles]);
+
+  }
+  }
+
+  function clickProfessionalnetworks() {
+    toggleDisplay(menuprofessionalnetworks, 'block');
+    resetDisplay([menuforum, menudevelop, menudesign, menutasksandguides, menubootcamp, menuaboutme, social]);
+
+    if (menuprofessionalnetworks.style.display === 'block') {
+      hideElements([professionalnetworks, forum, develop, tasksandguides, design, bootcamp, aboutme, social]);
+      showElements([professionalnetworks1, professionalnetworks2, professionalnetworks3]);
     } else {
-      showElements([social, forum, develop, tasksandguides, design, bootcamp, aboutme]);
-      hideElements([social1, social2, social3]);
+      showElements([professionalnetworks, forum, develop, tasksandguides, design, bootcamp, aboutme, social]);
+      hideElements([professionalnetworks1, professionalnetworks2, professionalnetworks3]);
     }
 
-    if (social1.style.display === 'block') {
-      hideElements([social, forum, develop, design, tasksandguides, bootcamp, aboutme]);
-      showElements([social1, social2, social3]);
+    if (professionalnetworks1.style.display === 'block') {
+      hideElements([professionalnetworks, forum, develop, design, tasksandguides, bootcamp, aboutme, social]);
+      showElements([professionalnetworks1, professionalnetworks2, professionalnetworks3]);
     } else {
-      showElements([social, forum, develop, design, tasksandguides, bootcamp, aboutme]);
-      hideElements([social1, social2, social3]);
+      showElements([professionalnetworks, forum, develop, design, tasksandguides, bootcamp, aboutme, social]);
+      hideElements([professionalnetworks1, professionalnetworks2, professionalnetworks3]);
     }
   }
 
