@@ -150,6 +150,16 @@ menu > ul > li > a {
   margin-top: 30px;
 }
 
+.secondmenu {
+  display: none;
+  margin-left: 25px;
+  margin-top: 30px;
+}
+
+.show {
+  display: block !important;
+}
+
 menu > ul {
   width: 100%;
   display: flex;
@@ -161,12 +171,11 @@ menu > ul {
   animation: glitch1 2.5s infinite;
 }
 
-.menuclick2:hover {
-  font-weight: 600;
-  animation: glitch1 2.5s infinite;
+.menuclick {
+  display: block;
 }
 
-.menuclick2 {
+.secondmenuclick {
   display: none;
 }
 
