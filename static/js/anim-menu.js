@@ -1,42 +1,28 @@
-function toggleDisplay(element, displayValue) {
-    element.style.display = element.style.display === displayValue ? 'none' : displayValue;
+function hideElements(elements) {
+  for (var i = 0; i < elements.length; i++) {
+    elements[i].style.display = 'none';
   }
-///bora tentaar arrumar esta bagaça que eu não faço ideia de como resolver mas tamo aí ne.....uma hora agente consegue..
-  function resetDisplay(elements) {
-    elements.forEach(function (element) {
-      element.style.display = 'none';
-    });
+}
+function showElements(elements) {
+  for (var i = 0; i < elements.length; i++) {
+    elements[i].style.display = 'block';
   }
-
-  function showElements(elements) {
-    elements.forEach(function (element) {
-      element.style.display = 'block';
-    });
-  }
-
-  function hideElements(elements) {
-    elements.forEach(function (element) {
-      element.style.display = 'none';
-    });
-  }
-
-  function clickSocial() {
-    toggleDisplay(social, 'block');
-    resetDisplay([menuforum, menudevelop, menudesign, menutasksandguides, menubootcamp, menuaboutme]);
+}
+document.addEventListener('DOMContentLoaded', function () {
+  setTimeout(function () {
+    clickSocial();
+  }, 10);
+});
+function clickSocial() {
+    var menuanterior = [social, develop, tasksandguides, forum, design, bootcamp, aboutme];
+    var menuatual = [social1, social2, social3, professionalnetworks, socialcircles];
 
     if (social.style.display === 'block') {
-      hideElements([social, forum, develop, tasksandguides, design, bootcamp, aboutme]);
-      showElements([social1, social2, social3]);
-    } else {
-      showElements([social, forum, develop, tasksandguides, design, bootcamp, aboutme]);
-      hideElements([social1, social2, social3]);
+      hideElements(menuanterior);
+      showElements(menuatual);
     }
-
-    if (social1.style.display === 'block') {
-      hideElements([social, forum, develop, design, tasksandguides, bootcamp, aboutme]);
-      showElements([social1, social2, social3]);
-    } else {
-      showElements([social, forum, develop, design, tasksandguides, bootcamp, aboutme]);
-      hideElements([social1, social2, social3]);
+    else {
+      hideElements(menuatual);
+      showElements(menuanterior);
     }
   }
