@@ -153,20 +153,6 @@ menu > ul > li > a {
   margin-top: 30px;
 }
 
-.secondmenuclick {
-  display: none;
-}
-
-.show {
-  display: block !important;
-}
-
-menu > ul {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
 .menuclick {
   display: block;
 }
@@ -178,6 +164,21 @@ menu > ul {
 
 .secondmenuclick {
   display: none;
+}
+
+.secondmenuclick:hover {
+  font-weight: 600;
+  animation: glitch1 2.5s infinite;
+}
+
+.show {
+  display: block !important;
+}
+
+menu > ul {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .animbackmenu1, .animbackmenu2, .animbackmenu3 {
