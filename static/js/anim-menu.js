@@ -17,7 +17,7 @@ function clickSocial() {
     var menuanterior = [social, develop, tasksandguides, forum, design, bootcamp, aboutme];
     var menuatual = [social1, social2, social3, professionalnetworks, socialcircles];
 
-    if (social.style.display === 'block') {
+    if (social.style.display === 'block' || social.style.display === 'flex') {
       hideElements(menuanterior);
       showElements(menuatual);
     }

@@ -163,7 +163,9 @@ menu > ul > li > a {
 }
 
 .secondmenuclick {
-  display: none;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
 }
 
 .secondmenuclick:hover {
@@ -175,7 +177,14 @@ menu > ul > li > a {
   display: block !important;
 }
 
-menu > ul {
+
+/* menu > ul {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+} */
+
+.linklist { /*New menu > ul*/
   width: 100%;
   display: flex;
   flex-direction: column;
