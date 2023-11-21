@@ -34,17 +34,25 @@
         </h1>
     </div>
     <nav>
-        <menu>
+        <menu id="homemenu">
             <h2 id="social" class="menuclick" onclick="clickSocial()">Social</h2>
-            <h2 id="social1" class="animbackmenu1" onclick="clickSocial()">Social</h2>
-            <h2 id="social2" class="animbackmenu2" onclick="clickSocial()">Social</h2>
-            <h2 id="social3" class="animbackmenu3" onclick="clickSocial()">Social</h2>
 
-            <h2 id="professionalnetworks" class="secondmenuclick" onclick="clickProfessionalNetworks()">Professional Networks</h2>
-            <h2 id="professionalnetworks1" class="animbackmenu1" onclick="clickProfessionalNetworks()">Professional Networks</h2>
-            <h2 id="professionalnetworks2" class="animbackmenu2" onclick="clickProfessionalNetworks()">Professional Networks</h2>
-            <h2 id="professionalnetworks3" class="animbackmenu3" onclick="clickProfessionalNetworks()">Professional Networks</h2>
-            <menu id="menuprofessionalnetworks" class="secondmenu" onclick="clickProfessionalNetworks()">
+            <menu id="menusocial" class="firstmenu">
+                <menu class="animbackmenu">
+                    <h2 id="social1" class="animbackmenu1" onclick="clickSocial()">Social</h2>
+                    <h2 id="social2" class="animbackmenu2" onclick="clickSocial()">Social</h2>
+                    <h2 id="social3" class="animbackmenu3" onclick="clickSocial()">Social</h2>
+                </menu>
+                <h2 id="professionalnetworks" class="secondmenuclick" onclick="clickProfessionalNetworks()">Professional Networks</h2>
+                <h2 id="socialcircles" class="secondmenuclick" onclick="clickSocialCircles()">Social Circles</h2>
+            </menu>
+
+            <menu id="menuprofessionalnetworks" class="secondmenu">
+                <menu class="animbackmenu">
+                    <h2 id="professionalnetworks1" class="animbackmenu1" onclick="clickProfessionalNetworks()">Professional Networks</h2>
+                    <h2 id="professionalnetworks2" class="animbackmenu2" onclick="clickProfessionalNetworks()">Professional Networks</h2>
+                    <h2 id="professionalnetworks3" class="animbackmenu3" onclick="clickProfessionalNetworks()">Professional Networks</h2>
+                </menu>
                 <ul class="linklist">
                     <li>
                         <a href="https://www.linkedin.com/in/yohrannes-santos-bigoli-46076ab3/" target="_blank" rel="external">Linkedin</a>
@@ -55,30 +63,86 @@
                 </ul>
             </menu>
 
-            <h2 id="socialcircles" class="secondmenuclick" onclick="clickSocialCircles()">Social Circles</h2>
-            <h2 id="socialcircles1" class="animbackmenu1" onclick="clickSocialCircles()">Social Circles</h2>
-            <h2 id="socialcircles2" class="animbackmenu2" onclick="clickSocialCircles()">Social Circles</h2>
-            <h2 id="socialcircles3" class="animbackmenu3" onclick="clickSocialCircles()">Social Circles</h2>
-            <menu id="menusocialcircles" class="secondmenu" onclick="clickSocialCircles">
+            <menu id="menusocialcircles" class="secondmenu">
+                <menu class="animbackmenu">
+                    <h2 id="socialcircles1" class="animbackmenu1" onclick="clickSocialCircles()">Social Circles</h2>
+                    <h2 id="socialcircles2" class="animbackmenu2" onclick="clickSocialCircles()">Social Circles</h2>
+                    <h2 id="socialcircles3" class="animbackmenu3" onclick="clickSocialCircles()">Social Circles</h2>
+                </menu>
                 <ul class="linklist">
                     <li>
                         <a href="https://www.instagram.com/yohrannes_tribal/" target="_blank" rel="external">Instagram</a>
                     </li>
                 </ul>
             </menu>
-            <h2 id="develop" class="menuclick" onclick="clickDevelop()">Projects</h2>
-            <h2 id="develop1" class="animbackmenu1" onclick="clickDevelop()">Projects</h2>
-            <h2 id="develop2" class="animbackmenu2" onclick="clickDevelop()">Projects</h2>
-            <h2 id="develop3" class="animbackmenu3" onclick="clickDevelop()">Projects</h2>
-            <menu id="menudevelop" class="firstmenu">
+
+            <h2 id="projects" class="menuclick" onclick="clickProjects()">Projects</h2>
+
+            <menu id="menuprojects" class="firstmenu">
+                <menu class="animbackmenu"> 
+                    <h2 id="projects1" class="animbackmenu1" onclick="clickProjects()">Projects</h2>
+                    <h2 id="projects2" class="animbackmenu2" onclick="clickProjects()">Projects</h2>
+                    <h2 id="projects3" class="animbackmenu3" onclick="clickProjects()">Projects</h2>
+                </menu>
+                <h2 id="devops" class="secondmenuclick" onclick="clickDevOps()">Dev Ops</h2>
+                <h2 id="backend" class="secondmenuclick" onclick="clickBackend()">Backend</h2>
+                <h2 id="frontend" class="secondmenuclick" onclick="clickFrontend()">Frontend</h2>
+                <h2 id="personaleditions" class="secondmenuclick" onclick="clickPersonalEditions()">Personal Editions</h2>
+            </menu>
+
+            <menu id="menudevops" class="secondmenu">
+                <menu class="animbackmenu">
+                    <h2 id="devops1" class="animbackmenu1" onclick="clickDevOps()">Dev Ops</h2>
+                    <h2 id="devops2" class="animbackmenu2" onclick="clickDevOps()">Dev Ops</h2>
+                    <h2 id="devops3" class="animbackmenu3" onclick="clickDevOps()">Dev Ops</h2>
+                </menu>
                 <ul class="linklist">
                     <li>
                         <a href="https://github.com/yohrannes/accesshub" target="_blank" rel="external">AccessHub - ssh manager</a>
-                        <a href="https://github.com/yohrannes/mysql-pizzariadb" target="_blank" rel="external">Pizzeria - Database</a>
                         <a href="https://github.com/yohrannes/docker-mine" target="_blank" rel="external">Minecraft server - Docker</a>
                     </li>
                 </ul>
             </menu>
+
+            <menu id="menubackend" class="secondmenu">
+                <menu class="animbackmenu">
+                    <h2 id="backend1" class="animbackmenu1" onclick="clickBackend()">Backend</h2>
+                    <h2 id="backend2" class="animbackmenu2" onclick="clickBackend()">Backend</h2>
+                    <h2 id="backend3" class="animbackmenu3" onclick="clickBackend()">Backend</h2>
+                </menu>
+                <ul class="linklist">
+                    <li>
+                        <a href="https://github.com/yohrannes/mysql-pizzariadb" target="_blank" rel="external">Pizzeria - Database</a>
+                    </li>
+                </ul>
+            </menu>
+
+            <menu id="menufrontend" class="secondmenu">
+                <menu class="animbackmenu">
+                    <h2 id="frontend1" class="animbackmenu1" onclick="clickFrontend()">Frontend</h2>
+                    <h2 id="frontend2" class="animbackmenu2" onclick="clickFrontend()">Frontend</h2>
+                    <h2 id="frontend3" class="animbackmenu3" onclick="clickFrontend()">Frontend</h2>
+                </menu>
+                <ul class="linklist">
+                    <li>
+                        <!-- <a href="http://"></a> -->
+                    </li>
+                </ul>
+            </menu>
+
+            <menu id="menupersonaleditions" class="secondmenu">
+                <menu class="animbackmenu">
+                    <h2 id="personaleditions1" class="animbackmenu1" onclick="clickPersonalEditions"></h2>
+                    <h2 id="personaleditions2" class="animbackmenu2" onclick="clickPersonalEditions"></h2>
+                    <h2 id="personaleditions3" class="animbackmenu3" onclick="clickPersonalEditions"></h2>
+                </menu>
+                <ul class="linklist">
+                    <li>
+                        <a href="http://pinterest.com/catnoeditor/edição/" target="_blank" rel="external">Pinterest</a>
+                    </li>
+                </ul>
+            </menu>
+
             <h2 id="tasksandguides" class="menuclick" onclick="clickTasksandguides()">Tasks and guides</h2>
             <h2 id="tasksandguides1" class="animbackmenu1" onclick="clickTasksandguides()">Task nd g..</h2>
             <h2 id="tasksandguides2" class="animbackmenu2" onclick="clickTasksandguides()">Task nd g..</h2>
@@ -106,17 +170,7 @@
                     </li>
                 </ul>
             </menu>
-            <h2 id="design" class="menuclick" onclick="clickDesign()">Design</h2>
-            <h2 id="design1" class="animbackmenu1" onclick="clickDesign()">Design</h2>
-            <h2 id="design2" class="animbackmenu2" onclick="clickDesign()">Design</h2>
-            <h2 id="design3" class="animbackmenu3" onclick="clickDesign()">Design</h2>
-            <menu id="menudesign" class="firstmenu">
-                <ul class="linklist">
-                    <li>
-                        <a href="http://pinterest.com/catnoeditor/edição/" target="_blank" rel="external">Pinterest</a>
-                    </li>
-                </ul>
-            </menu>
+            
             <h2 id="bootcamp" class="menuclick" onclick="clickBootcamp()">Bootcamps</h2>
             <h2 id="bootcamp1" class="animbackmenu1" onclick="clickBootcamp()">Bootcamps</h2>
             <h2 id="bootcamp2" class="animbackmenu2" onclick="clickBootcamp()">Bootcamps</h2>

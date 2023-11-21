@@ -111,14 +111,8 @@ nav {
   padding-left: 10vw;
 }
 
-menu#menunav {
-  cursor: pointer;
-}
-
-nav > menu > h2 {
-  display: block;
-  padding-left: 10px;
-  cursor: pointer;
+nav#homemenu {
+  display: contents;
 }
 
 h2, a {
@@ -128,29 +122,22 @@ h2, a {
   text-decoration: none;
 }
 
-menu > ul {
-  list-style-type: none;
-}
-
 menu > ul > li > a {
   display: block;
 }
 
-.firstmenu > ul > li > a:hover {
+.linklist > li > a:hover {
   color: #6aff65c9;
   animation: glitch1 1s ;
 }
 
-.firstmenu {
-  display: none;
-  margin-left: 25px;
-  margin-top: 30px;
+.menuclick:hover {
+  cursor: pointer;
 }
 
-.secondmenu {
+.firstmenu, .secondmenu {
   display: none;
-  margin-left: 25px;
-  margin-top: 30px;
+  margin-left: 30px;
 }
 
 .menuclick {
@@ -164,8 +151,9 @@ menu > ul > li > a {
 
 .secondmenuclick {
   width: 100%;
-  display: flex;
+  display: block;
   flex-direction: column;
+  cursor: pointer;
 }
 
 .secondmenuclick:hover {
@@ -173,21 +161,18 @@ menu > ul > li > a {
   animation: glitch1 2.5s infinite;
 }
 
-.show {
-  display: block !important;
-}
-
-
 /* menu > ul {
   width: 100%;
   display: flex;
   flex-direction: column;
+  list-style-type: none;
 } */
 
 .linklist { /*New menu > ul*/
   width: 100%;
   display: flex;
   flex-direction: column;
+  list-style-type: none;
 }
 
 .animbackmenu1, .animbackmenu2, .animbackmenu3 {
@@ -196,12 +181,13 @@ menu > ul > li > a {
   left: 10px;
 }
 
-.animbackmenu::after {
-  content: '-_';
+.animbackmenu {
+  padding-bottom: 30px;
 }
 
 .animbackmenu:hover {
   font-weight: bolder;
+  cursor: pointer;
 }
 
 .animbackmenu1 {
