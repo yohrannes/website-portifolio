@@ -9,7 +9,6 @@
     <link rel="stylesheet" href="../static/css/desktop.css">
     <link rel="stylesheet" href="../static/css/big-screens.css">
     <link rel="shortcut icon" href="../static/images/icons/icon-notes.png">
-    <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compsatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>
@@ -125,16 +124,20 @@
                 </menu>
                 <ul class="linklist">
                     <li>
-                        <!-- <a href="http://"></a> -->
+                        <a href="https://github.com/yohrannes/php-moderno" target="_blank" rel="external">PHP learn practices</a>
+                        <a href="https://github.com/yohrannes/html-css" target="_blank" rel="external">HTML CSS practices</a>
+                        <a href="https://github.com/yohrannes/htmlcss-projeto-login" target="_blank" rel="external">HTML CSS login page</a>
+                        <a href="https://github.com/yohrannes/htmlcss-projeto-social" target="_blank" rel="external">HTML CSS social medias page</a>
+                        <a href="https://github.com/yohrannes/htmlcss-projeto-cordel" target="_blank" rel="external">HTML CSS nice scrool page</a>
                     </li>
                 </ul>
             </menu>
 
             <menu id="menupersonaleditions" class="secondmenu">
                 <menu class="animbackmenu">
-                    <h2 id="personaleditions1" class="animbackmenu1" onclick="clickPersonalEditions"></h2>
-                    <h2 id="personaleditions2" class="animbackmenu2" onclick="clickPersonalEditions"></h2>
-                    <h2 id="personaleditions3" class="animbackmenu3" onclick="clickPersonalEditions"></h2>
+                    <h2 id="personaleditions1" class="animbackmenu1" onclick="clickPersonalEditions()">Personal Editions</h2>
+                    <h2 id="personaleditions2" class="animbackmenu2" onclick="clickPersonalEditions()">Personal Editions</h2>
+                    <h2 id="personaleditions3" class="animbackmenu3" onclick="clickPersonalEditions()">Personal Editions</h2>
                 </menu>
                 <ul class="linklist">
                     <li>
@@ -143,11 +146,14 @@
                 </ul>
             </menu>
 
-            <h2 id="tasksandguides" class="menuclick" onclick="clickTasksandguides()">Tasks and guides</h2>
-            <h2 id="tasksandguides1" class="animbackmenu1" onclick="clickTasksandguides()">Task nd g..</h2>
-            <h2 id="tasksandguides2" class="animbackmenu2" onclick="clickTasksandguides()">Task nd g..</h2>
-            <h2 id="tasksandguides3" class="animbackmenu3" onclick="clickTasksandguides()">Task nd g..</h2>
+            <h2 id="tasksandguides" class="menuclick" onclick="clickTasksAndGuides()">Tasks and guides</h2>
+
             <menu id="menutasksandguides" class="firstmenu">
+                <menu class="animbackmenu">
+                    <h2 id="tasksandguides1" class="animbackmenu1" onclick="clickTasksAndGuides()">Task nd g..</h2>
+                    <h2 id="tasksandguides2" class="animbackmenu2" onclick="clickTasksAndGuides()">Task nd g..</h2>
+                    <h2 id="tasksandguides3" class="animbackmenu3" onclick="clickTasksAndGuides()">Task nd g..</h2>
+                </menu>
                 <ul class="linklist">
                     <li>
                         <a href="https://www.evernote.com/shard/s397/sh/bc017a63-6d27-dd78-c146-329579dddd56/QhjnKiNzKoWGzucYN7JAVsk9Yt4BNjOATrBbcsZPrI9ktxpQBuA19QxVTw" target="_blank" rel="external">Good coexistence - Guide (en-us)</a>
@@ -158,11 +164,15 @@
                     </li>
                 </ul>
             </menu>
+
             <h2 id="forum" class="menuclick" onclick="clickForum()">Forum</h2>
-            <h2 id="forum1" class="animbackmenu1" onclick="clickForum()">Forum</h2>
-            <h2 id="forum2" class="animbackmenu2" onclick="clickForum()">Forum</h2>
-            <h2 id="forum3" class="animbackmenu3" onclick="clickForum()">Forum</h2>
+
             <menu id="menuforum" class="firstmenu">
+                <menu class="animbackmenu">
+                    <h2 id="forum1" class="animbackmenu1" onclick="clickForum()">Forum</h2>
+                    <h2 id="forum2" class="animbackmenu2" onclick="clickForum()">Forum</h2>
+                    <h2 id="forum3" class="animbackmenu3" onclick="clickForum()">Forum</h2>
+                </menu>
                 <ul class="linklist">
                     <li>
                         <a href="https://stackoverflow.com/users/19536006/yohrannes-santos-bigoli" target="_blank" rel="external">Stack Overflow</a>
@@ -172,27 +182,35 @@
             </menu>
             
             <h2 id="bootcamp" class="menuclick" onclick="clickBootcamp()">Bootcamps</h2>
-            <h2 id="bootcamp1" class="animbackmenu1" onclick="clickBootcamp()">Bootcamps</h2>
-            <h2 id="bootcamp2" class="animbackmenu2" onclick="clickBootcamp()">Bootcamps</h2>
-            <h2 id="bootcamp3" class="animbackmenu3" onclick="clickBootcamp()">Bootcamps</h2>
+
             <menu id="menubootcamp" class="firstmenu">
+                <menu class="animbackmenu">
+                    <h2 id="bootcamp1" class="animbackmenu1" onclick="clickBootcamp()">Bootcamps</h2>
+                    <h2 id="bootcamp2" class="animbackmenu2" onclick="clickBootcamp()">Bootcamps</h2>
+                    <h2 id="bootcamp3" class="animbackmenu3" onclick="clickBootcamp()">Bootcamps</h2>
+                </menu>
                 <ul class="linklist">
                     <li>
                         <a href="https://www.linkedin.com/posts/yohrannes_cloud-aws-google-activity-7075804666545999872-H4xU?utm_source=share&utm_medium=member_desktop" target="_blank" rel="external">Imersão Cloud na prática</a>
                     </li>
                 </ul>
             </menu>
-            <h2 id="aboutme" class="menuclick" onclick="clickAboutme()">About me</h2>
-            <h2 id="aboutme1" class="animbackmenu1" onclick="clickAboutme()">About me</h2>
-            <h2 id="aboutme2" class="animbackmenu2" onclick="clickAboutme()">About me</h2>
-            <h2 id="aboutme3" class="animbackmenu3" onclick="clickAboutme()">About me</h2>
+
+            <h2 id="aboutme" class="menuclick" onclick="clickAboutMe()">About me</h2>
+
             <menu id="menuaboutme" class="firstmenu">
+                <menu class="animbackmenu">
+                    <h2 id="aboutme1" class="animbackmenu1" onclick="clickAboutMe()">About me</h2>
+                    <h2 id="aboutme2" class="animbackmenu2" onclick="clickAboutMe()">About me</h2>
+                    <h2 id="aboutme3" class="animbackmenu3" onclick="clickAboutMe()">About me</h2>
+                </menu>
                 <ul class="linklist">
                     <li>
                         <a href="https://www.evernote.com/shard/s397/sh/685f1c2d-2299-bb36-5c21-7e5a18c423e7/rNSHghOGNGUd59vbYc1sVZYeTZOSaygHA5QVROGyvE__YVUw_ckBg1gr7g">Get in touch</a>
                     </li>
                 </ul>
             </menu>
+
         </menu>
     </nav>
     <script src="../static/js/anim-menu.js"></script>
