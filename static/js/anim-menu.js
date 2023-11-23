@@ -28,7 +28,7 @@ function handleClick(menuanterior, menuatual, element) {
 
 //SOCIAL MENU
 function clickSocial() {
-  var menuanterior = [social, projects, tasksandguides, forum, bootcamp, aboutme];
+  var menuanterior = [social, projects, tasksandguides, forum, bootcamp, aboutme, achievementsandcertifications];
   var menuatual = [menusocial, social1, social2, social3];
   handleClick(menuanterior, menuatual, social);
 }
@@ -44,7 +44,7 @@ function clickSocialCircles() {
 
 // PROJECTS MENU
 function clickProjects() {
-  var menuanterior = [social, projects, tasksandguides, forum, bootcamp, aboutme];
+  var menuanterior = [social, projects, tasksandguides, forum, bootcamp, aboutme, achievementsandcertifications];
   var menuatual = [menuprojects, projects1, projects2, projects3];
   handleClick(menuanterior, menuatual, projects);
 }
@@ -68,28 +68,35 @@ function clickPersonalEditions() {
 
 //TASKS AND GUIDES MENU
 function clickTasksAndGuides() {
-  var menuanterior = [social, projects, tasksandguides, forum, bootcamp, aboutme];
+  var menuanterior = [social, projects, tasksandguides, forum, bootcamp, aboutme, achievementsandcertifications];
   var menuatual = [menutasksandguides, tasksandguides1, tasksandguides2, tasksandguides3];
   handleClick(menuanterior, menuatual, tasksandguides);
 }
 
 //FORUMS MENU
 function clickForum() {
-  var menuanterior = [social, projects, tasksandguides, forum, bootcamp, aboutme];
+  var menuanterior = [social, projects, tasksandguides, forum, bootcamp, aboutme, achievementsandcertifications];
   var menuatual = [menuforum, forum1, forum2, forum3];
   handleClick(menuanterior, menuatual, forum);
 }
 
 //BOOTCAMPS MENU
 function clickBootcamp() {
-  var menuanterior = [social, projects, tasksandguides, forum, bootcamp, aboutme];
+  var menuanterior = [social, projects, tasksandguides, forum, bootcamp, aboutme, achievementsandcertifications];
   var menuatual = [menubootcamp, bootcamp1, bootcamp2, bootcamp3];
   handleClick(menuanterior, menuatual, bootcamp);
 }
 
-//ABOUT ME MENU
+//ACHIEVEMENTS AND CERTIFICATIONS
 function clickAboutMe() {
-  var menuanterior = [social, projects, tasksandguides, forum, bootcamp, aboutme];
+  var menuanterior = [social, projects, tasksandguides, forum, bootcamp, aboutme, achievementsandcertifications];
   var menuatual = [menuaboutme, aboutme1, aboutme2, aboutme3];
   handleClick(menuanterior, menuatual, aboutme);
+}
+
+//ABOUT ME MENU
+function clickAchievementsAndCertifications() {
+  var menuanterior = [social, projects, tasksandguides, forum, bootcamp, aboutme, achievementsandcertifications];
+  var menuatual = [menuachievementsandcertifications, achievementsandcertifications1, achievementsandcertifications2, achievementsandcertifications3];
+  handleClick(menuanterior, menuatual, achievementsandcertifications);
 }
