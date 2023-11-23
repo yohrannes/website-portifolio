@@ -5,6 +5,8 @@ app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
 @app.route('/')
+def index(methods=['POST']):
+  return render_template('index.html')
 def toggle_element():
   global show_element
   if request.is_json and 'toggle' in request.json:
