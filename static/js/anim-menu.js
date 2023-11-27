@@ -13,90 +13,90 @@ function isElementVisible(element) {
   var computedStyle = window.getComputedStyle(element);
   return computedStyle.display === 'block' || computedStyle.display === 'flex';
 }
-function handleClick(menuanterior, menuatual, element) {
+function handleClick(previousmenu, currentmenu, element) {
   if (isElementVisible(element)) {
-    console.log(element.id + " entrou no menu");
-    hideElements(menuanterior);
-    showElements(menuatual);
+    console.log(element.id + " menu in");
+    hideElements(previousmenu);
+    showElements(currentmenu);
   }
   else {
-    console.log(element.id + " saiu do menu");
-    hideElements(menuatual);
-    showElements(menuanterior);
+    console.log(element.id + " menu out");
+    hideElements(currentmenu);
+    showElements(previousmenu);
   }
 }
 
+//START MENU
+var startmenu = [social, projects, tasksandguides, forum, bootcamp, aboutme, achievementsandcertifications];
+
 //SOCIAL MENU
+var socialmenu = [social1, social2, social3, professionalnetworks, socialcircles];
+
 function clickSocial() {
-  var menuanterior = [social, projects, tasksandguides, forum, bootcamp, aboutme, achievementsandcertifications];
-  var menuatual = [menusocial, social1, social2, social3];
-  handleClick(menuanterior, menuatual, social);
+  var currentmenu = [menusocial, social1, social2, social3];
+  handleClick(startmenu, currentmenu, social);
 }
-var menuanterior = [social1, social2, social3, professionalnetworks, socialcircles];
+
 function clickProfessionalNetworks() {
-  var menuatual = [professionalnetworks1, professionalnetworks2, professionalnetworks3, menuprofessionalnetworks];
-  handleClick(menuanterior, menuatual, professionalnetworks);
+  var currentmenu = [professionalnetworks1, professionalnetworks2, professionalnetworks3, menuprofessionalnetworks];
+  handleClick(socialmenu, currentmenu, professionalnetworks);
 }
 function clickSocialCircles() {
-  var menuatual = [menusocialcircles, socialcircles1, socialcircles2, socialcircles3];
-  handleClick(menuanterior, menuatual, socialcircles);
+  var currentmenu = [menusocialcircles, socialcircles1, socialcircles2, socialcircles3];
+  handleClick(socialmenu, currentmenu, socialcircles);
 }
 
 // PROJECTS MENU
+var projectsmenu = [projects1, projects2, projects3, devops, backend, frontend, personaleditions];
+
 function clickProjects() {
-  var menuanterior = [social, projects, tasksandguides, forum, bootcamp, aboutme, achievementsandcertifications];
-  var menuatual = [menuprojects, projects1, projects2, projects3];
-  handleClick(menuanterior, menuatual, projects);
+  var currentmenu = [menuprojects, projects1, projects2, projects3];
+  handleClick(startmenu, currentmenu, projects);
 }
-var menuanterior = [projects1, projects2, projects3, devops, backend, frontend, personaleditions];
+
 function clickDevOps() {
-  var menuatual = [menudevops, devops1, devops2, devops3];
-  handleClick(menuanterior, menuatual, devops);
+  var currentmenu = [menudevops, devops1, devops2, devops3];
+  handleClick(projectsmenu, currentmenu, devops);
 }
 function clickBackend() {
-  var menuatual = [menubackend, backend1, backend2, backend3];
-  handleClick(menuanterior, menuatual, backend);
+  var currentmenu = [menubackend, backend1, backend2, backend3];
+  handleClick(projectsmenu, currentmenu, backend);
 }
 function clickFrontend() {
-  var menuatual = [menufrontend, frontend1, frontend2, frontend3];
-  handleClick(menuanterior, menuatual, frontend);
+  var currentmenu = [menufrontend, frontend1, frontend2, frontend3];
+  handleClick(projectsmenu, currentmenu, frontend);
 }
 function clickPersonalEditions() {
-  var menuatual = [menupersonaleditions, personaleditions1, personaleditions2, personaleditions3];
-  handleClick(menuanterior, menuatual, personaleditions);
+  var currentmenu = [menupersonaleditions, personaleditions1, personaleditions2, personaleditions3];
+  handleClick(projectsmenu, currentmenu, personaleditions);
 }
 
 //TASKS AND GUIDES MENU
 function clickTasksAndGuides() {
-  var menuanterior = [social, projects, tasksandguides, forum, bootcamp, aboutme, achievementsandcertifications];
-  var menuatual = [menutasksandguides, tasksandguides1, tasksandguides2, tasksandguides3];
-  handleClick(menuanterior, menuatual, tasksandguides);
+  var currentmenu = [menutasksandguides, tasksandguides1, tasksandguides2, tasksandguides3];
+  handleClick(startmenu, currentmenu, tasksandguides);
 }
 
 //FORUMS MENU
 function clickForum() {
-  var menuanterior = [social, projects, tasksandguides, forum, bootcamp, aboutme, achievementsandcertifications];
-  var menuatual = [menuforum, forum1, forum2, forum3];
-  handleClick(menuanterior, menuatual, forum);
+  var currentmenu = [menuforum, forum1, forum2, forum3];
+  handleClick(startmenu, currentmenu, forum);
 }
 
 //BOOTCAMPS MENU
 function clickBootcamp() {
-  var menuanterior = [social, projects, tasksandguides, forum, bootcamp, aboutme, achievementsandcertifications];
-  var menuatual = [menubootcamp, bootcamp1, bootcamp2, bootcamp3];
-  handleClick(menuanterior, menuatual, bootcamp);
+  var currentmenu = [menubootcamp, bootcamp1, bootcamp2, bootcamp3];
+  handleClick(startmenu, currentmenu, bootcamp);
 }
 
 //ACHIEVEMENTS AND CERTIFICATIONS
 function clickAboutMe() {
-  var menuanterior = [social, projects, tasksandguides, forum, bootcamp, aboutme, achievementsandcertifications];
-  var menuatual = [menuaboutme, aboutme1, aboutme2, aboutme3];
-  handleClick(menuanterior, menuatual, aboutme);
+  var currentmenu = [menuaboutme, aboutme1, aboutme2, aboutme3];
+  handleClick(startmenu, currentmenu, aboutme);
 }
 
 //ABOUT ME MENU
 function clickAchievementsAndCertifications() {
-  var menuanterior = [social, projects, tasksandguides, forum, bootcamp, aboutme, achievementsandcertifications];
-  var menuatual = [menuachievementsandcertifications, achievementsandcertifications1, achievementsandcertifications2, achievementsandcertifications3];
-  handleClick(menuanterior, menuatual, achievementsandcertifications);
+  var currentmenu = [menuachievementsandcertifications, achievementsandcertifications1, achievementsandcertifications2, achievementsandcertifications3];
+  handleClick(startmenu, currentmenu, achievementsandcertifications);
 }
