@@ -82,7 +82,7 @@ img#foto, div#foto1, div#foto2 {
   height: 13vw;
 }
 
-img#foto { /*test*/
+img#foto {
   position: absolute;
   display: none;
 
