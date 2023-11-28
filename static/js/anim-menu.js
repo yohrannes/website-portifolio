@@ -37,7 +37,7 @@ function clickSocial() {
   handleClick(startmenu, currentmenu, social);
 }
 
-function clickProfessionalNetworks() {
+function clickProfessionalNetworks() { //test
   var currentmenu = [professionalnetworks1, professionalnetworks2, professionalnetworks3, menuprofessionalnetworks];
   handleClick(socialmenu, currentmenu, professionalnetworks);
 }
