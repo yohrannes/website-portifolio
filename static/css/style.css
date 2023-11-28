@@ -84,7 +84,7 @@ img#foto, div#foto1, div#foto2 {
 
 img#foto {
   position: absolute;
-  display: none; /* Change to none */
+  display: none;
 
   animation: glitchop- 2.5s infinite;
 }
@@ -162,7 +162,6 @@ menu > ul > li > a {
   font-weight: 600;
   animation: glitch1 2.5s infinite;
 }
-
 
 .linklist {
   width: 100%;
