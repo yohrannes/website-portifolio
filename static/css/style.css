@@ -181,9 +181,9 @@ menu > ul > li > a {
   content: '\0020\25B8';
 }
 
-/* .animbackmenu1:hover, .animbackmenu2:hover, .animbackmenu3:hover {
+.animbackmenu1:hover::after, .animbackmenu2:hover::after, .animbackmenu3:hover::after {
   content: '\0020\25C2';
-} */
+}
 
 .animbackmenu {
   padding-bottom: 30px;
