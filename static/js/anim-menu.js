@@ -72,9 +72,26 @@ function clickProjects() {
   }
 
 //TASKS AND GUIDES MENU
+var tasksandguidesmenu = [tasksandguides1, tasksandguides2, tasksandguides3,miscellaneous, virtuozzo, hostingservices]
+
 function clickTasksAndGuides() {
   var currentmenu = [menutasksandguides, tasksandguides1, tasksandguides2, tasksandguides3];
   handleClick(startmenu, currentmenu, tasksandguides);
+}
+
+function clickMiscellaneous() {
+  var currentmenu = []
+  handleClick ()
+}
+
+function clickVirtuozzo() {
+  var currentmenu = []
+  handleClick ()
+}
+
+function ClickHostingServices() {
+  var currentmenu = []
+  handleClick ()
 }
 
 //FORUMS MENU
