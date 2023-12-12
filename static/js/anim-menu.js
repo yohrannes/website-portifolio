@@ -80,18 +80,18 @@ function clickTasksAndGuides() {
 }
 
 function clickMiscellaneous() {
-  var currentmenu = []
-  handleClick ()
+  var currentmenu = [menumiscellaneous, miscellaneous1, miscellaneous2, miscellaneous3]
+  handleClick (tasksandguidesmenu, currentmenu, miscellaneous)
 }
 
 function clickVirtuozzo() {
-  var currentmenu = []
-  handleClick ()
+  var currentmenu = [menuvirtuozzo, virtuozzo1, virtuozzo2, virtuozzo3]
+  handleClick (tasksandguidesmenu, currentmenu, virtuozzo)
 }
 
-function ClickHostingServices() {
-  var currentmenu = []
-  handleClick ()
+function clickHostingServices() {
+  var currentmenu = [menuhostingservices, hostingservices1, hostingservices2,  hostingservices3]
+  handleClick (tasksandguidesmenu, currentmenu, hostingservices)
 }
 
 //FORUMS MENU
