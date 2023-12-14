@@ -26,7 +26,7 @@ function handleClick(previousmenu, currentmenu, element) {
   }
 }
 
-//START MENU
+//FIRST MENU
 var startmenu = [social, projects, tasksandguides, forum, bootcamp, handsonprojects, aboutme, achievementsandcertifications];
 
 //SOCIAL MENU
