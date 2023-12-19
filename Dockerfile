@@ -19,4 +19,3 @@ RUN set FLASK_ENV=developmennt
 EXPOSE 5000
 
 CMD [ "python3", "/root/app.py"]
-

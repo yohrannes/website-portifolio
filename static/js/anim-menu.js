@@ -72,10 +72,25 @@ function clickProjects() {
   }
 
 //TASKS AND GUIDES MENU
+var tasksandguidesmenu = [tasksandguides1, tasksandguides2, tasksandguides3, virtuozzocloudtutorials, hostingservices, miscellaneous];
+
 function clickTasksAndGuides() {
   var currentmenu = [menutasksandguides, tasksandguides1, tasksandguides2, tasksandguides3];
   handleClick(startmenu, currentmenu, tasksandguides);
 }
+
+  function clickVirtuozzoCloudTutorials() {
+    var currentmenu = [menuvirtuozzocloudtutorials, virtuozzocloudtutorials1, virtuozzocloudtutorials2, virtuozzocloudtutorials3];
+    handleClick (tasksandguidesmenu, currentmenu, virtuozzocloudtutorials);
+  }
+  function clickHostingServices() {
+    var currentmenu = [menuhostingservices, hostingservices1, hostingservices2, hostingservices3];
+    handleClick (tasksandguidesmenu, currentmenu, hostingservices);
+  }
+  function clickMiscellaneous() {
+    var currentmenu = [menumiscellaneous, miscellaneous1, miscellaneous2, miscellaneous3];
+    handleClick (tasksandguidesmenu, currentmenu, miscellaneous);
+  }
 
 //FORUMS MENU
 function clickForum() {
