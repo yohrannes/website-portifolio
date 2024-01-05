@@ -11,6 +11,23 @@
     <link rel="shortcut icon" href="../static/images/icons/icon-notes.png">
     <meta http-equiv="X-UA-Compsatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        function detectRegion() {
+            var language = navigator.language || navigator.userLanguage;
+            return language.substring(0, 2);
+        }
+        function askLanguage() {
+            var region = detectRegion();
+            if (region != "en") {
+            var message = "This site is only available in english. Do you want the browser to translate the content for you?";
+            if (confirm(message)) {
+                document.documentElement.setAttribute("lang", "en");
+                document.documentElement.setAttribute("translate", "yes");
+            }
+            }
+        }
+        window.onload = askLanguage;
+    </script>
     <title>
         Yoh.
     </title>
