@@ -11,6 +11,23 @@
     <link rel="shortcut icon" href="../static/images/icons/icon-notes.png">
     <meta http-equiv="X-UA-Compsatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script>
+        function detectRegion() {
+            var language = navigator.language || navigator.userLanguage;
+            return language.substring(0, 2);
+        }
+        function askLanguage() {
+            var region = detectRegion();
+            if (region != "en") {
+            var message = "This site is only available in english. Do you want the browser to translate the content for you?";
+            if (confirm(message)) {
+                document.documentElement.setAttribute("lang", "en");
+                document.documentElement.setAttribute("translate", "yes");
+            }
+            }
+        }
+        window.onload = askLanguage;
+    </script>
     <title>
         Yoh.
     </title>
@@ -98,7 +115,7 @@
                 <ul class="linklist">
                     <li>
                         <a href="https://github.com/yohrannes/accesshub" target="_blank" rel="external">AccessHub - ssh manager</a>
-                        <a href="https://github.com/yohrannes/docker-mine" target="_blank" rel="external">Minecraft server - Docker</a>
+                        <a href="https://github.com/yohrannes/docker-mine" target="_blank" rel="external">Mine server - Docker</a>
                     </li>
                 </ul>
             </menu>
@@ -154,9 +171,38 @@
                     <h2 id="tasksandguides2" class="animbackmenu2" onclick="clickTasksAndGuides()">Task nd g..</h2>
                     <h2 id="tasksandguides3" class="animbackmenu3" onclick="clickTasksAndGuides()">Task nd g..</h2>
                 </menu>
+<<<<<<< HEAD
                 <h2 id="miscellaneous" class="secondmenuclick" onclick="clickMiscellaneous()">Miscellaneous</h2>
                 <h2 id="virtuozzo" class="secondmenuclick" onclick="clickVirtuozzo()">Virtuozzo</h2>
                 <h2 id="hostingservices" class="secondmenuclick" onclick="clickHostingServices()">Hosting Services</h2>
+=======
+                <h2 id="virtuozzocloudtutorials" class="secondmenuclick" onclick="clickVirtuozzoCloudTutorials()">Virtuozzo Cloud tutorials</h2>
+                <h2 id="hostingservices" class="secondmenuclick" onclick="clickHostingServices()">Hosting services tutorials</h2>
+                <h2 id="miscellaneous" class="secondmenuclick" onclick="clickMiscellaneous()">Miscellaneous</h2>
+            </menu>
+
+            <menu id="menuvirtuozzocloudtutorials" class="secondmenu">
+                <menu class="animbackmenu">
+                    <h2 id="virtuozzocloudtutorials1" class="animbackmenu1" onclick="clickVirtuozzoCloudTutorials()">Vz tut..</h2>
+                    <h2 id="virtuozzocloudtutorials2" class="animbackmenu2" onclick="clickVirtuozzoCloudTutorials()">Vz tut..</h2>
+                    <h2 id="virtuozzocloudtutorials3" class="animbackmenu3" onclick="clickVirtuozzoCloudTutorials()">Vz tut..</h2>
+                </menu>
+                <ul class="linklist">
+                    <li><a href="https://www.evernote.com/shard/s397/sh/37c0780f-5120-283e-e205-98d288c82980/DFlDmuSfGrN8KCIJ-JhFp_HZxlFexBs7KzLSxtgQ_ICwN06hKhYG6eYT7g" target="_blank" rel="external">VS code SFTP Virtuozzo to windows (en-us)</a>
+                </ul>
+            </menu>
+
+            <menu id="menuhostingservices" class="secondmenu">
+                <menu class="animbackmenu">
+                    <h2 id="hostingservices1" class="animbackmenu1" onclick="clickHostingServices()">Host svc..</h2>
+                    <h2 id="hostingservices2" class="animbackmenu2" onclick="clickHostingServices()">Host svc..</h2>
+                    <h2 id="hostingservices3" class="animbackmenu3" onclick="clickHostingServices()">Host svc..</h2>
+                </menu>
+                <ul class="linklist">
+                    <li><a href="https://www.evernote.com/shard/s397/sh/90161548-c163-e825-6e9b-0b37e8d00475/JS5JcHSNIBsqtKcPNKenkbWmx7ZYQRSvzaS1uS4ZFDwx1OlR0QfHulWvyA" target="_blank" rel="external">Delist tutorial SORBS Spam Blacklist (pt-br)</a>
+                    <li><a href="https://www.evernote.com/shard/s397/sh/aa4feff3-a081-da4c-9b4e-a40deb96238a/PNS2uRwM66Rhrd13QBkiaaqef6WPfmfw31ltM8_5GnXn7qWZ7dV_BIA7zQ" target="_blank" rel="external">How to block email contacts in CWP panel</a>
+                </ul>
+>>>>>>> main
             </menu>
 
             <menu id="menumiscellaneous" class="secondmenu">
@@ -167,6 +213,7 @@
                 </menu>
                 <ul class="linklist">
                     <li><a href="https://www.evernote.com/shard/s397/sh/bc017a63-6d27-dd78-c146-329579dddd56/QhjnKiNzKoWGzucYN7JAVsk9Yt4BNjOATrBbcsZPrI9ktxpQBuA19QxVTw" target="_blank" rel="external">Good coexistence - Guide (en-us)</a>
+<<<<<<< HEAD
                     <li><a href="https://www.evernote.com/shard/s397/sh/871246a0-c0c2-1900-fb9e-90db7903e84d/sX6KUo6D65rFSxTLDJQk54Wk-YkHILNMaRJR1E1XgWG3lQ1u3BMSyA-DWg" target="_blank" rel="external">Minecraft server - Step by step (pt-br)</a>
                 </ul>
             </menu>
@@ -191,6 +238,9 @@
                 <ul class="linklist">
                     <li><a href="https://www.evernote.com/shard/s397/sh/90161548-c163-e825-6e9b-0b37e8d00475/JS5JcHSNIBsqtKcPNKenkbWmx7ZYQRSvzaS1uS4ZFDwx1OlR0QfHulWvyA" target="_blank" rel="external">Delist tutorial SORBS Spam Blacklist (pt-br)</a>
                     <li><a href="https://www.evernote.com/shard/s397/sh/aa4feff3-a081-da4c-9b4e-a40deb96238a/PNS2uRwM66Rhrd13QBkiaaqef6WPfmfw31ltM8_5GnXn7qWZ7dV_BIA7zQ" target="_blank" rel="external">How to block email contacts in CWP panel</a>
+=======
+                    <li><a href="https://www.evernote.com/shard/s397/sh/871246a0-c0c2-1900-fb9e-90db7903e84d/sX6KUo6D65rFSxTLDJQk54Wk-YkHILNMaRJR1E1XgWG3lQ1u3BMSyA-DWg" target="_blank" rel="external">Minecraft CentOS server - Step by step (pt-br)</a>
+>>>>>>> main
                 </ul>
             </menu>
 
@@ -245,7 +295,12 @@
                 </menu>
                 <ul class="linklist">
                     <li><a href="https://www.linkedin.com/feed/update/urn:li:activity:7135266117219958786/" target="_blank" rel="external">IAM & VPC Network</a>
+<<<<<<< HEAD
                     <li><a href="https://www.linkedin.com/feed/update/urn:li:activity:7138535133325721600/" target="_blank" rel="external">VPC _> GCP <-> AWS</a>
+=======
+                    <li><a href="https://www.linkedin.com/feed/update/urn:li:activity:7138535133325721600/" target="_blank" rel="external">New VPC GCP <-> AWS</a>
+                    <li><a href="https://www.linkedin.com/feed/update/urn:li:activity:7142876270115168257/" target="_blank" rel="external">Lift Shift + K8s Migrations</a>
+>>>>>>> main
                 </ul>
             </menu>
 
