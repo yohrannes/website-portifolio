@@ -26,7 +26,7 @@ function handleClick(previousmenu, currentmenu, element) {
   }
 }
 
-//START MENU
+//FIRST MENU
 var startmenu = [social, projects, tasksandguides, forum, bootcamp, handsonprojects, aboutme, achievementsandcertifications];
 
 //SOCIAL MENU
@@ -72,13 +72,18 @@ function clickProjects() {
   }
 
 //TASKS AND GUIDES MENU
+<<<<<<< HEAD
 var tasksandguidesmenu = [tasksandguides1, tasksandguides2, tasksandguides3,miscellaneous, virtuozzo, hostingservices]
+=======
+var tasksandguidesmenu = [tasksandguides1, tasksandguides2, tasksandguides3, virtuozzocloudtutorials, hostingservices, miscellaneous];
+>>>>>>> main
 
 function clickTasksAndGuides() {
   var currentmenu = [menutasksandguides, tasksandguides1, tasksandguides2, tasksandguides3];
   handleClick(startmenu, currentmenu, tasksandguides);
 }
 
+<<<<<<< HEAD
 function clickMiscellaneous() {
   var currentmenu = [menumiscellaneous, miscellaneous1, miscellaneous2, miscellaneous3]
   handleClick (tasksandguidesmenu, currentmenu, miscellaneous)
@@ -93,6 +98,20 @@ function clickHostingServices() {
   var currentmenu = [menuhostingservices, hostingservices1, hostingservices2,  hostingservices3]
   handleClick (tasksandguidesmenu, currentmenu, hostingservices)
 }
+=======
+  function clickVirtuozzoCloudTutorials() {
+    var currentmenu = [menuvirtuozzocloudtutorials, virtuozzocloudtutorials1, virtuozzocloudtutorials2, virtuozzocloudtutorials3];
+    handleClick (tasksandguidesmenu, currentmenu, virtuozzocloudtutorials);
+  }
+  function clickHostingServices() {
+    var currentmenu = [menuhostingservices, hostingservices1, hostingservices2, hostingservices3];
+    handleClick (tasksandguidesmenu, currentmenu, hostingservices);
+  }
+  function clickMiscellaneous() {
+    var currentmenu = [menumiscellaneous, miscellaneous1, miscellaneous2, miscellaneous3];
+    handleClick (tasksandguidesmenu, currentmenu, miscellaneous);
+  }
+>>>>>>> main
 
 //FORUMS MENU
 function clickForum() {

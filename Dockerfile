@@ -1,22 +1,16 @@
-FROM centos
+FROM python:3 AS build
 WORKDIR /root
+ADD . .
 
-RUN sed -i 's/mirrorlist/#mirrorlist/g' /etc/yum.repos.d/CentOS-*; sed -i 's|#baseurl=http://mirror.centos.org|baseurl=http://vault.centos.org|g' /etc/yum.repos.d/CentOS-*
-
-RUN yum update -y; yum upgrade -y;
-RUN yum install -y nano sudo wget epel-release telnet;
-RUN sudo dnf install dnf -y
-RUN sudo dnf update -y
-RUN sudo dnf install net-tools -y
-
-COPY . .
+FROM alpine:latest
+COPY --from=build /root /root
 
 # Installing python and flask
-RUN yum install gcc openssl-devel bzip2-devel libffi-devel -y
-RUN sudo yum install -y python3 python3-pip
-RUN pip3 install Flask requests
-RUN set FLASK_ENV=developmennt
+ENV PYTHONUNBUFFERED=1
+RUN apk add --update python3 py3-pip
+RUN ln -sf python3 /usr/bin/python
+RUN apk add py3-flask py3-requests
+RUN set FLASK_ENV=development
 EXPOSE 5000
 
 CMD [ "python3", "/root/app.py"]
-

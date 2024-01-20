@@ -27,7 +27,7 @@ spec:
     spec:
       containers:
         - name: flask
-          image: yohrannes/website-portifolio
+          image: yohrannes/multistage-build-flask-python-website
           ports:
             - containerPort: 5000
 ---
