@@ -1,5 +1,0 @@
-- repo: local
-  hooks:
-    - id: copy-file
-      name: Copiar arquivo de configuração
-      entry: cp /etc/nginx/nginx.conf .
