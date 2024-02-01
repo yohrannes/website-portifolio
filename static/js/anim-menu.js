@@ -89,17 +89,9 @@ function clickVirtuozzo() {
   handleClick (tasksandguidesmenu, currentmenu, virtuozzo)
 }
 
-  function clickVirtuozzoCloudTutorials() {
-    var currentmenu = [menuvirtuozzocloudtutorials, virtuozzocloudtutorials1, virtuozzocloudtutorials2, virtuozzocloudtutorials3];
-    handleClick (tasksandguidesmenu, currentmenu, virtuozzocloudtutorials);
-  }
   function clickHostingServices() {
     var currentmenu = [menuhostingservices, hostingservices1, hostingservices2, hostingservices3];
     handleClick (tasksandguidesmenu, currentmenu, hostingservices);
-  }
-  function clickMiscellaneous() {
-    var currentmenu = [menumiscellaneous, miscellaneous1, miscellaneous2, miscellaneous3];
-    handleClick (tasksandguidesmenu, currentmenu, miscellaneous);
   }
 
 //FORUMS MENU
