@@ -89,10 +89,6 @@ function clickVirtuozzo() {
   handleClick (tasksandguidesmenu, currentmenu, virtuozzo)
 }
 
-function clickHostingServices() {
-  var currentmenu = [menuhostingservices, hostingservices1, hostingservices2,  hostingservices3]
-  handleClick (tasksandguidesmenu, currentmenu, hostingservices)
-}
   function clickVirtuozzoCloudTutorials() {
     var currentmenu = [menuvirtuozzocloudtutorials, virtuozzocloudtutorials1, virtuozzocloudtutorials2, virtuozzocloudtutorials3];
     handleClick (tasksandguidesmenu, currentmenu, virtuozzocloudtutorials);
