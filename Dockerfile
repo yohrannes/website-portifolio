@@ -1,8 +1,8 @@
-FROM python:3 AS build
+FROM balenalib/aarch64-python AS build
 WORKDIR /root
 ADD . .
 
-FROM alpine:latest
+FROM balenalib/aarch64-alpine-node
 COPY --from=build /root /root
 
 # Installing python and flask
