@@ -27,7 +27,7 @@ function handleClick(previousmenu, currentmenu, element) {
 }
 
 //FIRST MENU
-var startmenu = [social, projects, tasksandguides, forum, bootcamp, handsonprojects, aboutme, achievementsandcertifications];
+var startmenu = [social, projects, tasksandguides, bootcamp, handsonprojects, aboutme, achievementsandcertifications];
 
 //SOCIAL MENU
 var socialmenu = [social1, social2, social3, professionalnetworks, socialcircles];
@@ -72,32 +72,36 @@ function clickProjects() {
   }
 
 //TASKS AND GUIDES MENU
-var tasksandguidesmenu = [tasksandguides1, tasksandguides2, tasksandguides3,miscellaneous, virtuozzo, hostingservices]
+var tasksandguidesmenu = [tasksandguides1, tasksandguides2, tasksandguides3, kubernetes, vpsnetwork, hostingservices, databases, miscellaneous]
 
 function clickTasksAndGuides() {
   var currentmenu = [menutasksandguides, tasksandguides1, tasksandguides2, tasksandguides3];
   handleClick(startmenu, currentmenu, tasksandguides);
 }
 
+function clickKubernetes() {
+  var currentmenu = [menukubernetes, kubernetes1, kubernetes2, kubernetes3]
+  handleClick (tasksandguidesmenu, currentmenu, kubernetes)
+}
+
+function clickVpsnetwork() {
+  var currentmenu = [menuvpsnetwork, vpsnetwork1, vpsnetwork2, vpsnetwork3]
+  handleClick (tasksandguidesmenu, currentmenu, vpsnetwork)
+}
+
+function clickHostingServices() {
+  var currentmenu = [menuhostingservices, hostingservices1, hostingservices2, hostingservices3];
+  handleClick (tasksandguidesmenu, currentmenu, hostingservices);
+}
+
+function clickDatabases() {
+  var currentmenu = [menudatabases, databases1, databases2, databases3]
+  handleClick (tasksandguidesmenu, currentmenu, databases)
+}
+
 function clickMiscellaneous() {
   var currentmenu = [menumiscellaneous, miscellaneous1, miscellaneous2, miscellaneous3]
   handleClick (tasksandguidesmenu, currentmenu, miscellaneous)
-}
-
-function clickVirtuozzo() {
-  var currentmenu = [menuvirtuozzo, virtuozzo1, virtuozzo2, virtuozzo3]
-  handleClick (tasksandguidesmenu, currentmenu, virtuozzo)
-}
-
-  function clickHostingServices() {
-    var currentmenu = [menuhostingservices, hostingservices1, hostingservices2, hostingservices3];
-    handleClick (tasksandguidesmenu, currentmenu, hostingservices);
-  }
-
-//FORUMS MENU
-function clickForum() {
-  var currentmenu = [menuforum, forum1, forum2, forum3];
-  handleClick(startmenu, currentmenu, forum);
 }
 
 //BOOTCAMPS MENU
