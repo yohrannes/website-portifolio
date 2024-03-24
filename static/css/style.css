@@ -178,7 +178,11 @@ menu > ul > li > a {
 }
 
 .animbackmenu1:hover::before, .animbackmenu2:hover::before, .animbackmenu3:hover::before {
-  content: '\25C2\25C2\25C2';
+  content: '\0020\25C2';
+}
+
+.animbackmenu1::before, .animbackmenu2::before, .animbackmenu3::before {
+  content: '\0020\25B8';
 }
 
 .animbackmenu {
