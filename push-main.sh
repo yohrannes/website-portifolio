@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Run ...
+# Run ....
 # ./push-main.sh "My commit comment"
 
 git add .
