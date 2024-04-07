@@ -187,15 +187,21 @@ menu > ul > li > a {
 }
 
 .animbackmenu1:hover::before, .animbackmenu2:hover::before, .animbackmenu3:hover::before {
-  content: '\0020\25C2';
+  content: '\00A0\00A0\00A0\00A0';
 }
 
 .animbackmenu1::before, .animbackmenu2::before, .animbackmenu3::before {
-  content: '\0020\25B8';
+  content: '\00A0\00A0\00A0\00A0';
 }
 
 .animbackmenu {
   padding-bottom: 30px;
+}
+
+.animbackmenu-back {
+  position: absolute;
+  left: 10px;
+  padding-left: 20px;
 }
 
 .animbackmenu:hover {
