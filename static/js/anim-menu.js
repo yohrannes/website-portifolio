@@ -123,6 +123,10 @@ function clickHandsOnProjects(){
     handleClick(handsonprojectsmenu, currentmenu, googlecloudhandson)
   }
 
+    // if (clickHandsOnProjects == True && clickGoogleCloudHandsOn == True) {
+    //   // <h2 class="animbackmenu-back">↲</h2> == inline block
+    // }
+
   function clickOracleCloudHandsOn(){
     var currentmenu = [oraclecloudhandson1, oraclecloudhandson2, oraclecloudhandson3, menuoraclecloudhandson]
     handleClick(handsonprojectsmenu, currentmenu, oraclecloudhandson)
