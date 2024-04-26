@@ -23,4 +23,3 @@ RUN apk update
 RUN apk upgrade
 
 # Running aplication
-CMD [ "python3", "/root/app.py"]
