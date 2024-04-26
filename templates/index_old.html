@@ -11,32 +11,20 @@
     <link rel="shortcut icon" href="../static/images/icons/icon-notes.png">
     <meta http-equiv="X-UA-Compsatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script>
-        function detectRegion() {
-            var language = navigator.language || navigator.userLanguage;
-            return language.substring(0, 2);
-        }
-        function askLanguage() {
-            var region = detectRegion();
-            if (region != "en") {
-            var message = "This site is only available in english. Do you want the browser to translate the content for you?";
-            if (confirm(message)) {
-                document.documentElement.setAttribute("lang", "en");
-                document.documentElement.setAttribute("translate", "yes");
-            }
-            }
-        }
-        window.onload = askLanguage;
-    </script>
-    <!-- <div class="imagem-transparente">
-        <img src="../static/images/oke-logo.png" alt="">
-    </div> -->
+    <!-- <script src="http://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" type="text/javascript">
+    </script> -->
     <title>
         Yoh.
     </title>
 </head>
 <body>
 <header>
+    <!-- <div id="google_translate_element"></div>
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+          new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.SIMPLE}, 'google_translate_element');
+        }
+    </script> -->    
     <div>
         <h1 id="title" onmouseover="HoverShowTitle()" onmouseout="HoverHideTitle()">
             Yohrannes Santos Bigoli
@@ -311,8 +299,6 @@
                     <li><a href="https://www.linkedin.com/feed/update/urn:li:activity:7142876270115168257/" target="_blank" rel="external">Lift Shift + K8s Migrations</a>
                     <li><a href="https://www.linkedin.com/feed/update/urn:li:activity:7146137765502525440/" target="_blank" rel="external">Migration US > Australia</a>
                     <li><a href="https://www.linkedin.com/feed/update/urn:li:activity:7148674457295888384/" target="_blank" rel="external">Load Balancer US > Europe</a>
-                    <li><a href="https://www.evernote.com/shard/s397/sh/0e735150-8b6a-f2f5-4a2b-f52ef909aac6/x7NchoORojHOP2gwPrKt7JosEG3bj-DlT7J8sSV97YkKuZBow5jXjOPA7A">GCP Badge - Core infrastructure</a>
-                    <li><a href="https://www.evernote.com/shard/s397/sh/e827333f-beb7-6966-ee46-f82128e3d09c/kkkZFicV01wjIBr5uvyJ85hWnUsVlR7hyE0aG98CtlW2NnSzYb88H64z5w">GCP Badge - Load Balancing</a>
                 </ul>
             </menu>
 
@@ -358,7 +344,6 @@
     <script src="../static/js/anim-menu.js"></script>
     <script src="../static/js/anim-titulo.js"></script>
     <script src="../static/js/anim-typewriter.js"></script>
-    <script src="../static/js/anim-back-menu.js"></script>
 </header>
 </body>
 </html>

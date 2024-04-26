@@ -6,6 +6,22 @@
 
 /* Mobile First Method */
 
+#google_translate_element,
+/*.goog-te-banner-frame,*/
+/*.goog-te-balloon-frame,*/
+/*#goog-gt-tt,*/
+/*.goog-te-balloon-frame,*/
+/*.goog-tooltip,*/
+/*.goog-tooltip:hover {
+ display:none !important;
+}*/
+
+#google_translate_element {
+  position: absolute;
+  right: 0;
+  top: 0; 
+}
+
 * {
   margin: 0px;
   padding: 0px;
