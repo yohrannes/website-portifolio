@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+/* Animations */
+@import url(animations/anim-glitch.css);
+@import url(animations/anim-glitchop-.css);
+
+* {
+  margin: 0px;
+  padding: 0px;
+  font-size: 1em;
+}
+
+:root { /*Working with variables*/
+  --fonte-del: 'Raleway', sans-serif;
+}
+
+body {
+  display: block;
+  background-color: rgb(0, 0, 0);
+}
+
+h2 {
+  font-family: 'Raleway';
+  color: white;
+  font-weight: 200;
+  font-size: 1.5em;
+  overflow-wrap: break-word;
+  /* word-break: break-all;  Break letters */
+  opacity: 1;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.301);
+  cursor: pointer;
+  margin-left: 20vw;
+}
+
+h1 {
+  font-family: 'Raleway';
+  color: white;
+  font-weight: 200;
+  font-size: 1em;
+  overflow-wrap: break-word;
+  /* word-break: break-all;  Break letters */
+  opacity: 1;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.301);
+  cursor: pointer;
+  margin-left: 20vw;
+}
+
+.linklist {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  list-style-type: none;
+}
+

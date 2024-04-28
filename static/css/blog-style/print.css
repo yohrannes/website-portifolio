@@ -1,0 +1,42 @@
+@charset "UTF-8";
+
+@media print { /* IMPRESSÃO */
+    * {
+        font-family: 'Courier New', Courier, monospace;
+    }
+
+    header > h1 {
+        display: none;
+    }
+
+    header > nav {
+        word-break: normal;
+    }
+
+    header::after {
+        display: inline-block;
+        content: 'Essa impressão foi feita através do site www.yohrannes.com.';
+        text-align: center;
+    }
+
+    header h1 {
+        text-shadow: none;
+        color: black;
+    }
+
+    nav > ul > li > ul > li > a:hover {
+        text-decoration: underline;
+      }
+
+    a::after {
+        content:'\a' attr(href);
+    }
+
+    li > a {
+        color: black;
+    }
+
+    nav ul ul {
+        display: block;
+    }
+}

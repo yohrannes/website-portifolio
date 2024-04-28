@@ -12,5 +12,13 @@ def index():
 def gcp_skills_redirect():
     return redirect('https://www.cloudskillsboost.google/public_profiles/d446290c-301d-4cec-bf2c-c1e1ba9752f1')
 
+@app.route('/contact')
+def contact():
+    return render_template('getintouch.html')
+
+@app.route('/websitespecs')
+def websitespecs():
+    return render_template('website-specs.html')
+
 if __name__ == "__main__":
   app.run(host="0.0.0.0", debug=True, port="5000")
