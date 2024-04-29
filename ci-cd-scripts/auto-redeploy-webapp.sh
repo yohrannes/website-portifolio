@@ -1,4 +1,3 @@
-echo "15 * * * * python3 /root/repos-github/docker-lenda/lenda/scripts/get-last-commit.py" >> /etc/crontabs/root
-echo "crontab ok!"
+echo "15       *       *       *       *       python3 /root/website-portifolio/ci-cd-scripts/get-last-commit.py" >> /etc/crontabs/root
 echo "Actual crontab configs"
 cat /etc/crontabs/root
