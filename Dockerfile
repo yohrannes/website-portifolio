@@ -17,6 +17,7 @@ RUN apk add --update python3 py3-pip
 RUN apk add --upgrade python3 py3-pip
 RUN ln -sf python3 /usr/bin/python
 RUN apk add py3-flask py3-requests
+
 RUN set FLASK_ENV=development
 EXPOSE 5000
 
