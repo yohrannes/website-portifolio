@@ -17,6 +17,10 @@ RUN apk add --update python3 py3-pip
 RUN apk add --upgrade python3 py3-pip
 RUN ln -sf python3 /usr/bin/python
 RUN apk add py3-flask py3-requests
+RUN apk add --upgrade nano
+
+# Config crontab to update project periodically
+RUN /root/website-portifolio/ci-cd-scripts/auto-redeploy-webapp.sh
 
 RUN set FLASK_ENV=development
 EXPOSE 5000
