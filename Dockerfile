@@ -1,6 +1,5 @@
 FROM alpine
 WORKDIR /root
-#ADD . .
 
 # Upgrading system
 RUN apk update
@@ -18,15 +17,14 @@ RUN apk add --upgrade python3 py3-pip
 RUN ln -sf python3 /usr/bin/python
 RUN apk add py3-flask py3-requests
 RUN apk add --upgrade nano
-
-# Config crontab to update project periodically
-RUN /root/website-portifolio/ci-cd-scripts/auto-redeploy-webapp.sh
-
 RUN set FLASK_ENV=development
 EXPOSE 5000
 
-# Activate environment
-RUN source /root/website-portifolio/yoh-app/bin/activate
+# Config crond and app
+ADD crontab.txt /crontab.txt
+ADD script.sh /script.sh
+COPY entry.sh /entry.sh
+RUN chmod 755 /script.sh /entry.sh
+RUN /usr/bin/crontab /crontab.txt
 
-# Running aplication
-CMD [ "python3", "/root/website-portifolio/app.py"]
+CMD ["/entry.sh"]
