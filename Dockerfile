@@ -27,4 +27,6 @@ COPY entry.sh /entry.sh
 RUN chmod 755 /script.sh /entry.sh
 RUN /usr/bin/crontab /crontab.txt
 
+# Add source yoh-app/bin ... dont forget
+
 CMD ["/entry.sh"]
