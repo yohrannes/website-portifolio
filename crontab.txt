@@ -1,1 +1,1 @@
-* * * * * /script.sh >> /var/log/script.log
+* 15 * * * /script.sh >> /var/log/script.log
