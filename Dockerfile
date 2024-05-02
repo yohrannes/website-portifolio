@@ -5,6 +5,9 @@ WORKDIR /root
 RUN apk update
 RUN apk upgrade
 
+# Installing useful programs
+RUN apk add --upgrade nano
+
 #Get website project from github
 RUN apk add --upgrade git
 RUN git clone https://github.com/yohrannes/website-portifolio.git
@@ -14,6 +17,7 @@ ENV PYTHONUNBUFFERED=1
 RUN apk add --update python3 py3-pip
 RUN apk add --upgrade python3 py3-pip
 RUN ln -sf python3 /usr/bin/python
+
 RUN apk add py3-flask py3-requests
 RUN apk add --upgrade nano
 RUN set FLASK_ENV=development
