@@ -10,7 +10,6 @@ RUN apk add --upgrade git
 RUN git clone https://github.com/yohrannes/website-portifolio.git
 
 # Installing python and flask
-
 ENV PYTHONUNBUFFERED=1
 RUN apk add --update python3 py3-pip
 RUN apk add --upgrade python3 py3-pip
