@@ -1,0 +1,2 @@
+kubectl create rolebinding --namespace=gitlab gitlab-runner-binding --role=gitlab-runner --serviceaccount=gitlab-runner:default
+helm install --namespace gitlab gitlab-runner -f values.yaml gitlab/gitlab-runner
