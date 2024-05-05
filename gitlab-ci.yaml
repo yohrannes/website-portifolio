@@ -1,9 +1,0 @@
-stages:
-  - deploy
-
-deploy:
-  stage: deploy
-  script:
-    - kubectl rollout restart deployment port-app -n yohapp
-  only:
-    - master
