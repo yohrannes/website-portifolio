@@ -2,11 +2,17 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: Role
 metadata:
   name: gitlab-runner
-  namespace: default
+  namespace: gitlab-runner
 rules:
   - apiGroups: [""]
     resources: ["secrets"]
     verbs: ["get", "create", "list"]
   - apiGroups: [""]
     resources: ["pods"]
-    verbs: ["get", "create", "list", "delete"]
+    verbs: ["list", "get", "watch", "create", "delete"]
+  - apiGroups: [""]
+    resources: ["pods/exec"]
+    verbs: ["create"]
+  - apiGroups: [""]
+    resources: ["pods/log"]
+    verbs: ["get"]
