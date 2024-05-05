@@ -1,11 +1,11 @@
-#stages:
-#  - deploy
+stages:
+  - deploy
 
-#deploy:
-#  stage: deploy
-#  script:
-#    - kubectl rollout restart deployment port-app -n yohapp
-#  only:
-#    - master
-job1:
-  script: echo "hi there"
+deploy:
+  stage: deploy
+  script:
+    - kubectl rollout restart deployment port-app -n yohapp
+  only:
+    - master
+#job1:
+#  script: echo "hi there"
