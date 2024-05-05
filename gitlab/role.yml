@@ -4,9 +4,9 @@ metadata:
   name: gitlab-runner
   namespace: gitlab-runner
 rules:
-#  - apiGroups: [""]
-#    resources: ["secrets"]
-#    verbs: ["get", "create", "list", "delete", "update"]
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get", "create", "list", "delete"]
   - apiGroups: [""]
     resources: ["pods"]
     verbs: ["list", "get", "watch", "create", "delete"]
