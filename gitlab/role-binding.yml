@@ -2,11 +2,11 @@ apiVersion: rbac.authorization.k8s.io/v1
 kind: RoleBinding
 metadata:
   name: gitlab-runner-binding
-  namespace: default
+  namespace: gitlab-runner
 subjects:
   - kind: ServiceAccount
-    name: gitlab-service-account
-    namespace: default
+    name: gitlab-runner
+    namespace: gitlab-runner
 roleRef:
   kind: Role
   name: gitlab-runner
