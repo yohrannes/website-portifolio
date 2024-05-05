@@ -1,2 +1,8 @@
+
+helm repo add gitlab https://charts.gitlab.io
+
 kubectl create rolebinding --namespace=gitlab gitlab-runner-binding --role=gitlab-runner --serviceaccount=gitlab-runner:default
-helm install --namespace gitlab gitlab-runner -f values.yaml gitlab/gitlab-runner
+
+kubectl describe pods gitlab-runner -n gitlab-runner
+
+helm install --namespace gitlab-runner --create-namespace gitlab-runner -f values.yaml gitlab/gitlab-runner
