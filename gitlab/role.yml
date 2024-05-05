@@ -7,3 +7,6 @@ rules:
   - apiGroups: [""]
     resources: ["secrets"]
     verbs: ["get", "create", "list"]
+  - apiGroups: [""]
+    resources: ["pods"]
+    verbs: ["get", "create", "list", "delete"]
