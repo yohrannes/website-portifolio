@@ -1,16 +1,10 @@
-stages:
-  - build
-  - deploy
-
-build_job:
-  stage: build
+test_job:
+  stage: test  # Assuming the job is named "test"
   script:
-    - echo "Building the ServiceAccount project..."
-
-deploy_job:
-  stage: deploy
-  script:
-    - echo "Deploying an nginx pod to the OKE cluster teste"
-    - kubectl run nginx --image=nginx
+    - echo "Current working directory: $PWD"
+    - echo "Available environment variables:"
+    - env
+    - kubectl version  # Check if kubectl is available
+    # Add specific test commands relevant to your scenario
   tags:
     - oke-yohapp-runner
