@@ -6,7 +6,7 @@ stages:
 build_job:
   stage: build
   script:
-    - echo "Building the ServiceAccount project..."
+    - echo "Building the ServiceAccount project... test"
 
 deploy_job:
   stage: deploy
