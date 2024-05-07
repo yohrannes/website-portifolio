@@ -10,7 +10,7 @@ build_job:
 deploy_job:
   stage: deploy
   script:
-    - echo "Deploying an nginx pod to the OKE cluster"
+    - echo "Deploying an nginx pod to the OKE cluster teste"
     - kubectl run nginx --image=nginx
   tags:
     - oke-yohapp-runner
