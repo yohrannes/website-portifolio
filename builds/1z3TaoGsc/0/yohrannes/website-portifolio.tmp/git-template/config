@@ -1,0 +1,8 @@
+[init]
+	defaultBranch = none
+[fetch]
+	recurseSubmodules = false
+[transfer]
+	bundleURI = true
+[http "https://gitlab.com"]
+	sslCAInfo = /home/yohrannes/repos-git/website-portifolio/builds/1z3TaoGsc/0/yohrannes/website-portifolio.tmp/CI_SERVER_TLS_CA_FILE
