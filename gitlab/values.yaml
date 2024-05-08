@@ -152,7 +152,7 @@ rbac:
   create: false
   ## Define the generated serviceAccountName when create is set to true
   ## It defaults to "gitlab-runner.fullname" if not provided
-  generatedServiceAccountName: ""
+  generatedServiceAccountName: "gitlab-runner"
 
   ## Define list of rules to be added to the rbac role permissions.
   ## Each rule supports the keys:
