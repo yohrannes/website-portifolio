@@ -149,7 +149,7 @@ sessionServer:
 
 ## For RBAC support:
 rbac:
-  create: false
+  create: true
   ## Define the generated serviceAccountName when create is set to true
   ## It defaults to "gitlab-runner.fullname" if not provided
   generatedServiceAccountName: ""
@@ -164,15 +164,15 @@ rbac:
   ##
   ## ref: https://docs.gitlab.com/runner/executors/kubernetes.html#configure-runner-api-permissions
   ##
-  rules: []
-  # - resources: ["configmaps", "events", "pods", "pods/attach", "pods/exec", "secrets", "services"]
-  #   verbs: ["get", "list", "watch", "create", "patch", "update", "delete"]
-  # - apiGroups: [""]
-  #   resources: ["pods/exec"]
-  #   verbs: ["create", "patch", "delete"]
-  # - apiGroups: [""]
-  #   resources: ["pods/log"]
-  #   verbs: ["get"]
+  rules:
+   - resources: ["configmaps", "events", "pods", "pods/attach", "pods/exec", "secrets", "services"]
+     verbs: ["get", "list", "watch", "create", "patch", "update", "delete"]
+   - apiGroups: [""]
+     resources: ["pods/exec"]
+     verbs: ["create", "patch", "delete"]
+   - apiGroups: [""]
+     resources: ["pods/log"]
+     verbs: ["get"]
 
   ## Run the gitlab-bastion container with the ability to deploy/manage containers of jobs
   ## cluster-wide or only within namespace
@@ -336,7 +336,7 @@ runners:
   config: |
     [[runners]]
       [runners.kubernetes]
-        helper_image = "gitlab/gitlab-runner-helper:latest"
+        helper_image = "gitlab/gitlab-runner-helper:arm64-latest"
         namespace = "{{.Release.Namespace}}"
         image = "alpine"
 
