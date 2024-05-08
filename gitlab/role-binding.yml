@@ -5,8 +5,8 @@ metadata:
   namespace: gitlab-runner
 subjects:
   - kind: ServiceAccount
-    name: gitlab-runner
-    namespace: gitlab-runner
+    name: default
+    namespace: default
 roleRef:
   kind: Role
   name: gitlab-runner

@@ -15,7 +15,5 @@ kubectl create rolebinding --namespace=gitlab-runner gitlab-runner-binding --rol
 
 kubectl describe pods gitlab-runner -n gitlab-runner
 
-helm install --namespace gitlab-runner --create-namespace gitlab-runner -f values.yaml gitlab/gitlab-runner
-
-
-helm install --namespace gitlab-runner --create-namespace --name gitlab-runner -f values.yaml gitlab/gitlab-runner --version 0.64.0
+helm delete gitlab-runner -n gitlab-runner;
+helm install --namespace gitlab-runner --create-namespace gitlab-runner -f values.yaml gitlab/gitlab-runner --version 0.60.0
