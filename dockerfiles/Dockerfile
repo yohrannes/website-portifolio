@@ -1,6 +1,5 @@
 FROM alpine
 WORKDIR /root
-#test
 # Upgrading system
 RUN apk update
 RUN apk upgrade
