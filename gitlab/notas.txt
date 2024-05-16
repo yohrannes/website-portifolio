@@ -9,11 +9,10 @@ gitlab-runner register  --url https://gitlab.com  --token XXXXXXXXXXX
 
 helm repo add gitlab https://charts.gitlab.io
 
-kubectl create rolebinding --namespace=gitlab gitlab-runner-binding --role=gitlab-runner --serviceaccount=gitlab-runner:default
-
 kubectl create rolebinding --namespace=gitlab-runner gitlab-runner-binding --role=gitlab-runner --serviceaccount=gitlab-runner:default
 
 kubectl describe pods gitlab-runner -n gitlab-runner
 
-helm delete gitlab-runner -n gitlab-runner;
+# helm delete gitlab-runner -n gitlab-runner;
+
 helm install --namespace gitlab-runner --create-namespace gitlab-runner -f values.yaml gitlab/gitlab-runner --version 0.60.0
