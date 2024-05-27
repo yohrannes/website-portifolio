@@ -1,4 +1,4 @@
-FROM alpine
+FROM arm64v8/alpine
 WORKDIR /root
 # Upgrading system
 RUN apk update
