@@ -9,7 +9,7 @@ RUN apk add --upgrade nano
 
 #Get website project from github
 RUN apk add --upgrade git
-RUN git clone https://github.com/yohrannes/website-portifolio.git
+#RUN git clone https://github.com/yohrannes/website-portifolio.git
 
 # Installing python and flask
 ENV PYTHONUNBUFFERED=1
