@@ -252,10 +252,6 @@ main {
   display: none;
 }
 
-#aboutme {
-  display: block;
-}
-
 h1#websiteinfo {
   display: flex;
   position: absolute;

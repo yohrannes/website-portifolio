@@ -12,6 +12,10 @@ def index():
 def contact():
     return render_template('getintouch.html')
 
+@app.route('/whoami')
+def whoami():
+    return render_template('whoami.html')
+
 @app.route('/websitespecs')
 def websitespecs():
     return render_template('website-specs.html')
