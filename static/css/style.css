@@ -89,6 +89,14 @@ header > div > h1 {
   margin-left: 20vw;
 }
 
+#title:hover {
+  font-family: 'Raleway';
+  color: #6ef169b2;
+  cursor: pointer;
+  animation: glitch1 2s ;
+  font-size: 1em;
+}
+
 header > div > div > h1 {
   font-family: 'Raleway';
   color: white;
@@ -244,11 +252,8 @@ main {
   display: none;
 }
 
-.getintouch {
-  font-family: var(--fonte-del);
-  font-weight: 500;
-  font-size: x-large;
-  color: white;
+#aboutme {
+  display: block;
 }
 
 h1#websiteinfo {
