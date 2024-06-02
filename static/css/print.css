@@ -39,4 +39,8 @@
     nav ul ul {
         display: block;
     }
+
+    #aboutme {
+        display: none;
+    }
 }
