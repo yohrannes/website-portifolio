@@ -3,8 +3,8 @@ import subprocess
 import os
 
 
-username = "yohrannes" # substitua pelo nome de usuário do GitHub
-repo_name = "website-portifolio" # substitua pelo nome do repositório
+username = "yohrannes"
+repo_name = "website-portifolio"
 
 url = f"https://api.github.com/repos/{username}/{repo_name}/commits"
 response = requests.get(url)
@@ -24,7 +24,7 @@ if actual_commit_sha != latest_commit_sha:
     print ("updating website folders....")
     workdir = "/root/website-portifolio"
     os.chdir(workdir)
-    command = "sudo lsof -t -i tcp:5000 | xargs sudo kill -9;git pull origin main;python3 app.py"
+    command = "git fetch origin main;git pull origin main"
     os.system(command)
 else:
     print ("commits up-to-date")
