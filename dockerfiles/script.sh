@@ -1,3 +1,3 @@
 #!/bin/sh
 
-echo "Cron test - OK"
+echo "Cron test - OK - "$(date)
