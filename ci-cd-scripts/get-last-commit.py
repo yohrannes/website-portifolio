@@ -24,7 +24,7 @@ if actual_commit_sha != latest_commit_sha:
     print ("updating website folders....")
     workdir = "/root/website-portifolio"
     os.chdir(workdir)
-    command = "git fetch origin main;git pull origin main"
+    command = "git fetch origin main;git pull origin main;echo 'updated at '$(date)"
     os.system(command)
 else:
     print ("commits up-to-date")
