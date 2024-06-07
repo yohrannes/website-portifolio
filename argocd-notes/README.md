@@ -2,5 +2,4 @@
 
 ```
 ![CD completed!](argocd-notes/RUNNING(°-°)b.webp)
-
 ```
