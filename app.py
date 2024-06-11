@@ -1,8 +1,20 @@
 import flask
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify
+import subprocess
+import os
+
+# Intern routes
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
+
+@app.route('/pod-info')
+def get_server_info():
+    hostname = os.popen('hostname').read().strip().lower()
+    date_command = 'date +"%Y-%m-%d %H:%M:%S"'
+    last_updated = os.popen(date_command).read().strip().lower()
+    response = f"{hostname} - up at {last_updated}"
+    return response
 
 @app.route('/')
 def index():
