@@ -13,7 +13,7 @@ def get_server_info():
     hostname = os.popen('hostname').read().strip().lower()
     date_command = 'date +"%Y-%m-%d %H:%M:%S"'
     last_updated = os.popen(date_command).read().strip().lower()
-    response = f"{hostname} - up at {last_updated}"
+    response = f"oke cluster pod - {hostname} - up at {last_updated}"
     return response
 
 @app.route('/')
