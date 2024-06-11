@@ -8,12 +8,13 @@ import os
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
 
-@app.route('/server-info')
+@app.route('/pod-info')
 def get_server_info():
-    hostname = os.popen('hostname').read().strip()
-    date_command = 'date +"%Y-%m-%d %H:%M:%S"'  # Customize date format
-    last_updated = os.popen(date_command).read().strip()
-    return jsonify({'hostname': hostname, 'last_updated': last_updated})
+    hostname = os.popen('hostname').read().strip().lower()
+    date_command = 'date +"%Y-%m-%d %H:%M:%S"'
+    last_updated = os.popen(date_command).read().strip().lower()
+    response = f"{hostname} - up at {last_updated}"
+    return response
 
 @app.route('/')
 def index():
