@@ -1,8 +1,19 @@
 import flask
-from flask import Flask, render_template, request, redirect
+from flask import Flask, render_template, request, redirect, jsonify
+import subprocess
+import os
+
+# Intern routes
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
+
+@app.route('/server-info')
+def get_server_info():
+    hostname = os.popen('hostname').read().strip()
+    date_command = 'date +"%Y-%m-%d %H:%M:%S"'  # Customize date format
+    last_updated = os.popen(date_command).read().strip()
+    return jsonify({'hostname': hostname, 'last_updated': last_updated})
 
 @app.route('/')
 def index():
