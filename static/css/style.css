@@ -252,13 +252,35 @@ main {
   display: none;
 }
 
-h1#websiteinfo {
+#k8s-logo {
+  justify-content: space-between;
+  align-items: center;
+  width: 3em;
+  height: 3em;
+}
+
+#k8s-logo img {
+  display: none;
+  position: absolute;
+  bottom:0;
+  left: 0;
+  width: 3em;
+  height: 3em;
+}
+
+#k8s-logo:hover h1#websiteinfo { 
   display: flex;
   position: absolute;
+}
+
+h1#websiteinfo {
+  display: none;
+  position: absolute;
+  margin-left: 0em;
   font-family: 'Raleway';
   color: white;
   font-weight: 200;
   font-size: 1em;
-  bottom: 0;
-  left: 0;
+  bottom: 0.9em;
+  left: 3em;
 }
