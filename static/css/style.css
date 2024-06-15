@@ -253,6 +253,7 @@ main {
 }
 
 #k8s-logo {
+  display: contents;
   justify-content: space-between;
   align-items: center;
   width: 3em;
