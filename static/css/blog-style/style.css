@@ -33,6 +33,20 @@ body > * {
   background-color: rgba(0, 0, 0, 0.445);
 } */
 
+#fotoblogdiv {
+  background-color: black;
+}
+
+img#fotoblog{
+  position: absolute;
+  display: flex;
+  top: 5vw;
+  left: 45vw;
+  width: 50vw;
+  height: 50vw;
+  opacity: 50%;
+}
+
 section {
   border-radius: 10px;
   padding: 1em;
