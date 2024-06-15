@@ -17,6 +17,8 @@ if response.status_code == 200:
     actual_commit_sha = os.popen('git rev-parse HEAD').read().strip()
     print(f"{actual_commit_sha}", "-> local website commit")
     print(f"{latest_commit_sha}", "-> latest website commit on github")
+    getdate = "date"
+    os.system(getdate)
 else:
     print(f"{response.status_code}")
     
