@@ -256,17 +256,17 @@ main {
   display: contents;
   justify-content: space-between;
   align-items: center;
-  width: 4em;
-  height: 3em;
+  width: 3.2em;
+  height: 2.5em;
 }
 
 #monit-logo img {
   display: none;
   position: absolute;
-  top: 0;
-  right: 0;
-  width: 4em;
-  height: 3em;
+  top: 0.5em;
+  right: 0.25em;
+  width: 3.2em;
+  height: 2.5em;
 }
 
 #k8s-logo {
@@ -286,12 +286,12 @@ main {
   height: 3em;
 }
 
-#k8s-logo:hover h1#websiteinfo { 
+#k8s-logo:hover a#websiteinfo { 
   display: flex;
   position: absolute;
 }
 
-h1#websiteinfo {
+a#websiteinfo {
   display: none;
   position: absolute;
   margin-left: 0em;
@@ -301,4 +301,9 @@ h1#websiteinfo {
   font-size: 1em;
   bottom: 0.9em;
   left: 3em;
+}
+
+a#websiteinfo:hover {
+  color: #6aff65c9;
+  animation: glitch1 1s ;
 }
