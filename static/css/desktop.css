@@ -44,7 +44,7 @@
     }
 
     #monit-logo img {
-        display: flex;
+        display: none;
     }
 
 }
