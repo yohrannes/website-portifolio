@@ -252,6 +252,23 @@ main {
   display: none;
 }
 
+#monit-logo {
+  display: contents;
+  justify-content: space-between;
+  align-items: center;
+  width: 4em;
+  height: 3em;
+}
+
+#monit-logo img {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 4em;
+  height: 3em;
+}
+
 #k8s-logo {
   display: contents;
   justify-content: space-between;
