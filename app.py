@@ -28,9 +28,9 @@ def contact():
 def whoami():
     return render_template('whoami.html')
 
-@app.route('/websitespecs')
+@app.route('/devops')
 def websitespecs():
-    return render_template('website-specs.html')
+    return render_template('devops.html')
 
 # Redirects routes
 
