@@ -71,6 +71,12 @@ header::before {
   z-index: -1;
 }
 
+header > #devopslogo {
+  justify-content: center;
+  width: 30vw;
+  height: 13vw;
+}
+
 header > div > h1 {
   display: none;
 
