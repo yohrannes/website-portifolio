@@ -33,11 +33,12 @@
 </head>
 <body>
 <header>
-    <div>
+    <!-- <div>
         <h1 onmouseover="HoverShowTitle()" onmouseout="HoverHideTitle()">
             <a id="title" href="whoami" target="_self">Website DevOps</a>
-        </h1>
-    </div>
+        </h1> 
+    </div>-->
+    <img id="devopslogo" src="../static/images/DevOps.png" alt="">
     <nav>
         <menu id="homemenu">
             <h2 id="social" class="menuclick" onclick="clickSocial()">Plan</h2>
@@ -259,7 +260,7 @@
                 </ul>
             </menu>
 
-            <h2 id="handsonprojects" class="menuclick" onclick="clickHandsOnProjects()">Deploy</h2>
+            <h2 id="handsonprojects" class="menuclick" onclick="clickHandsOnProjects()">Release</h2>
 
             <menu id="menuhandsonprojects" class="firstmenu">
                 <menu class="animbackmenu">
@@ -301,7 +302,7 @@
                 </ul>
             </menu>
 
-            <h2 id="achievementsandcertifications" class="menuclick" onclick="clickAchievementsAndCertifications()">Achievements & Certifications</h2>
+            <h2 id="achievementsandcertifications" class="menuclick" onclick="clickAchievementsAndCertifications()">Deploy</h2>
 
             <h2 id="menuachievementsandcertifications" class="firstmenu">
                 <menu class="animbackmenu">
@@ -322,7 +323,7 @@
                 </ul>
             </h2>
 
-            <h2 id="aboutme" class="menuclick" onclick="clickAboutMe()">About me</h2>
+            <h2 id="aboutme" class="menuclick" onclick="clickAboutMe()">Operate</h2>
 
             <menu id="menuaboutme" class="firstmenu">
                 <menu class="animbackmenu">
@@ -338,6 +339,8 @@
                     </li>
                 </ul>
             </menu>
+
+            <h2 id="monitor" class="menuclick" onclick="clickMonitor()">Monitor</h2>
 
         </menu>
     </nav>
