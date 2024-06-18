@@ -41,10 +41,11 @@ img#fotoblog{
   position: absolute;
   display: flex;
   top: 5vw;
-  left: 45vw;
-  width: 50vw;
-  height: 50vw;
+  right: 14vw;
+  width: 40vw;
+  height: 40vw;
   opacity: 50%;
+  border-radius: 2vw;
 }
 
 section {
