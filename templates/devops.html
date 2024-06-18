@@ -41,13 +41,13 @@
     <img id="devopslogo" src="../static/images/DevOps.png" alt="">
     <nav>
         <menu id="homemenu">
-            <h2 id="social" class="menuclick" onclick="clickSocial()">Plan</h2>
+            <h2 id="plan" class="menuclick" onclick="clickPlan()">Plan</h2>
 
-            <menu id="menusocial" class="firstmenu">
+            <menu id="menuplan" class="firstmenu">
                 <menu class="animbackmenu">
-                    <h2 id="social1" class="animbackmenu1" onclick="clickSocial()">Social</h2>
-                    <h2 id="social2" class="animbackmenu2" onclick="clickSocial()">Social</h2>
-                    <h2 id="social3" class="animbackmenu3" onclick="clickSocial()">Social</h2>
+                    <h2 id="plan1" class="animbackmenu1" onclick="clickPlan()">Plan</h2>
+                    <h2 id="plan2" class="animbackmenu2" onclick="clickPlan()">Plan</h2>
+                    <h2 id="plan3" class="animbackmenu3" onclick="clickPlan()">Plan</h2>
                     <h2 class="animbackmenu-back">◂</h2>
                 </menu>
                 <h2 id="professionalnetworks" class="secondmenuclick" onclick="clickProfessionalNetworks()">Professional Networks</h2>
@@ -86,19 +86,18 @@
                 </ul>
             </menu>
 
-            <h2 id="projects" class="menuclick" onclick="clickProjects()">Code</h2>
+            <h2 id="code" class="menuclick" onclick="clickCode()">Code</h2>
 
-            <menu id="menuprojects" class="firstmenu">
+            <menu id="menucode" class="firstmenu">
                 <menu class="animbackmenu"> 
-                    <h2 id="projects1" class="animbackmenu1" onclick="clickProjects()">Projects</h2>
-                    <h2 id="projects2" class="animbackmenu2" onclick="clickProjects()">Projects</h2>
-                    <h2 id="projects3" class="animbackmenu3" onclick="clickProjects()">Projects</h2>
+                    <h2 id="code1" class="animbackmenu1" onclick="clickCode()">Code</h2>
+                    <h2 id="code2" class="animbackmenu2" onclick="clickCode()">Code</h2>
+                    <h2 id="code3" class="animbackmenu3" onclick="clickCode()">Code</h2>
                     <h2 class="animbackmenu-back">◂</h2>
                 </menu>
                 <h2 id="devops" class="secondmenuclick" onclick="clickDevOps()">Dev Ops</h2>
                 <h2 id="backend" class="secondmenuclick" onclick="clickBackend()">Backend</h2>
-                <h2 id="frontend" class="secondmenuclick" onclick="clickFrontend()">Frontend</h2>
-                <h2 id="personaleditions" class="secondmenuclick" onclick="clickPersonalEditions()">Graphic Gallery</h2>
+
             </menu>
 
             <menu id="menudevops" class="secondmenu">
@@ -130,52 +129,18 @@
                 </ul>
             </menu>
 
-            <menu id="menufrontend" class="secondmenu">
-                <menu class="animbackmenu">
-                    <h2 id="frontend1" class="animbackmenu1" onclick="clickFrontend()">Frontend</h2>
-                    <h2 id="frontend2" class="animbackmenu2" onclick="clickFrontend()">Frontend</h2>
-                    <h2 id="frontend3" class="animbackmenu3" onclick="clickFrontend()">Frontend</h2>
-                    <h2 class="animbackmenu-back">◂</h2>
-                </menu>
-                <ul class="linklist">
-                    <li>
-                        <a href="https://github.com/yohrannes/php-moderno" target="_blank" rel="external">PHP learn practices</a>
-                        <a href="https://github.com/yohrannes/html-css" target="_blank" rel="external">HTML CSS practices</a>
-                        <a href="https://github.com/yohrannes/htmlcss-projeto-login" target="_blank" rel="external">HTML CSS login page</a>
-                        <a href="https://github.com/yohrannes/htmlcss-projeto-social" target="_blank" rel="external">HTML CSS social medias page</a>
-                        <a href="https://github.com/yohrannes/htmlcss-projeto-cordel" target="_blank" rel="external">HTML CSS nice scrool page</a>
-                    </li>
-                </ul>
-            </menu>
+            <h2 id="build" class="menuclick" onclick="clickBuild()">Build</h2>
 
-            <menu id="menupersonaleditions" class="secondmenu">
+            <menu id="menubuild" class="firstmenu">
                 <menu class="animbackmenu">
-                    <h2 id="personaleditions1" class="animbackmenu1" onclick="clickPersonalEditions()">Personal Editions</h2>
-                    <h2 id="personaleditions2" class="animbackmenu2" onclick="clickPersonalEditions()">Personal Editions</h2>
-                    <h2 id="personaleditions3" class="animbackmenu3" onclick="clickPersonalEditions()">Personal Editions</h2>
-                    <h2 class="animbackmenu-back">◂</h2>
-                </menu>
-                <ul class="linklist">
-                    <li>
-                        <a href="http://pinterest.com/catnoeditor/edição/" target="_blank" rel="external">Pinterest</a>
-                    </li>
-                </ul>
-            </menu>
-
-            <h2 id="tasksandguides" class="menuclick" onclick="clickTasksAndGuides()">Build</h2>
-
-            <menu id="menutasksandguides" class="firstmenu">
-                <menu class="animbackmenu">
-                    <h2 id="tasksandguides1" class="animbackmenu1" onclick="clickTasksAndGuides()">Task nd g..</h2>
-                    <h2 id="tasksandguides2" class="animbackmenu2" onclick="clickTasksAndGuides()">Task nd g..</h2>
-                    <h2 id="tasksandguides3" class="animbackmenu3" onclick="clickTasksAndGuides()">Task nd g..</h2>
+                    <h2 id="build1" class="animbackmenu1" onclick="clickBuild()">Build</h2>
+                    <h2 id="build2" class="animbackmenu2" onclick="clickBuild()">Build</h2>
+                    <h2 id="build3" class="animbackmenu3" onclick="clickBuild()">Build</h2>
                     <h2 class="animbackmenu-back">◂</h2>
                 </menu>
                 <h2 id="kubernetes" class="secondmenuclick" onclick="clickKubernetes()">Kubernetes</h2>
                 <h2 id="vpsnetwork" class="secondmenuclick" onclick="clickVpsnetwork()">Vps network</h2>
-                <h2 id="hostingservices" class="secondmenuclick" onclick="clickHostingServices()">Hosting Services</h2>
-                <h2 id="databases" class="secondmenuclick" onclick="clickDatabases()">Databases</h2>
-                <h2 id="miscellaneous" class="secondmenuclick" onclick="clickMiscellaneous()">Miscellaneous</h2>
+
             </menu>
 
             <menu id="menukubernetes" class="secondmenu">
@@ -202,54 +167,14 @@
                         <li><a href="https://www.evernote.com/shard/s397/sh/95493132-6997-679c-bfbc-d870c0ee1346/PAD3us0cncccIbMutVVoZ9WcoWRUmg1bjBKmTySl9msPBjjb7wAACH8VoA" target="_blank" rel="external">Putty SSH - VAP (pt-br)</a>
                     </ul>
             </menu>
-
-            <menu id="menuhostingservices" class="secondmenu">
-                <menu class="animbackmenu">
-                    <h2 id="hostingservices1" class="animbackmenu1" onclick="clickHostingServices()">Host svc..</h2>
-                    <h2 id="hostingservices2" class="animbackmenu2" onclick="clickHostingServices()">Host svc..</h2>
-                    <h2 id="hostingservices3" class="animbackmenu3" onclick="clickHostingServices()">Host svc..</h2>
-                    <h2 class="animbackmenu-back">◂</h2>
-                </menu>
-                <ul class="linklist">
-                    <li><a href="https://www.evernote.com/shard/s397/sh/90161548-c163-e825-6e9b-0b37e8d00475/JS5JcHSNIBsqtKcPNKenkbWmx7ZYQRSvzaS1uS4ZFDwx1OlR0QfHulWvyA" target="_blank" rel="external">Delist tutorial SORBS Spam Blacklist (pt-br)</a>
-                    <li><a href="https://www.evernote.com/shard/s397/sh/aa4feff3-a081-da4c-9b4e-a40deb96238a/PNS2uRwM66Rhrd13QBkiaaqef6WPfmfw31ltM8_5GnXn7qWZ7dV_BIA7zQ" target="_blank" rel="external">How to block email contacts in CWP pane (en-us)</a>
-                    <li><a href="https://www.evernote.com/shard/s397/sh/5bd33218-5456-a54d-4d48-c47acb69ba62/i9cmfw8VIYsStII7btQDubugpglyj8Dsj9ToTgi77pmRFLB3CwGTGsmmFA" target="_blank" rel="external">Email DNS Hotfixes (pt-br)</a>
-                </ul>
-            </menu>
-
-            <menu id="menudatabases" class="secondmenu">
-                <menu class="animbackmenu">
-                    <h2 id="databases1" class="animbackmenu1" onclick="clickDatabases()">Databases</h2>
-                    <h2 id="databases2" class="animbackmenu2" onclick="clickDatabases()">Databases</h2>
-                    <h2 id="databases3" class="animbackmenu3" onclick="clickDatabases()">Databases</h2>
-                    <h2 class="animbackmenu-back">◂</h2>
-                </menu>
-                <ul class="linklist">
-                    <li><a href="https://www.evernote.com/shard/s397/sh/d66656a5-e27d-7d54-1744-ab0db6de36f2/R497knw2GBvzc8gNypne22j3CQGtggUW14UP6lVSFGvPdE6-47yLIJmDGg" target="_blank" rel="external">Xtrabackup Mysql Migration</a>
-                </ul>
-            </menu>
-
-            <menu id="menumiscellaneous" class="secondmenu">
-                <menu class="animbackmenu">
-                    <h2 id="miscellaneous1" class="animbackmenu1" onclick="clickMiscellaneous()">Miscellaneous</h2>
-                    <h2 id="miscellaneous2" class="animbackmenu2" onclick="clickMiscellaneous()">Miscellaneous</h2>
-                    <h2 id="miscellaneous3" class="animbackmenu3" onclick="clickMiscellaneous()">Miscellaneous</h2>
-                    <h2 class="animbackmenu-back">◂</h2>
-                </menu>
-                <ul class="linklist">
-                    <li><a href="https://www.evernote.com/shard/s397/sh/bc017a63-6d27-dd78-c146-329579dddd56/QhjnKiNzKoWGzucYN7JAVsk9Yt4BNjOATrBbcsZPrI9ktxpQBuA19QxVTw" target="_blank" rel="external">Good coexistence - Guide (en-us)</a>
-                    <li><a href="https://www.evernote.com/shard/s397/sh/871246a0-c0c2-1900-fb9e-90db7903e84d/sX6KUo6D65rFSxTLDJQk54Wk-YkHILNMaRJR1E1XgWG3lQ1u3BMSyA-DWg" target="_blank" rel="external">Minecraft server - Step by step (pt-br)</a>
-                        <li><a href="https://www.evernote.com/shard/s397/sh/3ceaf41b-2376-59af-8388-3f2b060eef5f/WLANIedvoZwLH3KHQFAwRwc3qSa_rwqxHBfRrQcAHeeqyxSR3NIfLIjJlg" target="_blank" rel="external">Flask Framework full config (pt-br)</a>
-                </ul>
-            </menu>
             
-            <h2 id="bootcamp" class="menuclick" onclick="clickBootcamp()">Test</h2>
+            <h2 id="test" class="menuclick" onclick="clickTest()">Test</h2>
 
-            <menu id="menubootcamp" class="firstmenu">
+            <menu id="menutest" class="firstmenu">
                 <menu class="animbackmenu">
-                    <h2 id="bootcamp1" class="animbackmenu1" onclick="clickBootcamp()">Bootcamps</h2>
-                    <h2 id="bootcamp2" class="animbackmenu2" onclick="clickBootcamp()">Bootcamps</h2>
-                    <h2 id="bootcamp3" class="animbackmenu3" onclick="clickBootcamp()">Bootcamps</h2>
+                    <h2 id="test1" class="animbackmenu1" onclick="clickTest()">Test</h2>
+                    <h2 id="test2" class="animbackmenu2" onclick="clickTest()">Test</h2>
+                    <h2 id="test3" class="animbackmenu3" onclick="clickTest()">Test</h2>
                     <h2 class="animbackmenu-back">◂</h2>
                 </menu>
                 <ul class="linklist">
@@ -260,13 +185,13 @@
                 </ul>
             </menu>
 
-            <h2 id="handsonprojects" class="menuclick" onclick="clickHandsOnProjects()">Release</h2>
+            <h2 id="release" class="menuclick" onclick="clickRelease()">Release</h2>
 
-            <menu id="menuhandsonprojects" class="firstmenu">
+            <menu id="menurelease" class="firstmenu">
                 <menu class="animbackmenu">
-                    <h2 id="handsonprojects1" class="animbackmenu1" onclick="clickHandsOnProjects()">Hands-on Projects</h2>
-                    <h2 id="handsonprojects2" class="animbackmenu2" onclick="clickHandsOnProjects()">Hands-on Projects</h2>
-                    <h2 id="handsonprojects3" class="animbackmenu3" onclick="clickHandsOnProjects()">Hands-on Projects</h2>
+                    <h2 id="release1" class="animbackmenu1" onclick="clickRelease()">Release</h2>
+                    <h2 id="release2" class="animbackmenu2" onclick="clickRelease()">Release</h2>
+                    <h2 id="release3" class="animbackmenu3" onclick="clickRelease()">Release</h2>
                     <h2 class="animbackmenu-back">◂</h2>
                 </menu>
                 <h2 id="googlecloudhandson" class="secondmenuclick" onclick="clickGoogleCloudHandsOn()">Google Cloud</h2>
@@ -302,34 +227,28 @@
                 </ul>
             </menu>
 
-            <h2 id="achievementsandcertifications" class="menuclick" onclick="clickAchievementsAndCertifications()">Deploy</h2>
+            <h2 id="deploy" class="menuclick" onclick="clickDeploy()">Deploy</h2>
 
-            <h2 id="menuachievementsandcertifications" class="firstmenu">
+            <h2 id="menudeploy" class="firstmenu">
                 <menu class="animbackmenu">
-                    <h2 id="achievementsandcertifications1" class="animbackmenu1" onclick="clickAchievementsAndCertifications()">Achievements & Certifications</h2>
-                    <h2 id="achievementsandcertifications2" class="animbackmenu2" onclick="clickAchievementsAndCertifications()">Achievements & Certifications</h2>
-                    <h2 id="achievementsandcertifications3" class="animbackmenu3" onclick="clickAchievementsAndCertifications()">Achievements & Certifications</h2>
+                    <h2 id="deploy1" class="animbackmenu1" onclick="clickDeploy()">Deploy</h2>
+                    <h2 id="deploy2" class="animbackmenu2" onclick="clickDeploy()">Deploy</h2>
+                    <h2 id="deploy3" class="animbackmenu3" onclick="clickDeploy()">Deploy</h2>
                     <h2 class="animbackmenu-back">◂</h2>
                 </menu>
                 <ul class="linklist">
                     <li><a href="https://www.cloudskillsboost.google/public_profiles/d446290c-301d-4cec-bf2c-c1e1ba9752f1" target="_blank" rel="external">Google Cloud Badges and Certifications</a>
                     <li><a href="https://www.evernote.com/shard/s397/sh/b7522235-42f8-c124-87ab-25e5171b2399/72rIhR0w6HYPgydNMUs9qo_w_3F-R_PFfxuetgPSeyNDnuJzLgc1Ge23MA" target="_blank" rel="external">HTML and CSS</a>
-                    <li><a href="https://www.evernote.com/shard/s397/sh/72ce8104-0057-e454-8eaa-001704a7de9c/fcVjbvlUVn7EfMFxKqoOiVc80n45fLL2A3-1U5F6y9cGcD25cOLPTKZsNg" target="_blank" rel="external">Git and Github</a>
-                    <li><a href="https://www.evernote.com/shard/s397/sh/1df58ab4-d5d1-545c-cdc5-619d724d0a37/H1OYleamvuzTPjNsqfW3fk8lIFAJphDIBrb-6eVy9N3wr5LSvhLeAp0byw" target="_blank" rel="external">Docker - with Swarm and K8s</a>
-                    <li><a href="https://www.evernote.com/shard/s397/sh/334113c0-3962-d510-e6b7-298c1139b546/gGW91WWXeLRsg92l8ghHP4dqP8zKlenSvwoSbBCPtsut421lbux8hjZqLA" target="_blank" rel="external">Kubernetes Month</a>
-                    <li><a href="https://www.evernote.com/shard/s397/sh/837effd1-61ad-2c5e-f871-5528bac462ec/9zZg0kXxwBsGaE0YqmXuyYm0xTYMASLXCgBoYk0V525F6nL4OrPBQglndA" target="_blank" rel="external">Shell Script</a>
-                    <li><a href="https://www.evernote.com/shard/s397/sh/7316d765-1ae1-5208-1623-92fd253f5b94/1H0rngCrRLRRJBYrUKLG8wh4aWt5fBTvVDV0xw5llHYi6HFNxjv5757zBQ" target="_blank" rel="external">Kubernetes Essentials</a></li>
-                    <li><a href="https://www.evernote.com/shard/s397/sh/ca22875a-a20b-7533-d3a8-824d0b522d40/DbFUrLgaTKSlmcWIu82BHUcIvayoalkKgxTBw08Th6783-b87zBuuCvaJg">Argo CD</a></li>
                 </ul>
             </h2>
 
-            <h2 id="aboutme" class="menuclick" onclick="clickAboutMe()">Operate</h2>
+            <h2 id="operate" class="menuclick" onclick="clickOperate()">Operate</h2>
 
-            <menu id="menuaboutme" class="firstmenu">
+            <menu id="menuoperate" class="firstmenu">
                 <menu class="animbackmenu">
-                    <h2 id="aboutme1" class="animbackmenu1" onclick="clickAboutMe()">About me</h2>
-                    <h2 id="aboutme2" class="animbackmenu2" onclick="clickAboutMe()">About me</h2>
-                    <h2 id="aboutme3" class="animbackmenu3" onclick="clickAboutMe()">About me</h2>
+                    <h2 id="operate1" class="animbackmenu1" onclick="clickOperate()">Operate</h2>
+                    <h2 id="operate2" class="animbackmenu2" onclick="clickOperate()">Operate</h2>
+                    <h2 id="operate3" class="animbackmenu3" onclick="clickOperate()">Operate</h2>
                     <h2 class="animbackmenu-back">◂</h2>
                 </menu>
                 <ul class="linklist">
@@ -341,6 +260,21 @@
             </menu>
 
             <h2 id="monitor" class="menuclick" onclick="clickMonitor()">Monitor</h2>
+
+            <menu id="menumonitor" class="firstmenu">
+                <menu class="animbackmenu">
+                    <h2 id="monitor1" class="animbackmenu1" onclick="clickMonitor()">Monitor</h2>
+                    <h2 id="monitor2" class="animbackmenu2" onclick="clickMonitor()">Monitor</h2>
+                    <h2 id="monitor3" class="animbackmenu3" onclick="clickMonitor()">Monitor</h2>
+                    <h2 class="animbackmenu-back">◂</h2>
+                </menu>
+                <ul class="linklist">
+                    <li>
+                        <a href="contact" target="_self">Get in touch</a>
+                        <a href="whoami" target="_self">Who am i</a>
+                    </li>
+                </ul>
+            </menu>
 
         </menu>
     </nav>
@@ -362,7 +296,7 @@
         <img src="../static/images/k8s-logo.png" alt="">
         <a id="websiteinfo" href="https://github.com/yohrannes/website-portifolio/tree/main/kubernetes" target="_blank" rel="external"></a>
     </div>
-    <script src="../static/js/anim-menu.js"></script>
+    <script src="../static/js/anim-menu-devops.js"></script>
     <script src="../static/js/anim-titulo.js"></script>
     <script src="../static/js/anim-typewriter.js"></script>
     <!-- <script src="../static/js/anim-back-menu.js"></script> -->
