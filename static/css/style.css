@@ -72,6 +72,7 @@ header::before {
 }
 
 header > #devopslogo {
+  margin-left: 10vw;
   display: block;
   justify-content: center;
   width: 30vw;
