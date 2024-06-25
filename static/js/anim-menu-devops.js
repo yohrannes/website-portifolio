@@ -48,6 +48,11 @@ function clickCode() {
 //BUILD MENU
 var buildmenu = [build1, build2, build3, kubernetes, vpsnetwork, hostingservices, databases, miscellaneous]
 
+function clickBuild() {
+  var currentmenu = [menubuild, build1, build2, build3];
+  handleClick(startmenu, currentmenu, build);
+}
+
 //TEST MENU
 function clickTest() {
   var currentmenu = [menutest, test1, test2, test3];
