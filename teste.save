@@ -1,6 +1,0 @@
-100 - avg by (cpu) (irate(node_cpu_seconds_total{job='node_exporter', mode='idle'}[5m])) * 100
-
-
-
-100 - (node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100
-
