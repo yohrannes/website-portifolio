@@ -8,13 +8,18 @@
 # 2 - Autenticate my local public key with my gitlab account.
 # 3 - git remote add gitlab git@gitlab.com:yohrannes/website-portifolio.git
 
+echo "Be sure that you're in the develop branch."
 read -p "Commit comment:" coment
 
 push-main () {
 	git add .
 	git commit -m "${coment}"
+	git push origin develop
+	git checkout main
+	git merge develop
 	git push origin main
 	git push gitlab main
+	git checkout develop
 }
 
 push-main
