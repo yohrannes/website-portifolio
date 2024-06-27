@@ -295,6 +295,12 @@ main {
   height: 3em;
 }
 
+#k8s-logo:hover img {
+  color: #6aff65c9;
+  animation: glitch1 1s ;
+  cursor: pointer;
+}
+
 #k8s-logo:hover a#websiteinfo { 
   display: flex;
   position: absolute;
@@ -308,11 +314,13 @@ a#websiteinfo {
   color: white;
   font-weight: 200;
   font-size: 1em;
-  bottom: 0.9em;
+  bottom: 4px;
   left: 3em;
+  padding: 0.6em 0;
 }
 
 a#websiteinfo:hover {
   color: #6aff65c9;
   animation: glitch1 1s ;
+  font-weight: bold;
 }
