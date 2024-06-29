@@ -2,10 +2,11 @@ stages:
   - build
   - deploy
 
-build_job:
-  stage: build
-  script:
-    - echo "Building the ServiceAccount project..."
+#build_job:
+#  stage: build
+#  script:
+#    - echo "Building the ServiceAccount project..."
+
 deploy_job:
   stage: deploy
   script:
