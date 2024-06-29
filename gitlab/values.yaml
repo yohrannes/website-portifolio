@@ -55,7 +55,7 @@ gitlabUrl: https://gitlab.com/
 ##
 ## ref: https://docs.gitlab.com/ee/ci/runners/new_creation_workflow.html
 ##
-runnerRegistrationToken: "glrt-yZzK8K2UHLkJV-whzaTs"
+#runnerRegistrationToken: ""
 
 ## The Runner Token for adding new Runners to the GitLab Server. This must
 ## be retrieved from your GitLab instance. It is the token of an already registered runner.
@@ -149,10 +149,14 @@ sessionServer:
 
 ## For RBAC support:
 rbac:
+  ## Specifies whether a Role and RoleBinding should be created
+  ## If this value is set to `true`, `serviceAccount.create` should also be set to either `true` or `false`
+  ##
   create: true
   ## Define the generated serviceAccountName when create is set to true
   ## It defaults to "gitlab-runner.fullname" if not provided
-  generatedServiceAccountName: "gitlab-runner:default"
+  ## DEPRECATED: Please use `serviceAccount.name` instead
+#  generatedServiceAccountName: "gitlab-runner-svcacnt"
 
   ## Define list of rules to be added to the rbac role permissions.
   ## Each rule supports the keys:
@@ -162,35 +166,36 @@ rbac:
   ##
   ## Read more about the recommended rules on the following link
   ##
-  ## ref: https://docs.gitlab.com/runner/executors/kubernetes.html#configure-runner-api-permissions
+  ## ref: https://docs.gitlab.com/runner/executors/kubernetes/index.html#configure-runner-api-permissions
   ##
   rules:
-    - apiGroups: [""]
-      resources: ["pods"]
-      verbs: ["list", "get", "watch", "create", "delete"]
-    - apiGroups: [""]
-      resources: ["pods/exec"]
-      verbs: ["create"]
-    - apiGroups: [""]
-      resources: ["pods/log"]
-      verbs: ["get"]
-    - apiGroups: [""]
-      resources: ["pods/attach"]
-      verbs: ["list", "get", "create", "delete", "update"]
-    - apiGroups: [""]
-      resources: ["secrets"]
-      verbs: ["list", "get", "create", "delete", "update"]
-    - apiGroups: [""]
-      resources: ["configmaps"]
-      verbs: ["list", "get", "create", "delete", "update"]
+   - resources: ["events"]
+     verbs: ["list", "watch"]
+     resources: ["namespaces"]
+     verbs: ["create", "delete"]
+   - resources: ["pods"]
+     verbs: ["create","delete","get"]
+   - apiGroups: [""]
+     resources: ["pods/attach","pods/exec"]
+     verbs: ["get","create","patch","delete"]
+   - apiGroups: [""]
+     resources: ["pods/log"]
+     verbs: ["get","list"]
+   - resources: ["secrets"]
+     verbs: ["create","delete","get","update"]
+   - resources: ["serviceaccounts"]
+     verbs: ["get"]
+   - resources: ["services"]
+     verbs: ["create","get"]
 
   ## Run the gitlab-bastion container with the ability to deploy/manage containers of jobs
   ## cluster-wide or only within namespace
   clusterWideAccess: false
 
   ## Use the following Kubernetes Service Account name if RBAC is disabled in this Helm chart (see rbac.create)
+  ## DEPRECATED: Please use `serviceAccount.name` instead
   ##
-  # serviceAccountName: default
+  serviceAccountName: kube-system:kbconfig-gitlab-sa
 
   ## Specify annotations for Service Accounts, useful for annotations such as eks.amazonaws.com/role-arn.
   ## Values may refer to other values as the _tpl_ function is implicitly applied. Mind the quotes when using this, e.g.
@@ -199,7 +204,9 @@ rbac:
   ##
   ## ref: https://docs.aws.amazon.com/eks/latest/userguide/associate-service-account-role.html
   ##
-  # serviceAccountAnnotations: {}
+  ## DEPRECATED: Please use `serviceAccount.annotations` instead
+  ##
+  serviceAccountAnnotations: {}
 
   ## Use podSecurity Policy
   ## ref: https://kubernetes.io/docs/concepts/policy/pod-security-policy/
@@ -212,7 +219,34 @@ rbac:
   ##
   ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#add-imagepullsecrets-to-a-service-account
   ##
-  # imagePullSecrets: []
+  ## DEPRECATED: Please use `serviceAccount.imagePullSecrets` instead
+  ##
+  imagePullSecrets: []
+
+## Configure ServiceAccount
+##
+serviceAccount:
+  ## Specifies whether a ServiceAccount should be created
+  ##
+  ## TODO: Set default to `false`
+  # create: false
+  ## The name of the ServiceAccount to use.
+  ## If not set and create is `true`, a name is generated using the `gitlab-runner.fullname`` template
+  ##
+  name: ""
+  ## Additional custom annotations for the ServiceAccount, useful for annotations such as eks.amazonaws.com/role-arn.
+  ## Values may refer other values as the _tpl_ function is implicitly applied. Mind the quotes when using this, e.g.
+  ## serviceAccountAnnotations:
+  ##   eks.amazonaws.com/role-arn: "arn:aws:iam::{{ .Values.global.accountId }}:role/{{ .Values.global.iamRoleName }}"
+  ##
+  ## ref: https://docs.aws.amazon.com/eks/latest/userguide/specify-service-account-role.html
+  ##
+  annotations: {}
+  ## Specify one or more imagePullSecrets used for pulling the runner image
+  ##
+  ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/#add-imagepullsecrets-to-a-service-account
+  ##
+  imagePullSecrets: []
 
 ## Configure integrated Prometheus metrics exporter
 ##
@@ -346,9 +380,9 @@ runners:
   config: |
     [[runners]]
       [runners.kubernetes]
-        helper_image = "gitlab/gitlab-runner-helper:latest"
         namespace = "{{.Release.Namespace}}"
-        image = "alpine"
+        image = "arm64v8/clojure"
+        helper_image = "gitlab/gitlab-runner-helper:ubuntu-arm64-v14.10.2"
 
   ## Absolute path for an existing runner configuration file
   ## Can be used alongside "volumes" and "volumeMounts" to use an external config file
@@ -357,7 +391,7 @@ runners:
 
   ## Which executor should be used
   ##
-  executor: kubernetes
+  # executor: kubernetes
 
   ## DEPRECATED: Specify whether the runner should be locked to a specific project: true, false.
   ##
@@ -395,7 +429,7 @@ runners:
 
   ## The name of the secret containing runner-token and runner-registration-token
   secret: gitlab-runner-secret
-
+  namespace: gitlab-runner
   ## Distributed runners caching
   ## ref: https://docs.gitlab.com/runner/configuration/autoscale.html#distributed-runners-caching
   ##
@@ -587,7 +621,15 @@ deploymentAnnotations: {}
 deploymentLabels: {}
   # Example:
   # owner.team: <my_cool_team>
-  
+
+## Lifecycle options to be added to deployment
+##  
+deploymentLifecycle: {}
+  # Example
+  # preStop:
+  #   exec:
+  #     command: ["/bin/sh", "-c", "echo 'shutting down'"] 
+
 ## Set hostname for runner pods
 #hostname: my-gitlab-runner
 
