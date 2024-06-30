@@ -18,7 +18,7 @@ def get_server_info():
 
 @app.route('/')
 def index():
-  return render_template('index.html')
+    return render_template('index.html')
 
 @app.route('/contact')
 def contact():
@@ -47,4 +47,4 @@ def repo_redirect():
     return redirect('https://github.com/yohrannes/website-portifolio')
 
 if __name__ == "__main__":
-  app.run(host="0.0.0.0", debug=True, port="5000")
+    app.run(host="0.0.0.0", debug=True, port="5000")
