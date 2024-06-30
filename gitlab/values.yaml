@@ -383,6 +383,11 @@ runners:
         namespace = "{{.Release.Namespace}}"
         image = "arm64v8/clojure"
         helper_image = "gitlab/gitlab-runner-helper:ubuntu-arm64-v14.10.2"
+        privileged = true
+        disable_cache = false
+      [runners.cache]
+        [runners.cache.s3]
+        [runners.cache.gcs]
 
   ## Absolute path for an existing runner configuration file
   ## Can be used alongside "volumes" and "volumeMounts" to use an external config file
