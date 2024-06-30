@@ -30,24 +30,18 @@ function handleClick(previousmenu, currentmenu, element) {
 var startmenu = [plan, code, build, test, release, operate, deploy, monitor];
 
 //PLAN MENU
-var planmenu = [plan1, plan2, plan3, professionalnetworks, socialcircles];
-
 function clickPlan() {
   var currentmenu = [menuplan, plan1, plan2, plan3];
   handleClick(startmenu, currentmenu, plan);
 }
 
 // CODE MENU
-var codemenu = [code1, code2, code3, devops, backend, frontend, personaleditions];
-
 function clickCode() {
   var currentmenu = [menucode, code1, code2, code3];
   handleClick(startmenu, currentmenu, code);
 }
 
 //BUILD MENU
-var buildmenu = [build1, build2, build3, kubernetes, vpsnetwork, hostingservices, databases, miscellaneous]
-
 function clickBuild() {
   var currentmenu = [menubuild, build1, build2, build3];
   handleClick(startmenu, currentmenu, build);
@@ -60,8 +54,6 @@ function clickTest() {
 }
 
 //RELEASE MENU
-var releasemenu = [release1, release2, release3, googlecloudhandson, oraclecloudhandson]
-
 function clickRelease(){
   var currentmenu = [menurelease, release1, release2, release3]
   handleClick(startmenu, currentmenu, release)
