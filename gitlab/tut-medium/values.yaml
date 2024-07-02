@@ -1,2 +1,20 @@
 gitlabUrl: https://gitlab.com
 runnerRegistrationToken: "glrt-his1ZAtmT3t9xb-fbo-Z"
+
+runners:
+  # runner configuration, where the multi line string is evaluated as a
+  # template so you can specify helm values inside of it.
+  #
+  # tpl: https://helm.sh/docs/howto/charts_tips_and_tricks/#using-the-tpl-function
+  # runner configuration: https://docs.gitlab.com/runner/configuration/advanced-configuration.html
+  config: |
+    [[runners]]
+      [runners.kubernetes]
+        namespace = "{{.Release.Namespace}}"
+        image = "arm64v8/clojure"
+        helper_image = "gitlab/gitlab-runner-helper:ubuntu-arm64-v14.10.2"
+        privileged = true
+        disable_cache = false
+      [runners.cache]
+        [runners.cache.s3]
+        [runners.cache.gcs]
