@@ -1,0 +1,4 @@
+Now we need to past that url and token into a file called values.yml :
+
+gitlabUrl: https://gitlab.mycompany.com/
+runnerRegistrationToken: "ssssssssssss"
