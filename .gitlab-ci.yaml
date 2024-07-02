@@ -1,4 +1,2 @@
-build:
-  services:
-  - name: docker:dind
-    command: ["--tls=false"]
+job1:
+  script: echo "hi there"
