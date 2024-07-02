@@ -7,8 +7,6 @@ runners:
   #
   # tpl: https://helm.sh/docs/howto/charts_tips_and_tricks/#using-the-tpl-function
   # runner configuration: https://docs.gitlab.com/runner/configuration/advanced-configuration.html
-#        image = "arm64v8/clojure"
-#        helper_image = "gitlab/gitlab-runner-helper:ubuntu-arm64-v14.10.2"
   config: |
     [[runners]]
       [runners.kubernetes]
@@ -20,3 +18,4 @@ runners:
       [runners.cache]
         [runners.cache.s3]
         [runners.cache.gcs]
+
