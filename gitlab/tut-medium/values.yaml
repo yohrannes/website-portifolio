@@ -15,6 +15,10 @@ runners:
         helper_image = "gitlab/gitlab-runner-helper:ubuntu-arm64-v14.10.2"
         privileged = true
         disable_cache = false
+        tls_verify = true
+        disable_entrypoint_overwrite = false
+        oom_kill_disable = false
+        volumes = ["/cache", "/certs/client" ]
       [runners.cache]
         [runners.cache.s3]
         [runners.cache.gcs]
