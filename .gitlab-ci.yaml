@@ -1,22 +1,7 @@
-stages:
-  - build
-  - deploy
-
-build_job:
-  stage: build
-  script:
-    - echo "Building the ServiceAccount project..."
-  services:
-     - name: docker:20-dind
-       command: ["--tls=false"]
-  variables:
-    DOCKER_HOST: tcp://127.0.0.1:2375
-
-deploy_job:
-  stage: deploy
+deploy:
   script:
     - echo "Deploying an nginx pod to the OKE cluster"
     - kubectl run nginx --image=nginx
-variables:
-  KUBERNETES_CPU_REQUEST: 1  
-  KUBERNETES_MEMORY_REQUEST: 4000M
+  variables:
+    KUBERNETES_CPU_REQUEST: 1  
+    KUBERNETES_MEMORY_REQUEST: 4000M
