@@ -11,13 +11,14 @@ runners:
     [[runners]]
       [runners.kubernetes]
         namespace = "{{.Release.Namespace}}"
-        image = "arm64v8/docker:24.0.5"
-        helper_image = "gitlab/gitlab-runner-helper:ubuntu-arm64-v14.10.2"
+        image = "arm64v8/docker:19.03.8-dind"
         privileged = false
         disable_cache = false
         tls_verify = true
         disable_entrypoint_overwrite = false
         oom_kill_disable = false
+        [runners.kubernetes.node_selector]
+          gitlab = "true"
       [runners.cache]
         [runners.cache.s3]
         [runners.cache.gcs]
