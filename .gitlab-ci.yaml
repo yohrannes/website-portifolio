@@ -1,4 +1,11 @@
-job1:
-  script: echo "hi there"
-image: docker.io/library/alpine:3.16.3-arm64
+image: docker.io/library/alpine:latest
 
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+    - echo "Building application..."
+    - # Your application build commands here
+    - echo "Build completed successfully!"
