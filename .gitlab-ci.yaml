@@ -1,8 +1,20 @@
-default:
-  image: docker:24.0.5
-  services:
-   - docker:24.0.5-dind
-  before_script:
-   - docker info
-job1:
-  script: echo "hi there"
+image: docker.io/library/alpine:latest
+
+stages:
+  - build
+
+build:
+  stage: build
+  script:
+    - echo "Building application..."
+    - # Your application build commands here
+    - echo "Build completed successfully!"
+
+#default:
+#  image: docker:24.0.5
+#  services:
+#   - docker:24.0.5-dind
+#  before_script:
+#   - docker info
+#job1:
+#  script: echo "hi there"
