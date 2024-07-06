@@ -1,2 +1,6 @@
-job1:
-  script: echo "hi there"
+#job1:
+#  script: echo "hi there"
+build_job:
+  image: docker:latest
+  services:
+    - docker:dind

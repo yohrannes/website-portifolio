@@ -9,13 +9,28 @@ runners:
   # runner configuration: https://docs.gitlab.com/runner/configuration/advanced-configuration.html
   config: |
     [[runners]]
+      name = "gitlab-runner"
+      executor="kubernetes"
+      environment = [
+        "FF_KUBERNETES_HONOR_ENTRYPOINT=false",
+        "FF_USE_LEGACY_KUBERNETES_EXECUTION_STRATEGY=true",
+        ]
       [runners.kubernetes]
+        networkMode = "host"
+        poll_timeout = 2000
+        node_selector_overwrite_allowed = ".*"
+        helper_image = "docker.io/docker:19.03.8-dind"
         namespace = "{{.Release.Namespace}}"
-        image = "docker.io/library/arm64v8/docker:dind"
-        privileged = true
-        disable_cache = false
-        tls_verify = false
       [runners.cache]
         [runners.cache.s3]
         [runners.cache.gcs]
 
+unregisterRunners: true
+
+securityContext:
+  allowPrivilegeEscalation: true
+  readOnlyRootFilesystem: false
+  runAsNonRoot: true
+  privileged: true
+  capabilities:
+    drop: ["ALL"]
