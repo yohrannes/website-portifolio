@@ -4,11 +4,5 @@ default:
    - docker:24.0.5-dind
   before_script:
    - docker info
-stages:
-  - build
-build:
-  stage: build
-  script:
-    - echo "Building application..."
-    - # Your application build commands here
-    - echo "Build completed successfully!"
+job1:
+  script: echo "hi there"
