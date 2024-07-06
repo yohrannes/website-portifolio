@@ -19,18 +19,13 @@ runners:
         networkMode = "host"
         poll_timeout = 2000
         node_selector_overwrite_allowed = ".*"
-        helper_image = "docker.io/docker:19.03.8-dind"
+        helper_image = "arm64v8/docker:dind"
         namespace = "{{.Release.Namespace}}"
       [runners.cache]
         [runners.cache.s3]
         [runners.cache.gcs]
 
-unregisterRunners: true
-
 securityContext:
   allowPrivilegeEscalation: true
   readOnlyRootFilesystem: false
-  runAsNonRoot: true
   privileged: true
-  capabilities:
-    drop: ["ALL"]
