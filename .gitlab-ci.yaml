@@ -1,4 +1,4 @@
 job1:
   script: echo "hi there"
+image: docker.io/library/alpine:3.16.3-arm64
 
-image: docker.io/library/alpine
