@@ -11,7 +11,7 @@ runners:
     [[runners]]
       [runners.kubernetes]
         namespace = "{{.Release.Namespace}}"
-        image = "arm64v8/docker:dind"
+        image = "docker.io/library/arm64v8/docker:dind"
         helper_image = "gitlab/gitlab-runner-helper:ubuntu-arm64-v14.10.2"
         privileged = false
         disable_cache = false
