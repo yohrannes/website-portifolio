@@ -1,2 +1,8 @@
+default:
+  image: docker:24.0.5
+  services:
+    - docker:24.0.5-dind
+  before_script:
+    - docker info
 job1:
   script: echo "hi there"
