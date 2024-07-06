@@ -1,8 +1,11 @@
-image: docker.io/library/alpine:latest
-
+default:
+  image: docker:24.0.5
+  services:
+   - docker:24.0.5-dind
+  before_script:
+   - docker info
 stages:
   - build
-
 build:
   stage: build
   script:
