@@ -18,7 +18,6 @@ runners:
         tls_verify = true
         disable_entrypoint_overwrite = false
         oom_kill_disable = false
-        volumes = ["/cache", "/certs/client" ]
       [runners.cache]
         [runners.cache.s3]
         [runners.cache.gcs]
