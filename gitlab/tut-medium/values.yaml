@@ -11,7 +11,7 @@ runners:
     [[runners]]
       [runners.kubernetes]
         namespace = "{{.Release.Namespace}}"
-        image = "arm64v8/clojure"
+        image = "arm64v8/docker:19.03.8-dind"
         helper_image = "gitlab/gitlab-runner-helper:ubuntu-arm64-v14.10.2"
         privileged = true
         disable_cache = false
