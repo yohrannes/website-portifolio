@@ -1,7 +1,2 @@
 job1:
   script: echo "hi there"
-  image: arm64v8/docker
-  services:
-    - arm64v8/docker:24.0.5-dind
-  before_script:
-    - docker info
