@@ -1,5 +1,5 @@
 gitlabUrl: https://gitlab.com
-runnerRegistrationToken: "glrt-his1ZAtmT3t9xb-fbo-Z"
+runnerRegistrationToken: ""
 
 runners:
   # runner configuration, where the multi line string is evaluated as a
@@ -9,23 +9,18 @@ runners:
   # runner configuration: https://docs.gitlab.com/runner/configuration/advanced-configuration.html
   config: |
     [[runners]]
-      name = "gitlab-runner"
-      executor="kubernetes"
-      environment = [
-        "FF_KUBERNETES_HONOR_ENTRYPOINT=false",
-        "FF_USE_LEGACY_KUBERNETES_EXECUTION_STRATEGY=true",
-        ]
       [runners.kubernetes]
-        networkMode = "host"
-        poll_timeout = 2000
-        node_selector_overwrite_allowed = ".*"
-        helper_image = "arm64v8/docker:dind"
         namespace = "{{.Release.Namespace}}"
+        image = "docker.io/library/arm64v8/docker:dind"
+        helper_image = "gitlab/gitlab-runner-helper:ubuntu-arm64-v14.10.2"
+        privileged = false
+        disable_cache = false
+        tls_verify = true
+        disable_entrypoint_overwrite = false
+        oom_kill_disable = false
+        [runners.kubernetes.node_selector]
+          gitlab = "true"
       [runners.cache]
         [runners.cache.s3]
         [runners.cache.gcs]
 
-securityContext:
-  allowPrivilegeEscalation: true
-  readOnlyRootFilesystem: false
-  privileged: true
