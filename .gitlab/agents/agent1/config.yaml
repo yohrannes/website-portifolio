@@ -2,9 +2,8 @@ ci_access:
 #    groups:
 #        - id: "autodevopsyoh"
     projects:
-        - id: "autodevopsyoh/cluster-management"
-        - id: "autodevopsyoh/helloworld-autodevops"
+        - id: "yohrannes/website-portifolio"
 
-gitops:
-    manifest_projects:
-        - id : "autodevopsyoh/gitops-project"
+#gitops:
+#    manifest_projects:
+#        - id : "autodevopsyoh/gitops-project"
