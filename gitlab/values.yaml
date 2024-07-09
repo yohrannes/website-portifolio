@@ -6,6 +6,8 @@ runners:
   #
   # tpl: https://helm.sh/docs/howto/charts_tips_and_tricks/#using-the-tpl-function
   # runner configuration: https://docs.gitlab.com/runner/configuration/advanced-configuration.html
+
+
   config: |
     [[runners]]
       name = "gitlab-runner"
@@ -15,17 +17,18 @@ runners:
         "FF_USE_LEGACY_KUBERNETES_EXECUTION_STRATEGY=true",
         ]
       [runners.kubernetes]
+        pull_policy = "always"
         networkMode = "host"
-        poll_timeout = 2000
-        node_selector_overwrite_allowed = ".*"
-        helper_image = "arm64v8/docker:dind"
+        privileged = true
+        tls_verify = false
+        image = "arm64v8/docker:dind"
+        helper_image = "gitlab/gitlab-runner-helper:ubuntu-arm64-v14.10.2"
         namespace = "{{.Release.Namespace}}"
       [runners.cache]
         [runners.cache.s3]
         [runners.cache.gcs]
-
+  image_pull_policy: "Always"
   secret: gitlab-runner-secret
-  namespace: gitlab-runner
 
 securityContext:
   allowPrivilegeEscalation: true
