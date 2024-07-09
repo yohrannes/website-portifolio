@@ -1,0 +1,1 @@
+k get po -n gitlab-runner gitlab-runner-7cf45848d5-h8mjb -o jsonpath='{.spec.containers[0].image}'

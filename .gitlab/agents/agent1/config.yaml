@@ -1,0 +1,10 @@
+ci_access:
+#    groups:
+#        - id: "autodevopsyoh"
+    projects:
+        - id: "autodevopsyoh/cluster-management"
+        - id: "autodevopsyoh/helloworld-autodevops"
+
+gitops:
+    manifest_projects:
+        - id : "autodevopsyoh/gitops-project"
