@@ -1,5 +1,5 @@
 import flask
-from flask import Flask, render_template, request, redirect, jsonify
+from flask import Flask, render_template, request, redirect, jsonify, render_template_string
 import subprocess
 import os
 
@@ -16,11 +16,19 @@ def get_server_info():
     response = f"oke cluster pod - {hostname} - up at {last_updated}"
     return response
 
+@app.template_filter('nl2br') # Filter to use in route response
+def nl2br(s):
+    return s.replace('\n', '<br>\n')
+
 @app.route('/auto-deploy-log')
 def get_auto_deploy_log():
-    cat_command = 'cat /var/log/get-last-commit.log'
-    last_updated = os.popen(cat_command).read().strip().lower()
-    response = f"{last_updated}"
+    log_file_path = '/var/log/get-last-commit.log'
+    try:
+        with open(log_file_path, 'r') as file:
+            log_content = file.read()
+    except FileNotFoundError:
+        log_content = 'Log file not found.'
+    response = render_template_string('<pre>{{ log_content }}</pre>', log_content=log_content) # Puting line breaks in the HTML response using <pre> tag
     return response
 
 @app.route('/')
