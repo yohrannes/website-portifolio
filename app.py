@@ -18,8 +18,7 @@ def get_server_info():
 
 @app.route('/auto-deploy-log')
 def get_auto_deploy_log():
-    hostname = os.popen('hostname').read().strip().lower()
-    cat_command = 'cat /var/log/get-last-commit.log"'
+    cat_command = 'cat /var/log/get-last-commit.log'
     last_updated = os.popen(cat_command).read().strip().lower()
     response = f"{last_updated}"
     return response
