@@ -72,7 +72,7 @@ function clickProjects() {
   }
 
 //TASKS AND GUIDES MENU
-var tasksandguidesmenu = [tasksandguides1, tasksandguides2, tasksandguides3, kubernetes, vpsnetwork, hostingservices, databases, miscellaneous]
+var tasksandguidesmenu = [tasksandguides1, tasksandguides2, tasksandguides3, kubernetes, vpsnetwork, hostingservices, databases, webservers, miscellaneous]
 
 function clickTasksAndGuides() {
   var currentmenu = [menutasksandguides, tasksandguides1, tasksandguides2, tasksandguides3];
@@ -97,6 +97,11 @@ function clickHostingServices() {
 function clickDatabases() {
   var currentmenu = [menudatabases, databases1, databases2, databases3]
   handleClick (tasksandguidesmenu, currentmenu, databases)
+}
+
+function clickWebservers() {
+  var currentmenu = [menuwebservers, webservers1, webservers2, webservers3]
+  handleClick (tasksandguidesmenu, currentmenu, webservers)
 }
 
 function clickMiscellaneous() {
