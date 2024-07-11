@@ -1,5 +1,5 @@
 #FROM arm64v8/alpine
-FROM alpine
+FROM alpine:3.20.1
 WORKDIR /root
 # Upgrading system
 RUN apk update
@@ -12,14 +12,15 @@ RUN apk add --upgrade nano
 RUN apk add --upgrade git
 #RUN git clone https://github.com/yohrannes/website-portifolio.git
 
-# Installing python and flask
+# Installing python, flask, uwsgi
 ENV PYTHONUNBUFFERED=1
-RUN apk add --update python3 py3-pip
-RUN apk add --upgrade python3 py3-pip
+RUN apk add --update python3 py3-pip build-base python3-dev uwsgi uwsgi-python3
+RUN apk add --update uwsgi-python
+RUN apk add --upgrade python3 py3-pip nano
+
 RUN ln -sf python3 /usr/bin/python
 
 RUN apk add py3-flask py3-requests
-RUN apk add --upgrade nano
 RUN set FLASK_ENV=development
 EXPOSE 5000
 
@@ -30,4 +31,13 @@ COPY entry.sh /entry.sh
 RUN chmod 755 /script.sh /entry.sh
 RUN /usr/bin/crontab /crontab.txt
 
+COPY foobar.py .
+
+# Added user
+RUN adduser -D user
+
+#USER user
+
 CMD ["/entry.sh"]
+
+# uwsgi --http-socket :9090 --plugin python --wsgi-file foobar.py --uid user
