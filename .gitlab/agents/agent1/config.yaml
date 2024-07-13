@@ -1,9 +1,0 @@
-ci_access:
-#    groups:
-#        - id: "autodevopsyoh"
-    projects:
-        - id: "yohrannes/website-portifolio"
-
-#gitops:
-#    manifest_projects:
-#        - id : "autodevopsyoh/gitops-project"
