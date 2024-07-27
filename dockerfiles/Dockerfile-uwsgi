@@ -5,7 +5,7 @@ WORKDIR /root
 RUN apk update
 RUN apk upgrade
 
-# Installing useful programs
+## Installing useful programs
 RUN apk add --upgrade nano
 
 #Get website project from github
