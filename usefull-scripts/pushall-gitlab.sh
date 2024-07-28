@@ -14,10 +14,16 @@ read -p "Commit comment:" coment
 push-main () {
 	git add .
 	git commit -m "${coment}"
+	git fetch origin develop
+	git pull origin develop
+	git push origin develop
 	git checkout main
 	git merge develop
+	git fetch origin main
+        git pull origin main
 	git push gitlab main
 	git checkout develop
+
 }
 
 push-main
