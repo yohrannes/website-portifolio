@@ -1,14 +1,6 @@
-stages:
-  - build
-  - deploy
-
-build_job:
-  stage: build
+run_tests:
+  image: yohrannes/website-portifolio:v1.4
+  before_script:
+    - echo running before_script ...
   script:
-    - sudo echo "Building the ServiceAccount project..."
-
-deploy_job:
-  stage: deploy
-  script:
-    - sudo echo "Deploying nginx pod to the OKE cluster"
-    - sudo kubectl run nginx --image=nginx
+    - echo running tests ...
