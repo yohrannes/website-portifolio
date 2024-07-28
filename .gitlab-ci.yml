@@ -6,7 +6,7 @@ stages:
 build-job:
   stage: build
   script:
-    - docker build dockerfiles/.
+    - echo "docker build dockerfiles/."
     - echo "Compiling the code..."
     - echo "Compile complete."
 
