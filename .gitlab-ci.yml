@@ -13,15 +13,13 @@ build-job:
 unit-test-job:
   stage: test
   script:
-    - echo "Running unit tests... This will take about 3 seconds."
-    - sleep 3
+    - echo "Running unit tests..."
     - echo "Code coverage is 90%"
 
 lint-test-job:
   stage: test
   script:
-    - echo "Linting code... This will take about 3 seconds."
-    - sleep 3
+    - echo "Linting code... "
     - echo "No lint issues found."
 
 deploy-job:
