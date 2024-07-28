@@ -1,5 +1,5 @@
 run_tests:
-  image: yohrannes/website-portifolio:v1.4
+  image: python
   before_script:
     - echo running before_script ...
   script:

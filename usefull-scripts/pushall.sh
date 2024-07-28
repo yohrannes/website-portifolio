@@ -12,9 +12,15 @@ echo "Be sure that you're in the develop branch."
 read -p "Commit comment:" coment
 
 push-main () {
+	git fetch origin develop
+	git fetch gitlab develop
+	git pull origin develop
+	git pull gitlab develop
+
 	git add .
 	git commit -m "${coment}"
 	git push origin develop
+
 	git checkout main
 	git merge develop
 	git push origin main
