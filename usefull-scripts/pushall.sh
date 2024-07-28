@@ -22,6 +22,12 @@ push-main () {
 	git push origin develop
 
 	git checkout main
+
+        git fetch origin main
+        git fetch gitlab main
+        git pull origin main
+        git pull gitlab main
+
 	git merge develop
 	git push origin main
 	git push gitlab main
