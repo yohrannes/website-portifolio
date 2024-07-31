@@ -61,5 +61,13 @@ def linkedin_redirect():
 def repo_redirect():
     return redirect('https://github.com/yohrannes/website-portifolio')
 
+@app.route('/github')
+def github_redirect():
+    return redirect('https://github.com/yohrannes')
+
+@app.route('/gitlab')
+def gitlab_redirect():
+    return redirect('https://gitlab.com/yohrannes')
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port="5000")
