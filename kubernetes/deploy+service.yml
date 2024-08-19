@@ -18,7 +18,9 @@ spec:
     spec:
       containers:
       - name: port-app
-        image: docker.io/yohrannes/website-portifolio:latest
+        image: yohrannes/website-portifolio:latest
+# Get directly from docker registry
+#        image: docker.io/yohrannes/website-portifolio:latest
         # You can uncomment these lines to set the HOSTNAME and HOST_IP environment variables
         env:
         - name: HOSTNAME
