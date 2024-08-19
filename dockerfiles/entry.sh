@@ -4,7 +4,7 @@
 git clone https://github.com/yohrannes/website-portifolio.git /root/website-portifolio
 
 # Activate environment variable
-python -m venv venv
+python -m venv /root/website-portifolio/venv
 source /root/website-portifolio/venv/bin/activate
 
 # Run aplication
