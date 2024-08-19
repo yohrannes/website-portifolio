@@ -4,10 +4,11 @@
 git clone https://github.com/yohrannes/website-portifolio.git /root/website-portifolio
 
 # Activate environment variable
-#source /root/website-portifolio/venv/bin/activate
+python -m venv venv
+source /root/website-portifolio/venv/bin/activate
 
 # Run aplication
-#python3 /root/website-portifolio/app.py &
-uwsgi --http-socket :9090 --plugin python --wsgi-file foobar.py
+python3 /root/website-portifolio/app.py &
+#uwsgi --http-socket :9090 --plugin python --wsgi-file foobar.py
 # Run cron jobs
 /usr/sbin/crond -f -l 8
