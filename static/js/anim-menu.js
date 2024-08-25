@@ -119,18 +119,14 @@ function clickBootcamp() {
 var handsonprojectsmenu = [handsonprojects1, handsonprojects2, handsonprojects3, googlecloudhandson, oraclecloudhandson]
 
 function clickHandsOnProjects(){
-  var currentmenu = [menuhandsonprojects, handsonprojects1, handsonprojects2, handsonprojects3]
-  handleClick(startmenu, currentmenu, handsonprojects)
+  var currentmenu = [menuhandsonprojects, handsonprojects1, handsonprojects2, handsonprojects3];
+  handleClick(startmenu, currentmenu, handsonprojects);
 }
 
   function clickGoogleCloudHandsOn(){
-    var currentmenu = [googlecloudhandson1, googlecloudhandson2, googlecloudhandson3, menugooglecloudhandson]
-    handleClick(handsonprojectsmenu, currentmenu, googlecloudhandson)
+    var currentmenu = [googlecloudhandson1, googlecloudhandson2, googlecloudhandson3, menugooglecloudhandson];
+    handleClick(handsonprojectsmenu, currentmenu, googlecloudhandson);
   }
-
-    // if (clickHandsOnProjects == True && clickGoogleCloudHandsOn == True) {
-    //   // <h2 class="animbackmenu-back">↲</h2> == inline block
-    // }
 
   function clickOracleCloudHandsOn(){
     var currentmenu = [oraclecloudhandson1, oraclecloudhandson2, oraclecloudhandson3, menuoraclecloudhandson]
@@ -138,13 +134,37 @@ function clickHandsOnProjects(){
   }
 
 //ACHIEVEMENTS AND CERTIFICATIONS
-function clickAboutMe() {
-  var currentmenu = [menuaboutme, aboutme1, aboutme2, aboutme3];
-  handleClick(startmenu, currentmenu, aboutme);
-}
+var achievementsandcertificationsmenu = [achievementsandcertifications1, achievementsandcertifications2, achievementsandcertifications3, gcpcert, devcert, devopscicdcert, k8sdockercert]
 
-//ABOUT ME MENU
 function clickAchievementsAndCertifications() {
   var currentmenu = [menuachievementsandcertifications, achievementsandcertifications1, achievementsandcertifications2, achievementsandcertifications3];
   handleClick(startmenu, currentmenu, achievementsandcertifications);
 }
+  
+  function clickGcpCert(){
+  var currentmenu = [googlecloudcertifications1, googlecloudcertifications2, googlecloudcertifications3,  menugooglecloudcertifications];
+  handleClick(achievementsandcertificationsmenu, currentmenu, gcpcert);
+  }
+
+  function clickDevCert(){
+  var currentmenu = [developmentcertifications1, developmentcertifications2, developmentcertifications3,  menudevelopmentcertifications];
+  handleClick(achievementsandcertificationsmenu, currentmenu, devcert);
+  }
+
+  function clickDvOpCiCdCert(){
+  var currentmenu = [devopscicdcertifications1, devopscicdcertifications2, devopscicdcertifications3,  menudevopscicdcertifications];
+  handleClick(achievementsandcertificationsmenu, currentmenu, devopscicdcert);
+  }
+
+  function clickK8sDockerCert(){
+  var currentmenu = [kubernetesdockercertifications1, kubernetesdockercertifications2, kubernetesdockercertifications3,  menukubernetesdockercertifications];
+  handleClick(achievementsandcertificationsmenu, currentmenu, k8sdockercert);
+  }
+  
+//ABOUT ME MENU
+function clickAboutMe() {
+  var currentmenu = [menuaboutme, aboutme1, aboutme2, aboutme3];
+  handleClick(startmenu, currentmenu, aboutme);
+}
+  
+  
