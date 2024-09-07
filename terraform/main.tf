@@ -1,7 +1,6 @@
 locals {
   # cmpt_name_prefix = "A506"
   # time_f           = formatdate("HHmmss", timestamp())
-  ssh_authorized_keys = var.ssh_authorized_keys_path
 }
 
 resource "oci_identity_compartment" "yohapp-comp" {
@@ -80,7 +79,7 @@ resource "oci_core_instance" "ic_pub_vm-A" {
 
   metadata = {
     #ssh_authorized_keys = join("\n", [for k in local.ssh_authorized_keys : chomp(k)])
-    ssh_authorized_keys = local.ssh_authorized_keys
+    ssh_authorized_keys = file("~/.ssh/id_rsa.pub")
   }
 }
 
