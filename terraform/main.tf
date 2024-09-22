@@ -80,7 +80,9 @@ resource "oci_core_instance" "ic_pub_vm-A" {
   metadata = {
     #ssh_authorized_keys = join("\n", [for k in local.ssh_authorized_keys : chomp(k)])
     ssh_authorized_keys = file("~/.ssh/id_rsa.pub")
+    user_data = file("${path.module}/../startup-files/startup-script.sh")
   }
+
 }
 
 #terraform init

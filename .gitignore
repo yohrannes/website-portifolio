@@ -38,3 +38,10 @@ terraform.rc
 
 .terraform.lock.hcl
 terraform/.terraform.lock.hcl
+**/*.tfstate
+**/*.tfstate.*
+.terraform/
+*.pem
+*.key
+plan
+

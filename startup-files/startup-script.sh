@@ -1,5 +1,8 @@
 #!/bin/bash
 
+exec > /var/log/startup-script.log 2>&1
+set -x
+
 function install-docker-engine () {
 echo "Instalando docker engine e executando a aplicação em container."
 sudo apt-get update
