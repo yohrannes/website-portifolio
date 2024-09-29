@@ -14,7 +14,10 @@ sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 sudo systemctl enable docker
 sudo systemctl start docker
-sudo docker run -d -p 5000:5000 yohrannes/coodesh-challenge
+sudo docker run -d -p 5000:5000 docker.io/yohrannes/website-portifolio
+sudo mkdir /home/ubuntu/minecraft
+sudo docker run -d -p 25565:25565 -v "/home/ubuntu/minecraft:/root" docker.io/yohrannes/minecraft
+sudo docker run -d -p 25565:25565 docker.io/yohrannes/minecraft
 sudo bash startup-files/install-nginx.sh
 }
 function install-nginx () {
@@ -40,7 +43,8 @@ sudo systemctl enable nginx
 
 if [[ $1 == "install-nginx" ]]; then
     install-nginx
-else
+elif [[ $1 == "install-docker" ]]; then
     install-docker-engine
-    install-nginx
+else
+    break
 fi
