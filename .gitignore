@@ -45,3 +45,5 @@ terraform/.terraform.lock.hcl
 *.key
 plan
 
+terraform/modules/compute_instance/*.tfstate*
+terraform/modules/compute_instance/*.tfstate.*
