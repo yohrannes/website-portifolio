@@ -28,7 +28,7 @@ install-nginx-test:
       fi
 
 check-image-security:
-  stage: test
+#  stage: test
   image: ubuntu:22.04
   before_script:
     - apt-get update
@@ -43,16 +43,14 @@ check-image-security:
     - sudo apt-get update
     - sudo apt-get install -y trivy
   script:
-    - trivy image yohrannes/website-portifolio > trivy-scan.txt
+    - trivy image --format json --severity HIGH yohrannes/website-portifolio > trivy-scan.txt
+    - cat trivy-scan.txt
     - |
-      if [ $? -eq 0 ]; then
-        echo "CHECANDO VULNERABILIDADES DA IMAGEM DA APLICAÇÂO"
-        if [[ "$(cat trivy-scan.txt | grep HIGH)" ]]; then
-          echo "VULNERABILIDADE ENCONTRADA!!!";
-        fi
-      else
-        echo "FALHA AO VERIFICAR IMAGEM"
+      if echo $(cat trivy-scan.txt) | grep -q '"severity": "HIGH"'; then
+        echo "Vulnerabilidade HIGH encontrada"
         exit 1
+      else
+        echo "Nenhuma vulnerabilidade do tipo HIGH encontrada"
       fi
 
 build-app-image-test:
