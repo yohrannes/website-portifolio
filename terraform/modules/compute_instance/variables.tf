@@ -1,6 +1,7 @@
 variable "compartment_id" {
-  description = "ocid1.tenancy.oc1..aaaaaaaawb7j4hswwgcjncr2ezu5mptw6o5n6h7ixvef5lzqsqkbtmwk44aq"
+  description = "The OCID of the compartment"
   type        = string
+  default     = "ocid1.tenancy.oc1..aaaaaaaawb7j4hswwgcjncr2ezu5mptw6o5n6h7ixvef5lzqsqkbtmwk44aq"
 }
 
 variable "compartment_name" {
@@ -45,8 +46,9 @@ variable "internet_gateway_A" {
 }
 
 variable "ssh_authorized_keys_path" {
-  description = "~/.ssh/id_rsa.pub"
+  description = "Path to the SSH public key file"
   type        = string
+  default     = "~/.ssh/id_rsa.pub"
 }
 
 variable "ic_pub_vm_A" {
