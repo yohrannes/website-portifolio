@@ -49,3 +49,4 @@ terraform/modules/compute_instance/*.tfstate*
 terraform/modules/compute_instance/*.tfstate.*
 .terraform.d
 terraform/modules/compute_instance/.terraform.d
+terraform/modules/compute_instance/plan
