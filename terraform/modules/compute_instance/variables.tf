@@ -7,7 +7,7 @@ variable "compartment_id" {
 variable "compartment_name" {
   description = "Compartment Name"
   type        = string
-  default     = "yohapp"
+  default     = "port-web-comp"
 }
 
 variable "compartment_description" {
