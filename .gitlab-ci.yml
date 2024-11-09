@@ -4,7 +4,9 @@ stages:
   - build
   - deploy
 
-install-nginx-test:
+#build-infra-test:
+#install-docker-on-ec2-test:
+install-nginx-on-ec2-test:
   stage: test
   image: ubuntu:22.04
   before_script:
@@ -13,17 +15,17 @@ install-nginx-test:
     #- whoami
     #- which sudo
     - chmod +x /usr/bin/sudo
-    - sudo echo "sudo funcionando..."
+    - sudo echo "sudo working..."
     - apt-get install -y systemd libpam-systemd
     #- which systemctl
-    - echo "systemd instalado"
+    - echo "systemd installed"
   script:
     - sudo bash startup-files/startup-script.sh install-nginx
     - |
       if [ $? -eq 0 ]; then
         echo "NGINX OK"
       else
-        echo "FALHA NA INSTALAÇÃO DO NGINX"
+        echo "NGINX INSTALATION FAILED"
         exit 1
       fi
 
@@ -34,9 +36,9 @@ check-image-security:
     - apt-get update
     - apt-get install -y sudo
     - chmod +x /usr/bin/sudo
-    - sudo echo "sudo funcionando..."
+    - sudo echo "sudo working..."
     - apt-get install -y systemd libpam-systemd
-    - echo "systemd instalado"
+    - echo "systemd instaled"
     - sudo apt-get install -y wget apt-transport-https gnupg lsb-release
     - wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
     - echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
@@ -47,59 +49,59 @@ check-image-security:
     - cat trivy-scan.txt
     - |
       if echo $(cat trivy-scan.txt) | grep -q '"severity": "HIGH"'; then
-        echo "Vulnerabilidade HIGH encontrada"
+        echo "HIGH vulnerability found"
         exit 1
       else
-        echo "Nenhuma vulnerabilidade do tipo HIGH encontrada"
+        echo "No one HIGH vulnerability found"
       fi
 
-build-app-image-test:
-  needs: ['install-nginx-test']
-  stage: build
-  image: docker:27.1.2
-  services:
-    - docker:27.1.2-dind
-  script:
-    - docker build -t yohrannes/website-portifolio:latest ./build-app/.
-    #docker push yohrannes/website-portifolio:latest
-    - |
-      if [ $? -eq 0 ]; then
-        echo "IMAGEM DOCKER OK"
-      else
-        echo "FALHA NO BUILD DA IMAGEM DA APLICAÇÂO"
-        exit 1
-      fi
+#build-app-image-test:
+#  needs: ['install-nginx-test']
+#  stage: build
+#  image: docker:27.1.2
+#  services:
+#    - docker:27.1.2-dind
+#  script:
+#    - docker build -t yohrannes/website-portifolio:latest ./build-app/.
+#    #docker push yohrannes/website-portifolio:latest
+#    - |
+#      if [ $? -eq 0 ]; then
+#        echo "IMAGEM DOCKER OK"
+#      else
+#        echo "FALHA NO BUILD DA IMAGEM DA APLICAÇÂO"
+#        exit 1
+#      fi
 
-deploy-with-terraform:
-  needs: ['build-app-image-test']
-  stage: deploy
-  image: docker:23.0.2
-  services:
-    - docker:dind
-  variables:
-    DOCKER_DRIVER: overlay2
-  script:
-    - mkdir -p /root/.config/gcloud
-    - echo "$GOOGLE_APPLICATION_CREDENTIALS_JSON_BASE64" | base64 -d > /root/.config/gcloud/application_default_credentials.json
-    - docker run -v $PWD:/root -w /root -e GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT -e GOOGLE_REGION=us-central1 -e GOOGLE_ZONE=us-central1-a hashicorp/terraform:light init
-    - docker run -v $PWD:/root -w /root -e GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT -e GOOGLE_REGION=us-central1 -e GOOGLE_ZONE=us-central1-a hashicorp/terraform:light apply -auto-approve
-    - |
-      cat <<EOF >> main.tf
-      terraform {
-        backend "gcs" {
-          bucket  = "yohapp-bucket"
-          prefix  = "terraform/state"
-        }
-      }
-      EOF
-    - docker run -v $PWD:/root -w /root -e GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT -e GOOGLE_REGION=us-central1 -e GOOGLE_ZONE=us-central1-a hashicorp/terraform:light init
-    - docker run -v $PWD:/root -w /root -e GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT -e GOOGLE_REGION=us-central1 -e GOOGLE_ZONE=us-central1-a hashicorp/terraform:light apply -auto-approve
+#deploy-with-terraform:
+#  needs: ['build-app-image-test']
+#  stage: deploy
+#  image: docker:23.0.2
+#  services:
+#    - docker:dind
+#  variables:
+#    DOCKER_DRIVER: overlay2
+#  script:
+#   - mkdir -p /root/.config/gcloud
+#    - echo "$GOOGLE_APPLICATION_CREDENTIALS_JSON_BASE64" | base64 -d > /root/.config/gcloud/application_default_credentials.json
+#    - docker run -v $PWD:/root -w /root -e GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT -e GOOGLE_REGION=us-central1 -e GOOGLE_ZONE=us-central1-a hashicorp/terraform:light init
+#    - docker run -v $PWD:/root -w /root -e GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT -e GOOGLE_REGION=us-central1 -e GOOGLE_ZONE=us-central1-a hashicorp/terraform:light apply -auto-approve
+#    - |
+#      cat <<EOF >> main.tf
+#      terraform {
+#        backend "gcs" {
+#          bucket  = "yohapp-bucket"
+#          prefix  = "terraform/state"
+#        }
+#      }
+#      EOF
+#    - docker run -v $PWD:/root -w /root -e GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT -e GOOGLE_REGION=us-central1 -e GOOGLE_ZONE=us-central1-a hashicorp/terraform:light init
+#    - docker run -v $PWD:/root -w /root -e GOOGLE_CLOUD_PROJECT=$GOOGLE_CLOUD_PROJECT -e GOOGLE_REGION=us-central1 -e GOOGLE_ZONE=us-central1-a hashicorp/terraform:light apply -auto-approve
 
-    # Verificar o status do último comando apply
-    - |
-      if [ $? -eq 0 ]; then
-        echo "Infraestrutura provisionada e configurada com sucesso."
-      else
-        echo "Falha ao provisionar ou configurar a infraestrutura."
-        exit 1
-      fi
+#    # Verificar o status do último comando apply
+#    - |
+#      if [ $? -eq 0 ]; then
+#        echo "Infraestrutura provisionada e configurada com sucesso."
+#      else
+#        echo "Falha ao provisionar ou configurar a infraestrutura."
+#        exit 1
+#     fi
