@@ -22,3 +22,11 @@ repo/
 ├── .gitignore
 └── README.md
 ```
+
+```
+docker run -it \
+-v ~/.oci:/root/.oci \
+-v path-to-main.tf:/app \
+-w /app \
+--entrypoint "" hashicorp/terraform:light sh
+```
