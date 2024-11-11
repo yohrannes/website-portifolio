@@ -44,13 +44,20 @@ check-image-security:
     - sudo echo "sudo working..."
     - apt-get install -y systemd libpam-systemd
     - echo "systemd instaled"
-    - sudo apt-get install -y wget apt-transport-https gnupg lsb-release
-    - wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
-    - echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
-    - sudo apt-get update
-    - sudo apt-get install -y trivy
-  script:
-    - trivy image --format json --severity HIGH yohrannes/website-portifolio > trivy-scan.txt
+
+    - sudo apt-get install wget gnupg -y
+    - wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+    - echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+    - sudo apt-get update  
+    - sudo apt-get install trivy -y
+
+#    - sudo apt-get install -y wget apt-transport-https gnupg lsb-release
+#    - wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | sudo apt-key add -
+#    - echo deb https://aquasecurity.github.io/trivy-repo/deb $(lsb_release -sc) main | sudo tee -a /etc/apt/sources.list.d/trivy.list
+#    - sudo apt-get update
+#    - sudo apt-get install -y trivy
+    script:
+    - trivy image --vuln-type os --cache-dir . yohrannes/website-portifolio
     - cat trivy-scan.txt
     - |
       if echo $(cat trivy-scan.txt) | grep -q '"severity": "HIGH"'; then
