@@ -51,10 +51,10 @@ check-image-security:
     - sudo apt-get install trivy -y
 
   script:
-    - trivy image --format json --severity HIGH --vuln-type os --cache-dir . yohrannes/website-portifolio > trivy-scan.txt
+    - trivy image --vuln-type os --cache-dir . yohrannes/website-portifolio | grep "│ HIGH" > trivy-scan.txt
     - cat trivy-scan.txt
     - |
-      if echo $(cat trivy-scan.txt) | grep -q '"severity": "HIGH"'; then
+      if cat trivy-scan.txt | grep -q "│ HIGH"; then
         echo "HIGH vulnerability found"
         exit 1
       else
