@@ -1,5 +1,5 @@
 FROM arm64v8/alpine
-#FROM alpine
+FROM alpine
 WORKDIR /root
 # Upgrading system
 RUN apk update
@@ -8,7 +8,9 @@ RUN apk upgrade
 # Installing useful programs
 RUN apk add --upgrade nano
 
-#Get website project from github
+#Provide application content
+RUN mkdir /root/website-portifolio
+COPY . /root/website-portifolio
 RUN apk add --upgrade git
 #RUN git clone https://github.com/yohrannes/website-portifolio.git
 
@@ -24,9 +26,9 @@ RUN set FLASK_ENV=development
 EXPOSE 5000
 
 # Config crond and app
-ADD crontab.txt /crontab.txt
-ADD script.sh /script.sh
-COPY entry.sh /entry.sh
+ADD build-app/crontab.txt /crontab.txt
+ADD build-app/script.sh /script.sh
+ADD build-app/entry.sh /entry.sh
 RUN chmod 755 /script.sh /entry.sh
 RUN /usr/bin/crontab /crontab.txt
 

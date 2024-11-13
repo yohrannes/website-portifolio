@@ -1,10 +1,10 @@
 #!/bin/sh
 
 # Clone project
-git clone https://github.com/yohrannes/website-portifolio.git /root/website-portifolio
+#git clone https://github.com/yohrannes/website-portifolio.git /root/website-portifolio
 
 # Activate environment variable
-#python3 -m venv /root/website-portifolio/venv
+python3 -m venv /root/website-portifolio/venv
 #source /root/website-portifolio/venv/bin/activate
 
 # Run aplication

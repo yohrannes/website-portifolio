@@ -7,7 +7,9 @@ repo/
 │   │   ├── compute_instance/
 │   │   │   ├── main.tf
 │   │   │   ├── variables.tf
-│   │   │   └── outputs.tf
+│   │   │   ├── outputs.tf
+│   │   │   └── scripts/
+│   │   │       └── startup-script.sh    # Coloque o script aqui
 │   │   └── oke_cluster/
 │   │       ├── main.tf
 │   │       ├── variables.tf
@@ -15,9 +17,6 @@ repo/
 │   │
 │   ├── provider.tf
 │   └── README.md
-│
-├── startup-files/
-│   └── startup-script.sh
 │
 ├── .gitignore
 └── README.md
