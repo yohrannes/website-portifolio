@@ -1,5 +1,7 @@
 #!/bin/bash
 # Instalando nginx como proxy da porta 80 para a 5000 da aplicação.
+# Installing nginx proxy lintening on port 80, redirecting to port 5000 -> flask application
+
 sudo apt-get install -y nginx
 sudo tee /etc/nginx/sites-available/default <<EOF
 server {

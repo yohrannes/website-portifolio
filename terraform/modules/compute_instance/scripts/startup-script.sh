@@ -4,8 +4,8 @@ exec > /var/log/startup-script.log 2>&1
 set -x
 
 function install-docker-engine () {
-echo "Instalando docker engine e executando a aplicação em container."
 sudo apt-get update
+sudo apt-get upgrade
 sudo apt-get install -y ca-certificates curl
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo tee /etc/apt/keyrings/docker.asc
@@ -15,13 +15,11 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plug
 sudo systemctl enable docker
 sudo systemctl start docker
 sudo docker run -d -p 5000:5000 docker.io/yohrannes/website-portifolio
-sudo mkdir /home/ubuntu/minecraft
-sudo docker run -d -p 25565:25565 -v "/home/ubuntu/minecraft:/root" docker.io/yohrannes/minecraft
-sudo docker run -d -p 25565:25565 docker.io/yohrannes/minecraft
-sudo bash startup-files/install-nginx.sh
 }
+
 function install-nginx () {
-echo  "Instalando nginx como proxy da porta 80 para a 5000 da aplicação."
+sudo apt-get update
+sudo apt-get upgrade
 sudo apt-get install -y nginx
 sudo tee /etc/nginx/sites-available/default <<EOF
 server {
@@ -46,5 +44,6 @@ if [[ $1 == "install-nginx" ]]; then
 elif [[ $1 == "install-docker" ]]; then
     install-docker-engine
 else
-    break
+    install-nginx
+    install-docker-engine
 fi

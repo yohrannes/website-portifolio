@@ -7,7 +7,7 @@ variable "compartment_id" {
 variable "compartment_name" {
   description = "Compartment Name"
   type        = string
-  default     = "port-web-comp"
+  default     = "port-comp"
 }
 
 variable "compartment_description" {
