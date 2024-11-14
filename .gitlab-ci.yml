@@ -20,6 +20,10 @@ build-infra-test:
     - chmod 600 /root/.oci/oci_api_key.pem
     - export TF_VAR_compartment_id=$OCI_COMPARTMENT_OCID
     - export TF_VAR_region=$OCI_REGION
+    - docker info
+    - ls -l /var/run/docker.sock
+    - nslookup docker
+    - ping docker
     - |
       docker run \
       -v ~/.oci:/root/.oci \
