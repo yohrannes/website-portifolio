@@ -25,7 +25,8 @@ repo/
 ```
 docker run -it \
 -v ~/.oci:/root/.oci \
--v path-to-main.tf:/app \
+-v $PWD:/app \
+-v ~/.ssh:/root/.ssh \
 -w /app \
 --entrypoint "" hashicorp/terraform:light sh
 ```
