@@ -5,7 +5,7 @@ stages:
   - deploy
 
 build-infra-test:
-  stage: deploy
+  stage: test
   image: docker:23.0.2
   services:
     - docker:dind
@@ -60,7 +60,7 @@ build-infra-test:
 #      fi#
 
 check-image-security:
-#  stage: test
+  stage: test
   image: ubuntu:22.04
   before_script:
     - apt-get update
