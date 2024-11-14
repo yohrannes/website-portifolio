@@ -9,9 +9,10 @@ build-infra-test:
   image: docker:stable
   services:
     - name: docker:dind
-      command: ["--privileged"]
+      command: ["--host=tcp://0.0.0.0:2375", "--privileged"]
   variables:
     DOCKER_DRIVER: overlay2
+    DOCKER_HOST: tcp://localhost:2375
   script:
     - mkdir -p /root/.oci
     - echo "$OCI_CONFIG_BASE64" | base64 -d > /root/.oci/config
