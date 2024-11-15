@@ -6,6 +6,7 @@ stages:
 
 build-infra-test:
   stage: test
+#Verificar com a ultima versao disponivel do docker e docker:dind
   image: docker:20.10.16
   services:
    - docker:20.10.16-dind
@@ -19,6 +20,7 @@ build-infra-test:
     - export TF_VAR_compartment_id=$OCI_COMPARTMENT_OCID
     - export TF_VAR_region=$OCI_REGION
     - ls
+# Verificar se reamente está pegando a pasta terraform dentro do projeto
     - |
       docker run \
       -v ~/.oci:/root/.oci \
