@@ -23,7 +23,7 @@ build-infra-test:
     - |
       docker run \
       -v ~/.oci:/root/.oci \
-      -v $PWD/terraform:/app \
+      -v $PWD/terraform/modules/compute_instance:/app \
       -v ~/.ssh:/root/.ssh \
       -w /app \
       hashicorp/terraform:light init
