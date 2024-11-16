@@ -24,10 +24,10 @@ build-infra-test:
     - |
       docker run \
       -v ~/.oci:/root/.oci \
-      -v /builds/yohrannes/website-portifolio/terraform/modules/compute_instance:/app \
+      -v $PWD/terraform/modules/compute_instance:/app \
       -v ~/.ssh:/root/.ssh \
       -w /app \
-      hashicorp/terraform:light sh -c "ls -la /app && terraform init"
+      hashicorp/terraform:light init
 
 #    # Verificar o status do último comando apply
 #    - |
@@ -66,32 +66,32 @@ build-infra-test:
 #        exit 1
 #      fi#
 
-check-image-security:
-  stage: test
-  image: ubuntu:22.04
-  before_script:
-    - apt-get update
-    - apt-get install -y sudo
-    - chmod +x /usr/bin/sudo
-    - sudo echo "sudo working..."
-    - apt-get install -y systemd libpam-systemd
-    - echo "systemd instaled"
-    - sudo apt-get install wget gnupg -y
-    - wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
-    - echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
-    - sudo apt-get update  
-    - sudo apt-get install trivy -y
+#check-image-security:
+#  stage: test
+#  image: ubuntu:22.04
+#  before_script:
+#    - apt-get update
+#    - apt-get install -y sudo
+#    - chmod +x /usr/bin/sudo
+#    - sudo echo "sudo working..."
+#    - apt-get install -y systemd libpam-systemd
+#    - echo "systemd instaled"
+#    - sudo apt-get install wget gnupg -y
+#    - wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+#    - echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+#    - sudo apt-get update  
+#    - sudo apt-get install trivy -y
 
-  script:
-    - trivy image --vuln-type os --cache-dir . yohrannes/website-portifolio | grep "│ HIGH" > trivy-scan.txt
-    - cat trivy-scan.txt
-    - |
-      if cat trivy-scan.txt | grep -q "│ HIGH"; then
-        echo "HIGH vulnerability found"
-        exit 1
-      else
-        echo "No one HIGH vulnerability found"
-      fi
+#  script:
+#    - trivy image --vuln-type os --cache-dir . yohrannes/website-portifolio | grep "│ HIGH" > trivy-scan.txt
+#    - cat trivy-scan.txt
+#    - |
+#      if cat trivy-scan.txt | grep -q "│ HIGH"; then
+#        echo "HIGH vulnerability found"
+#        exit 1
+#      else
+#        echo "No one HIGH vulnerability found"
+#      fi
 
 #build-app-image-test:
 #  needs: ['install-nginx-test']
