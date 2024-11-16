@@ -27,7 +27,7 @@ build-infra-test:
       -v /builds/yohrannes/website-portifolio/terraform/modules/compute_instance:/app \
       -v ~/.ssh:/root/.ssh \
       -w /app \
-      hashicorp/terraform:light init
+      hashicorp/terraform:light sh -c "ls -la /app && terraform init"
 
 #    # Verificar o status do último comando apply
 #    - |
