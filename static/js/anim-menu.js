@@ -134,7 +134,7 @@ function clickHandsOnProjects(){
   }
 
 //ACHIEVEMENTS AND CERTIFICATIONS
-var achievementsandcertificationsmenu = [achievementsandcertifications1, achievementsandcertifications2, achievementsandcertifications3, gcpcert, devcert, devopscicdcert, k8sdockercert]
+var achievementsandcertificationsmenu = [achievementsandcertifications1, achievementsandcertifications2, achievementsandcertifications3, gcpcert, devcert, devopscicdcert, k8sdockercert, monitoringcert]
 
 function clickAchievementsAndCertifications() {
   var currentmenu = [menuachievementsandcertifications, achievementsandcertifications1, achievementsandcertifications2, achievementsandcertifications3];
@@ -159,6 +159,11 @@ function clickAchievementsAndCertifications() {
   function clickK8sDockerCert(){
   var currentmenu = [kubernetesdockercertifications1, kubernetesdockercertifications2, kubernetesdockercertifications3,  menukubernetesdockercertifications];
   handleClick(achievementsandcertificationsmenu, currentmenu, k8sdockercert);
+  }
+
+  function clickMonitCert(){
+    var currentmenu = [monitoringcertifications1, monitoringcertifications2, monitoringcertifications3, menumonitoringcertifications];
+    handleClick(achievementsandcertificationsmenu, currentmenu, monitoringcert);
   }
   
 //ABOUT ME MENU
