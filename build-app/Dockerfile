@@ -6,22 +6,21 @@ RUN apk update
 RUN apk upgrade
 
 # Installing useful programs
-RUN apk add --upgrade nano
+RUN apk add --upgrade --no-cache nano
 
 #Provide application content
 RUN mkdir /root/website-portifolio
 COPY . /root/website-portifolio
-RUN apk add --upgrade git
-#RUN git clone https://github.com/yohrannes/website-portifolio.git
+RUN apk add --upgrade --no-cache git
 
 # Installing python and flask
 ENV PYTHONUNBUFFERED=1
-RUN apk add --update python3 py3-pip
-RUN apk add --upgrade python3 py3-pip
+RUN apk add --update python3 --no-cache py3-pip
+RUN apk add --upgrade python3 --no-cache py3-pip
 RUN ln -sf python3 /usr/bin/python
 
-RUN apk add py3-flask py3-requests
-RUN apk add --upgrade nano
+RUN apk add --no-cache py3-flask py3-requests
+RUN apk add --upgrade --no-cache nano
 RUN set FLASK_ENV=development
 EXPOSE 5000
 
