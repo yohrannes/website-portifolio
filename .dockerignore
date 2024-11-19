@@ -1,5 +1,5 @@
 terraform
 venv
 kubernetes
-.git
 nginx-conf
+.dist
