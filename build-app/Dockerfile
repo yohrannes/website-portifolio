@@ -1,4 +1,4 @@
-FROM arm64v8/alpine
+#FROM arm64v8/alpine
 FROM alpine
 WORKDIR /root
 # Upgrading system
