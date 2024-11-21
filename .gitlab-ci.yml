@@ -27,7 +27,7 @@ build-infra-test:
       -v $PWD/terraform/modules/compute_instance:/app \
       -v ~/.ssh:/root/.ssh \
       -w /app \
-      --entrypoint "" hashicorp/terraform:light ls
+      --entrypoint "" hashicorp/terraform:light ls /app
 
 #    # Verificar o status do último comando apply
 #    - |
