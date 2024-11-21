@@ -24,8 +24,8 @@ build-infra-test:
       docker run -d --name terraform-container \
       -w /app \
       --entrypoint "" hashicorp/terraform:light sleep 3600
-    - docker cp $CI_PROJECT_DIR/terraform/modules/compute_instance terraform-container:/app
-    - docker cp /root/.oci terraform-container:/root/.oci
+    - docker cp $CI_PROJECT_DIR/terraform/modules/compute_instance/* terraform-container:/app
+    - docker cp /root/.oci/* terraform-container:/root/.oci
     - |
       docker exec terraform-container sh -c \
       "pwd && ls -la /app && ls -la /root/.oci"
