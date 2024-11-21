@@ -8,28 +8,21 @@ build-infra-test:
   stage: test
   image: docker:27.3.1
   services:
-   - docker:27.3.1-dind
+    - docker:27.3.1-dind
+    - hashicorp/terraform:light
   variables:
     DOCKER_DRIVER: overlay2
-  script:
+  before_script:
     - mkdir -p /root/.oci
     - echo "$OCI_CONFIG_BASE64" | base64 -d > /root/.oci/config
     - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > /root/.oci/oci_api_key.pem
     - chmod 600 /root/.oci/oci_api_key.pem
+  script:
     - export TF_VAR_compartment_id=$OCI_COMPARTMENT_OCID
     - export TF_VAR_region=$OCI_REGION
-    - ls terraform/modules/compute_instance
-    - echo $PWD/terraform/modules/compute_instance
-# Verificar se reamente está pegando a pasta terraform dentro do projeto
-    - |
-      docker run \
-      -v ~/.oci:/root/.oci \
-      -v "$(pwd)/terraform/modules/compute_instance:/app" \
-      -v ~/.ssh:/root/.ssh \
-      -w /app \
-      --entrypoint "" \
-      hashicorp/terraform:light \
-      sh -c "pwd && ls -la /app && pwd && ls"
+    - terraform init
+    - terraform validate
+    - terraform plan
 
 #    # Verificar o status do último comando apply
 #    - |
