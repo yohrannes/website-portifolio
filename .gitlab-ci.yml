@@ -18,7 +18,7 @@ build-infra-test:
     - chmod 600 /root/.oci/oci_api_key.pem
     - export TF_VAR_compartment_id=$OCI_COMPARTMENT_OCID
     - export TF_VAR_region=$OCI_REGION
-    - pwd && ls -la /app && ls -la / && ls -la /root
+    - pwd && ls -la / && ls -la /root
     - |
       docker run \
       -v /root/.oci:/root/.oci \
