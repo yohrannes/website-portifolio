@@ -6,12 +6,16 @@ stages:
 
 build-infra-test:
   stage: test
-  image: docker:27.3.1
-  services:
-    - docker:27.3.1-dind
-    - hashicorp/terraform:light
-  variables:
-    DOCKER_DRIVER: overlay2
+  image:
+    name: registry.gitlab.com/gitlab-org/gitlab-build-images:terraform
+    entrypoint:
+      - '/usr/bin/env'
+      - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:bin'
+#  services:
+#    - docker:27.3.1-dind
+#    - hashicorp/terraform:light
+#  variables:
+#    DOCKER_DRIVER: overlay2
   before_script:
     - mkdir -p /root/.oci
     - echo "$OCI_CONFIG_BASE64" | base64 -d > /root/.oci/config
