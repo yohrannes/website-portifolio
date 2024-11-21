@@ -6,29 +6,31 @@ stages:
 
 build-infra-test:
   stage: test
-  image:
-    name: docker:27.3.1
-    entrypoint:
-      - '/usr/bin/env'
-      - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:bin'
+  image: docker:27.3.1
   services:
     - docker:27.3.1-dind
-    - registry.gitlab.com/gitlab-org/gitlab-build-images:terraform
   variables:
     DOCKER_DRIVER: overlay2
-  before_script:
-    - whoami  # Check current user
-    - sudo mkdir -p /root/.oci || mkdir -p /root/.oci  # Try with sudo or without
-    - sudo chown -R $(whoami):$(whoami) /root/.oci  # Ensure proper ownership
+  script:
+    - mkdir -p /root/.oci
     - echo "$OCI_CONFIG_BASE64" | base64 -d > /root/.oci/config
     - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > /root/.oci/oci_api_key.pem
     - chmod 600 /root/.oci/oci_api_key.pem
-  script:
+    - chmod 777 terraform/modules/compute_instance
     - export TF_VAR_compartment_id=$OCI_COMPARTMENT_OCID
-    - export TF_VAR_region=$OCI_REGION
-    - terraform init
-    - terraform validate
-    - terraform plan
+    - export TF_VAR_region=$OCI_REGION  
+    - ls terraform/modules/compute_instance
+    - echo "Actual path $CI_PROJECT_DIR"
+    - |
+      docker run \
+      -v /root/.oci:/root/.oci \
+      -v "$CI_PROJECT_DIR/terraform/modules/compute_instance:/app" \
+      -v ~/.ssh:/root/.ssh \
+      -w /app \
+      --entrypoint "" \
+      hashicorp/terraform:light \
+      sh -c "pwd && ls -la /app && terraform init"
+
 
 #    # Verificar o status do último comando apply
 #    - |
