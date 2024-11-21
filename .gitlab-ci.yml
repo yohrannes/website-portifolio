@@ -17,7 +17,9 @@ build-infra-test:
 #  variables:
 #    DOCKER_DRIVER: overlay2
   before_script:
-    - mkdir -p /root/.oci
+    - whoami  # Check current user
+    - sudo mkdir -p /root/.oci || mkdir -p /root/.oci  # Try with sudo or without
+    - sudo chown -R $(whoami):$(whoami) /root/.oci  # Ensure proper ownership
     - echo "$OCI_CONFIG_BASE64" | base64 -d > /root/.oci/config
     - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > /root/.oci/oci_api_key.pem
     - chmod 600 /root/.oci/oci_api_key.pem
