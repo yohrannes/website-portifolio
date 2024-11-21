@@ -21,6 +21,7 @@ build-infra-test:
     - export TF_VAR_region=$OCI_REGION  
     - ls terraform/modules/compute_instance
     - echo "Actual path $CI_PROJECT_DIR"
+    - docker inspect hashicorp/terraform:light | grep 'Mounts'
     - |
       docker run \
       -v /root/.oci:/root/.oci \
