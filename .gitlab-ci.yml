@@ -24,7 +24,7 @@ build-infra-test:
     - |
       docker run \
       -v /root/.oci:/root/.oci \
-      -v "$CI_PROJECT_DIR/terraform/modules/compute_instance:/app" \
+      --mount type=bind,source="$CI_PROJECT_DIR/terraform/modules/compute_instance",target=/app \
       -v ~/.ssh:/root/.ssh \
       -w /app \
       --entrypoint "" \
