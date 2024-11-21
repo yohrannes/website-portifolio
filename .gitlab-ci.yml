@@ -28,7 +28,7 @@ build-infra-test:
     - |
       docker exec terraform-container sh -c \
       "pwd && ls -la /app && ls -la /root/.oci"
-    - docker exec terraform-container terraform init
+    - docker exec -w /app terraform-container terraform init ### See if -w /app works fine
     - docker stop terraform-container
     - docker rm terraform-container
 
