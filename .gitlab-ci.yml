@@ -33,7 +33,7 @@ build-infra-test:
   script:
     - docker exec -w /app terraform-container terraform init
     - docker exec -w /app terraform-container terraform plan -out plan -no-color | grep -E "Plan:|^[[:space:]]+[a-z]+[[:space:]]+[\"a-zA-Z0-9_-]+$"
-    - docker exec -w /app terraform-container terraform apply --auto-approve plan -no-color | grep -E "Plan:|^[[:space:]]+[a-z]+[[:space:]]+[\"a-zA-Z0-9_-]+$"
+    - docker exec -w /app terraform-container terraform apply --auto-approve plan
 #    - docker exec -w /app terraform-container terraform destroy --auto-approve
     - docker stop terraform-container
     - docker rm terraform-container
