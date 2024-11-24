@@ -24,16 +24,16 @@ build-infra-test:
     - |
       docker run -d --name terraform-container \
       --entrypoint "" hashicorp/terraform:light sleep 3600
-    - docker cp $CI_PROJECT_DIR/terraform/modules/compute_instance terraform-container:/app
-    - docker cp /root/.oci terraform-container:/root/.oci
-    - docker cp /root/.ssh terraform-container:/root/.ssh
+    - docker cp $CI_PROJECT_DIR/terraform/modules/compute_instance terraform-container:/app > /dev/null 2>&1
+    - docker cp /root/.oci terraform-container:/root/.oci > /dev/null 2>&1
+    - docker cp /root/.ssh terraform-container:/root/.ssh > /dev/null 2>&1
 #    - |
 #      docker exec terraform-container sh -c \
 #      "pwd && ls -la /app && ls -la /root/.oci"
   script:
     - docker exec -w /app terraform-container terraform init
-    - docker exec -w /app terraform-container terraform plan -out plan -no-color | grep -E "Plan:|^[[:space:]]+[a-z]+[[:space:]]+[\"a-zA-Z0-9_-]+$"
-    - docker exec -w /app terraform-container terraform apply --auto-approve plan | grep -o -E 'oci[^:]*:'
+    - docker exec -w /app terraform-container terraform plan -out plan -no-color | grep -E "Plan:"
+    - docker exec -w /app terraform-container terraform apply --auto-approve plan | grep -o -E 'oci[^.]*.'
 #    - docker exec -w /app terraform-container terraform destroy --auto-approve
     - docker exec -w /app terraform-container terraform output -json > terraform-output.json
     - docker exec -w /app terraform-container ls -la
@@ -46,10 +46,17 @@ build-infra-test:
         echo "INFRA PROVISION FAILED"
         exit 1
       fi
+  artifacts:
+    paths:
+      - /root/.ssh/id_rsa.pub
 
-#install-docker-on-ec2-test:
-#  needs: ['build-infra-test']
-
+install-docker-on-ec2-test:
+  needs: ['build-infra-test']
+  dependencies:
+    - build-infra-test
+  script:
+    - ls -la /root/.ssh
+    - ssh -i /root/.ssh/id_rsa ubuntu@0.0.0.0
 # 1 - Install docker on ec2
 # 2 - If job failed -> Destroy infra
 
