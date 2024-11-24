@@ -36,7 +36,7 @@ build-infra-test:
     - docker exec -w /app terraform-container terraform apply --auto-approve plan
 #    - docker exec -w /app terraform-container terraform destroy --auto-approve
     - docker exec -w /app terraform-container terraform output -json > terraform-output.json
-    - docker exec -w /app terraform-container cat terraform-output.json
+    - docker exec -w /app terraform-container ls -la
     - docker stop terraform-container
     - docker rm terraform-container
     - |
