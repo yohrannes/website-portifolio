@@ -11,7 +11,7 @@ build-infra-test:
     - docker:27.3.1-dind
   variables:
     DOCKER_DRIVER: overlay2
-  script:
+  before_script:
     - mkdir -p /root/.oci
     - echo "$OCI_CONFIG_BASE64" | base64 -d > /root/.oci/config
     - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > /root/.oci/oci_api_key.pem
@@ -25,13 +25,16 @@ build-infra-test:
       --entrypoint "" hashicorp/terraform:light sleep 3600
     - docker cp $CI_PROJECT_DIR/terraform/modules/compute_instance terraform-container:/app
     - docker cp /root/.oci terraform-container:/root/.oci
-    - |
-      docker exec terraform-container sh -c \
-      "pwd && ls -la /app && ls -la /root/.oci"
+#    - |
+#      docker exec terraform-container sh -c \
+#      "pwd && ls -la /app && ls -la /root/.oci"
+  script:
     - docker exec -w /app terraform-container terraform init
+    - docker exec -w /app terraform-container terraform plan -out plan
+    - docker exec -w /app terraform-container terraform apply plan --auto-approve
+    - docker exec -w /app terraform-container terraform destroy --auto-approve
     - docker stop terraform-container
     - docker rm terraform-container
-
 
 #    # Verificar o status do último comando apply
 #    - |
@@ -41,7 +44,6 @@ build-infra-test:
 #        echo "Falha ao provisionar ou configurar a infraestrutura."
 #        exit 1
 #     fi
-
 
 #install-docker-on-ec2-test:
 # 1 - Install docker on ec2
