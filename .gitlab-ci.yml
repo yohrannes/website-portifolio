@@ -25,6 +25,11 @@ build-infra-test:
       --entrypoint "" hashicorp/terraform:light sleep 3600
     - docker cp $CI_PROJECT_DIR/terraform/modules/compute_instance terraform-container:/app
     - docker cp /root/.oci terraform-container:/root/.oci
+    - apk add --no-cache openssh
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PUBLIC_KEY" > ~/.ssh/id_rsa.pub
+    - chmod 644 ~/.ssh/id_rsa.pub
+    - ls -la ~/.ssh
 #    - |
 #      docker exec terraform-container sh -c \
 #      "pwd && ls -la /app && ls -la /root/.oci"
