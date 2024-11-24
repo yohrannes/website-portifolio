@@ -46,8 +46,8 @@ build-infra-test:
         exit 1
       fi
 
-install-docker-on-ec2-test:
-  needs: ['build-infra-test']
+#install-docker-on-ec2-test:
+#  needs: ['build-infra-test']
 
 # 1 - Install docker on ec2
 # 2 - If job failed -> Destroy infra
