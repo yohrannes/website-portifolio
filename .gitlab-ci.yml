@@ -30,9 +30,9 @@ build-infra-test:
     - echo "$SSH_PUBLIC_KEY" > ~/.ssh/id_rsa.pub
     - chmod 644 ~/.ssh/id_rsa.pub
     - ls -la ~/.ssh
-#    - |
-#      docker exec terraform-container sh -c \
-#      "pwd && ls -la /app && ls -la /root/.oci"
+    - |
+      docker exec terraform-container sh -c \
+      "pwd && ls -la /app && ls -la /root/.oci"
   script:
     - docker exec -w /app terraform-container terraform init
     - docker exec -w /app terraform-container terraform plan -out plan
