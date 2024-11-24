@@ -35,9 +35,9 @@ build-infra-test:
     - docker exec -w /app terraform-container terraform plan -out plan -no-color | grep -E "Plan:|^[[:space:]]+[a-z]+[[:space:]]+[\"a-zA-Z0-9_-]+$"
     - docker exec -w /app terraform-container terraform apply --auto-approve plan
 #    - docker exec -w /app terraform-container terraform destroy --auto-approve
+    - docker exec -w /app terraform-container terraform output -json > terraform-output.json
     - docker stop terraform-container
     - docker rm terraform-container
-    - docker exec -w /app terraform-container terraform output -json > terraform-output.json
     - |
       if [ $? -eq 0 ]; then
         echo "INFRA PROVISION COMPLETED"
