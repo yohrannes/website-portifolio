@@ -1,5 +1,4 @@
 stages:
-  #- deploy
   - test
   - build
   - deploy
@@ -20,7 +19,7 @@ build-infra-test:
     - export TF_VAR_region=$OCI_REGION
     - apk add --no-cache openssh
     - mkdir -p ~/.ssh
-    - echo "$SSH_PUBLIC_KEY" | base64 -d > ~/.ssh/id_rsa.pub
+    - (echo "$SSH_PUBLIC_KEY" | base64 -d > ~/.ssh/id_rsa.pub 2>/dev/null)
     - chmod 644 ~/.ssh/id_rsa.pub
     - |
       docker run -d --name terraform-container \
@@ -28,27 +27,28 @@ build-infra-test:
     - docker cp $CI_PROJECT_DIR/terraform/modules/compute_instance terraform-container:/app
     - docker cp /root/.oci terraform-container:/root/.oci
     - docker cp /root/.ssh terraform-container:/root/.ssh
-    - |
-      docker exec terraform-container sh -c \
-      "pwd && ls -la /app && ls -la /root/.oci"
+#    - |
+#      docker exec terraform-container sh -c \
+#      "pwd && ls -la /app && ls -la /root/.oci"
   script:
     - docker exec -w /app terraform-container terraform init
-    - docker exec -w /app terraform-container terraform plan -out plan
-    - docker exec -w /app terraform-container terraform apply --auto-approve plan
-    - docker exec -w /app terraform-container terraform destroy --auto-approve
+    - docker exec -w /app terraform-container terraform plan -out plan -no-color | grep -E "Plan:|^[[:space:]]+[a-z]+[[:space:]]+[\"a-zA-Z0-9_-]+$"
+    - docker exec -w /app terraform-container terraform apply --auto-approve plan -no-color | grep -E "Plan:|^[[:space:]]+[a-z]+[[:space:]]+[\"a-zA-Z0-9_-]+$"
+#    - docker exec -w /app terraform-container terraform destroy --auto-approve
     - docker stop terraform-container
     - docker rm terraform-container
+    - docker exec -w /app terraform-container terraform output -json > terraform-output.json
     - |
       if [ $? -eq 0 ]; then
-        echo "Infraestrutura provisionada e configurada com sucesso."
+        echo "INFRA PROVISION COMPLETED"
       else
-        echo "Falha ao provisionar ou configurar a infraestrutura."
-        docker stop terraform-container
-        docker rm terraform-container
+        echo "INFRA PROVISION FAILED"
         exit 1
       fi
 
-#install-docker-on-ec2-test:
+install-docker-on-ec2-test:
+  needs: ['build-infra-test']
+
 # 1 - Install docker on ec2
 # 2 - If job failed -> Destroy infra
 
