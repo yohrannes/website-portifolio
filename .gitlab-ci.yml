@@ -35,7 +35,7 @@ build-infra-test:
     - docker exec -w /app terraform-container terraform init
     - docker exec -w /app terraform-container terraform plan -out plan
     - docker exec -w /app terraform-container terraform apply plan --auto-approve
-#    - docker exec -w /app terraform-container terraform destroy --auto-approve
+    - docker exec -w /app terraform-container terraform destroy --auto-approve
     - docker stop terraform-container
     - docker rm terraform-container
     - |
