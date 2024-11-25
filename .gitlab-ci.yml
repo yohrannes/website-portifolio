@@ -36,7 +36,7 @@ build-infra-test:
     - docker exec -w /app terraform-container terraform init
     - docker exec -w /app terraform-container terraform plan -out plan -no-color | grep -E "Plan:"
     - docker exec -w /app terraform-container terraform apply --auto-approve plan | grep -o -E 'oci[^.]*.'
-#    - docker exec -w /app terraform-container terraform destroy --auto-approve
+    - docker exec -w /app terraform-container terraform destroy --auto-approve
     - docker exec -w /app terraform-container terraform output -json > terraform-output.json
     - docker exec -w /app terraform-container ls -la
     - docker stop terraform-container
