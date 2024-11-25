@@ -21,6 +21,8 @@ build-infra-test:
     - mkdir -p ~/.ssh
     - (echo "$SSH_PUBLIC_KEY" | base64 -d > ~/.ssh/id_rsa.pub 2>/dev/null)
     - chmod 644 ~/.ssh/id_rsa.pub
+    - mkdir -p $CI_PROJECT_DIR/ssh_artifacts
+    - cp ~/.ssh/id_rsa.pub $CI_PROJECT_DIR/ssh_artifacts/id_rsa.pub
     - |
       docker run -d --name terraform-container \
       --entrypoint "" hashicorp/terraform:light sleep 3600
@@ -48,14 +50,17 @@ build-infra-test:
       fi
   artifacts:
     paths:
-      - /root/.ssh/id_rsa.pub
+      - ssh_artifacts/id_rsa.pub
 
 install-docker-on-ec2-test:
   needs: ['build-infra-test']
   dependencies:
     - build-infra-test
   script:
-    - ls -la /root/.ssh
+    - mkdir -p ~/.ssh
+    - cp ssh_artifacts/id_rsa.pub ~/.ssh/id_rsa.pub
+    - chmod 644 ~/.ssh/id_rsa.pub
+    - ls -la ~/.ssh
     - ssh -i /root/.ssh/id_rsa ubuntu@0.0.0.0
 # 1 - Install docker on ec2
 # 2 - If job failed -> Destroy infra
