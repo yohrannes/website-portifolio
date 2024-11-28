@@ -27,8 +27,6 @@ build-infra-test:
     - mkdir -p ~/.ssh
     - (echo "$SSH_PUBLIC_KEY" | base64 -d > ~/.ssh/id_rsa.pub 2>/dev/null)
     - chmod 644 ~/.ssh/id_rsa.pub
-    - mkdir -p $CI_PROJECT_DIR/ssh_artifacts
-    - cp ~/.ssh/id_rsa.pub $CI_PROJECT_DIR/ssh_artifacts/id_rsa.pub
 
     - |
       docker run -d --name terraform-container \
@@ -56,9 +54,6 @@ build-infra-test:
         echo "INFRA PROVISION FAILED"
         exit 1
       fi
-  artifacts:
-    paths:
-      - ssh_artifacts/id_rsa.pub
 
 check-docker-instalation:
   stage: test
@@ -71,8 +66,8 @@ check-docker-instalation:
     DOCKER_DRIVER: overlay2
   script:
     - apk add --no-cache openssh
-    - cat ssh_artifacts/id_rsa.pub
-    - cp ssh_artifacts/id_rsa.pub ~/.ssh/id_rsa.pub
+    - mkdir -p ~/.ssh
+    - (echo "$SSH_PUBLIC_KEY" | base64 -d > ~/.ssh/id_rsa.pub 2>/dev/null)
     - chmod 644 ~/.ssh/id_rsa.pub
     - ls -la ~/.ssh
     - ssh -i /root/.ssh/id_rsa ubuntu@0.0.0.0
