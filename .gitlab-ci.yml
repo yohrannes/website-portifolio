@@ -11,6 +11,11 @@ build-infra-test:
   variables:
     DOCKER_DRIVER: overlay2
   before_script:
+    #Autenticate with aws
+    - mkdir -p /root/.aws
+    - export AWS_ACCESS_KEY_ID="$AWS_ACCESS_KEY_ID"
+    - export AWS_SECRET_ACCESS_KEY="$AWS_SECRET_ACCESS_KEY"
+    - echo "$AWS_CONFIG_BASE64" | base64 -d > ~/.aws/config
     #Autencicate with OCI
     - mkdir -p /root/.oci
     - echo "$OCI_CONFIG_BASE64" | base64 -d > /root/.oci/config
