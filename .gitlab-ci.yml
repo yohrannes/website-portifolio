@@ -30,6 +30,8 @@ build-infra-test:
 
     - |
       docker run -d --name terraform-container \
+      -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
+      -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
       --entrypoint "" hashicorp/terraform:light sleep 3600
     - docker cp $CI_PROJECT_DIR/terraform/modules/instance_oracle terraform-container:/app > /dev/null 2>&1
     - docker cp /root/.oci terraform-container:/root/.oci > /dev/null 2>&1
