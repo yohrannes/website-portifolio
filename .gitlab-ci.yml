@@ -71,7 +71,7 @@ check-docker-instalation:
     DOCKER_DRIVER: overlay2
   script:
     - apk add --no-cache openssh
-    - mkdir -p ~/.ssh
+    - cat ssh_artifacts/id_rsa.pub
     - cp ssh_artifacts/id_rsa.pub ~/.ssh/id_rsa.pub
     - chmod 644 ~/.ssh/id_rsa.pub
     - ls -la ~/.ssh
