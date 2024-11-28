@@ -45,11 +45,21 @@ terraform/.terraform.lock.hcl
 *.key
 plan
 
-terraform/modules/compute_instance/*.tfstate*
-terraform/modules/compute_instance/*.tfstate.*
-.terraform.d
-terraform/modules/compute_instance/.terraform.d
-terraform/modules/compute_instance/plan
 
+.terraform.d
+terraform/modules/instance_oracle/.terraform.d
+terraform/modules/instance_oracle/plan
+terraform/modules/instance_oracle/*.tfstate*
+terraform/modules/instance_oracle/*.tfstate.*
+
+terraform/modules/bucket_oracle/.terraform.d
+terraform/modules/bucket_oracle_oracle/plan
+terraform/modules/bucket_oracle/*.tfstate*
+terraform/modules/bucket_oracle/*.tfstate.*
+
+terraform/modules/cluster_oracle/.terraform.d
+terraform/modules/cluster_oracle_oracle/plan
+terraform/modules/cluster_oracle/*.tfstate*
+terraform/modules/cluster_oracle/*.tfstate.*
 # Ignore package instalation
 venv
