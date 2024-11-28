@@ -46,9 +46,7 @@ build-infra-test:
     - docker exec -w /app terraform-container terraform init
     - docker exec -w /app terraform-container terraform plan -out plan -no-color | grep -E "Plan:"
     - docker exec -w /app terraform-container terraform apply --auto-approve plan | grep -o -E 'oci[^.]*.'
-    - docker exec -w /app terraform-container terraform destroy --auto-approve
     - docker exec -w /app terraform-container terraform output -json > terraform-output.json
-    - docker exec -w /app terraform-container ls -la
     - docker stop terraform-container
     - docker rm terraform-container
     - |
@@ -62,11 +60,17 @@ build-infra-test:
     paths:
       - ssh_artifacts/id_rsa.pub
 
-install-docker-on-ec2-test:
-  needs: ['build-infra-test']
+check-docker-instalation:
+  stage: test
   dependencies:
     - build-infra-test
+  image: docker:27.3.1
+  services:
+    - docker:27.3.1-dind
+  variables:
+    DOCKER_DRIVER: overlay2
   script:
+    - apk add --no-cache openssh
     - mkdir -p ~/.ssh
     - cp ssh_artifacts/id_rsa.pub ~/.ssh/id_rsa.pub
     - chmod 644 ~/.ssh/id_rsa.pub
