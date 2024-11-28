@@ -1,0 +1,6 @@
+docker run -it \
+-v ~/.oci:/root/.oci \
+-v $PWD/modules/bucket_oracle:/app \
+-v ~/.ssh:/root/.ssh \
+-w /app \
+--entrypoint "" hashicorp/terraform:light sh
