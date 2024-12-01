@@ -2,6 +2,12 @@ docker run -it \
 -v ~/.oci:/root/.oci \
 -v ~/.aws/:/root/.aws \
 -v ~/.ssh/:/root/.ssh \
--v $PWD/modules/instance_oracle:/app \
+-v $PWD:/app \
 -w /app \
 --entrypoint "" hashicorp/terraform:light sh
+
+mv backend.tf /modules/instance_oracle/.
+terraform init
+terraform apply -target=module.bucket_aws -auto-approve
+mv modules/instance_oracle/backend.tf .
+terraform init
