@@ -1,6 +1,6 @@
 @charset "UTF-8";
 
-@media print { /* IMPRESSÃO */
+@media print { /* PRINT */
     * {
         font-family: 'Courier New', Courier, monospace;
     }
