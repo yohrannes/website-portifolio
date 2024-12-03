@@ -39,9 +39,9 @@ build-infra-test:
     - docker cp $CI_PROJECT_DIR/terraform terraform-container:/app > /dev/null 2>&1
     - docker cp /root/.oci terraform-container:/root/.oci > /dev/null 2>&1
     - docker cp /root/.ssh terraform-container:/root/.ssh > /dev/null 2>&1
-#    - |
-#      docker exec terraform-container sh -c \
-#      "pwd && ls -la /app && ls -la /root/.oci"
+    - |
+      docker exec terraform-container sh -c \
+      "pwd && ls -la /app && ls -la /root/.oci"
   script:
     - docker exec -w /app terraform-container terraform init -reconfigure
     
