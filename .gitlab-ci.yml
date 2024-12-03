@@ -29,6 +29,7 @@ build-infra-test:
     - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa.pub 2>/dev/null)
     - chmod 644 ~/.ssh/id_rsa.pub
 
+    # Run terraform-container
     - |
       docker run -d --name terraform-container \
       -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
@@ -43,6 +44,15 @@ build-infra-test:
 #      "pwd && ls -la /app && ls -la /root/.oci"
   script:
     - docker exec -w /app terraform-container terraform init
+
+    # Verify if exist bucket (bucket with tfstate) and remove it from terraform management
+    - |
+      if docker exec -w /app terraform state list | grep -q "module.bucket_aws.aws_s3_bucket.my_bucket"; then
+        docker exec -w /app terraform state rm module.bucket_aws.aws_s3_bucket.my_bucket
+      else
+        exit 0
+      fi
+
     - docker exec -w /app terraform-container terraform plan -out plan -no-color | grep -E "Plan:"
     - docker exec -w /app terraform-container terraform apply --auto-approve plan | grep -o -E 'oci[^.]*.'
     - docker stop terraform-container
