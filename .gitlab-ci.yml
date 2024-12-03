@@ -43,7 +43,7 @@ build-infra-test:
 #      docker exec terraform-container sh -c \
 #      "pwd && ls -la /app && ls -la /root/.oci"
   script:
-    - docker exec -w /app terraform-container terraform init
+    - docker exec -w /app terraform-container terraform init -reconfigure
     # Verify if exist bucket (bucket with tfstate) and remove it from terraform management
     - |
       if docker exec -w /app terraform-container terraform state list | grep -q "module.bucket_aws.aws_s3_bucket.my_bucket"; then
