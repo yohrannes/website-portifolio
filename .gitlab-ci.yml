@@ -25,10 +25,10 @@ build-infra-test:
     # Prepare SSH files to enable ssh conection with instance
     - apk add --no-cache openssh
     - mkdir -p ~/.ssh
-    #- (echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa 2>/dev/null)
-    - (echo "$SSH_PRIVATE_KEY_BASE64" > ~/.ssh/id_rsa 2>/dev/null)
-    #- (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa.pub 2>/dev/null)
-    - (echo "$SSH_PUBLIC_KEY_BASE64" > ~/.ssh/id_rsa.pub 2>/dev/null)
+    - (echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa 2>/dev/null)
+    #- (echo "$SSH_PRIVATE_KEY_BASE64" > ~/.ssh/id_rsa 2>/dev/null)
+    - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa.pub 2>/dev/null)
+    #- (echo "$SSH_PUBLIC_KEY_BASE64" > ~/.ssh/id_rsa.pub 2>/dev/null)
     - chmod 644 ~/.ssh/id_rsa.pub
 
     # Run terraform-container
@@ -40,10 +40,10 @@ build-infra-test:
       --entrypoint "" hashicorp/terraform:light sleep 3600
     - docker cp $CI_PROJECT_DIR/terraform terraform-container:/app > /dev/null 2>&1
     - docker cp /root/.oci terraform-container:/root/.oci > /dev/null 2>&1
-    - docker cp /root/.ssh terraform-container:/root/.ssh > /dev/null 2>&1
-    - |
-      docker exec terraform-container sh -c \
-      "pwd && ls -la /app && ls -la /root/.oci"
+    - docker cp /root/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
+    #- |
+    #  docker exec terraform-container sh -c \
+    #  "pwd && ls -la /app && ls -la /root/.oci"
   script:
     - docker exec -w /app terraform-container terraform init -reconfigure
     
@@ -64,7 +64,7 @@ build-infra-test:
         docker exec -w /app terraform-container terraform state rm module.bucket_aws.aws_s3_bucket.my_bucket
       fi
 
-    - docker exec -w /app terraform-container terraform apply --auto-approve plan | grep -o -E 'oci[^.]*.'
+    - docker exec -w /app terraform-container terraform apply plan | grep -o -E 'oci[^.]*.'
     - docker stop terraform-container
     - docker rm terraform-container
     - |
