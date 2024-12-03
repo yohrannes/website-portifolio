@@ -48,8 +48,6 @@ build-infra-test:
     - |
       if docker exec -w /app terraform-container terraform state list | grep -q "module.bucket_aws.aws_s3_bucket.my_bucket"; then
         docker exec -w /app terraform-container terraform state rm module.bucket_aws.aws_s3_bucket.my_bucket
-      else
-        exit 0
       fi
 
     - docker exec -w /app terraform-container terraform plan -out plan -no-color | grep -E "Plan:"
