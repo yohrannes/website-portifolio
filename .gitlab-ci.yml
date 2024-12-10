@@ -18,9 +18,19 @@ build-infra-test:
     - mkdir -p /root/.oci
     - echo "$OCI_CONFIG_BASE64" | base64 -d > /root/.oci/config
     - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > /root/.oci/oci_api_key.pem
+    - chmod 700 /root/.oci
     - chmod 600 /root/.oci/oci_api_key.pem
+    - chmod 600 /root/.oci/config
     - export TF_VAR_compartment_id=$OCI_COMPARTMENT_OCID
     - export TF_VAR_region=$OCI_REGION
+
+    #Autencicate with AWS
+    - mkdir -p /root/.aws
+    - echo "$AWS_CONFIG_BASE64" | base64 -d > /root/.aws/config
+    - echo "$AWS_CREDENTIALS_BASE64" | base64 -d > /root/.aws/credentials
+    - chmod 700 /root/.aws
+    - chmod 600 /root/.aws/credentials
+    - chmod 600 /root/.aws/config
 
     # Prepare SSH files to enable ssh conection with instance
     - apk add --no-cache openssh
@@ -32,17 +42,15 @@ build-infra-test:
     # Run terraform-container
     - |
       docker run -d --name terraform-container \
-      -e AWS_ACCESS_KEY_ID=$AWS_ACCESS_KEY_ID \
-      -e AWS_SECRET_ACCESS_KEY=$AWS_SECRET_ACCESS_KEY \
-      -e AWS_DEFAULT_REGION=us-east-1 \
       --entrypoint "" hashicorp/terraform:light sleep 3600
     - docker cp $CI_PROJECT_DIR/terraform terraform-container:/app > /dev/null 2>&1
     - docker cp /root/.oci terraform-container:/root/.oci > /dev/null 2>&1
+    - docker cp /root/.aws terraform-container:/root/.aws > /dev/null 2>&1
     - docker exec -w /app terraform-container mkdir /root/.ssh
     - docker cp /root/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
     #- |
     #  docker exec terraform-container sh -c \
-    #  "pwd && ls -la /app && ls -la /root/.oci"
+    #  "pwd && ls -la /app"
   script:
     - docker exec -w /app terraform-container terraform init -reconfigure
     
