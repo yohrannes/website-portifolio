@@ -98,7 +98,6 @@ check-docker-instalation:
   variables:
     DOCKER_DRIVER: overlay2
   script:
-    - source terraform_output.env
     - apk add --no-cache openssh
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
