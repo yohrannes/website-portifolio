@@ -12,7 +12,7 @@ build-infra-test:
     - docker:27.3.1-dind
   variables:
     DOCKER_DRIVER: overlay2
-    AWS_DEFAULT_REGION: "us-east-1"
+    AWS_DEFAULT_REGION: "us-east-1" #Check if that's really necessary
   before_script:
     #Autencicate with OCI
     - mkdir -p /root/.oci
@@ -98,9 +98,8 @@ check-docker-instalation:
     - chmod 644 ~/.ssh/id_rsa.pub
     - ls -la ~/.ssh
     - |
-      ssh -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP << EOF
+      ssh -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP
         echo "Conection sucessfull"
-        sudo docker --version
       EOF
 
 #install-nginx-on-ec2-test:
