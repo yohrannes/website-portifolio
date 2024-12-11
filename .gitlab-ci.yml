@@ -73,8 +73,8 @@ build-infra-test:
     #TERRAFORM APPLY
     - docker exec -w /app terraform-container terraform apply plan | grep -o -E 'oci[^.]*.'
     #EXPORT INSTANCE IP
+    - INSTANCE_PUBLIC_IP=$(docker exec -w /app terraform-container terraform output -raw instance_public_ip)
     - |
-      INSTANCE_PUBLIC_IP=$(docker exec -w /app terraform-container terraform output -raw instance_public_ip)
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --request PUT \
         --form "value=$INSTANCE_PUBLIC_IP" \
