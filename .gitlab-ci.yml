@@ -74,8 +74,7 @@ build-infra-test:
     - docker exec -w /app terraform-container terraform apply plan | grep -o -E 'oci[^.]*.'
     #EXPORT INSTANCE IP
     - |
-      echo "INSTANCE_PUBLIC_IP=$(docker exec -w /app terraform-container terraform output -raw instance_public_ip)" >> terraform_output.env
-    - |
+      INSTANCE_PUBLIC_IP=$(docker exec -w /app terraform-container terraform output -raw instance_public_ip)
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --request PUT \
         --form "value=$INSTANCE_PUBLIC_IP" \
@@ -99,10 +98,9 @@ check-docker-instalation:
     - chmod 644 ~/.ssh/id_rsa.pub
     - ls -la ~/.ssh
     - |
-      ssh-keyscan -H "$TF_INSTANCE_PUBLIC_IP" >> ~/.ssh/known_hosts
       ssh -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP << EOF
         echo "Conection sucessfull"
-        docker --version
+        sudo docker --version
       EOF
 
 #install-nginx-on-ec2-test:
