@@ -53,21 +53,37 @@ build-infra-test:
     #  "pwd && ls -la /app"
   script:
     - docker exec -w /app terraform-container terraform init -reconfigure
-    - docker exec -w /app terraform-container terraform refresh
     - |
-      docker exec -w /app terraform-container terraform plan -detailed-exitcode -target=module.instance_oracle -out=plan
-      PLAN_EXIT_CODE=$?
-      
-      if [ $PLAN_EXIT_CODE -eq 0 ]; then
-        echo "Infrastructure is up to date. No changes needed."
-        exit 0
-      elif [ $PLAN_EXIT_CODE -eq 2 ]; then
-        echo "Changes detected. Applying plan..."
-        docker exec -w /app terraform-container terraform apply -auto-approve plan | grep -o -E 'oci[^.]*.'
-      else
-        echo "Terraform plan failed"
-        exit 1
-      fi
+      docker exec -w /app terraform-container sh -c "
+        terraform plan -detailed-exitcode -target=module.instance_oracle -out=plan
+        PLAN_EXIT_CODE=$?
+        
+        if [ $PLAN_EXIT_CODE -eq 0 ]; then
+          echo \"No changes needed for Oracle instance.\"
+          exit 0
+        elif [ $PLAN_EXIT_CODE -eq 2 ]; then
+          echo \"Changes detected for Oracle instance. Analyzing plan...\"
+          
+          SIGNIFICANT_CHANGES=$(terraform show -json plan | jq '
+            .resource_changes[] | 
+            select(.change.actions != ["update"] and 
+                   .change.actions != ["refresh"]) | 
+            select(.type == "oci_core_instance")
+          ')
+          
+          if [ -z \"$SIGNIFICANT_CHANGES\" ]; then
+            echo \"Only metadata or non-critical changes detected. Skipping apply.\"
+            exit 0
+          else
+            echo \"Significant infrastructure changes detected.\"
+            terraform apply plan
+            exit $?
+          fi
+        else
+          echo \"Terraform plan failed\"
+          exit 1
+        fi
+      "
     #- docker exec -w /app terraform-container terraform apply plan | grep -o -E 'oci[^.]*.'
 
 
