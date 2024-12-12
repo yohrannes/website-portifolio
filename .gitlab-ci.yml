@@ -98,9 +98,8 @@ check-docker-instalation:
     - chmod 644 ~/.ssh/id_rsa.pub
     - ls -la ~/.ssh
     - |
-      ssh -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP
         echo "Conection sucessfull"
-      EOF
 
 #install-nginx-on-ec2-test:
 #  stage: test
