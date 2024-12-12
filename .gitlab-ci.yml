@@ -71,7 +71,9 @@ build-infra-test:
 check-startup-instalations:
   stage: test
   only:
-    - develop
+    - infra
+  needs:
+    - build-infra-test
   image: docker:27.3.1
   services:
     - docker:27.3.1-dind
