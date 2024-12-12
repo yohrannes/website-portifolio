@@ -68,7 +68,7 @@ build-infra-test:
     - docker stop terraform-container
     - docker rm terraform-container
 
-check-docker-nginx-instalation:
+check-startup-instalations:
   stage: test
   only:
     - develop
@@ -85,7 +85,7 @@ check-docker-nginx-instalation:
     - |
       while true; do
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
-          sudo docker ps
+          while true; do if [[ $(tail -n1 /var/log/startup-script.log) == "startup-script-finished" ]]; then echo "Startup script finished!";break;fi;done
           "
         break
       done
@@ -130,5 +130,5 @@ build-app-image-test:
     - chmod 600 ~/.ssh/id_rsa
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
-      
+        sudo docker ps
       "

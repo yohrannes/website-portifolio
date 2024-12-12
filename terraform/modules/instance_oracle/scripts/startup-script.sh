@@ -45,4 +45,5 @@ elif [[ $1 == "install-docker" ]]; then
 else
     install-nginx
     install-docker-engine
+    echo "startup-script-finished"
 fi
