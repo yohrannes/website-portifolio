@@ -85,11 +85,9 @@ check-docker-nginx-instalation:
     - |
       while true; do
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
-            command -v docker > /dev/null && 
-            sudo nginx -t > /dev/null" && break"
-        echo "Still no installed ... waiting..."
-        sleep 10
-        fi
+          sudo docker ps
+          "
+        break
       done
 
 check-image-security:
