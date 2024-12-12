@@ -53,25 +53,24 @@ build-infra-test:
     #  "pwd && ls -la /app"
   script:
     - docker exec -w /app terraform-container terraform init -reconfigure
-    
-    #--------------------------------------------------------
-    # Specify the bucket_aws module
-    #- docker exec -w /app terraform-container terraform plan -target=module.bucket_aws -out plan -no-color | grep -E "Plan:"
-
-    # Specify the instance_oracle module
-    - docker exec -w /app terraform-container terraform plan -target=module.instance_oracle -out plan -no-color | grep -E "Plan:"
-
-    # Specify the cluster_oracle module
-    #- docker exec -w /app terraform-container terraform plan -target=module.cluster_oracle -out plan -no-color | grep -E "Plan:"
-    #--------------------------------------------------------
-
-    # Verify if exist bucket (bucket with tfstate) and remove it from terraform management - increase security for tfstate
+    - docker exec -w /app terraform-container terraform refresh
     - |
-      if docker exec -w /app terraform-container terraform state list | grep -q "module.bucket_aws.aws_s3_bucket.my_bucket"; then
-        docker exec -w /app terraform-container terraform state rm module.bucket_aws.aws_s3_bucket.my_bucket
+      docker exec -w /app terraform-container terraform plan -detailed-exitcode -target=module.instance_oracle -out=plan"
+      PLAN_EXIT_CODE=$?
+      
+      if [ $PLAN_EXIT_CODE -eq 0 ]; then
+        echo "Infrastructure is up to date. No changes needed."
+        exit 0
+      elif [ $PLAN_EXIT_CODE -eq 2 ]; then
+        echo "Changes detected. Applying plan..."
+        docker exec -w /app terraform-container terraform apply -auto-approve plan | grep -o -E 'oci[^.]*.'
+      else
+        echo "Terraform plan failed"
+        exit 1
       fi
-    #TERRAFORM APPLY
-    - docker exec -w /app terraform-container terraform apply plan | grep -o -E 'oci[^.]*.'
+    #- docker exec -w /app terraform-container terraform apply plan | grep -o -E 'oci[^.]*.'
+
+
     #EXPORT INSTANCE IP
     - INSTANCE_PUBLIC_IP=$(docker exec -w /app terraform-container terraform output -raw instance_public_ip)
     - |
@@ -97,7 +96,7 @@ check-docker-nginx-instalation:
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
         sudo docker ps &&
-        sudo nginx -t" > /dev/null 2>&1
+        sudo nginx -t"
 
 #check-image-security:
 #  stage: test
