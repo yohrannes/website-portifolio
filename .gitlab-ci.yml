@@ -83,11 +83,16 @@ check-startup-instalations:
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - |
-      while true; do
+      while true; do 
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
-          while true; do if [[ $(tail -n1 /var/log/startup-script.log) == "startup-script-finished" ]]; then echo "Startup script finished!";break;fi;done
-          "
-        break
+          while true; do 
+            if [[ \$(tail -n1 /var/log/startup-script.log) == 'startup-script-finished' ]]; then 
+              echo 'Startup script finished!'; 
+              break; 
+            fi; 
+          done
+        " && break || echo 'Retrying connection...';
+        sleep 5;
       done
 
 check-image-security:
