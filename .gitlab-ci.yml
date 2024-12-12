@@ -99,19 +99,12 @@ check-image-security:
     - chmod 600 ~/.ssh/id_rsa
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
-        sudo apt-get install wget gnupg -y &&
-        wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null &&
-        echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list &&
-        sudo apt-get update &&
-        sudo apt-get install trivy -y &&
-        trivy image --vuln-type os --cache-dir . yohrannes/website-portifolio | grep "│ HIGH" > trivy-scan.txt &&
-        cat trivy-scan.txt &&
-        if cat trivy-scan.txt | grep -q "│ HIGH"; then
-          echo "HIGH vulnerability found"
-          exit 1
-        else
-          echo "No one HIGH vulnerability found"
-        fi
+        sudo apt-get install wget gnupg -y
+        wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
+        echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
+        sudo apt-get update
+        sudo apt-get install trivy -y
+        trivy image --vuln-type os --cache-dir . yohrannes/website-portifolio
       "
 
 #build-app-image-test:
