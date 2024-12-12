@@ -6,7 +6,7 @@ stages:
 build-infra-test:
   stage: test
   only:
-    - main
+    - infra
   image: docker:27.3.1
   services:
     - docker:27.3.1-dind
@@ -70,6 +70,8 @@ build-infra-test:
 
 check-docker-nginx-instalation:
   stage: test
+  only:
+    - develop
   image: docker:27.3.1
   services:
     - docker:27.3.1-dind
@@ -81,12 +83,23 @@ check-docker-nginx-instalation:
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
-        sudo docker ps &&
-        sudo nginx -t"
+      while true; do
+        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
+          docker ps > /dev/null 2>&1 &&
+          nginx -t > /dev/null 2>&1"
+        if [ $? -eq 0 ]; then
+          echo "Instalation sucessfull!!"
+          break
+        else
+          echo "Still no installed ... waiting..."
+          sleep 10
+        fi
+      done
 
 check-image-security:
   stage: test
+  only:
+   - develop
   image: docker:27.3.1
   services:
     - docker:27.3.1-dind
@@ -107,19 +120,21 @@ check-image-security:
         trivy image --vuln-type os --cache-dir . yohrannes/website-portifolio
       "
 
-#build-app-image-test:
-#  needs: ['install-nginx-test']
-#  stage: build
-#  image: docker:27.1.2
-#  services:
-#    - docker:27.1.2-dind
-#  script:
-#    - docker build -t yohrannes/website-portifolio:latest ./build-app/.
-#    #docker push yohrannes/website-portifolio:latest
-#    - |
-#      if [ $? -eq 0 ]; then
-#        echo "IMAGEM DOCKER OK"
-#      else
-#        echo "FALHA NO BUILD DA IMAGEM DA APLICAÇÂO"
-#        exit 1
-#      fi
+build-app-image-test:
+  stage: build
+  only:
+   - develop
+  image: docker:27.3.1
+  services:
+    - docker:27.3.1-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  script:
+    - apk add --no-cache openssh
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - |
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
+      
+      "
