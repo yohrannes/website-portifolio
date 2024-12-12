@@ -97,7 +97,7 @@ check-docker-nginx-instalation:
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
         sudo docker ps &&
-        sudo nginx -t"
+        sudo nginx -t" > /dev/null 2>&1
 
 #check-image-security:
 #  stage: test
