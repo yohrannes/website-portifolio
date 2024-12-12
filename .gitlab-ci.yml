@@ -55,7 +55,7 @@ build-infra-test:
     - docker exec -w /app terraform-container terraform init -reconfigure
     - docker exec -w /app terraform-container terraform refresh
     - |
-      docker exec -w /app terraform-container terraform plan -detailed-exitcode -target=module.instance_oracle -out=plan"
+      docker exec -w /app terraform-container terraform plan -detailed-exitcode -target=module.instance_oracle -out=plan
       PLAN_EXIT_CODE=$?
       
       if [ $PLAN_EXIT_CODE -eq 0 ]; then
