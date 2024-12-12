@@ -85,32 +85,34 @@ check-docker-nginx-instalation:
         sudo docker ps &&
         sudo nginx -t"
 
-#check-image-security:
-#  stage: test
-#  image: ubuntu:22.04
-#  before_script:
-#    - apt-get update
-#    - apt-get install -y sudo
-#    - chmod +x /usr/bin/sudo
-#    - sudo echo "sudo working..."
-#    - apt-get install -y systemd libpam-systemd
-#    - echo "systemd instaled"
-#    - sudo apt-get install wget gnupg -y
-#    - wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
-#    - echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
-#    - sudo apt-get update  
-#    - sudo apt-get install trivy -y
-
-#  script:
-#    - trivy image --vuln-type os --cache-dir . yohrannes/website-portifolio | grep "│ HIGH" > trivy-scan.txt
-#    - cat trivy-scan.txt
-#    - |
-#      if cat trivy-scan.txt | grep -q "│ HIGH"; then
-#        echo "HIGH vulnerability found"
-#        exit 1
-#      else
-#        echo "No one HIGH vulnerability found"
-#      fi
+check-image-security:
+  stage: test
+  image: docker:27.3.1
+  services:
+    - docker:27.3.1-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  script:
+    - apk add --no-cache openssh
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - |
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
+        sudo apt-get install wget gnupg -y &&
+        wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null &&
+        echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list &&
+        sudo apt-get update &&
+        sudo apt-get install trivy -y &&
+        trivy image --vuln-type os --cache-dir . yohrannes/website-portifolio | grep "│ HIGH" > trivy-scan.txt &&
+        cat trivy-scan.txt &&
+        if cat trivy-scan.txt | grep -q "│ HIGH"; then
+          echo "HIGH vulnerability found"
+          exit 1
+        else
+          echo "No one HIGH vulnerability found"
+        fi
+      "
 
 #build-app-image-test:
 #  needs: ['install-nginx-test']
