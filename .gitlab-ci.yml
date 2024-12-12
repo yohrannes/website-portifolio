@@ -82,7 +82,7 @@ build-infra-test:
     - docker stop terraform-container
     - docker rm terraform-container
 
-check-docker-instalation:
+check-docker-nginx-instalation:
   stage: test
   image: docker:27.3.1
   services:
@@ -99,30 +99,8 @@ check-docker-instalation:
     - ls -la ~/.ssh
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP
-        echo "Conection sucessfull"
-
-#install-nginx-on-ec2-test:
-#  stage: test
-#  image: ubuntu:22.04
-#  before_script:
-#    - apt-get update
-#    - apt-get install -y sudo
-#    #- whoami
-#    #- which sudo
-#    - chmod +x /usr/bin/sudo
-#    - sudo echo "sudo working..."
-#    - apt-get install -y systemd libpam-systemd
-#    #- which systemctl
-#    - echo "systemd installed"
-#  script:
-#    - sudo bash startup-files/startup-script.sh install-nginx
-#    - |
-#      if [ $? -eq 0 ]; then
-#        echo "NGINX OK"
-#      else
-#        echo "NGINX INSTALATION FAILED"
-#        exit 1
-#      fi#
+        sudo docker ps &&
+        sudo nginx -t
 
 #check-image-security:
 #  stage: test
