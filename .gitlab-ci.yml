@@ -111,6 +111,7 @@ check-image-security:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
+    # fix... vulnerability count
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
         sudo apt-get install wget gnupg -y
@@ -118,7 +119,12 @@ check-image-security:
         echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
         sudo apt-get update
         sudo apt-get install trivy -y
+
         vulnerabilities_count=$(trivy image --pkg-types os --cache-dir . yohrannes/website-portifolio --format json | grep "HIGH" | wc -l)
+        if [[ ! "$vulnerabilities_count" =~ ^[0-9]+$ ]]; then
+            echo "Error: vulnerabilities_count is not a valid number."
+            exit 1
+        fi
         if [[ $vulnerabilities_count -eq 0 ]]; then
             echo 'No HIGH vulnerabilities found.'
             exit 0
