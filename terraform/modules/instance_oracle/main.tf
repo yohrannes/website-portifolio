@@ -19,12 +19,44 @@ resource "oci_core_vcn" "example_vcn" {
   display_name = var.vcn1.display_name
 }
 
+resource "oci_core_security_list" "security_list_pub" {
+  compartment_id = oci_identity_compartment.yohapp-comp.id
+  vcn_id         = oci_core_vcn.example_vcn.id
+  display_name   = "Public Security List"
+
+  ingress_security_rules {
+    protocol = "6" # TCP
+    source   = "0.0.0.0/0"
+
+    # Porta 80 (HTTP)
+    tcp_options {
+      min = 80
+      max = 80
+    }
+  }
+
+  ingress_security_rules {
+    protocol = "6" # TCP
+    source   = "0.0.0.0/0"
+    tcp_options {
+      min = 443
+      max = 443
+    }
+  }
+
+  egress_security_rules {
+    protocol = "all"
+    destination = "0.0.0.0/0"
+  }
+}
+
 resource "oci_core_subnet" "subnetA_pub" {
   #Required
   compartment_id = oci_identity_compartment.yohapp-comp.id
   vcn_id         = oci_core_vcn.example_vcn.id
   cidr_block     = var.subnetA_pub.cidr_block
   #Optional
+  security_list_ids = [oci_core_security_list.security_list_pub.id]
   display_name               = var.subnetA_pub.display_name
   prohibit_public_ip_on_vnic = !var.subnetA_pub.is_public
   prohibit_internet_ingress  = !var.subnetA_pub.is_public
