@@ -36,11 +36,29 @@ resource "oci_core_security_list" "security_list_pub" {
   }
 
   ingress_security_rules {
-    protocol = "6" # TCP
+    protocol = "6"
     source   = "0.0.0.0/0"
     tcp_options {
       min = 443
       max = 443
+    }
+  }
+
+  ingress_security_rules {
+    protocol = "6"
+    source   = "0.0.0.0/0"
+    tcp_options {
+      min = 22
+      max = 22
+    }
+  }
+
+  ingress_security_rules {
+    protocol = "1" # ICMP
+    source   = "0.0.0.0/0"
+    icmp_options {
+      type = 8
+      code = 0 #Code type for Request (ping)
     }
   }
 
