@@ -38,6 +38,20 @@ sudo systemctl restart nginx
 sudo systemctl enable nginx
 }
 
+function allow-ports () {
+# 80 (HTTP)
+sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
+# 443 (HTTPS)
+sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT
+# 22 (SSH)
+sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 22 -j ACCEPT
+# ICMP (Ping)
+sudo iptables -I INPUT 6 -p icmp --icmp-type echo-request -j ACCEPT
+sudo iptables -I INPUT 6 -p icmp --icmp-type echo-reply -j ACCEPT
+
+sudo netfilter-persistent save
+}
+
 if [[ $1 == "install-nginx" ]]; then
     install-nginx
 elif [[ $1 == "install-docker" ]]; then
@@ -45,5 +59,8 @@ elif [[ $1 == "install-docker" ]]; then
 else
     install-nginx
     install-docker-engine
+    allow-ports
+
+    # Leave this command bellow by least (used in pipeline)
     echo "startup-script-finished"
 fi
