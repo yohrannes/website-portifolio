@@ -103,7 +103,7 @@ check-startup-instalations:
 update_dns:
   stage: deploy-infra
   only:
-    - develop
+    - infra
 #  needs:
 #    - check-startup-instalations
   image: docker:27.3.1
