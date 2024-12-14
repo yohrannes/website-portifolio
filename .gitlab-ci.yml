@@ -118,7 +118,7 @@ update_dns:
     - chmod 600 ~/.ssh/id_rsa
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
-        sudo apt-get install curl -y
+        sudo apt-get install curl jq -y
         curl --request PUT \
         --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_YO_COM \
         --header 'Content-Type: application/json' \
@@ -132,7 +132,7 @@ update_dns:
           \"ttl\": 1,
           \"content\": \"'"$TF_INSTANCE_PUBLIC_IP"'\",
           \"type\": \"A\"
-        }'
+        }' | jq '.'
       "
 
 #check-image-security:
