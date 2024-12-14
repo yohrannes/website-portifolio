@@ -71,7 +71,7 @@ EOF
 sudo ln -s /etc/nginx/sites-available/oracle-instance.yohrannes.com /etc/nginx/sites-enabled/
 sudo systemctl restart nginx
 
-sudo docker run -d yohrannes/website-portifolio -p 5000:5000
+docker run -d -p 5000:5000 yohrannes/website-portifolio
 }
 
 if [[ $1 == "install-nginx" ]]; then
