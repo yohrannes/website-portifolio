@@ -11,14 +11,3 @@ terraform init
 terraform apply -target=module.bucket_aws -auto-approve
 mv modules/instance_oracle/backend.tf .
 terraform init
-############### FIX ERROR WITH /root/.ssh/id_rsa .... format error.... see 
-╵
-/app # cat /root/.ssh/id_rsa.pub
-/home/yohrannes/.ssh/id_rsa_gitlab.pub
-/app # cat /root/.ssh/id_rsa.pub
-/home/yohrannes/.ssh/id_rsa_gitlab.pub
-/app # cat /root/.ssh/id_rsa.pub
-/home/yohrannes/.ssh/id_rsa_gitlab.pub
-/app # cat /root/.ssh/id_rsa.pub
-/home/yohrannes/.ssh/id_rsa_gitlab.pub
-/app #
