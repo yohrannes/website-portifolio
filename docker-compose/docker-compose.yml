@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  flask-app:
+    image: yohrannes/website-portifolio
+    container_name: port-container
+    expose:
+      - "5000"
+    networks:
+      - portfolio-network
+
+  nginx:
+    image: nginx:1.18.0
+    container_name: nginx-container
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/sites-available/oracle-instance.yohrannes.com:/etc/nginx/sites-available/oracle-instance.yohrannes.com:ro
+    depends_on:
+      - flask-app
+    networks:
+      - portfolio-network
+
+networks:
+  portfolio-network:
+    driver: bridge
