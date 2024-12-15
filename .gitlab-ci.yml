@@ -121,7 +121,9 @@ run-containers:
       mkdir repos-git
       cd repos-git
       git clone https://github.com/yohrannes/website-portifolio.git
-      cd website-portifolio/docker-compose
+      cd website-portifolio
+      git checkout infra
+      cd docker-compose
       sudo docker compose up -d
       "
 
