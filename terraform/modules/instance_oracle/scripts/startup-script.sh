@@ -22,30 +22,20 @@ sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 22 -j ACCEPT
 # ICMP (Ping)
 sudo iptables -I INPUT 6 -p icmp --icmp-type echo-request -j ACCEPT
 sudo iptables -I INPUT 6 -p icmp --icmp-type echo-reply -j ACCEPT
+# HTTP + HTTPS
 sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
 sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT
 
 sudo netfilter-persistent save
 }
 
-function configure-website {
-sudo apt-get install logrotate -y
-sudo apt-get install cron -y
-
-#do it from docker exec...
-sudo ln -s /etc/nginx/sites-available/oracle-instance.yohrannes.com /etc/nginx/sites-enabled/
-#sudo systemctl restart nginx
-
-docker compose up -d
-
-}
-
 if [[ $1 == "install-docker" ]]; then
     install-docker-engine
+elif [[ $1 == "allow-ports" ]]; then
+    allow-ports
 else
     install-docker-engine
     allow-ports
-    configure-website
 
     # Leave this command bellow by least (used for pipeline checks)
     echo "startup-script-finished"
