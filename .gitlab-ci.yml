@@ -100,6 +100,29 @@ check-startup-instalations:
         sleep 5;
       done
 
+run-containers:
+  stage: deploy-infra
+  only: 
+    - develop
+  image: docker:27.3.1
+  services:
+    - docker:27.3.1-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  script:
+    - apk add --no-cache openssh
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - |
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
+      mkdir repos-git
+      cd repos-git
+      git clone https://github.com/yohrannes/website-portifolio.git
+      cd website-portifolio/docker-compose
+      docker compose up -d
+      "
+
 update_dns:
   stage: deploy-infra
   only:

@@ -1,6 +1,6 @@
 server {
     listen 80;
-    server_name _;
+    server_name oracle-instance.yohrannes.com;
 
     location / {
         proxy_pass http://flask-app:5000;
