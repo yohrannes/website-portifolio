@@ -103,7 +103,9 @@ check-startup-instalations:
 run-containers:
   stage: deploy-infra
   only: 
-    - develop
+    - infra
+  needs:
+    - check-startup-instalations
   image: docker:27.3.1
   services:
     - docker:27.3.1-dind
