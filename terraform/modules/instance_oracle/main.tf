@@ -28,7 +28,7 @@ resource "oci_core_security_list" "security_list_pub" {
     protocol = "6" # TCP
     source   = "0.0.0.0/0"
 
-    # Porta 80 (HTTP)
+    # 80 (HTTP)
     tcp_options {
       min = 80
       max = 80
@@ -39,6 +39,10 @@ resource "oci_core_security_list" "security_list_pub" {
     protocol = "6"
     source   = "0.0.0.0/0"
     tcp_options {
+      min = 443
+      max = 443
+    }
+    udp_options {
       min = 443
       max = 443
     }
