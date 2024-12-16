@@ -82,6 +82,11 @@ resource "oci_core_security_list" "additional_security_rules" {
       min = 53
       max = 53
     }
+  }
+
+  ingress_security_rules {
+    protocol = "17"
+    source = "0.0.0.0/0"
     udp_options {
       min = 53
       max = 53
@@ -122,6 +127,11 @@ resource "oci_core_security_list" "additional_security_rules" {
       min = 465
       max = 465
     }
+  }
+
+  ingress_security_rules {
+    protocol = "17"
+    source = "0.0.0.0/0"
     udp_options {
       min = 465
       max = 465
@@ -153,6 +163,11 @@ resource "oci_core_security_list" "additional_security_rules" {
       min = 783
       max = 783
     }
+  }
+
+  ingress_security_rules {
+    protocol = "17"
+    source = "0.0.0.0/0"
     udp_options {
       min = 783
       max = 783
@@ -166,6 +181,11 @@ resource "oci_core_security_list" "additional_security_rules" {
       min = 873
       max = 873
     }
+  }
+
+  ingress_security_rules {
+    protocol = "17"
+    source = "0.0.0.0/0"
     udp_options {
       min = 873
       max = 873
@@ -323,6 +343,11 @@ resource "oci_core_security_list" "additional_security_rules" {
       min = 6277
       max = 6277
     }
+  }
+
+  ingress_security_rules {
+    protocol = "17"
+    source = "0.0.0.0/0"
     udp_options {
       min = 6277
       max = 6277
@@ -345,6 +370,11 @@ resource "oci_core_security_list" "additional_security_rules" {
       min = 24441
       max = 24441
     }
+  }
+
+  ingress_security_rules {
+    protocol = "17"
+    source = "0.0.0.0/0"
     udp_options {
       min = 24441
       max = 24441
