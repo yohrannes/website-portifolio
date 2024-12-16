@@ -33,12 +33,6 @@ function install-usefull-packages () {
     sudo apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tmux
 }
 
-function install-cpanel () {
-    sudo su
-    whoami
-    cd /home && curl -o latest -L https://securedownloads.cpanel.net/latest && sh latest
-}
-
 if [[ $1 == "install-docker" ]]; then
     install-docker-engine
 elif [[ $1 == "allow-ports" ]]; then
@@ -46,7 +40,8 @@ elif [[ $1 == "allow-ports" ]]; then
 else
     install-docker-engine
     allow-ports
-
+    install-usefull-packages
+    
     # Leave this command bellow by least (used for pipeline checks)
     echo "startup-script-finished"
 fi
