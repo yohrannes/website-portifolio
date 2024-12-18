@@ -55,6 +55,7 @@ create-oracle-instance:
     - |
       docker exec -w /app terraform-container sh -c "
         terraform init -reconfigure
+        terraform workspace select website_portifolio
         terraform plan -detailed-exitcode -target=module.instance_oracle -out=plan | grep "Plan:"
         terraform apply plan | grep -o -E 'oci[^.]*.'
       "
