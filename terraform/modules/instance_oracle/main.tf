@@ -135,26 +135,12 @@ resource "oci_core_instance" "ic_pub_vm-A" {
     assign_public_ip = var.ic_pub_vm_A.assign_public_ip
   }
 
-
   metadata = {
     #ssh_authorized_keys = join("\n", [for k in local.ssh_authorized_keys : chomp(k)])
     ssh_authorized_keys = file("/root/.ssh/id_rsa.pub")
     user_data = base64encode(file("${path.module}/scripts/startup-script.sh"))
   }
 
-}
-
-terraform {
-  required_providers {
-    oci = {
-      source = "oracle/oci"
-      version = ">= 4.0.0"
-    }
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
-  }
 }
 
 #terraform init -upgrade
