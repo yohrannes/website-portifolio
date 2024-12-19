@@ -91,18 +91,16 @@ check-startup-instalations:
     - |
       while true; do 
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
-          while true; do 
+          while true; do
             if [ -e /var/log/startup-script.log ]; then
               if [ -r /var/log/startup-script.log ]; then
-                if [[ $(tail -n1 /var/log/startup-script.log) == 'startup-script-finished' ]]; then
-                  echo 'Startup script finished!';
+                if [[ $(tail -n1 /var/log/startup-script.log 2>/dev/null) == "startup-script-finished" ]]; then
+                  echo "Startup script finished!";
                   break;
                 fi
               else
-                echo "File found... waiting permission..."
               fi
             else
-              echo "File not fount .. waiting ..."
             fi
             sleep 1
           done
