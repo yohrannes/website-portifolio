@@ -89,13 +89,14 @@ check-startup-instalations:
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - |
+      sleep 30;
       while true; do 
         ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
           while true; do
           if [ -e /var/log/startup-script.log ]; then
               if [ -r /var/log/startup-script.log ]; then
-                  if [[ $(tail -n1 /var/log/startup-script.log 2>/dev/null) == "startup-script-finished" ]]; then
-                      echo "Startup script finished!";
+                  if [[ \$(tail -n1 /var/log/startup-script.log 2>/dev/null) == "startup-script-finished" ]]; then
+                      echo 'Startup script finished!';
                       break;
                   fi
               fi
