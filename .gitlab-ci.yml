@@ -90,22 +90,27 @@ check-startup-instalations:
     - chmod 600 ~/.ssh/id_rsa
     - |
       sleep 30;
-      while true; do 
-        ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
-          while true; do
-          if [ -e /var/log/startup-script.log ]; then
-              if [ -r /var/log/startup-script.log ]; then
-                  if [[ \$(tail -n1 /var/log/startup-script.log 2>/dev/null) == "startup-script-finished" ]]; then
-                      echo 'Startup script finished!';
-                      break;
+        while true; do
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
+            while true; do
+              if [ -e /var/log/startup-script.log ]; then
+                  if [ -r /var/log/startup-script.log ]; then
+                      last_line=\$(tail -n1 /var/log/startup-script.log 2>/dev/null)
+                      if [ \"\$last_line\" = 'startup-script-finished' ]; then
+                          echo 'Startup script finished!';
+                          exit 0;
+                      fi
+                  else
+                      echo '/var/log/startup-script.log exists but is not readable.';
                   fi
+              else
+                  echo '/var/log/startup-script.log does not exist yet.';
               fi
-          fi
-          sleep 1
-          done
-        " && break || echo 'Retrying connection...';
-        sleep 5;
-      done
+              sleep 1
+            done
+          " && break || echo 'Retrying connection...';
+          sleep 5;
+        done
 
 run-containers:
   stage: deploy-infra
