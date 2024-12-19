@@ -125,8 +125,12 @@ run-containers:
       cd website-portifolio
       git checkout infra
       sudo docker build -f ./build-app/Dockerfile --network host -t yohrannes/website-portifolio .
+      sudo docker image ls
       cd docker-compose
       sudo docker compose up -d
+      sleep 20
+      sudo docker ps
+      sudo docker ps -a
       "
 
 update_dns:
