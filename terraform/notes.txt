@@ -4,7 +4,7 @@ docker run -it \
 -v ~/.ssh/:/root/.ssh \
 -v $PWD:/app \
 -w /app \
---entrypoint "" hashicorp/terraform:light sh
+--entrypoint "" hashicorp/terraform:1.5.6 sh
 
 mv backend.tf /modules/instance_oracle/.
 terraform init
