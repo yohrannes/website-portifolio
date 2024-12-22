@@ -72,7 +72,7 @@ create-oracle-instance:
     - docker stop terraform-container
     - docker rm terraform-container
 
-check-runner-startup-script:
+check-startup-script:
   stage: test-infra
   only:
     - infra-amd
@@ -112,12 +112,12 @@ check-runner-startup-script:
           sleep 5;
         done
 
-run-runner:
+build-deploy-infra-amd:
   stage: deploy-infra
   only: 
     - infra-amd
   needs:
-    - check-startup-instalations
+    - check-startup-script
   image: docker:27.3.1
   services:
     - docker:27.3.1-dind
@@ -148,9 +148,9 @@ run-runner:
 update_dns:
   stage: deploy-infra
   only:
-    - infra
+    - infra-amd
   needs:
-    - check-startup-instalations
+    - check-startup-script
   image: docker:27.3.1
   services:
     - docker:27.3.1-dind
