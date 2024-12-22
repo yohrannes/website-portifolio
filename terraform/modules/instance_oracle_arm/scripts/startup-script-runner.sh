@@ -33,14 +33,14 @@ function install-usefull-packages () {
     sudo apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tmux
 }
 
-#function install-gitlab-runner () {
-#    sudo docker volume create gitlab-runner-config
-#    sudo docker run -d --name gitlab-runner --restart always \
-#      -v /var/run/docker.sock:/var/run/docker.sock \
-#      -v gitlab-runner-config:/etc/gitlab-runner \
-#      gitlab/gitlab-runner:latest
+function install-gitlab-runner () {
+    sudo docker volume create gitlab-runner-config
+    sudo docker run -d --name gitlab-runner --restart always \
+      -v /var/run/docker.sock:/var/run/docker.sock \
+      -v gitlab-runner-config:/etc/gitlab-runner \
+      gitlab/gitlab-runner:latest
 
-#}
+}
 
 if [[ $1 == "install-docker" ]]; then
     install-docker-engine
@@ -50,6 +50,7 @@ else
     install-docker-engine
     allow-ports
     install-usefull-packages
+    install-gitlab-runner
     
     # Leave this command bellow by least (used for pipeline checks)
     echo "startup-script-finished"

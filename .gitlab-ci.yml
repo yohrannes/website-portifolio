@@ -227,8 +227,65 @@ create-oci-gt-runner-instance:
         terraform plan -detailed-exitcode -target=module.instance_oracle_arm -out=plan | grep "Plan:"
         terraform apply plan | grep -o -E 'oci[^.]*.'
       "
+    - INSTANCE_PUBLIC_IP=$(docker exec -w /app terraform-container terraform output -raw instance_public_ip)
+    - |
+      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+        --request PUT \
+        --form "value=$INSTANCE_PUBLIC_IP" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/RUNNER_INSTANCE_PUBLIC_IP" \
+        > /dev/null 2>&1
     - docker stop terraform-container
     - docker rm terraform-container
+
+create-runner:
+  stage: create-infra
+  only:
+    - infra-runner
+  needs:
+    - create-oci-gt-runner-instance
+  image: docker:27.3.1
+  services:
+    - docker:27.3.1-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  script:
+    - |
+      apk add --no-cache curl jq
+      RUNNER_TOKEN=$(curl --request POST --url "https://gitlab.com/api/v4/user/runners" --header "PRIVATE-TOKEN: '"$GITLAB_TOKEN_RUNNER_CREATOR"'" --data "runner_type=project_type" --data "project_id=57493833" --data "description=oci-runner" | jq -r '.token')
+    - |
+      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+        --request PUT \
+        --form "value=$RUNNER_TOKEN" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER_TOKEN_CREATED" \
+        > /dev/null 2>&1
+
+authorize-runner:
+  stage: deploy-infra
+  only: 
+    - infra-runner
+  needs:
+    - create-runner
+  image: docker:27.3.1
+  services:
+    - docker:27.3.1-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  script:
+    - apk add --no-cache openssh
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - |
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$RUNNER_INSTANCE_PUBLIC_IP "
+        docker exec gitlab-runner \
+        gitlab-runner register \
+        --non-interactive \
+        --url "https://gitlab.com/" \
+        --token "'"$GITLAB_RUNNER_TOKEN_CREATED"'" \
+        --executor "docker" \
+        --docker-image alpine:latest \
+        --description "docker-runner"
+      "
 
 #check-image-security:
 #  stage: test
