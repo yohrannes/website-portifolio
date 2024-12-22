@@ -281,7 +281,7 @@ authorize-runner:
         gitlab-runner register \
         --non-interactive \
         --url "https://gitlab.com/" \
-        --token "'"$GITLAB_RUNNER_TOKEN_CREATED"'" \
+        --token "$GITLAB_RUNNER_TOKEN_CREATED" \
         --executor "docker" \
         --docker-image alpine:latest \
         --description "docker-runner"
