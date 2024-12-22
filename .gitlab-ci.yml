@@ -198,7 +198,7 @@ check-image-security:
 
         vulnerabilities_count=$(trivy image --pkg-types os --cache-dir . yohrannes/website-portifolio --format json | grep "HIGH" | wc -l)
         #vulnerabilities_count=$(trivy image --pkg-types os --cache-dir . busybox --format json | grep "HIGH" | wc -l)
-        if [[ $vulnerabilities_count -eq "0" ]]; then
+        if [[ $vulnerabilities_count -eq 0 ]]; then
             echo 'No HIGH vulnerabilities found.'
             exit 0
         else
