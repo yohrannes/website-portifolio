@@ -225,7 +225,7 @@ create-oci-gt-runner-instance:
         terraform init -reconfigure
         terraform workspace select oracle_instance_arm
         terraform plan -detailed-exitcode -target=module.instance_oracle_arm -out=plan | grep "Plan:"
-        terraform apply plan | grep -o -E 'oci[^.]*.'
+        terraform apply plan | grep "Apply complete!"
       "
     - INSTANCE_PUBLIC_IP=$(docker exec -w /app terraform-container terraform output -raw instance_runner_public_ip)
     - |
