@@ -15,7 +15,7 @@ create-oracle-instance:
     - docker:27.3.1-dind
   variables:
     DOCKER_DRIVER: overlay2
-    AWS_DEFAULT_REGION: "us-east-1" #Check if that's really necessary
+    AWS_DEFAULT_REGION: "us-east-1" #Check if that's really necessary...
   before_script:
     #Autencicate with OCI
     - mkdir -p /root/.oci
