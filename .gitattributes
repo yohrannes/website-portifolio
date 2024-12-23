@@ -1,1 +1,2 @@
 .gitlab-ci.yml linguist-language=GitLab YAML
+.gitlab-ci.yml linguist-detectable=true
