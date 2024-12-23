@@ -363,6 +363,7 @@ build-app-image-test:
   stage: build
   only:
    - develop
+  needs: []
   image: docker:27.3.1
   services:
    - docker:27.3.1-dind
