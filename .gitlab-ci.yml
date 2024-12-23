@@ -375,6 +375,12 @@ build-app-image-test:
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
-        sudo docker ps
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$RUNNER_INSTANCE_PUBLIC_IP "
+        mkdir repos-git
+        cd repos-git
+        git clone https://github.com/yohrannes/website-portifolio.git
+        cd website-portifolio
+        git checkout develop
+        sudo docker build -f ./build-app/Dockerfile --network host -t yohrannes/website-portifolio .
+        sudo docker image ls
       "
