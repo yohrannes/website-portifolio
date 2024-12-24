@@ -54,19 +54,7 @@ build-app-image-test:
   variables:
     DOCKER_DRIVER: overlay2
   script:
-    - apk add --no-cache openssh
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$RUNNER_INSTANCE_PUBLIC_IP "
-        mkdir repos-git
-        cd repos-git
-        git clone https://github.com/yohrannes/website-portifolio.git
-        cd website-portifolio
-        git checkout develop
-        sudo docker build -f ./build-app/Dockerfile --network host -t yohrannes/website-portifolio .
-        echo "$DOCKER_REG_PASSWORD" | sudo docker login -u yohrannes --password-stdin
-        export TAG=\$(echo "$CI_COMMIT_REF_NAME" | sed 's/\//-/g')-${CI_COMMIT_SHORT_SHA}
-        echo "$CI_REGISTRY_IMAGE":"$TAG"
-      "
+    sudo docker build -f ./build-app/Dockerfile --network host -t yohrannes/website-portifolio .
+    echo "$DOCKER_REG_PASSWORD" | sudo docker login -u yohrannes --password-stdin
+    export TAG=\$(echo "$CI_COMMIT_REF_NAME" | sed 's/\//-/g')-${CI_COMMIT_SHORT_SHA}
+    echo "$CI_REGISTRY_IMAGE":"$TAG"
