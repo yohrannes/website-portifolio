@@ -54,6 +54,8 @@ build-app-image-test:
   variables:
     DOCKER_DRIVER: overlay2
   script:
+    ls -lahtr
+    ls -lahtr ./*
     sudo docker build -f ./build-app/Dockerfile yohrannes/website-portifolio .
     echo "$DOCKER_REG_PASSWORD" | sudo docker login -u yohrannes --password-stdin
     echo $CI_COMMIT_REF_NAME $CI_COMMIT_SHORT_SHA
