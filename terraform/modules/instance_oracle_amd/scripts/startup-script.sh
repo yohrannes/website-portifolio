@@ -33,6 +33,28 @@ function install-usefull-packages () {
     sudo apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tmux fail2ban
 }
 
+function configure_fail2ban() {
+    sudo systemctl enable fail2ban
+    sudo mkdir -p /etc/fail2ban/filter.d
+    sudo tee /etc/fail2ban/filter.d/nginx-injection.conf > /dev/null <<EOF
+[Definition]
+failregex = ^<HOST> -.*"(GET|POST).*HTTP.*" 403
+EOF
+    sudo tee /etc/fail2ban/jail.local > /dev/null <<EOF
+[nginx-injection]
+enabled = true
+port    = http,https
+filter  = nginx-injection
+logpath = /var/log/nginx/access.log
+maxretry = 5
+bantime = 3600
+EOF
+    sudo systemctl start fail2ban
+    sudo fail2ban-client reload
+    sudo fail2ban-client status nginx-injection
+}
+
+
 if [[ $1 == "install-docker" ]]; then
     install-docker-engine
 elif [[ $1 == "allow-ports" ]]; then
