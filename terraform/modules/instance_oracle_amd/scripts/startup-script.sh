@@ -30,7 +30,7 @@ sudo netfilter-persistent save
 }
 
 function install-usefull-packages () {
-    sudo apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tmux
+    sudo apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tmux fail2ban
 }
 
 if [[ $1 == "install-docker" ]]; then
