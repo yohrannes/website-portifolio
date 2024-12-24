@@ -66,5 +66,4 @@ build-app-image-test:
         cd website-portifolio
         git checkout develop
         sudo docker build -f ./build-app/Dockerfile --network host -t yohrannes/website-portifolio .
-        sudo docker image ls
       "
