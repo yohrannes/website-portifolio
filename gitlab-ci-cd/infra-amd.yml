@@ -157,7 +157,7 @@ update_dns:
         --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
         --data '{
           "comment": "Domain verification record",
-          "name": "oracle-instance.yohrannes.com",
+          "name": "yohrannes.com",
           "proxied": true,
           "settings": {},
           "tags": [],
