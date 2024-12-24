@@ -54,7 +54,7 @@ build-app-image-test:
   variables:
     DOCKER_DRIVER: overlay2
   script:
-    sudo docker build -f ./build-app/Dockerfile --network host -t yohrannes/website-portifolio .
+    sudo docker build -f ./build-app/Dockerfile yohrannes/website-portifolio .
     echo "$DOCKER_REG_PASSWORD" | sudo docker login -u yohrannes --password-stdin
-    export TAG=\$(echo "$CI_COMMIT_REF_NAME" | sed 's/\//-/g')-${CI_COMMIT_SHORT_SHA}
+    echo "$CI_COMMIT_REF_NAME" | sed 's/\//-/g')-${CI_COMMIT_SHORT_SHA}
     echo "$CI_REGISTRY_IMAGE":"$TAG"
