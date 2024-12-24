@@ -61,6 +61,7 @@ build-app-image-test:
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
-    - docker build -f ./build-app/Dockerfile -t --network host $IMAGE_NAME:$IMAGE_TAG .
+    - cd build-app
+    - docker build -f ./build-app/Dockerfile --network host -t $IMAGE_NAME:$IMAGE_TAG .
     - export TAG=\$(echo "$CI_COMMIT_REF_NAME" | sed 's/\//-/g')-${CI_COMMIT_SHORT_SHA}
     - echo "$CI_REGISTRY_IMAGE":"$TAG"
