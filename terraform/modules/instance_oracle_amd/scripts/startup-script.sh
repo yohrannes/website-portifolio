@@ -64,7 +64,7 @@ else
     install-docker-engine
     allow-ports
     install-usefull-packages
-    
+    configure_fail2ban
     # Leave this command bellow by least (used for pipeline checks)
     echo "startup-script-finished"
 fi
