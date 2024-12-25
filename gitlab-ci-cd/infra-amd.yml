@@ -65,7 +65,7 @@ create-oracle-instance:
     - docker rm terraform-container
 
 check-startup-script:
-  stage: test-infra
+  stage: create-infra
   only:
     - infra-amd
   needs:
