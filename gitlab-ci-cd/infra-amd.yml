@@ -108,8 +108,7 @@ configure_fail2ban:
   stage: create-infra
   only:
     - infra-amd
-  needs:
-    - check-startup-script
+  needs: check-startup-script
   image: docker:27.3.1
   services:
     - docker:27.3.1-dind
