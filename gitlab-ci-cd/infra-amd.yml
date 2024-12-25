@@ -122,19 +122,14 @@ build-deploy-infra-amd:
     - chmod 600 ~/.ssh/id_rsa
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
-      mkdir repos-git
-      cd repos-git
-      git clone https://github.com/yohrannes/website-portifolio.git
+      mkdir repos-gitlab
+      cd repos-gitlab
+      git clone https://gitlab.com/yohrannes/website-portifolio.git
       cd website-portifolio
       git checkout infra-amd
-      git checkout infra
       sudo docker build -f ./build-app/Dockerfile --network host -t yohrannes/website-portifolio .
-      sudo docker image ls
       cd docker-compose
       sudo docker compose up -d
-      sleep 20
-      sudo docker ps
-      sudo docker ps -a
       "
 
 update_dns:
