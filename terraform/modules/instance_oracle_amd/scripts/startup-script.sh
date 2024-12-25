@@ -33,29 +33,6 @@ function install-usefull-packages () {
     sudo apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tmux fail2ban
 }
 
-function configure_fail2ban() {
-    mkdir /var/log/nginx ### this's create a nginx file to fail2ban don't crash... ;)
-    sudo systemctl enable fail2ban
-    sudo mkdir -p /etc/fail2ban/filter.d
-    sudo tee /etc/fail2ban/filter.d/nginx-injection.conf > /dev/null <<EOF
-[Definition]
-failregex = ^<HOST> -.*"(GET|POST).*HTTP.*" 403
-EOF
-    sudo tee /etc/fail2ban/jail.local > /dev/null <<EOF
-[nginx-injection]
-enabled = true
-port    = http,https
-filter  = nginx-injection
-logpath = /var/log/nginx/yohrannes.com-access.log
-maxretry = 5
-bantime = 3600
-EOF
-    sudo systemctl start fail2ban
-    sudo fail2ban-client reload
-    sudo fail2ban-client status nginx-injection
-}
-
-
 if [[ $1 == "install-docker" ]]; then
     install-docker-engine
 elif [[ $1 == "allow-ports" ]]; then
@@ -64,7 +41,6 @@ else
     install-docker-engine
     allow-ports
     install-usefull-packages
-    configure_fail2ban
     # Leave this command bellow by least (used for pipeline checks)
     echo "startup-script-finished"
 fi
