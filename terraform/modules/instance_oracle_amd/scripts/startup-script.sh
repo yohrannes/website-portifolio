@@ -34,6 +34,7 @@ function install-usefull-packages () {
 }
 
 function configure_fail2ban() {
+    mkdir /var/log/nginx ### this's create a nginx file to fail2ban don't crash... ;)
     sudo systemctl enable fail2ban
     sudo mkdir -p /etc/fail2ban/filter.d
     sudo tee /etc/fail2ban/filter.d/nginx-injection.conf > /dev/null <<EOF
@@ -45,7 +46,7 @@ EOF
 enabled = true
 port    = http,https
 filter  = nginx-injection
-logpath = /var/log/nginx/access.log
+logpath = /var/log/nginx/yohrannes.com-access.log
 maxretry = 5
 bantime = 3600
 EOF
