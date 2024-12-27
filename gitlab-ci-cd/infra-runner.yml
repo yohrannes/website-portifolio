@@ -149,7 +149,9 @@ authorize-runner:
         --executor "docker" \
         --docker-image alpine:latest \
         --description "docker-runner"
-        echo "gitlab-runner ALL=(ALL:ALL) ALL"
-        gitlab-runner ALL=(ALL) NOPASSWD: ALL" | sudo EDITOR='tee -a' visudo
+        sudo EDITOR='tee -a' visudo <<EOF
+      gitlab-runner ALL=(ALL:ALL) ALL
+      gitlab-runner ALL=(ALL) NOPASSWD: ALL
+      EOF
         exit
       "
