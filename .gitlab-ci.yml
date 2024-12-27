@@ -37,13 +37,22 @@ check-image-security:
         echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
         sudo apt-get update
         sudo apt-get install trivy -y
-        vulnerabilities_count=\$(sudo trivy image --pkg-types os --cache-dir . yohrannes/website-portifolio --format json | grep "HIGH" | wc -l || echo 0)
-        if [[ \$vulnerabilities_count -eq 0 ]]; then
-            echo 'No HIGH vulnerabilities found.'
-            exit 0
+        trivy_output=$(sudo trivy image --pkg-types os --cache-dir . yohrannes/website-portifolio --format json)
+        critical_vulnerabilities_count=$(echo "$trivy_output" | grep "CRITICAL" | wc -l)
+        high_vulnerabilities_count=$(echo "$trivy_output" | grep "HIGH" | wc -l)
+        medium_vulnerabilities_count=$(echo "$trivy_output" | grep "MEDIUM" | wc -l)
+        low_vulnerabilities_count=$(echo "$trivy_output" | grep "LOW" | wc -l )
+        unknown_vulnerabilities_count=$(echo "$trivy_output" | grep "UNKNOWN" | wc -l)
+        if [ $critical_vulnerabilities_count -eq 0 ] && [ $high_vulnerabilities_count -eq 0 ] && [ $medium_vulnerabilities_count -eq 0 ] && [ $low_vulnerabilities_count -eq 0 ] && [ $unknown_vulnerabilities_count -eq 0 ]; then
+          echo 'No vulnerabilities found.'
+          exit 0
         else
-            echo "Found \$vulnerabilities_count HIGH vulnerabilities."
-            exit 1
+          echo "Found $critical_vulnerabilities_count CRITICAL vulnerabilities."
+          echo "Found $high_vulnerabilities_count HIGH vulnerabilities."
+          echo "Found $medium_vulnerabilities_count MEDIUM vulnerabilities."
+          echo "Found $low_vulnerabilities_count LOW vulnerabilities."
+          echo "Found $unknown_vulnerabilities_count UNKNOWN vulnerabilities."
+          exit 1
         fi
       "
 
