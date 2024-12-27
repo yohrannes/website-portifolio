@@ -35,7 +35,7 @@ function install-usefull-packages () {
 
 function install-gitlab-runner () {
     sudo curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" | sudo bash
-    sudo apt-get install gitlab-runner
+    sudo apt-get install gitlab-runner -y
     sudo gitlab-runner -version
     sudo gitlab-runner status
     echo "gitlab-runner start"
@@ -46,8 +46,6 @@ function install-gitlab-runner () {
 
 if [[ $1 == "install-docker" ]]; then
     install-docker-engine
-elif [[ $1 == "allow-ports" ]]; then
-    allow-ports
 else
     install-docker-engine
     allow-ports
