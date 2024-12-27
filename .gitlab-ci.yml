@@ -37,7 +37,7 @@ check-image-security:
         echo "deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main" | sudo tee -a /etc/apt/sources.list.d/trivy.list
         sudo apt-get update
         sudo apt-get install trivy -y
-        vulnerabilities_count=\$(trivy image --pkg-types os --cache-dir . yohrannes/website-portifolio --format json | grep "HIGH" | wc -l || echo 0)
+        vulnerabilities_count=\$(sudo trivy image --pkg-types os --cache-dir . yohrannes/website-portifolio --format json | grep "HIGH" | wc -l || echo 0)
         if [[ \$vulnerabilities_count -eq 0 ]]; then
             echo 'No HIGH vulnerabilities found.'
             exit 0
@@ -61,6 +61,7 @@ build-app-image-test:
     DOCKER_TLS_CERTDIR: "/certs"
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
+    - echo "$CI_COMMIT_REF_NAME" | sed 's/\//-/g')-${CI_COMMIT_SHORT_SHA}
     - echo "$CI_REGISTRY_IMAGE":"$TAG"
     - apk add --no-cache openssh
     - mkdir -p ~/.ssh
