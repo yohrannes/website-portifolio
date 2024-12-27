@@ -60,8 +60,19 @@ build-app-image-test:
     DOCKER_HOST: tcp://docker:2375
     DOCKER_TLS_CERTDIR: "/certs"
   before_script:
-    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
-  script:
-    - docker build -f ./build-app/Dockerfile --network host -t $IMAGE_NAME:$IMAGE_TAG .
-    - export TAG=\$(echo "$CI_COMMIT_REF_NAME" | sed 's/\//-/g')-${CI_COMMIT_SHORT_SHA}
+    - echo "$DOCKER_REG_PASSWORD" | sudo docker login -u yohrannes --password-stdin
     - echo "$CI_REGISTRY_IMAGE":"$TAG"
+    - apk add --no-cache openssh
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+  script:
+    - |
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$RUNNER_INSTANCE_PUBLIC_IP "
+        mkdir repos-gitlab
+        cd repos-gitlab
+        git clone https://gitlab.com/yohrannes/website-portifolio.git
+        cd website-portifolio
+        sudo docker build -f ./build-app/Dockerfile --network host -t $IMAGE_NAME:$IMAGE_TAG .
+        export TAG=\$(echo "$CI_COMMIT_REF_NAME" | sed 's/\//-/g')-${CI_COMMIT_SHORT_SHA}
+      "
