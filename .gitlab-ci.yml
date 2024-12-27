@@ -43,7 +43,7 @@ check-image-security:
         medium_vulnerabilities_count=\$(echo "$trivy_output" | grep "MEDIUM" | wc -l)
         low_vulnerabilities_count=\$(echo "$trivy_output" | grep "LOW" | wc -l )
         unknown_vulnerabilities_count=\$(echo "$trivy_output" | grep "UNKNOWN" | wc -l)
-        if [ $critical_vulnerabilities_count -eq 0 ] && [ $high_vulnerabilities_count -eq 0 ] && [ $medium_vulnerabilities_count -eq 0 ] && [ $low_vulnerabilities_count -eq 0 ] && [ $unknown_vulnerabilities_count -eq 0 ]; then
+        if [ \$critical_vulnerabilities_count -eq 0 ] && [ \$high_vulnerabilities_count -eq 0 ] && [ \$medium_vulnerabilities_count -eq 0 ] && [ \$low_vulnerabilities_count -eq 0 ] && [ \$unknown_vulnerabilities_count -eq 0 ]; then
           echo 'No vulnerabilities found.'
           exit 0
         else
