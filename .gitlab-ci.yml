@@ -58,8 +58,7 @@ build-app-image-test:
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: ""
-#    DOCKER_TLS_CERTDIR: "/certs"
+    DOCKER_TLS_CERTDIR: "/certs"
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
