@@ -38,11 +38,11 @@ check-image-security:
         sudo apt-get update
         sudo apt-get install trivy -y
         trivy_output=\$(sudo trivy image --pkg-types os --cache-dir . yohrannes/website-portifolio --format json)
-        critical_vulnerabilities_count=\$(echo "$trivy_output" | grep "CRITICAL" | wc -l)
-        high_vulnerabilities_count=\$(echo "$trivy_output" | grep "HIGH" | wc -l)
-        medium_vulnerabilities_count=\$(echo "$trivy_output" | grep "MEDIUM" | wc -l)
-        low_vulnerabilities_count=\$(echo "$trivy_output" | grep "LOW" | wc -l )
-        unknown_vulnerabilities_count=\$(echo "$trivy_output" | grep "UNKNOWN" | wc -l)
+        critical_vulnerabilities_count=\$(echo "\$trivy_output" | grep "CRITICAL" | wc -l)
+        high_vulnerabilities_count=\$(echo "\$trivy_output" | grep "HIGH" | wc -l)
+        medium_vulnerabilities_count=\$(echo "\$trivy_output" | grep "MEDIUM" | wc -l)
+        low_vulnerabilities_count=\$(echo "\$trivy_output" | grep "LOW" | wc -l )
+        unknown_vulnerabilities_count=\$(echo "\$trivy_output" | grep "UNKNOWN" | wc -l)
         if [ \$critical_vulnerabilities_count -eq 0 ] && [ \$high_vulnerabilities_count -eq 0 ] && [ \$medium_vulnerabilities_count -eq 0 ] && [ \$low_vulnerabilities_count -eq 0 ] && [ \$unknown_vulnerabilities_count -eq 0 ]; then
           echo 'No vulnerabilities found.'
           exit 0
