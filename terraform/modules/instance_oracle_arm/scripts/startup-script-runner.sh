@@ -34,11 +34,12 @@ function install-usefull-packages () {
 }
 
 function install-gitlab-runner () {
-    sudo docker volume create gitlab-runner-config
-    sudo docker run -d --name gitlab-runner --restart always \
-      -v /var/run/docker.sock:/var/run/docker.sock \
-      -v gitlab-runner-config:/etc/gitlab-runner \
-      gitlab/gitlab-runner:latest
+    sudo curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" | sudo bash
+    sudo apt-get install gitlab-runner
+    sudo gitlab-runner -version
+    sudo gitlab-runner status
+    sudo gitlab-runner start
+    sudo gitlab-runner status
 
 }
 

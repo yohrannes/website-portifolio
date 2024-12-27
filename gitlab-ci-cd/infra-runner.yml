@@ -142,8 +142,7 @@ authorize-runner:
     - chmod 600 ~/.ssh/id_rsa
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$RUNNER_INSTANCE_PUBLIC_IP "
-        sudo docker exec gitlab-runner \
-        gitlab-runner register \
+        sudo gitlab-runner register \
         --non-interactive \
         --url "https://gitlab.com/" \
         --token "$GITLAB_RUNNER_TOKEN_CREATED" \
