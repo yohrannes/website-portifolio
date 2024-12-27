@@ -38,6 +38,7 @@ function install-gitlab-runner () {
     sudo apt-get install gitlab-runner
     sudo gitlab-runner -version
     sudo gitlab-runner status
+    echo "gitlab-runner start"
     sudo gitlab-runner start
     sudo gitlab-runner status
 
