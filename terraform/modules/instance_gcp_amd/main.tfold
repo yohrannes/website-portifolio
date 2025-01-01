@@ -1,7 +1,4 @@
-provider "google" {
-  project     = "website-portifolio"
-  region      = "us-west1"
-}
+provider "google" {}
 
 resource "google_compute_network" "vpc_network" {
   name                    = "cd-vpc"
@@ -30,15 +27,15 @@ resource "google_compute_firewall" "default-allow-http-https-ssh-icmp" {
   source_ranges = ["0.0.0.0/0"]
 }
 
-resource "google_compute_instance" "inst-website-portifolio" {
+resource "google_compute_instance" "coodesh-webserver" {
   boot_disk {
     auto_delete = true
-    device_name = "inst-website-portifolio"
+    device_name = "webserver-coodesh"
 
     initialize_params {
-      image = "projects/ubuntu-os-cloud/global/images/ubuntu-2404-noble-amd64-v20241219"
-      size  = 30
-      type  = "pd-standard"
+      image = "projects/ubuntu-os-cloud/global/images/ubuntu-2204-jammy-v20240801"
+      size  = 10
+      type  = "pd-balanced"
     }
 
     mode = "READ_WRITE"
@@ -53,33 +50,15 @@ resource "google_compute_instance" "inst-website-portifolio" {
   }
 
   machine_type = "e2-micro"
-  name         = "inst-website-portifolio"
   metadata = {
-    startup-script = local.startup_script_content
+      startup-script = local.startup_script_content
   }
 
-  network_interface {
-    network    = google_compute_network.vpc_network.self_link
-    subnetwork = google_compute_subnetwork.subnet.self_link
-    access_config {
-      # network_tier = "PREMIUM"
-    }
-
-    queue_count = 0
-    stack_type  = "IPV4_ONLY"
-    subnetwork  = "projects/website-portifolio/regions/us-west1/subnetworks/default"
-  }
+  name = "cd-webserver"
 
   scheduling {
-    automatic_restart   = true
-    on_host_maintenance = "MIGRATE"
+    automatic_restart   = false
     preemptible         = false
-    provisioning_model  = "STANDARD"
-  }
-
-  locals {
-  startup_script_path = "startup-files/startup-script.sh"
-  startup_script_content = file(local.startup_script_path)
   }
 
   shielded_instance_config {
@@ -87,5 +66,34 @@ resource "google_compute_instance" "inst-website-portifolio" {
     enable_secure_boot          = false
     enable_vtpm                 = true
   }
-  zone = "us-west1-a"
+
+  tags = ["http-server", "https-server", "ssh"]
+
+  network_interface {
+    network    = google_compute_network.vpc_network.self_link
+    subnetwork = google_compute_subnetwork.subnet.self_link
+    access_config {
+      // Ephemeral IP
+    }
+  }
+}
+
+resource "google_storage_bucket" "static-site" {
+  name          = "coodesh-bucket"
+  location      = "EU"
+  force_destroy = true
+
+  uniform_bucket_level_access = true
+}
+
+#terraform {
+#  backend "gcs" {
+#    bucket  = "coodesh-bucket"
+#    prefix  = "terraform/state"
+#  }
+#}
+
+locals {
+  startup_script_path = "startup-files/startup-script.sh"
+  startup_script_content = file(local.startup_script_path)
 }
