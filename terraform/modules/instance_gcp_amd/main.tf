@@ -55,7 +55,10 @@ resource "google_compute_instance" "inst-website-portifolio" {
   machine_type = "e2-micro"
   name         = "inst-website-portifolio"
   metadata = {
-    startup-script = local.startup_script_content
+    startup-script = "${path.module}/startup-files/startup-script.sh"
+    #ssh_authorized_keys = join("\n", [for k in local.ssh_authorized_keys : chomp(k)])
+    #ssh_authorized_keys = file("/root/.ssh/id_rsa.pub")
+    #user_data = base64encode(file("${path.module}/scripts/startup-script.sh"))
   }
 
   network_interface {
@@ -67,7 +70,6 @@ resource "google_compute_instance" "inst-website-portifolio" {
 
     queue_count = 0
     stack_type  = "IPV4_ONLY"
-    subnetwork  = "projects/website-portifolio/regions/us-west1/subnetworks/default"
   }
 
   scheduling {
@@ -75,11 +77,6 @@ resource "google_compute_instance" "inst-website-portifolio" {
     on_host_maintenance = "MIGRATE"
     preemptible         = false
     provisioning_model  = "STANDARD"
-  }
-
-  locals {
-  startup_script_path = "startup-files/startup-script.sh"
-  startup_script_content = file(local.startup_script_path)
   }
 
   shielded_instance_config {
