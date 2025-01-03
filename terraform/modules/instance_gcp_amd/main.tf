@@ -59,6 +59,10 @@ resource "google_compute_instance" "inst-website-portifolio" {
     #ssh_authorized_keys = join("\n", [for k in local.ssh_authorized_keys : chomp(k)])
     #ssh_authorized_keys = file("/root/.ssh/id_rsa.pub")
     #user_data = base64encode(file("${path.module}/scripts/startup-script.sh"))
+    #ssh-keys = join("\n", [
+    #"user1:ssh-rsa ${chomp(file("~/.ssh/id_rsa.pub"))} user1@host.com",
+    #"user2:ssh-rsa ${chomp(file("~/.ssh/another_key.pub"))} user2@host.com"
+    #])
   }
 
   network_interface {

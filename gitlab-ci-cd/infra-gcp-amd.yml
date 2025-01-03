@@ -1,7 +1,7 @@
 create-oracle-instance:
   stage: create-infra
   only:
-    - infra-amd
+    - infra-gcp-amd
   image: docker:27.3.1
   services:
     - docker:27.3.1-dind
@@ -47,167 +47,179 @@ create-oracle-instance:
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --request PUT \
         --form "value=$INSTANCE_PUBLIC_IP" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/TF_INSTANCE_PUBLIC_IP" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/TF_GCP_INSTANCE_PUBLIC_IP" \
         > /dev/null 2>&1
     - docker stop terraform-container
     - docker rm terraform-container
 
-configure_fail2ban:
-  stage: create-infra
-  only:
-    - infra-amd
-  needs:
-    - check-startup-script
-  image: docker:27.3.1
-  services:
-    - docker:27.3.1-dind
-  variables:
-    DOCKER_DRIVER: overlay2
-  before_script:
-    - apk add --no-cache openssh
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-  script:
-    - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP <<EOF
-      sudo mkdir -p /var/log/nginx
-      sudo mkdir -p /etc/fail2ban/filter.d
-      sudo tee /etc/fail2ban/filter.d/nginx-injection.conf > /dev/null <<'FILTER_EOF'
-      [Definition]
-      failregex = ^<HOST> -.*"(GET|POST).*HTTP.*" 403
-      FILTER_EOF
-      sudo tee /etc/fail2ban/jail.local > /dev/null <<'JAIL_EOF'
-      [nginx-injection]
-      enabled = true
-      port    = http,https
-      filter  = nginx-injection
-      logpath = /var/log/nginx/yohrannes.com-access.log
-      maxretry = 5
-      bantime = 3600
-      JAIL_EOF
-      EOF
+#configure_fail2ban:
+#  stage: create-infra
+#  only:
+#    - infra-gcp-amd
+#  needs:
+#    - check-startup-script
+#  image: docker:27.3.1
+#  services:
+#    - docker:27.3.1-dind
+#  variables:
+#    DOCKER_DRIVER: overlay2
+#  before_script:
+#    - apk add --no-cache openssh
+#    - mkdir -p ~/.ssh
+#    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
+#    - chmod 600 ~/.ssh/id_rsa
+#  script:
+#    - |
+#      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP <<EOF
+#      sudo mkdir -p /var/log/nginx
+#      sudo mkdir -p /etc/fail2ban/filter.d
+#      sudo tee /etc/fail2ban/filter.d/nginx-injection.conf > /dev/null <<'FILTER_EOF'
+#      [Definition]
+#      failregex = ^<HOST> -.*"(GET|POST).*HTTP.*" 403
+#      FILTER_EOF
+#      sudo tee /etc/fail2ban/jail.local > /dev/null <<'JAIL_EOF'
+#      [nginx-injection]
+#      enabled = true
+#      port    = http,https
+#      filter  = nginx-injection
+#      logpath = /var/log/nginx/yohrannes.com-access.log
+#      maxretry = 5
+#      bantime = 3600
+#      JAIL_EOF
+#      sudo tee /etc/fail2ban/filter.d/wp-injection.conf > /dev/null <<'FILTER_EOF'
+#      [Definition]
+#      failregex = ^<HOST> -.*"(GET|POST).*wp*.*HTTP.*" 404
+#      FILTER_EOF
+#      sudo tee -a /etc/fail2ban/jail.local > /dev/null <<'JAIL_EOF'
+#      [wp-injection]
+#      enabled = true
+#      filter  = wp-injection
+#      logpath = /var/log/nginx/yohrannes.com-access.log
+#      maxretry = 5
+#      bantime = 3600
+#      JAIL_EOF
+#      EOF
 
-check-startup-script:
-  stage: create-infra
-  only:
-    - infra-amd
-  needs:
-    - create-oracle-instance
-  image: docker:27.3.1
-  services:
-    - docker:27.3.1-dind
-  variables:
-    DOCKER_DRIVER: overlay2
-  script:
-    - apk add --no-cache openssh
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - |
-      sleep 30;
-        while true; do
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
-            while true; do
-              if [ -e /var/log/startup-script.log ]; then
-                  if [ -r /var/log/startup-script.log ]; then
-                      last_line=\$(tail -n1 /var/log/startup-script.log 2>/dev/null)
-                      if [ \"\$last_line\" = 'startup-script-finished' ]; then
-                          echo 'Startup script finished!';
-                          exit 0;
-                      fi
-                  else
-                      echo '/var/log/startup-script.log exists but is not readable.';
-                  fi
-              else
-                  echo '/var/log/startup-script.log does not exist yet.';
-              fi
-              sleep 1
-            done
-          " && break || echo 'Retrying connection...';
-          sleep 5;
-        done
+#check-startup-script:
+#  stage: create-infra
+#  only:
+#    - infra-gcp-amd
+#  needs:
+#    - create-oracle-instance
+#  image: docker:27.3.1
+#  services:
+#    - docker:27.3.1-dind
+#  variables:
+#    DOCKER_DRIVER: overlay2
+#  script:
+#    - apk add --no-cache openssh
+#    - mkdir -p ~/.ssh
+#    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
+#    - chmod 600 ~/.ssh/id_rsa
+#    - |
+#      sleep 30;
+#       while true; do
+#          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
+#            while true; do
+#              if [ -e /var/log/startup-script.log ]; then
+#                  if [ -r /var/log/startup-script.log ]; then
+#                      last_line=\$(tail -n1 /var/log/startup-script.log 2>/dev/null)
+#                      if [ \"\$last_line\" = 'startup-script-finished' ]; then
+#                          echo 'Startup script finished!';
+#                          exit 0;
+#                      fi
+#                  else
+#                     echo '/var/log/startup-script.log exists but is not readable.';
+#                  fi
+#              else
+#                  echo '/var/log/startup-script.log does not exist yet.';
+#              fi
+#              sleep 1
+#            done
+#         " && break || echo 'Retrying connection...';
+#          sleep 5;
+#        done
 
-deploy-containers-amd:
-  stage: deploy-infra
-  only: 
-    - infra-amd
-  needs:
-    - check-startup-script
-  image: docker:27.3.1
-  services:
-    - docker:27.3.1-dind
-  variables:
-    DOCKER_DRIVER: overlay2
-  before_script:
-    - apk add --no-cache openssh
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-  script:
-    - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
-        mkdir repos-gitlab
-        cd repos-gitlab
-        git clone https://gitlab.com/yohrannes/website-portifolio.git
-        cd website-portifolio
-        git checkout infra-amd
-        sudo docker build -f ./build-app/Dockerfile --network host -t yohrannes/website-portifolio .
-        cd docker-compose
-        sudo docker compose up -d
-      "
+#deploy-containers-amd:
+#  stage: deploy-infra
+#  only: 
+#    - infra-gcp-amd
+#  needs:
+#    - check-startup-script
+#  image: docker:27.3.1
+#  services:
+#    - docker:27.3.1-dind
+#  variables:
+#    DOCKER_DRIVER: overlay2
+#  before_script:
+#    - apk add --no-cache openssh
+#    - mkdir -p ~/.ssh
+#    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
+#    - chmod 600 ~/.ssh/id_rsa
+#  script:
+#    - |
+#      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
+#       mkdir repos-gitlab
+#        cd repos-gitlab
+#        git clone https://gitlab.com/yohrannes/website-portifolio.git
+#        cd website-portifolio
+#        git checkout infra-gcp-amd
+#        sudo docker build -f ./build-app/Dockerfile --network host -t yohrannes/website-portifolio .
+#        cd docker-compose
+#        sudo docker compose up -d
+#      "
 
-update_dns:
-  stage: deploy-infra
-  only:
-    - infra-amd
-  needs:
-    - check-startup-script
-  image: docker:27.3.1
-  services:
-    - docker:27.3.1-dind
-  variables:
-    DOCKER_DRIVER: overlay2
-  script:
-    - |
-      apk add --no-cache curl jq
-      curl --request PUT \
-        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_YO_COM \
-        --header "Content-Type: application/json" \
-        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
-        --data '{
-          "comment": "Domain verification record",
-          "name": "yohrannes.com",
-          "proxied": true,
-          "settings": {},
-          "tags": [],
-          "ttl": 1,
-          "content": "'"$TF_INSTANCE_PUBLIC_IP"'",
-          "type": "A"
-        }' | jq '.'
+#update_dns:
+#  stage: deploy-infra
+#  only:
+#    - infra-gcp-amd
+#  needs:
+#    - check-startup-script
+#  image: docker:27.3.1
+#  services:
+#    - docker:27.3.1-dind
+#  variables:
+#    DOCKER_DRIVER: overlay2
+#  script:
+#    - |
+#     apk add --no-cache curl jq
+#      curl --request PUT \
+#        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_YO_COM \
+#        --header "Content-Type: application/json" \
+#       --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
+#        --data '{
+#          "comment": "Domain verification record",
+#         "name": "yohrannes.com",
+#          "proxied": true,
+#          "settings": {},
+#          "tags": [],
+#          "ttl": 1,
+#          "content": "'"$TF_INSTANCE_PUBLIC_IP"'",
+#          "type": "A"
+#        }' | jq '.'
 
-deploy_fail2ban:
-  stage: deploy-infra
-  only:
-    - infra-amd
-  needs:
-    - check-startup-script
-  image: docker:27.3.1
-  services:
-    - docker:27.3.1-dind
-  variables:
-    DOCKER_DRIVER: overlay2
-  before_script:
-    - apk add --no-cache openssh
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-  script:
-    - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
-        sudo systemctl enable fail2ban
-        sudo systemctl start fail2ban
-        sudo fail2ban-client reload
-        sudo fail2ban-client status nginx-injection
-      "
+#deploy_fail2ban:
+#  stage: deploy-infra
+#  only:
+#    - infra-gcp-amd
+#  needs:
+#    - check-startup-script
+#  image: docker:27.3.1
+#  services:
+#    - docker:27.3.1-dind
+#  variables:
+#    DOCKER_DRIVER: overlay2
+#  before_script:
+#    - apk add --no-cache openssh
+#    - mkdir -p ~/.ssh
+#    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
+#    - chmod 600 ~/.ssh/id_rsa
+#  script:
+#    - |
+#      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
+#        sudo systemctl enable fail2ban
+#        sudo systemctl start fail2ban
+#        sudo fail2ban-client reload
+#        sudo fail2ban-client status nginx-injection
+#      "
         
