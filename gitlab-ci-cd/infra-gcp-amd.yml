@@ -25,7 +25,6 @@ create-oracle-instance:
     - docker exec -w /app terraform-container mkdir /root/.ssh
     - docker cp /root/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
 
-    #Autenthicate with GCP
   script:
     - |
       docker exec -w /app terraform-container sh -c "
