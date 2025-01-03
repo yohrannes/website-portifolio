@@ -132,6 +132,9 @@ gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
 gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
   --member "serviceAccount:$SERVICE_ACCOUNT_EMAIL" \
   --role "roles/compute.securityAdmin"
+gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+  --member "serviceAccount:$SERVICE_ACCOUNT_EMAIL" \
+  --role "roles/compute.admin"
 
 ```
 
