@@ -10,6 +10,6 @@ module "instance_oracle_amd" {
   source = "./modules/instance_oracle_amd"
 }
 
-module "instance_gcp_amd" {
-  source = "./modules/instance_gcp_amd"
-}
+#module "instance_gcp_amd" {
+#  source = "./modules/instance_gcp_amd"
+#}
