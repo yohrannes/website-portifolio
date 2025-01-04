@@ -154,4 +154,18 @@ authorize-runner:
       gitlab-runner ALL=(ALL) NOPASSWD: ALL
       EOF
         exit
+      
+      sudo tee /home/ubuntu/.gitlab-runner/config.toml > /dev/null <<'EOF'
+      [[runners]]
+      name = "docker-runner"
+      url = "https://gitlab.com/"
+      token = "$GITLAB_RUNNER_TOKEN_CREATED"
+      executor = "docker"
+      [runners.docker]
+        tls_verify = false
+        image = "docker:27.3.1"
+        privileged = true
+        volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/cache"]
+      EOF
+
       "

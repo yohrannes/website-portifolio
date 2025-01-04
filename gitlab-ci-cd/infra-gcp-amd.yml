@@ -7,9 +7,6 @@ create-oracle-instance:
     - docker:27.3.1-dind
   variables:
     DOCKER_DRIVER: overlay2
-    DOCKER_HOST: unix:///var/run/docker.sock
-  volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
   before_script:
     # Prepare SSH files to enable ssh conection with instance
     - apk add --no-cache openssh curl
