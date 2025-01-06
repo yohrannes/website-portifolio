@@ -152,8 +152,3 @@ terraform {
   }
 }
 
-#terraform init -upgrade
-#terraform fmt .
-#terraform validate .
-#terraform plan -out plan
-#terraform apply plan
