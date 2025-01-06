@@ -146,7 +146,7 @@ authorize-runner:
         --non-interactive \
         --url "https://gitlab.com/" \
         --token "$GITLAB_RUNNER_TOKEN_CREATED" \
-        --executor "docker" \
+        --executor "shell" \
         --docker-image alpine:latest \
         --description "docker-runner"
         sudo EDITOR='tee -a' visudo <<EOF
@@ -160,7 +160,7 @@ authorize-runner:
       name = "docker-runner"
       url = "https://gitlab.com/"
       token = "$GITLAB_RUNNER_TOKEN_CREATED"
-      executor = "docker"
+      executor = "shell"
       [runners.docker]
         tls_verify = false
         image = "docker:27.3.1"
