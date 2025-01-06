@@ -38,3 +38,6 @@ terraform.rc
 
 #Service account key
 key.json
+
+#tf plan
+plan
