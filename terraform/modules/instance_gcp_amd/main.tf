@@ -90,3 +90,4 @@ resource "google_compute_instance" "inst-website-portifolio" {
   }
   zone = "us-west1-a"
 }
+

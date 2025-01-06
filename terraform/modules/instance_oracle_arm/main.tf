@@ -143,6 +143,15 @@ resource "oci_core_instance" "ic_pub_vm-A" {
 
 }
 
+terraform {
+  required_providers {
+    oci = {
+      source  = "oracle/oci"
+      version = ">= 4.0.0"
+    }
+  }
+}
+
 #terraform init -upgrade
 #terraform fmt .
 #terraform validate .

@@ -25,8 +25,11 @@ repo/
 ```
 docker run -it \
 -v ~/.oci:/root/.oci \
--v $PWD:/app \
+-v ~/.aws:/root/.aws \
 -v ~/.ssh:/root/.ssh \
+-v ~/.gcp:/root/.gcp \
+-v $PWD:/app \
 -w /app \
---entrypoint "" hashicorp/terraform:light sh
+-e GOOGLE_APPLICATION_CREDENTIALS="/root/.gcp/credentials.json" \
+--entrypoint "" hashicorp/terraform:latest sh -c "terraform init && sh"
 ```
