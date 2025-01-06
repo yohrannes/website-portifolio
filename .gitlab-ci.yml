@@ -27,7 +27,6 @@ check-image-security:
   variables:
     DOCKER_DRIVER: overlay2
   script:
-    - sudo apt-get install openssh -y
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
