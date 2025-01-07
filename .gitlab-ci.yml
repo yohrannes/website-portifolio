@@ -13,8 +13,8 @@ stages:
   - test-infra
   - deploy-infra
 
-  - build
   - test
+  - build
   - deploy-image
 
 check-image-security:
