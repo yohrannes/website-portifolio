@@ -13,8 +13,8 @@ stages:
   - test-infra
   - deploy-infra
 
-  - test
   - build
+  - test
   - deploy-image
 
 check-image-security:
@@ -98,6 +98,7 @@ deploy-image:
       git clone https://gitlab.com/yohrannes/website-portifolio.git
       cd website-portifolio
       docker build -f ./build-app/Dockerfile --network host -t $IMAGE_NAME:$IMAGE_TAG .
+      ls -lahtr
       NEW_TAG=$(./usefull-scripts/nx-dk-img-version.sh)
       docker tag $IMAGE_NAME:latest $IMAGE_NAME:$NEW_TAG
       echo $NEW_TAG
