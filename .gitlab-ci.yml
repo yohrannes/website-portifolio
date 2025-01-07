@@ -103,4 +103,4 @@ deploy-image:
       apk add --no-cache jq curl
       NEW_TAG=$(sh nx-dk-img-version.sh)
       docker tag $IMAGE_NAME:latest $IMAGE_NAME:$NEW_TAG
-      echo $NEW_TAG
+      echo $NEW_TAG test
