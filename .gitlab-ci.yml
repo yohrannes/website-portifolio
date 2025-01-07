@@ -27,13 +27,12 @@ check-image-security:
   variables:
     DOCKER_DRIVER: overlay2
     DOCKER_TLS_CERTDIR: "/certs"
+  before_script:
+    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
+    - trivy_output=$(docker run --rm -v ~/.cache:/root/.cache alpine/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json docker.io/$IMAGE_NAME:$IMAGE_TAG)
+    
     - |
-      trivy_output=$(docker run --rm -v ~/.cache:/root/.cache alpine/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json docker.io/$IMAGE_NAME:$IMAGE_TAG)
-
       if echo "$trivy_output" | jq . >/dev/null 2>&1; then
         critical_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[].Vulnerabilities[] | select(.Severity=="CRITICAL")] | length')
         high_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[].Vulnerabilities[] | select(.Severity=="HIGH")] | length')
