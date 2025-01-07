@@ -60,7 +60,8 @@ build-image:
   stage: build
   only:
    - develop
-  needs: []
+  needs:
+   - check-image-security
   image: docker:27.3.1
   services:
    - docker:27.3.1-dind
@@ -97,8 +98,8 @@ deploy-image:
       cd repos-gitlab
       git clone https://gitlab.com/yohrannes/website-portifolio.git
       cd website-portifolio
-      git checkout develop
       docker build -f ./build-app/Dockerfile --network host -t $IMAGE_NAME:$IMAGE_TAG .
+      git checkout develop
       cd usefull-scripts
       apk add --no-cache jq curl
       NEW_TAG=$(sh nx-dk-img-version.sh)
