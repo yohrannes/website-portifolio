@@ -30,6 +30,12 @@ check-image-security:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
+
+# alias scan="docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock -v ~/.cache:/root/.cache alpine/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN"
+
+#scan quay.io/keycloak/keycloak
+#scan docker.io/yohrannes/website-portifolio
+
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$RUNNER_INSTANCE_PUBLIC_IP "
         sudo apt-get install wget gnupg -y
@@ -103,5 +109,9 @@ deploy-image:
       cd usefull-scripts
       apk add --no-cache jq curl
       NEW_TAG=$(sh nx-dk-img-version.sh)
-      docker tag $IMAGE_NAME:latest $IMAGE_NAME:$NEW_TAG
-      echo $NEW_TAG test
+      echo "docker tag "$IMAGE_NAME":latest "$IMAGE_NAME":"$NEW_TAG
+#      ... if Dockerfile =! last_commit_Dockerfile || check_image_security_job_error
+#      docker tag $IMAGE_NAME:latest $IMAGE_NAME:$NEW_TAG
+#      docker push $IMAGE_NAME:$NEW_TAG
+#      docker tag $IMAGE_NAME:$NEW_TAG $IMAGE_NAME:latest
+#      docker push $IMAGE_NAME:latest
