@@ -100,7 +100,7 @@ deploy-image:
       git checkout develop
       docker build -f ./build-app/Dockerfile --network host -t $IMAGE_NAME:$IMAGE_TAG .
       cd usefull-scripts
-      apk add --no-cache -y curl jq
+      apk add --no-cache jq curl
       NEW_TAG=$(sh nx-dk-img-version.sh)
       docker tag $IMAGE_NAME:latest $IMAGE_NAME:$NEW_TAG
       echo $NEW_TAG
