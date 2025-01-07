@@ -61,21 +61,9 @@ build-image:
   only:
    - develop
   needs: []
-  image: docker:27.3.1
-  services:
-   - docker:27.3.1-dind
-  variables:
-    DOCKER_DRIVER: overlay2
-    DOCKER_HOST: tcp://docker:2375
-    DOCKER_TLS_CERTDIR: "/certs"
+  image: ubuntu
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
-    - echo "$CI_COMMIT_REF_NAME" ${CI_COMMIT_SHORT_SHA}
-    - echo "$CI_REGISTRY_IMAGE":"$TAG"
-    - apk add --no-cache openssh
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
   script:
     - |
       mkdir repos-gitlab
