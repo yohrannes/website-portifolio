@@ -30,37 +30,25 @@ check-image-security:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-
-# alias scan="docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock -v ~/.cache:/root/.cache alpine/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN"
-
-#scan quay.io/keycloak/keycloak
-#scan docker.io/yohrannes/website-portifolio
-
+    - alias scan="docker run -ti --rm -v /var/run/docker.sock:/var/run/docker.sock -v ~/.cache:/root/.cache alpine/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json"
+    - trivy_output=$(scan docker.io/yohrannes/website-portifolio)
     - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$RUNNER_INSTANCE_PUBLIC_IP "
-        sudo apt-get install wget gnupg -y
-        wget -qO - https://aquasecurity.github.io/trivy-repo/deb/public.key | gpg --dearmor | sudo tee /usr/share/keyrings/trivy.gpg > /dev/null
-        echo 'deb [signed-by=/usr/share/keyrings/trivy.gpg] https://aquasecurity.github.io/trivy-repo/deb generic main' | sudo tee -a /etc/apt/sources.list.d/trivy.list
-        sudo apt-get update
-        sudo apt-get install trivy -y
-        trivy_output=\$(sudo trivy image --pkg-types os --cache-dir . yohrannes/website-portifolio --format json)
-        critical_vulnerabilities_count=\$(echo \"\$trivy_output\" | grep \"CRITICAL\" | wc -l)
-        high_vulnerabilities_count=\$(echo \"\$trivy_output\" | grep \"HIGH\" | wc -l)
-        medium_vulnerabilities_count=\$(echo \"\$trivy_output\" | grep \"MEDIUM\" | wc -l)
-        low_vulnerabilities_count=\$(echo \"\$trivy_output\" | grep \"LOW\" | wc -l )
-        unknown_vulnerabilities_count=\$(echo \"\$trivy_output\" | grep \"UNKNOWN\" | wc -l)
-        if [ \$critical_vulnerabilities_count -eq 0 ] && [ \$high_vulnerabilities_count -eq 0 ] && [ \$medium_vulnerabilities_count -eq 0 ] && [ \$low_vulnerabilities_count -eq 0 ] && [ \$unknown_vulnerabilities_count -eq 0 ]; then
-          echo 'No vulnerabilities found.'
-          exit 0
-        else
-          echo \"Found \$critical_vulnerabilities_count CRITICAL vulnerabilities.\"
-          echo \"Found \$high_vulnerabilities_count HIGH vulnerabilities.\"
-          echo \"Found \$medium_vulnerabilities_count MEDIUM vulnerabilities.\"
-          echo \"Found \$low_vulnerabilities_count LOW vulnerabilities.\"
-          echo \"Found \$unknown_vulnerabilities_count UNKNOWN vulnerabilities.\"
-          exit 1
-        fi
-      "
+      critical_vulnerabilities_count=$(echo "$trivy_output" | grep "CRITICAL" | wc -l)
+      high_vulnerabilities_count=$(echo "$trivy_output" | grep "HIGH" | wc -l)
+      medium_vulnerabilities_count=$(echo "$trivy_output" | grep "MEDIUM" | wc -l)
+      low_vulnerabilities_count=$(echo "$trivy_output" | grep "LOW" | wc -l )
+      unknown_vulnerabilities_count=$(echo "$trivy_output" | grep "UNKNOWN" | wc -l)
+      if [ $critical_vulnerabilities_count -eq 0 ] && [ $high_vulnerabilities_count -eq 0 ] && [ $medium_vulnerabilities_count -eq 0 ] && [ $low_vulnerabilities_count -eq 0 ] && [ $unknown_vulnerabilities_count -eq 0 ]; then
+      echo 'No vulnerabilities found.'
+      exit 0
+      else
+        echo "Found $critical_vulnerabilities_count CRITICAL vulnerabilities."
+        echo "Found $high_vulnerabilities_count HIGH vulnerabilities."
+        echo "Found $medium_vulnerabilities_count MEDIUM vulnerabilities."
+        echo "Found $low_vulnerabilities_count LOW vulnerabilities."
+        echo "Found $unknown_vulnerabilities_count UNKNOWN vulnerabilities."
+        exit 1
+      fi
 
 build-image:
   stage: build
