@@ -30,8 +30,8 @@ check-image-security:
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
-    - trivy_output=$(docker run --rm -v ~/.cache:/root/.cache alpine/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json docker.io/$IMAGE_NAME:$IMAGE_TAG)
-    
+    - docker run --rm -v ~/.cache:/root/.cache alpine/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json docker.io/$IMAGE_NAME:$IMAGE_TAG
+
     - |
       if echo "$trivy_output" | jq . >/dev/null 2>&1; then
         critical_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[].Vulnerabilities[] | select(.Severity=="CRITICAL")] | length')
