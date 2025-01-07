@@ -97,6 +97,7 @@ deploy-image:
       cd repos-gitlab
       git clone https://gitlab.com/yohrannes/website-portifolio.git
       cd website-portifolio
+      git checkout develop
       docker build -f ./build-app/Dockerfile --network host -t $IMAGE_NAME:$IMAGE_TAG .
       cd usefull-scripts
       ls -lahtr
