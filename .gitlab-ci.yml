@@ -30,22 +30,29 @@ check-image-security:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - trivy_output=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v ~/.cache:/root/.cache alpine/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json docker.io/$IMAGE_NAME:$IMAGE_TAG)
     - |
-      critical_vulnerabilities_count=$(echo "$trivy_output" | grep "CRITICAL" | wc -l)
-      high_vulnerabilities_count=$(echo "$trivy_output" | grep "HIGH" | wc -l)
-      medium_vulnerabilities_count=$(echo "$trivy_output" | grep "MEDIUM" | wc -l)
-      low_vulnerabilities_count=$(echo "$trivy_output" | grep "LOW" | wc -l )
-      unknown_vulnerabilities_count=$(echo "$trivy_output" | grep "UNKNOWN" | wc -l)
-      if [ $critical_vulnerabilities_count -eq 0 ] && [ $high_vulnerabilities_count -eq 0 ] && [ $medium_vulnerabilities_count -eq 0 ] && [ $low_vulnerabilities_count -eq 0 ] && [ $unknown_vulnerabilities_count -eq 0 ]; then
-      echo 'No vulnerabilities found.'
-      exit 0
+      trivy_output=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v ~/.cache:/root/.cache alpine/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json docker.io/$IMAGE_NAME:$IMAGE_TAG)
+
+      if echo "$trivy_output" | jq . >/dev/null 2>&1; then
+        critical_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[].Vulnerabilities[] | select(.Severity=="CRITICAL")] | length')
+        high_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[].Vulnerabilities[] | select(.Severity=="HIGH")] | length')
+        medium_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[].Vulnerabilities[] | select(.Severity=="MEDIUM")] | length')
+        low_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[].Vulnerabilities[] | select(.Severity=="LOW")] | length')
+        unknown_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[].Vulnerabilities[] | select(.Severity=="UNKNOWN")] | length')
+
+        if [ "$critical_vulnerabilities_count" -eq 0 ] && [ "$high_vulnerabilities_count" -eq 0 ] && [ "$medium_vulnerabilities_count" -eq 0 ] && [ "$low_vulnerabilities_count" -eq 0 ] && [ "$unknown_vulnerabilities_count" -eq 0 ]; then
+          echo 'No vulnerabilities found.'
+          exit 0
+        else
+          echo "Found $critical_vulnerabilities_count CRITICAL vulnerabilities."
+          echo "Found $high_vulnerabilities_count HIGH vulnerabilities."
+          echo "Found $medium_vulnerabilities_count MEDIUM vulnerabilities."
+          echo "Found $low_vulnerabilities_count LOW vulnerabilities."
+          echo "Found $unknown_vulnerabilities_count UNKNOWN vulnerabilities."
+          exit 1
+        fi
       else
-        echo "Found $critical_vulnerabilities_count CRITICAL vulnerabilities."
-        echo "Found $high_vulnerabilities_count HIGH vulnerabilities."
-        echo "Found $medium_vulnerabilities_count MEDIUM vulnerabilities."
-        echo "Found $low_vulnerabilities_count LOW vulnerabilities."
-        echo "Found $unknown_vulnerabilities_count UNKNOWN vulnerabilities."
+        echo "Error: Failed to parse Trivy output as JSON."
         exit 1
       fi
 
