@@ -26,6 +26,7 @@ check-image-security:
    - docker:27.3.1-dind
   variables:
     DOCKER_DRIVER: overlay2
+    DOCKER_TLS_CERTDIR: "/certs"
   script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
