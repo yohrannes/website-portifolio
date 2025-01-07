@@ -82,7 +82,7 @@ build-image:
       cd repos-gitlab
       git clone https://gitlab.com/yohrannes/website-portifolio.git
       cd website-portifolio
-      sudo docker build -f ./build-app/Dockerfile --network host -t $IMAGE_NAME:$IMAGE_TAG .
+      docker build -f ./build-app/Dockerfile --network host -t $IMAGE_NAME:$IMAGE_TAG .
 
 deploy-image:
   stage: deploy-image
