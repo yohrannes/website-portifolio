@@ -98,7 +98,7 @@ deploy-image:
       git clone https://gitlab.com/yohrannes/website-portifolio.git
       cd website-portifolio
       docker build -f ./build-app/Dockerfile --network host -t $IMAGE_NAME:$IMAGE_TAG .
-      usefull-scripts
+      cd usefull-scripts
       ls -lahtr
       NEW_TAG=$(sh nx-dk-img-version.sh)
       docker tag $IMAGE_NAME:latest $IMAGE_NAME:$NEW_TAG
