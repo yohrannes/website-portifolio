@@ -26,12 +26,11 @@ check-image-security:
    - docker:27.3.1-dind
   variables:
     DOCKER_DRIVER: overlay2
-    DOCKER_HOST: "tcp://docker:2375"
-    DOCKER_TLS_CERTDIR: ""
+    DOCKER_TLS_CERTDIR: "/certs"
   before_script:
+    - docker info
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
-    - docker info
     - trivy_output=$(docker run --rm -v ~/.cache:/root/.cache alpine/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json docker.io/$IMAGE_NAME:$IMAGE_TAG)
     
     - |
