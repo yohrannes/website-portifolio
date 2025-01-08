@@ -8,3 +8,6 @@ Get latest docker pipeline logs
 docker logs -f $(docker ps -lq)
 
 Obs: To use this comand you will need a gl-runner running in docker mode...
+
+### Tasks
+[ ] Use the dynamoDb to Lock the state file (use the official documentation)
