@@ -1,2 +1,2 @@
-.gitlab-ci.yml linguist-language=GitLab YAML
-gitlab-ci-cd/* linguist-language=GitLab YAML
+.gitlab-ci.yml linguist-language=YAML
+gitlab-ci-cd/* linguist-language=YAML
