@@ -97,14 +97,14 @@ resource "oci_core_default_route_table" "the_route_table" {
   }
 }
 
-resource "oci_core_instance" "ic_pub_vm-A" {
+resource "oci_core_instance" "tf_gitlab_runner" {
   compartment_id      = oci_identity_compartment.runner-comp.id
-  shape               = var.ic_pub_vm_A.shape.name
-  availability_domain = var.ic_pub_vm_A.availability_domain
-  display_name        = var.ic_pub_vm_A.display_name
+  shape               = var.tf_gitlab_runner.shape.name
+  availability_domain = var.tf_gitlab_runner.availability_domain
+  display_name        = var.tf_gitlab_runner.display_name
 
   source_details {
-    source_id   = var.ic_pub_vm_A.image_ocid
+    source_id   = var.tf_gitlab_runner.image_ocid
     source_type = "image"
   }
 
@@ -112,14 +112,14 @@ resource "oci_core_instance" "ic_pub_vm-A" {
     for_each = [true]
     content {
       #Optional
-      memory_in_gbs = var.ic_pub_vm_A.shape.memory_in_gbs
-      ocpus         = var.ic_pub_vm_A.shape.ocpus
+      memory_in_gbs = var.tf_gitlab_runner.shape.memory_in_gbs
+      ocpus         = var.tf_gitlab_runner.shape.ocpus
     }
   }
 
   create_vnic_details {
     subnet_id        = oci_core_subnet.subnetA_pub.id
-    assign_public_ip = var.ic_pub_vm_A.assign_public_ip
+    assign_public_ip = var.tf_gitlab_runner.assign_public_ip
   }
 
   metadata = {
