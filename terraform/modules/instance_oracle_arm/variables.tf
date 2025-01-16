@@ -47,7 +47,7 @@ variable "internet_gateway_A" {
 
 # Needs to be same region of the cluster, same image_ocid of cluster nodes + check if that was really in aways free plan
 
-variable "ic_pub_vm_A" {
+variable "tf_gitlab_runner" {
   description = "The details of the compute instance"
   default = {
     display_name : "gitlab-runner"
