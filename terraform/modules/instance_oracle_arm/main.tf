@@ -10,12 +10,12 @@ resource "oci_identity_compartment" "runner-comp" {
 resource "oci_core_vcn" "tf_vcn" {
   #Required
   compartment_id = oci_identity_compartment.runner-comp.id
-  cidr_blocks    = var.vcn1.cidr_blocks
+  cidr_blocks    = var.tf_vcn.cidr_blocks
   #Optional
-  display_name = var.vcn1.display_name
+  display_name = var.tf_vcn.display_name
 }
 
-resource "oci_core_security_list" "security_list_pub" {
+resource "oci_core_security_list" "tf_sec_list" {
   compartment_id = oci_identity_compartment.runner-comp.id
   vcn_id         = oci_core_vcn.tf_vcn.id
   display_name   = "Public Security List"
@@ -64,35 +64,35 @@ resource "oci_core_security_list" "security_list_pub" {
   }
 }
 
-resource "oci_core_subnet" "subnetA_pub" {
+resource "oci_core_subnet" "tf_subnet" {
   #Required
   compartment_id = oci_identity_compartment.runner-comp.id
   vcn_id         = oci_core_vcn.tf_vcn.id
-  cidr_block     = var.subnetA_pub.cidr_block
+  cidr_block     = var.tf_subnet.cidr_block
   #Optional
-  security_list_ids = [oci_core_security_list.security_list_pub.id]
-  display_name               = var.subnetA_pub.display_name
-  prohibit_public_ip_on_vnic = !var.subnetA_pub.is_public
-  prohibit_internet_ingress  = !var.subnetA_pub.is_public
+  security_list_ids = [oci_core_security_list.tf_sec_list.id]
+  display_name               = var.tf_subnet.display_name
+  prohibit_public_ip_on_vnic = !var.tf_subnet.is_public
+  prohibit_internet_ingress  = !var.tf_subnet.is_public
 }
 
-resource "oci_core_internet_gateway" "the_internet_gateway" {
+resource "oci_core_internet_gateway" "tf_int_gateway" {
   compartment_id = oci_identity_compartment.runner-comp.id
   vcn_id         = oci_core_vcn.tf_vcn.id
-  display_name   = var.internet_gateway_A.display_name
+  display_name   = var.tf_int_gateway.display_name
 }
 
-resource "oci_core_default_route_table" "the_route_table" {
+resource "oci_core_default_route_table" "tf_route_table" {
   compartment_id             = oci_identity_compartment.runner-comp.id
   manage_default_resource_id = oci_core_vcn.tf_vcn.default_route_table_id
   # Optional
-  display_name = var.subnetA_pub.route_table.display_name
+  display_name = var.tf_subnet.route_table.display_name
   dynamic "route_rules" {
     for_each = [true]
     content {
-      destination       = var.internet_gateway_A.ig_destination
-      description       = var.subnetA_pub.route_table.description
-      network_entity_id = oci_core_internet_gateway.the_internet_gateway.id
+      destination       = var.tf_int_gateway.ig_destination
+      description       = var.tf_subnet.route_table.description
+      network_entity_id = oci_core_internet_gateway.tf_int_gateway.id
     }
   }
 }
@@ -118,7 +118,7 @@ resource "oci_core_instance" "tf_gitlab_runner" {
   }
 
   create_vnic_details {
-    subnet_id        = oci_core_subnet.subnetA_pub.id
+    subnet_id        = oci_core_subnet.tf_subnet.id
     assign_public_ip = var.tf_gitlab_runner.assign_public_ip
   }
 
