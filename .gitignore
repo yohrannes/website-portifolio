@@ -61,5 +61,9 @@ terraform/modules/cluster_oracle/.terraform.d
 terraform/modules/cluster_oracle_oracle/plan
 terraform/modules/cluster_oracle/*.tfstate*
 terraform/modules/cluster_oracle/*.tfstate.*
+
 # Ignore package instalation
 venv
+
+# Ignore VsCode files
+.vscode
