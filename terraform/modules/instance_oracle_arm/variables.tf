@@ -16,31 +16,31 @@ variable "compartment_description" {
   default     = "Compartmant description ......"
 }
 
-variable "vcn1" {
-  description = "The details of VCN1."
+variable "tf_vcn" {
+  description = "The details of VCN."
   default = {
     cidr_blocks : ["10.23.0.0/20"]
-    display_name : "vcn01"
+    display_name : "tf_runner_vcn"
   }
 }
 
-variable "subnetA_pub" {
+variable "tf_subnet" {
   description = "The details of the subnet"
   default = {
     cidr_block : "10.23.11.0/24"
-    display_name : "IC_pub_snet-A"
+    display_name : "GL_RUNNER_SUBNET"
     is_public : true
     route_table : {
-      display_name = "routeTable-Apub"
-      description  = "routeTable-Apub"
+      display_name = "tf_runner_route_table"
+      description  = "tf_runner_route_table"
     }
   }
 }
 
-variable "internet_gateway_A" {
+variable "tf_int_gateway" {
   description = "The details of the internet gateway"
   default = {
-    display_name : "IC_IG-A"
+    display_name : "INT_GATEWAY"
     ig_destination = "0.0.0.0/0"
   }
 }
