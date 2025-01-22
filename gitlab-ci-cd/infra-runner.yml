@@ -88,7 +88,7 @@ check-startup-script-runner:
   only:
     - infra-runner
   needs:
-    - create-oci-gt-runner-instance
+    - create-oci-gl-runner-instance
   image: docker:27.3.1
   services:
     - docker:27.3.1-dind
