@@ -52,6 +52,8 @@ create-oci-gl-runner-instance:
         terraform apply plan | grep "Apply complete!"
       "
     - INSTANCE_PUBLIC_IP=$(docker exec -w /app terraform-container terraform output -raw instance_runner_public_ip)
+
+    ### CHECK IF GITLAB_TOKEN IT'S WORKING
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --request PUT \
