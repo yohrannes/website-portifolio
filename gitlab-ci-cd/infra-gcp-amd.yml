@@ -12,7 +12,7 @@ create-gcp-instance:
   
   before_script:
     # Prepare SSH files to enable ssh conection with instance
-    - apt-get install -y openssh curl
+    - sudo apt-get install -y openssh curl
     - mkdir -p ~/.ssh
     - (echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa 2>/dev/null)
     - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa.pub 2>/dev/null)
