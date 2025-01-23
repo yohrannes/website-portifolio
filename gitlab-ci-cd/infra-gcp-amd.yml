@@ -29,7 +29,7 @@ create-gcp-instance:
     # Build terraform container to arm64/v8
     - sudo docker build -f ./build-tf-arm64-v8/Dockerfile --build-arg PRODUCT=terraform --build-arg VERSION=1.7.2 -t yohrannes/terraform:latest .
 
-    # Run terraform-container
+    # Run terraform-container 
     - |
       sudo docker run -d --name terraform-container \
       --entrypoint "" yohrannes/terraform:latest sleep 3600
