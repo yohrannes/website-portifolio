@@ -23,16 +23,16 @@ create-gcp-instance:
       sudo docker run -d --name terraform-container \
       --entrypoint "" hashicorp/terraform:light sleep 3600
     - sudo docker cp $CI_PROJECT_DIR/terraform terraform-container:/app > /dev/null 2>&1
-    - docker cp /root/.oci terraform-container:/root/.oci > /dev/null 2>&1
-    - docker cp /root/.aws terraform-container:/root/.aws > /dev/null 2>&1
-    - docker cp /root/.gcp terraform-container:/root/.gcp > /dev/null 2>&1
-    - docker exec -w /app terraform-container export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.gcp/credentials.json"
-    - docker exec -w /app terraform-container mkdir /root/.ssh
-    - docker cp /root/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
+    - sudo docker cp /root/.oci terraform-container:/root/.oci > /dev/null 2>&1
+    - sudo docker cp /root/.aws terraform-container:/root/.aws > /dev/null 2>&1
+    - sudo docker cp /root/.gcp terraform-container:/root/.gcp > /dev/null 2>&1
+    - sudo docker exec -w /app terraform-container export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.gcp/credentials.json"
+    - sudo docker exec -w /app terraform-container mkdir /root/.ssh
+    - sudo docker cp /root/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
 
   script:
     - |
-      docker exec -w /app terraform-container sh -c "
+      sudo docker exec -w /app terraform-container sh -c "
         terraform init -reconfigure
         terraform workspace select gcp_instance_amd
         terraform plan -detailed-exitcode -target=module.instance_gcp_amd -out=plan | grep "Plan:"
@@ -41,15 +41,15 @@ create-gcp-instance:
     #- docker exec -w /app terraform-container terraform apply plan | grep -o -E 'oci[^.]*.'
 
     #EXPORT INSTANCE IP
-    - INSTANCE_PUBLIC_IP=$(docker exec -w /app terraform-container terraform output -raw instance_public_ip)
+    - INSTANCE_PUBLIC_IP=$(sudo docker exec -w /app terraform-container terraform output -raw instance_public_ip)
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --request PUT \
         --form "value=$INSTANCE_PUBLIC_IP" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/TF_GCP_INSTANCE_PUBLIC_IP" \
         > /dev/null 2>&1
-    - docker stop terraform-container
-    - docker rm terraform-container
+    - sudo docker stop terraform-container
+    - sudo docker rm terraform-container
 
 #configure_fail2ban:
 #  stage: create-infra
