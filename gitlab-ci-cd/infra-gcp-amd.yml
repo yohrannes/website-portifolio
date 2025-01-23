@@ -18,6 +18,14 @@ create-gcp-instance:
     - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa.pub 2>/dev/null)
     - chmod 644 ~/.ssh/id_rsa.pub
 
+    # Check old terraform containers
+    - |
+      if [ "$(sudo docker ps -a -q -f name=^terraform-container$)" ]; then
+        echo "Old terraform container found removing..."
+        sudo docker stop terraform-container
+        sudo docker rm terraform-container
+      fi
+
     # Run terraform-container
     - |
       sudo docker run -d --name terraform-container \
