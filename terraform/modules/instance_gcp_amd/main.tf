@@ -32,6 +32,7 @@ resource "google_compute_firewall" "default-allow-http-https-ssh-icmp" {
 }
 
 resource "google_compute_instance" "inst-website-portifolio" {
+  zone = "us-west1-a"
   boot_disk {
     auto_delete = true
     device_name = "inst-website-portifolio"
@@ -89,6 +90,5 @@ resource "google_compute_instance" "inst-website-portifolio" {
     enable_secure_boot          = false
     enable_vtpm                 = true
   }
-  zone = "us-west1-a"
 }
 

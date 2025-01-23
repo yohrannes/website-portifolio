@@ -1,13 +1,43 @@
+# Docker command used for tests
 docker run -it \
 -v ~/.oci:/root/.oci \
--v ~/.aws/:/root/.aws \
--v ~/.ssh/:/root/.ssh \
+-v ~/.aws:/root/.aws \
+-v ~/.ssh:/root/.ssh \
+-v ~/.gcp:/root/.gcp \
 -v $PWD:/app \
 -w /app \
---entrypoint "" hashicorp/terraform:1.5.6 sh
+--entrypoint "" hashicorp/terraform:latest sh -c "terraform init -reconfigure && sh"
 
+###Create Bucket to store tf state ....
 mv backend.tf /modules/instance_oracle/.
 terraform init
 terraform apply -target=module.bucket_aws -auto-approve
 mv modules/instance_oracle/backend.tf .
 terraform init
+
+##GCP commands to autenticate service account
+export GOOGLE_CLOUD_PROJECT=website-portifolio;
+export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.gcp/credentials.json"
+export GOOGLE_REGION=us-west1;
+export GOOGLE_ZONE=us-west1-a;
+export SERVICE_ACCOUNT_EMAIL="<service-account-email>";
+
+gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+  --member "serviceAccount:$SERVICE_ACCOUNT_EMAIL" \
+  --role "roles/compute.instanceAdmin.v1" && \
+gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+  --member "serviceAccount:$SERVICE_ACCOUNT_EMAIL" \
+  --role "roles/compute.networkAdmin" && \
+gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+  --member "serviceAccount:$SERVICE_ACCOUNT_EMAIL" \
+  --role "roles/cloudbuild.integrationsOwner" && \
+gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+  --member "serviceAccount:$SERVICE_ACCOUNT_EMAIL" \
+  --role "roles/vpcaccess.serviceAgent" && \
+gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+  --member "serviceAccount:$SERVICE_ACCOUNT_EMAIL" \
+  --role "roles/storage.admin" && \
+gcloud projects add-iam-policy-binding $GOOGLE_CLOUD_PROJECT \
+  --member "serviceAccount:$SERVICE_ACCOUNT_EMAIL" \
+  --role "roles/compute.securityAdmin"
+
