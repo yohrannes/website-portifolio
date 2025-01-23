@@ -26,10 +26,13 @@ create-gcp-instance:
         sudo docker rm terraform-container
       fi
 
+    # Build terraform container to arm64/v8
+    - sudo docker build -f ./build-tf-arm64-v8/Dockerfile --build-arg PRODUCT=terraform --build-arg VERSION=1.7.2 -t yohrannes/terraform:latest .
+
     # Run terraform-container
     - |
       sudo docker run -d --name terraform-container \
-      --entrypoint "" hashicorp/terraform:light sleep 3600
+      --entrypoint "" yohrannes/terraform:latest sleep 3600
     - sudo docker cp $CI_PROJECT_DIR/terraform terraform-container:/app > /dev/null 2>&1
     - sudo docker cp /root/.oci terraform-container:/root/.oci > /dev/null 2>&1
     - sudo docker cp /root/.aws terraform-container:/root/.aws > /dev/null 2>&1
