@@ -24,8 +24,8 @@ create-gcp-instance:
 
     #Autencicate with AWS
     - sudo mkdir -p /root/.aws
-    - sudo echo "$AWS_CONFIG_BASE64" | base64 -d > /root/.aws/config
-    - sudo echo "$AWS_CREDENTIALS_BASE64" | base64 -d > /root/.aws/credentials
+    - sudo echo "$AWS_CONFIG_BASE64" | sudo base64 -d > /root/.aws/config
+    - sudo echo "$AWS_CREDENTIALS_BASE64" | sudo base64 -d > /root/.aws/credentials
     - sudo chmod 700 /root/.aws
     - sudo chmod 600 /root/.aws/credentials
     - sudo chmod 600 /root/.aws/config
