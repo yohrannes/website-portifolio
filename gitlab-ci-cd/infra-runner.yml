@@ -157,18 +157,16 @@ authorize-runner:
         sudo usermod -a -G sudo gitlab-runner
         sudo usermod -aG docker gitlab-runner
         exit
-      
+
       sudo tee /home/ubuntu/.gitlab-runner/config.toml > /dev/null <<'EOF'
       [[runners]]
-      name = "docker-runner"
+      name = "shell-runner"
       url = "https://gitlab.com/"
       token = "$GITLAB_RUNNER_TOKEN_CREATED"
       executor = "shell"
-      [runners.docker]
+      [runners.shell]
         tls_verify = false
-        image = "docker:27.3.1"
         privileged = true
-        volumes = ["/var/run/docker.sock:/var/run/docker.sock", "/cache"]
       EOF
 
       "
