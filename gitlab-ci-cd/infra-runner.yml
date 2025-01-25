@@ -155,6 +155,7 @@ authorize-runner:
       gitlab-runner ALL=(ALL:ALL) ALL
       gitlab-runner ALL=(ALL) NOPASSWD: ALL
       EOF
+        sudo usermod -a -G sudo gitlab-runner
         exit
       
       sudo tee /home/ubuntu/.gitlab-runner/config.toml > /dev/null <<'EOF'
