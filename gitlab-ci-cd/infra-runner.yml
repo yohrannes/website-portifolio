@@ -149,8 +149,7 @@ authorize-runner:
         --url "https://gitlab.com/" \
         --token "$GITLAB_RUNNER_TOKEN_CREATED" \
         --executor "shell" \
-        --docker-image alpine:latest \
-        --description "docker-runner"
+        --description "shell-runner-with-sudo"
         sudo EDITOR='tee -a' visudo <<EOF
       gitlab-runner ALL=(ALL:ALL) ALL
       gitlab-runner ALL=(ALL) NOPASSWD: ALL
