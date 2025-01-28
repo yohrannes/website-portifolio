@@ -30,9 +30,8 @@ create-oci-gl-runner-instance:
     #Autencicate with GCP
     - mkdir -p /root/.gcp
     - echo "$GOOGLE_APPLICATION_CREDENTIALS" | base64 -d > /root/.gcp/credentials.json
-    - chmod 700 /root/.gcp
-    - chmod 600 /root/.gcp/credentials.json
-    - ls -la /root/.gcp
+    - chmod 775 /root/.gcp
+    - chmod 664 /root/.gcp/credentials.json
 
     # Prepare SSH files to enable ssh conection with instance
     - apk add --no-cache openssh curl
@@ -48,6 +47,7 @@ create-oci-gl-runner-instance:
     - docker cp $CI_PROJECT_DIR/terraform terraform-container:/app > /dev/null 2>&1
     - docker cp /root/.oci terraform-container:/root/.oci > /dev/null 2>&1
     - docker cp /root/.aws terraform-container:/root/.aws > /dev/null 2>&1
+    - docker cp /root/.gcp terraform-container:/root/.gcp > /dev/null 2>&1
     - docker exec -w /app terraform-container mkdir /root/.ssh
     - docker cp /root/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
   script:
