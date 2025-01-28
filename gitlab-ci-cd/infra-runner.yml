@@ -32,6 +32,7 @@ create-oci-gl-runner-instance:
     - echo "$GOOGLE_APPLICATION_CREDENTIALS" | base64 -d > /root/.gcp/credentials.json
     - chmod 700 /root/.gcp
     - chmod 600 /root/.gcp/credentials.json
+    - ls -la /root/.gcp
 
     # Prepare SSH files to enable ssh conection with instance
     - apk add --no-cache openssh curl
