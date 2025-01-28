@@ -15,6 +15,9 @@ create-gcp-instance:
     #Autencicate with OCI
     - sudo mkdir -p /root/.oci
     - sudo touch /root/.oci/config
+    - whoami
+    - sudo chown -R root:root /root/.oci/*
+    - ls -lahtr /root/.oci
     - sudo echo "$OCI_CONFIG_BASE64" | sudo base64 -d > /root/.oci/config
     - sudo echo "$OCI_PRIVATE_KEY_BASE64" | sudo base64 -d > /root/.oci/oci_api_key.pem
     - sudo chmod 700 /root/.oci
@@ -30,6 +33,12 @@ create-gcp-instance:
     - sudo chmod 700 /root/.aws
     - sudo chmod 600 /root/.aws/credentials
     - sudo chmod 600 /root/.aws/config
+
+    #Autencicate with GCP
+    - mkdir -p /root/.gcp
+    - echo "$GOOGLE_APPLICATION_CREDENTIALS" | base64 -d > /root/.gcp/credentials.json
+    - chmod 775 /root/.gcp
+    - chmod 664 /root/.gcp/credentials.json
 
     # Prepare SSH files to enable ssh conection with instance
     - sudo apt-get install -y openssh-client openssh-server curl
@@ -56,7 +65,6 @@ create-gcp-instance:
     - sudo docker cp /root/.oci terraform-container:/root/.oci > /dev/null 2>&1
     - sudo docker cp /root/.aws terraform-container:/root/.aws > /dev/null 2>&1
     - sudo docker cp /root/.gcp terraform-container:/root/.gcp > /dev/null 2>&1
-    - sudo docker exec -w /app terraform-container export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.gcp/credentials.json"
     - sudo docker exec -w /app terraform-container mkdir /root/.ssh
     - sudo docker cp /root/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
 
