@@ -64,8 +64,7 @@ create-gcp-instance:
     - |
       sudo docker run -d --name terraform-container yohrannes/terraform:latest sleep 3600
     - sudo docker cp $CI_PROJECT_DIR/terraform terraform-container:/app > /dev/null 2>&1
-    - ls -lahtr $HOME/
-    - sudo docker cp $HOME/.oci terraform-container:/root/.oci
+    - sudo docker cp $HOME/.oci terraform-container:/root/.oci > /dev/null 2>&1
     - sudo docker cp $HOME/.aws terraform-container:/root/.aws > /dev/null 2>&1
     - sudo docker cp $HOME/.gcp terraform-container:/root/.gcp > /dev/null 2>&1
     - sudo docker exec -w /app terraform-container mkdir /root/.ssh
@@ -75,7 +74,7 @@ create-gcp-instance:
     - |
       sudo docker exec -w /app terraform-container sh -c "
         terraform init -reconfigure
-        terraform workspace select gcp_instance_amd
+        terraform workspace select web_port_dev
         terraform plan -detailed-exitcode -target=module.instance_gcp_amd -out=plan | grep "Plan:"
         terraform apply plan | grep -o -E 'oci[^.]*.'
       "
