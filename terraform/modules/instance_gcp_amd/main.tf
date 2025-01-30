@@ -64,7 +64,6 @@ resource "google_compute_instance" "inst-website-portifolio" {
     network    = google_compute_network.vpc_network.self_link
     subnetwork = google_compute_subnetwork.subnet.self_link
     access_config {
-      # network_tier = "PREMIUM"
     }
 
     queue_count = 0
