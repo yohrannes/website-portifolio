@@ -31,6 +31,13 @@ resource "google_compute_firewall" "default-allow-http-https-ssh-icmp" {
   source_ranges = ["0.0.0.0/0"]
 }
 
+data "template_file" "default" {
+  template = file("./startup-files/startup-script.sh")
+  vars = {
+    address = "some value"
+  }
+}
+
 resource "google_compute_instance" "inst-website-portifolio" {
   zone = "us-west1-a"
   boot_disk {
@@ -56,9 +63,9 @@ resource "google_compute_instance" "inst-website-portifolio" {
 
   machine_type = "e2-micro"
   name         = "inst-website-portifolio"
-  metadata_startup_script = file("./startup-files/startup-script.sh")
+  metadata_startup_script = data.template_file.default.rendered
 #  metadata = {
-    startup-script = "${path.module}/startup-files/startup-script.sh"
+#    startup-script = "${path.module}/startup-files/startup-script.sh"
     #ssh_authorized_keys = join("\n", [for k in local.ssh_authorized_keys : chomp(k)])
     #ssh_authorized_keys = file("/root/.ssh/id_rsa.pub")
     #user_data = base64encode(file("${path.module}/scripts/startup-script.sh"))
