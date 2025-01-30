@@ -56,7 +56,9 @@ resource "google_compute_instance" "inst-website-portifolio" {
 
   machine_type = "e2-micro"
   name         = "inst-website-portifolio"
-  metadata_startup_script = templatefile("${path.module}/startup-files/startup-script.sh")
+  metadata_startup_script = templatefile("${path.module}/startup-files/startup-script.sh", {
+    address = "valor_da_variavel"
+  })
 
   network_interface {
     network    = google_compute_network.vpc_network.self_link
