@@ -78,7 +78,6 @@ create-gcp-instance:
         terraform plan -detailed-exitcode -target=module.instance_gcp_amd -out=plan | grep "Plan:"
         terraform apply plan | grep -o -E 'oci[^.]*.'
       "
-    #- docker exec -w /app terraform-container terraform apply plan | grep -o -E 'oci[^.]*.'
 
     #EXPORT INSTANCE IP
     - INSTANCE_PUBLIC_IP=$(sudo docker exec -w /app terraform-container terraform output -raw instance_public_ip)
