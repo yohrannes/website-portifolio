@@ -58,6 +58,7 @@ create-gcp-instance:
     - |
       sudo docker run -d --name terraform-container yohrannes/terraform:latest sleep 3600
     - sudo docker cp $CI_PROJECT_DIR/terraform terraform-container:/app > /dev/null 2>&1
+    - ls -lahtr ~/
     - sudo docker cp ~/.oci terraform-container:~/.oci > /dev/null 2>&1
     - sudo docker cp ~/.aws terraform-container:~/.aws > /dev/null 2>&1
     - sudo docker cp ~/.gcp terraform-container:~/.gcp > /dev/null 2>&1
