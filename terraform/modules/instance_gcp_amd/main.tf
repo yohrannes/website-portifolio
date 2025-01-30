@@ -65,7 +65,7 @@ resource "google_compute_instance" "inst-website-portifolio" {
     #ssh-keys = join("\n", [
     #"user1:ssh-rsa ${chomp(file("~/.ssh/id_rsa.pub"))} user1@host.com",
     #"user2:ssh-rsa ${chomp(file("~/.ssh/another_key.pub"))} user2@host.com"
-    #])
+    #]) 
 #  }
 
   network_interface {
