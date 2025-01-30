@@ -1,7 +1,7 @@
 create-oracle-instance:
   stage: create-infra
-  only:
-    - infra-amd
+  rules:
+    - if: $CI_COMMIT_BRANCH == "infra-amd"
   image: docker:27.3.1
   services:
     - docker:27.3.1-dind
@@ -66,8 +66,8 @@ create-oracle-instance:
 
 configure_fail2ban:
   stage: create-infra
-  only:
-    - infra-amd
+  rules:
+    - if: $CI_COMMIT_BRANCH == "infra-amd"
   needs:
     - check-startup-script
   image: docker:27.3.1
@@ -114,9 +114,8 @@ configure_fail2ban:
       EOF
 
 check-startup-script:
-  stage: create-infra
-  only:
-    - infra-amd
+  rules:
+    - if: $CI_COMMIT_BRANCH == "infra-amd"
   needs:
     - create-oracle-instance
   image: docker:27.3.1
@@ -155,8 +154,8 @@ check-startup-script:
 
 deploy-containers-amd:
   stage: deploy-infra
-  only: 
-    - infra-amd
+  rules:
+    - if: $CI_COMMIT_BRANCH == "infra-amd"
   needs:
     - check-startup-script
   image: docker:27.3.1
@@ -184,8 +183,8 @@ deploy-containers-amd:
 
 update_dns:
   stage: deploy-infra
-  only:
-    - infra-amd
+  rules:
+    - if: $CI_COMMIT_BRANCH == "infra-amd"
   needs:
     - check-startup-script
   image: docker:27.3.1
@@ -213,8 +212,8 @@ update_dns:
 
 deploy_fail2ban:
   stage: deploy-infra
-  only:
-    - infra-amd
+  rules:
+    - if: $CI_COMMIT_BRANCH == "infra-amd"
   needs:
     - check-startup-script
   image: docker:27.3.1
