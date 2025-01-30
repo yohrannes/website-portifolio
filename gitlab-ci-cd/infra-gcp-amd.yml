@@ -14,9 +14,9 @@ create-gcp-instance:
 
     #Autencicate with OCI
     - sudo mkdir -p /root/.oci
-    - ls -lahtr /root
-    - ls -lahtr /root/.oci
-    - groups
+    - sudo ls -lahtr /root
+    - sudo ls -lahtr /root/.oci
+    - sudo groups
     - sudo echo "$OCI_CONFIG_BASE64" | sudo base64 -d > /root/.oci/config
     - sudo echo "$OCI_PRIVATE_KEY_BASE64" | sudo base64 -d > /root/.oci/oci_api_key.pem
     - sudo chmod 700 /root/.oci
