@@ -1,7 +1,7 @@
 create-oci-gl-runner-instance:
   stage: create-infra
-  only:
-    - infra-runner
+  rules:
+    - if: $CI_COMMIT_BRANCH == "infra-runner"
   image: docker:27.3.1
   services:
     - docker:27.3.1-dind
@@ -72,8 +72,8 @@ create-oci-gl-runner-instance:
 
 check-startup-script:
   stage: test-infra
-  only:
-    - infra-runner
+  rules:
+    - if: $CI_COMMIT_BRANCH == "infra-runner"
   needs:
     - create-oci-gl-runner-instance
   image: docker:27.3.1
@@ -112,8 +112,8 @@ check-startup-script:
 
 create-runner-gl-api:
   stage: create-infra
-  only:
-    - infra-runner
+  rules:
+    - if: $CI_COMMIT_BRANCH == "infra-runner"
   needs:
     - create-oci-gl-runner-instance
   image: docker:27.3.1
@@ -134,8 +134,8 @@ create-runner-gl-api:
 
 authorize-runner:
   stage: deploy-infra
-  only: 
-    - infra-runner
+  rules:
+    - if: $CI_COMMIT_BRANCH == "infra-runner"
   needs:
     - create-runner-gl-api
     - check-startup-script
