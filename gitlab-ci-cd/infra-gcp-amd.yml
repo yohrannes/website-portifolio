@@ -62,7 +62,7 @@ create-gcp-instance:
     - sudo docker cp $HOME/.oci terraform-container:/root/.oci
     - sudo docker cp $HOME/.aws terraform-container:/root/.aws > /dev/null 2>&1
     - sudo docker cp $HOME/.gcp terraform-container:/root/.gcp > /dev/null 2>&1
-    - sudo docker exec -w /app terraform-container mkdir $HOME/.ssh
+    - sudo docker exec -w /app terraform-container mkdir /root/.ssh
     - sudo docker cp $HOME/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
 
   script:
