@@ -1,7 +1,7 @@
 create-gcp-instance:
   stage: create-infra
-  only:
-    - infra-gcp-amd
+  rules:
+    - if: $CI_COMMIT_BRANCH == "infra-gcp-amd"
   image: docker:27.3.1
   services:
     - docker:27.3.1-dind
