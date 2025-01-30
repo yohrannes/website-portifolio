@@ -70,29 +70,7 @@ create-oci-gl-runner-instance:
     - docker stop terraform-container
     - docker rm terraform-container
 
-create-runner:
-  stage: create-infra
-  only:
-    - infra-runner
-  needs:
-    - create-oci-gl-runner-instance
-  image: docker:27.3.1
-  services:
-    - docker:27.3.1-dind
-  variables:
-    DOCKER_DRIVER: overlay2
-  script:
-    - |
-      apk add --no-cache curl jq
-      RUNNER_TOKEN=$(curl --request POST --url "https://gitlab.com/api/v4/user/runners" --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_CREATOR" --data "runner_type=project_type" --data "project_id=57493833" --data "description=oci-runner" | jq -r '.token')
-    - |
-      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-        --request PUT \
-        --form "value=$RUNNER_TOKEN" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER_TOKEN_CREATED" \
-        > /dev/null 2>&1
-
-check-startup-script-runner:
+check-startup-script:
   stage: test-infra
   only:
     - infra-runner
@@ -132,13 +110,35 @@ check-startup-script-runner:
           sleep 5;
         done
 
+create-runner-gl-api:
+  stage: create-infra
+  only:
+    - infra-runner
+  needs:
+    - create-oci-gl-runner-instance
+  image: docker:27.3.1
+  services:
+    - docker:27.3.1-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  script:
+    - |
+      apk add --no-cache curl jq
+      RUNNER_TOKEN=$(curl --request POST --url "https://gitlab.com/api/v4/user/runners" --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_CREATOR" --data "runner_type=project_type" --data "project_id=57493833" --data "description=oci-runner" | jq -r '.token')
+    - |
+      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+        --request PUT \
+        --form "value=$RUNNER_TOKEN" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER_TOKEN_CREATED" \
+        > /dev/null 2>&1
+
 authorize-runner:
   stage: deploy-infra
   only: 
     - infra-runner
   needs:
-    - create-runner
-    - check-startup-script-runner
+    - create-runner-gl-api
+    - check-startup-script
   image: docker:27.3.1
   services:
     - docker:27.3.1-dind
