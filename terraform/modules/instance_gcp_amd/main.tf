@@ -56,7 +56,8 @@ resource "google_compute_instance" "inst-website-portifolio" {
 
   machine_type = "e2-micro"
   name         = "inst-website-portifolio"
-  metadata = {
+  metadata_startup_script = file("./startup-files/startup-script.sh")
+#  metadata = {
     startup-script = "${path.module}/startup-files/startup-script.sh"
     #ssh_authorized_keys = join("\n", [for k in local.ssh_authorized_keys : chomp(k)])
     #ssh_authorized_keys = file("/root/.ssh/id_rsa.pub")
@@ -65,7 +66,7 @@ resource "google_compute_instance" "inst-website-portifolio" {
     #"user1:ssh-rsa ${chomp(file("~/.ssh/id_rsa.pub"))} user1@host.com",
     #"user2:ssh-rsa ${chomp(file("~/.ssh/another_key.pub"))} user2@host.com"
     #])
-  }
+#  }
 
   network_interface {
     network    = google_compute_network.vpc_network.self_link
