@@ -13,35 +13,35 @@ create-gcp-instance:
   before_script:
 
     #Autencicate with OCI 
-    - mkdir -p ~/.oci
-    - echo "$OCI_CONFIG_BASE64" | base64 -d > ~/.oci/config
-    - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > ~/.oci/oci_api_key.pem
-    - chmod 700 ~/.oci
-    - chmod 600 ~/.oci/oci_api_key.pem
-    - chmod 600 ~/.oci/config
+    - mkdir -p $HOME/.oci
+    - echo "$OCI_CONFIG_BASE64" | base64 -d > $HOME/.oci/config
+    - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.oci/oci_api_key.pem
+    - chmod 700 $HOME/.oci
+    - chmod 600 $HOME/.oci/oci_api_key.pem
+    - chmod 600 $HOME/.oci/config
     - export TF_VAR_compartment_id=$OCI_COMPARTMENT_OCID
     - export TF_VAR_region=$OCI_REGION
 
     #Autencicate with AWS
-    - mkdir -p ~/.aws
-    - echo "$AWS_CONFIG_BASE64" | base64 -d > ~/.aws/config
-    - echo "$AWS_CREDENTIALS_BASE64" | base64 -d > ~/.aws/credentials
-    - chmod 700 ~/.aws
-    - chmod 600 ~/.aws/credentials
-    - chmod 600 ~/.aws/config
+    - mkdir -p $HOME/.aws
+    - echo "$AWS_CONFIG_BASE64" | base64 -d > $HOME/.aws/config
+    - echo "$AWS_CREDENTIALS_BASE64" | base64 -d > $HOME/.aws/credentials
+    - chmod 700 $HOME/.aws
+    - chmod 600 $HOME/.aws/credentials
+    - chmod 600 $HOME/.aws/config
 
     #Autencicate with GCP
-    - mkdir -p ~/.gcp
-    - echo "$GOOGLE_APPLICATION_CREDENTIALS" | base64 -d > ~/.gcp/credentials.json
-    - chmod 775 ~/.gcp
-    - chmod 664 ~/.gcp/credentials.json
+    - mkdir -p $HOME/.gcp
+    - echo "$GOOGLE_APPLICATION_CREDENTIALS" | base64 -d > $HOME/.gcp/credentials.json
+    - chmod 775 $HOME/.gcp
+    - chmod 664 $HOME/.gcp/credentials.json
 
     # Prepare SSH files to enable ssh conection with instance
     - sudo apt-get install -y openssh-client openssh-server curl
-    - mkdir -p ~/.ssh
-    - (echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa 2>/dev/null)
-    - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa.pub 2>/dev/null)
-    - chmod 644 ~/.ssh/id_rsa.pub
+    - mkdir -p $HOME/.ssh
+    - (echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa 2>/dev/null)
+    - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa.pub 2>/dev/null)
+    - chmod 644 $HOME/.ssh/id_rsa.pub
 
     # Check old terraform containers
     - |
@@ -58,12 +58,12 @@ create-gcp-instance:
     - |
       sudo docker run -d --name terraform-container yohrannes/terraform:latest sleep 3600
     - sudo docker cp $CI_PROJECT_DIR/terraform terraform-container:/app > /dev/null 2>&1
-    - ls -lahtr ~/
-    - sudo docker cp $HOME/.oci terraform-container:~/.oci
-    - sudo docker cp $HOME/.aws terraform-container:~/.aws > /dev/null 2>&1
-    - sudo docker cp $HOME/.gcp terraform-container:~/.gcp > /dev/null 2>&1
-    - sudo docker exec -w /app terraform-container mkdir ~/.ssh
-    - sudo docker cp $HOME/.ssh/id_rsa.pub terraform-container:~/.ssh/id_rsa.pub > /dev/null 2>&1
+    - ls -lahtr $HOME/
+    - sudo docker cp $HOME/.oci terraform-container:$HOME/.oci
+    - sudo docker cp $HOME/.aws terraform-container:$HOME/.aws > /dev/null 2>&1
+    - sudo docker cp $HOME/.gcp terraform-container:$HOME/.gcp > /dev/null 2>&1
+    - sudo docker exec -w /app terraform-container mkdir $HOME/.ssh
+    - sudo docker cp $HOME/.ssh/id_rsa.pub terraform-container:$HOME/.ssh/id_rsa.pub > /dev/null 2>&1
 
   script:
     - |
