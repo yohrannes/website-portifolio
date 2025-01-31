@@ -1,7 +1,15 @@
 include:
   - local: 'gitlab-ci-cd/infra-amd.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "infra-amd"
+
   - local: 'gitlab-ci-cd/infra-gcp-amd.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "infra-gcp-amd"
+
   - local: 'gitlab-ci-cd/infra-runner.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "infra-runner"
 #  - local: 'gitlab-ci-cd/infra-k8s.yml'
 
 variables:
