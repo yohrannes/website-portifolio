@@ -1,7 +1,7 @@
 include:
   - local: 'gitlab-ci-cd/infra-amd.yml'
   - local: 'gitlab-ci-cd/infra-gcp-amd.yml'
-  - local: 'gitlab-ci-cd/infra-runner.yml'
+#  - local: 'gitlab-ci-cd/infra-runner.yml'
 #  - local: 'gitlab-ci-cd/infra-k8s.yml'
 
 variables:
