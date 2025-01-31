@@ -69,11 +69,9 @@ create-oracle-instance:
       docker exec -w /app terraform-container sh -c "
         terraform init -reconfigure
         terraform workspace select web_port_dev
-        terraform plan -detailed-exitcode -target=module.instance_oracle_amd -out=plan
-        terraform apply plan
+        terraform plan -detailed-exitcode -target=module.instance_oracle_amd -out=plan | grep "Plan:"
+        terraform apply plan | grep -o -E 'oci[^.]*.'
       "
-# | grep -o -E 'oci[^.]*.'
-# | grep "Plan:"
 
     #EXPORT INSTANCE IP
     - INSTANCE_PUBLIC_IP=$(docker exec -w /app terraform-container terraform output -raw oracle_instance_amd_public_ip)
