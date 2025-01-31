@@ -8,48 +8,69 @@ create-oracle-instance:
   variables:
     DOCKER_DRIVER: overlay2
     AWS_DEFAULT_REGION: "us-east-1" #Check if that's really necessary...
+
   before_script:
-    #Autencicate with OCI
-    - mkdir -p /root/.oci
-    - echo "$OCI_CONFIG_BASE64" | base64 -d > /root/.oci/config
-    - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > /root/.oci/oci_api_key.pem
-    - chmod 700 /root/.oci
-    - chmod 600 /root/.oci/oci_api_key.pem
-    - chmod 600 /root/.oci/config
+
+    #Autencicate with OCI 
+    - mkdir -p $HOME/.oci
+    - echo "$OCI_CONFIG_BASE64" | base64 -d > $HOME/.oci/config
+    - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.oci/oci_api_key.pem
+    - chmod 700 $HOME/.oci
+    - chmod 600 $HOME/.oci/oci_api_key.pem
+    - chmod 600 $HOME/.oci/config
     - export TF_VAR_compartment_id=$OCI_COMPARTMENT_OCID
     - export TF_VAR_region=$OCI_REGION
 
     #Autencicate with AWS
-    - mkdir -p /root/.aws
-    - echo "$AWS_CONFIG_BASE64" | base64 -d > /root/.aws/config
-    - echo "$AWS_CREDENTIALS_BASE64" | base64 -d > /root/.aws/credentials
-    - chmod 700 /root/.aws
-    - chmod 600 /root/.aws/credentials
-    - chmod 600 /root/.aws/config
+    - mkdir -p $HOME/.aws
+    - echo "$AWS_CONFIG_BASE64" | base64 -d > $HOME/.aws/config
+    - echo "$AWS_CREDENTIALS_BASE64" | base64 -d > $HOME/.aws/credentials
+    - chmod 700 $HOME/.aws
+    - chmod 600 $HOME/.aws/credentials
+    - chmod 600 $HOME/.aws/config
+
+    #Autencicate with GCP
+    - mkdir -p $HOME/.gcp
+    - echo "$GOOGLE_APPLICATION_CREDENTIALS" | base64 -d > $HOME/.gcp/credentials.json
+    - chmod 775 $HOME/.gcp
+    - chmod 664 $HOME/.gcp/credentials.json
 
     # Prepare SSH files to enable ssh conection with instance
-    - apk add --no-cache openssh curl
-    - mkdir -p ~/.ssh
-    - (echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa 2>/dev/null)
-    - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa.pub 2>/dev/null)
-    - chmod 644 ~/.ssh/id_rsa.pub
+    - sudo apt-get install -y openssh-client openssh-server curl
+    - mkdir -p $HOME/.ssh
+    - (echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa 2>/dev/null)
+    - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa.pub 2>/dev/null)
+    - chmod 644 $HOME/.ssh/id_rsa.pub
+
+    # Check old terraform containers
+    - |
+      if [ "$(sudo docker ps -a -q -f name=^terraform-container$)" ]; then
+        echo "Old terraform container found removing..."
+        sudo docker stop terraform-container
+        sudo docker rm terraform-container
+      fi
+
+    # Build terraform container to arm64/v8
+    - |
+      sudo docker buildx build -f ./build-tf-arm64-v8/Dockerfile --platform linux/arm64 -t yohrannes/terraform:latest --build-arg PRODUCT=terraform --build-arg VERSION=1.7.2 --load .
+    - sudo docker image ls
 
     # Run terraform-container
     - |
-      docker run -d --name terraform-container \
-      --entrypoint "" hashicorp/terraform:light sleep 3600
-    - docker cp $CI_PROJECT_DIR/terraform terraform-container:/app > /dev/null 2>&1
-    - docker cp /root/.oci terraform-container:/root/.oci > /dev/null 2>&1
-    - docker cp /root/.aws terraform-container:/root/.aws > /dev/null 2>&1
-    - docker exec -w /app terraform-container mkdir /root/.ssh
-    - docker cp /root/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
+      sudo docker run -d --name terraform-container yohrannes/terraform:latest sleep 3600
+    - sudo docker cp $CI_PROJECT_DIR/terraform terraform-container:/app > /dev/null 2>&1
+    - sudo docker cp $HOME/.oci terraform-container:/root/.oci > /dev/null 2>&1
+    - sudo docker cp $HOME/.aws terraform-container:/root/.aws > /dev/null 2>&1
+    - sudo docker cp $HOME/.gcp terraform-container:/root/.gcp > /dev/null 2>&1
+    - sudo docker exec -w /app terraform-container mkdir /root/.ssh
+    - sudo docker cp $HOME/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
   script:
     - |
       docker exec -w /app terraform-container sh -c "
         terraform init -reconfigure
-        terraform workspace select oracle_instance_amd
+        terraform workspace select web_port_dev
         terraform plan -detailed-exitcode -target=module.instance_oracle_amd -out=plan | grep "Plan:"
-        terraform apply plan | grep -o -E 'oci[^.]*.'
+        terraform apply plan
       "
     #- docker exec -w /app terraform-container terraform apply plan | grep -o -E 'oci[^.]*.'
 
