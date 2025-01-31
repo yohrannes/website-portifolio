@@ -75,7 +75,7 @@ create-gcp-instance:
     #- docker exec -w /app terraform-container terraform apply plan | grep -o -E 'oci[^.]*.'
 
     #EXPORT INSTANCE IP
-    - INSTANCE_PUBLIC_IP=$(sudo docker exec -w /app terraform-container terraform output -raw instance_public_ip)
+    - INSTANCE_PUBLIC_IP=$(sudo docker exec -w /app terraform-container terraform output -raw gcp_instance_amd_public_ip)
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --request PUT \
