@@ -19,7 +19,7 @@ variable "compartment_description" {
 variable "tf_vcn" {
   description = "The details of VCN."
   default = {
-    cidr_blocks : ["10.23.0.0/20"]
+    cidr_blocks : ["10.1.0.0/16"]
     display_name : "tf_runner_vcn"
   }
 }
@@ -27,7 +27,6 @@ variable "tf_vcn" {
 variable "tf_subnet" {
   description = "The details of the subnet"
   default = {
-    cidr_block : "10.23.11.0/24"
     display_name : "GL_RUNNER_SUBNET"
     is_public : true
     route_table : {

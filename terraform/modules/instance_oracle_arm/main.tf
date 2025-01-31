@@ -1,4 +1,6 @@
-
+locals {
+  cird_block_subnets = cidrsubnet(oci_core_vcn.tf_vcn.cidr_blocks[0], 8, 0)
+}
 
 resource "oci_identity_compartment" "runner-comp" {
   # Required
@@ -15,60 +17,13 @@ resource "oci_core_vcn" "tf_vcn" {
   display_name = var.tf_vcn.display_name
 }
 
-resource "oci_core_security_list" "tf_sec_list" {
-  compartment_id = oci_identity_compartment.runner-comp.id
-  vcn_id         = oci_core_vcn.tf_vcn.id
-  display_name   = "Public Security List"
-
-  ingress_security_rules {
-    protocol = "6" # TCP
-    source   = "0.0.0.0/0"
-
-    # 80 (HTTP)
-    tcp_options {
-      min = 80
-      max = 80
-    }
-  }
-
-  ingress_security_rules {
-    protocol = "6"
-    source   = "0.0.0.0/0"
-    tcp_options {
-      min = 443
-      max = 443
-    }
-  }
-
-  ingress_security_rules {
-    protocol = "6"
-    source   = "0.0.0.0/0"
-    tcp_options {
-      min = 22
-      max = 22
-    }
-  }
-
-  ingress_security_rules {
-    protocol = "1" # ICMP
-    source   = "0.0.0.0/0"
-    icmp_options {
-      type = 8
-      code = 0 #Code type for Request (ping)
-    }
-  }
-
-  egress_security_rules {
-    protocol = "all"
-    destination = "0.0.0.0/0"
-  }
-}
 
 resource "oci_core_subnet" "tf_subnet" {
   #Required
   compartment_id = oci_identity_compartment.runner-comp.id
   vcn_id         = oci_core_vcn.tf_vcn.id
-  cidr_block     = var.tf_subnet.cidr_block
+  #cidr_block     = var.tf_subnet.cidr_block
+  cidr_block     = local.cird_block_subnets
   #Optional
   security_list_ids = [oci_core_security_list.tf_sec_list.id]
   display_name               = var.tf_subnet.display_name
@@ -127,6 +82,55 @@ resource "oci_core_instance" "tf_gitlab_runner" {
     user_data = base64encode(file("${path.module}/scripts/startup-script-runner.sh"))
   }
 
+}
+
+resource "oci_core_security_list" "tf_sec_list" {
+  compartment_id = oci_identity_compartment.runner-comp.id
+  vcn_id         = oci_core_vcn.tf_vcn.id
+  display_name   = "Public Security List"
+
+  ingress_security_rules {
+    protocol = "6" # TCP
+    source   = "0.0.0.0/0"
+
+    # 80 (HTTP)
+    tcp_options {
+      min = 80
+      max = 80
+    }
+  }
+
+  ingress_security_rules {
+    protocol = "6"
+    source   = "0.0.0.0/0"
+    tcp_options {
+      min = 443
+      max = 443
+    }
+  }
+
+  ingress_security_rules {
+    protocol = "6"
+    source   = "0.0.0.0/0"
+    tcp_options {
+      min = 22
+      max = 22
+    }
+  }
+
+  ingress_security_rules {
+    protocol = "1" # ICMP
+    source   = "0.0.0.0/0"
+    icmp_options {
+      type = 8
+      code = 0 #Code type for Request (ping)
+    }
+  }
+
+  egress_security_rules {
+    protocol = "all"
+    destination = "0.0.0.0/0"
+  }
 }
 
 terraform {
