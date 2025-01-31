@@ -216,6 +216,8 @@ deploy_fail2ban:
   stage: deploy-infra
   rules:
     - if: $CI_COMMIT_BRANCH == "infra-amd"
+  needs:
+    - check-startup-script
   image: docker:27.3.1
   services:
     - docker:27.3.1-dind
