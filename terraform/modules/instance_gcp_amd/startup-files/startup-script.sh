@@ -1,8 +1,11 @@
 #!/bin/bash
 
+exec > /var/log/startup-script.log 2>&1
+set -x
+
 function install-docker-engine () {
-echo "Instalando docker engine e executando a aplicação em container."
 sudo apt-get update
+sudo apt-get upgrade
 sudo apt-get install -y ca-certificates curl
 sudo install -m 0755 -d /etc/apt/keyrings
 sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo tee /etc/apt/keyrings/docker.asc
@@ -11,33 +14,45 @@ sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 sudo systemctl enable docker
 sudo systemctl start docker
-sudo docker run -d -p 5000:5000 yohrannes/coodesh-challenge
-sudo bash startup-files/install-nginx.sh
-}
-function install-nginx () {
-echo  "Instalando nginx como proxy da porta 80 para a 5000 da aplicação."
-sudo apt-get install -y nginx
-sudo tee /etc/nginx/sites-available/default <<EOF
-server {
-listen 80;
-server_name _;
-
-location / {
-    proxy_pass http://localhost:5000;
-    proxy_set_header Host \$host;
-    proxy_set_header X-Real-IP \$remote_addr;
-    proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-    proxy_set_header X-Forwarded-Proto \$scheme;
-}
-}
-EOF
-sudo systemctl restart nginx
-sudo systemctl enable nginx
+sudo docker buildx create --use --name multiarch-builder
 }
 
-if [[ $1 == "install-nginx" ]]; then
-    install-nginx
+function allow-ports () {
+# 22 (SSH)
+sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 22 -j ACCEPT
+# ICMP (Ping)
+sudo iptables -I INPUT 6 -p icmp --icmp-type echo-request -j ACCEPT
+sudo iptables -I INPUT 6 -p icmp --icmp-type echo-reply -j ACCEPT
+# HTTP + HTTPS
+sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
+sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT
+
+sudo netfilter-persistent save
+}
+
+function install-usefull-packages () {
+    sudo apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tmux
+}
+
+function install-gitlab-runner () {
+    sudo curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" | sudo bash
+    sudo apt-get install gitlab-runner -y
+    sudo gitlab-runner -version
+    sudo gitlab-runner status
+    echo "gitlab-runner start"
+    sudo gitlab-runner start
+    sudo gitlab-runner status
+
+}
+
+if [[ $1 == "install-docker" ]]; then
+    install-docker-engine
 else
     install-docker-engine
-    install-nginx
+    allow-ports
+    install-usefull-packages
+    install-gitlab-runner
+    
+    # Leave this command bellow by least (used for pipeline checks)
+    echo "startup-script-finished"
 fi
