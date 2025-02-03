@@ -177,7 +177,7 @@ deploy-containers-amd:
   rules:
     - if: $CI_COMMIT_BRANCH == "infra-amd"
   needs:
-    - check-startup-script
+    - configure_fail2ban
   image: docker:27.3.1
   services:
     - docker:27.3.1-dind
