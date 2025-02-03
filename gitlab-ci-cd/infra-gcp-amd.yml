@@ -84,3 +84,43 @@ create-gcp-instance:
         > /dev/null 2>&1
     - sudo docker stop terraform-container
     - sudo docker rm terraform-container
+
+check-startup-script:
+  stage: test-infra
+  rules:
+    - if: $CI_COMMIT_BRANCH == "infra-gcp-amd"
+  needs:
+    - create-oci-gl-runner-instance
+  image: docker:27.3.1
+  services:
+    - docker:27.3.1-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  script:
+    - apk add --no-cache openssh
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+    - |
+      sleep 30;
+        while true; do
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_GCP_INSTANCE_PUBLIC_IP "
+            while true; do
+              if [ -e /var/log/startup-script.log ]; then
+                  if [ -r /var/log/startup-script.log ]; then
+                      last_line=\$(tail -n1 /var/log/startup-script.log 2>/dev/null)
+                      if [ \"\$last_line\" = 'startup-script-finished' ]; then
+                          echo 'Startup script finished!';
+                          exit 0;
+                      fi
+                  else
+                      echo '/var/log/startup-script.log exists but is not readable.';
+                  fi
+              else
+                  echo '/var/log/startup-script.log does not exist yet.';
+              fi
+              sleep 1
+            done
+          " && break || echo 'Retrying connection...';
+          sleep 5;
+        done
