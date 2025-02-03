@@ -56,8 +56,13 @@ resource "google_compute_instance" "inst-website-portifolio" {
 
   machine_type = "e2-micro"
   name         = "inst-website-portifolio"
+
+  metadata = {
+    ssh-keys = "${file("~/.ssh/id_rsa")}"
+  }
+
   metadata_startup_script = templatefile("${path.module}/startup-files/startup-script.sh", {
-    address = "valor_da_variavel"
+    address = "valor_do_giropops"
   })
 
   network_interface {
