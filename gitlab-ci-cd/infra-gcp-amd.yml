@@ -91,7 +91,6 @@ check-startup-script:
   stage: test-infra
   rules:
     - if: $CI_COMMIT_BRANCH == "infra-gcp-amd"
-    - when: always
   needs:
     - create-gcp-instance
   image: docker:27.3.1
@@ -105,7 +104,7 @@ check-startup-script:
     - chmod 600 ~/.ssh/id_rsa
     - |
       timeout_start=$(date +%s)
-      timeout_max=1800  # 30 minutos
+      timeout_max=1800
       sleep 30;
         while true; do
           ssh -o ConnectTimeout=15 StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_GCP_INSTANCE_PUBLIC_IP "
