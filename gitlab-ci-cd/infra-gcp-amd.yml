@@ -88,6 +88,7 @@ check-startup-script:
   stage: test-infra
   rules:
     - if: $CI_COMMIT_BRANCH == "infra-gcp-amd"
+    - when: always
   needs:
     - create-gcp-instance
   image: docker:27.3.1
@@ -95,30 +96,60 @@ check-startup-script:
     - docker:27.3.1-dind
   variables:
     DOCKER_DRIVER: overlay2
-  script:
+script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - |
-      sleep 30;
-        while true; do
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_GCP_INSTANCE_PUBLIC_IP "
-            while true; do
+      set -e
+      MAX_ATTEMPTS=30
+      ATTEMPT=0
+      SLEEP_DURATION=30
+      CONNECTION_RETRIES=5
+      
+      sleep 30
+      
+      while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+          ((ATTEMPT=ATTEMPT+1))
+          echo "Attempt $ATTEMPT/$MAX_ATTEMPTS"
+          ssh -o ConnectTimeout=20 -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_GCP_INSTANCE_PUBLIC_IP "
               if [ -e /var/log/startup-script.log ]; then
-                  if [ -r /var/log/startup-script.log ]; then
-                      last_line=\$(tail -n1 /var/log/startup-script.log 2>/dev/null)
-                      if [ \"\$last_line\" = 'startup-script-finished' ]; then
-                          echo 'Startup script finished!';
-                          exit 0;
-                      fi
+                  LAST_LINE=\$(tail -n1 /var/log/startup-script.log 2>/dev/null)
+                  if [ \"\$LAST_LINE\" = 'startup-script-finished' ]; then
+                      echo 'Startup script completed successfully!'
+                      exit 0
                   else
-                      echo '/var/log/startup-script.log exists but is not readable.';
+                      echo 'Last line: ' \$LAST_LINE
+                      exit 2
                   fi
               else
-                  echo '/var/log/startup-script.log does not exist yet.';
+                  echo 'Log file not found'
+                  exit 3
               fi
-              sleep 1
-            done
-          " && break || echo 'Retrying connection...';
-          sleep 5;
-        done
+          " && break || SSH_STATUS=$?
+          case $SSH_STATUS in
+              255)
+                  echo "SSH Connection failed (Network error)"
+                  if [ $ATTEMPT -ge $CONNECTION_RETRIES ]; then
+                      echo "Maximum connection retries reached ($CONNECTION_RETRIES)"
+                      exit 1
+                  fi
+                  ;;
+              2)
+                  echo "Startup script still running..."
+                  ;;
+              3)
+                  echo "Startup script not started yet..."
+                  ;;
+              *)
+                  echo "Unknown error ($SSH_STATUS)"
+                  ;;
+          esac
+          sleep $SLEEP_DURATION
+      done
+      
+      if [ $ATTEMPT -eq $MAX_ATTEMPTS ]; then
+          echo "ERROR: Maximum attempts reached without success"
+          echo "Failed after $((MAX_ATTEMPTS * SLEEP_DURATION)) seconds"
+          exit 1
+      fi
