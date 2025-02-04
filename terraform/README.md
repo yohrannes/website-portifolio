@@ -1,9 +1,7 @@
-## Website terraform insfrastructure
-
 ### Terraform Infrastructure diagram
 ![terraform-diagram](./infra-diagram/infra-diagram-website-portifolio.png)
 
-### First provision program (requires docker locally)
+### First provision command (requires docker locally).
 ```
 docker run -it \
 -v ~/.oci:/root/.oci \
