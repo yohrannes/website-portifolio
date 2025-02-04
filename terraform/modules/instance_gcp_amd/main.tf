@@ -58,7 +58,7 @@ resource "google_compute_instance" "inst-website-portifolio" {
   name         = "inst-website-portifolio"
 
   metadata = {
-    ssh-keys = "${file("$HOME/.ssh/id_rsa")}"
+    ssh-keys = local.ssh_key
   }
 
   metadata_startup_script = templatefile("${path.module}/startup-files/startup-script.sh", {
