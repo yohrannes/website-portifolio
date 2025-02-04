@@ -73,7 +73,7 @@ create-oracle-instance:
         terraform apply plan | grep -o -E 'oci[^.]*.'
       "
 
-    #EXPORT INSTANCE IP
+    #EXPORT INSTANCE IP 
     - INSTANCE_PUBLIC_IP=$(docker exec -w /app terraform-container terraform output -raw oracle_instance_amd_public_ip)
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
