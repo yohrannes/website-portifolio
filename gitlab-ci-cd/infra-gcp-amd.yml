@@ -69,9 +69,12 @@ create-gcp-instance:
         terraform init -reconfigure
         terraform workspace select web_port_dev
         terraform plan -detailed-exitcode -target=module.instance_gcp_amd -out=plan | grep "Plan:"
-        terraform apply plan | grep -o -E 'oci[^.]*.'
+        terraform apply plan > >(tee /dev/stderr) | grep -o -E 'oci[^.]*.' 
+        echo "Exit Code: ${PIPESTATUS[0]}"  
+        exit ${PIPESTATUS[0]}
       "
-    #- docker exec -w /app terraform-container terraform apply plan | grep -o -E 'oci[^.]*.'
+    # ${PIPESTATUS[0]} ---> terraform exit code
+    # ${PIPESTATUS[1]} ---> grep exit code
 
     #EXPORT INSTANCE IP
     - INSTANCE_PUBLIC_IP=$(sudo docker exec -w /app terraform-container terraform output -raw gcp_instance_amd_public_ip)
