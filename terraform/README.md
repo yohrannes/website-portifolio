@@ -1,5 +1,7 @@
 ## Website terraform insfrastructure
 
+![terraform-diagram](./infra-diagram/infra-diagram-website-portifolio.png)
+
 ```
 repo/
 ├── terraform/
