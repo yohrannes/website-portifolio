@@ -66,6 +66,7 @@ create-gcp-instance:
   script:
     - |
       sudo docker exec -w /app terraform-container sh -c "
+        apk add --no-cache git
         terraform init -reconfigure
         terraform workspace select web_port_dev
         terraform plan -detailed-exitcode -target=module.instance_gcp_amd -out=plan | grep "Plan:"
