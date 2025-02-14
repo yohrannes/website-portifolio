@@ -10,7 +10,7 @@ include:
   - local: 'gitlab-ci-cd/infra-runner.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner"
-#  - local: 'gitlab-ci-cd/infra-k8s.yml'
+# - local: 'gitlab-ci-cd/infra-k8s.yml'
 
 variables:
   IMAGE_NAME: yohrannes/website-portifolio
