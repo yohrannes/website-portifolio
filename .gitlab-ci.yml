@@ -107,7 +107,7 @@ build-check-image-security:
       cd repos-gitlab
       git clone https://gitlab.com/yohrannes/website-portifolio.git
       cd website-portifolio
-      docker build -f ./build-app/Dockerfile --network host -t $IMAGE_NAME:$IMAGE_TAG .
+      docker build -f ./build-app/Dockerfile host -t $IMAGE_NAME:$IMAGE_TAG .
 
     - trivy_output=$(docker run --rm -v ~/.cache:/root/.cache alpine/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json $IMAGE_NAME:$IMAGE_TAG)
     
@@ -155,7 +155,7 @@ deploy-image:
       cd repos-gitlab
       git clone https://gitlab.com/yohrannes/website-portifolio.git
       cd website-portifolio
-      docker build -f ./build-app/Dockerfile --network host -t $IMAGE_NAME:$IMAGE_TAG .
+      docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
       git checkout develop
       cd usefull-scripts
       NEW_TAG=$(sh nx-dk-img-version.sh)
