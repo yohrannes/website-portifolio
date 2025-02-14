@@ -111,7 +111,7 @@ check-startup-script:
       timeout_max=1800
       sleep 30;
         while true; do
-          ssh -i ~/.ssh/id_rsa_teste_check_startup_script -o ConnectTimeout=15 -o StrictHostKeyChecking=no ubuntu@$TF_GCP_INSTANCE_PUBLIC_IP "
+          ssh -i ~/.ssh/id_rsa -o ConnectTimeout=15 -o StrictHostKeyChecking=no ubuntu@$TF_GCP_INSTANCE_PUBLIC_IP "
             while [ \$((\$(date +%s) - $timeout_start)) -lt $timeout_max ]; do
               if [ -e /var/log/startup-script.log ]; then
                   if [ -r /var/log/startup-script.log ]; then
