@@ -109,7 +109,7 @@ build-check-image-security:
       cd website-portifolio
       docker system prune -a -f
       docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
-      docker run --rm -v ~/.cache:/root/.cache alpine/trivy image localhost/$IMAGE_NAME:$IMAGE_TAG
+      docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v ~/.cache:/root/.cache aquasec/trivy image $IMAGE_NAME:$IMAGE_TAG
 
 #    - trivy_output=$(docker run --rm -v ~/.cache:/root/.cache alpine/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json $IMAGE_NAME:$IMAGE_TAG)
     
