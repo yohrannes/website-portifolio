@@ -30,8 +30,6 @@ build-image:
   stage: build
   only:
    - develop
-  needs:
-   - check-image-security
   image: docker:27.3.1
   services:
    - docker:27.3.1-dind
@@ -52,6 +50,8 @@ check-image-security:
   stage: test
   only:
    - develop
+  needs:
+    - build-image
   image: docker:27.3.1
   services:
    - docker:27.3.1-dind
