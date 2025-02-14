@@ -111,7 +111,7 @@ build-check-image-security:
     - trivy_output=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v ~/.cache:/root/.cache aquasec/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json $IMAGE_NAME:$IMAGE_TAG)
     - |
       echo "$trivy_output"
-      if echo "$trivy_output" | jq . >/dev/null 2>&1; then
+      if echo "$trivy_output" | jq . ; then
         critical_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[].Vulnerabilities[] | select(.Severity=="CRITICAL")] | length')
         high_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[].Vulnerabilities[] | select(.Severity=="HIGH")] | length')
         medium_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[].Vulnerabilities[] | select(.Severity=="MEDIUM")] | length')
