@@ -108,9 +108,9 @@ build-check-image-security:
       cd website-portifolio
       docker build -f ./build-app/Dockerfile -t $IMAGE_NAME .
       docker image ls
-    
+    - IMAGE_ID=$(docker images -q | head -n 1)
     - trivy_output=$(docker run --rm -v ~/.cache:/root/.cache aquasec/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json 
-     $IMAGE_NAME:$IMAGE_TAG)
+     "$IMAGE_ID")
 
     - |
       if echo "$trivy_output" | jq . >/dev/null 2>&1; then
