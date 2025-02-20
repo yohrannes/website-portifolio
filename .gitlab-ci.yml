@@ -109,15 +109,16 @@ build-check-image-security:
       docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
       docker image ls
     
-    - trivy_output=$(docker run --rm -v ~/.cache:/root/.cache alpine/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json --offline $IMAGE_NAME:$IMAGE_TAG)
+    - trivy_output=$(docker run --rm -v ~/.cache:/root/.cache aquasec/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json 
+     $IMAGE_NAME:$IMAGE_TAG)
 
     - |
       if echo "$trivy_output" | jq . >/dev/null 2>&1; then
-        critical_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[].Vulnerabilities[] | select(.Severity=="CRITICAL")] | length')
-        high_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[].Vulnerabilities[] | select(.Severity=="HIGH")] | length')
-        medium_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[].Vulnerabilities[] | select(.Severity=="MEDIUM")] | length')
-        low_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[].Vulnerabilities[] | select(.Severity=="LOW")] | length')
-        unknown_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[].Vulnerabilities[] | select(.Severity=="UNKNOWN")] | length')
+        critical_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[] | select(.Vulnerabilities != null) | .Vulnerabilities[] | select(.Severity=="CRITICAL")] | length')
+        high_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[] | select(.Vulnerabilities != null) | .Vulnerabilities[] | select(.Severity=="HIGH")] | length')
+        medium_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[] | select(.Vulnerabilities != null) | .Vulnerabilities[] | select(.Severity=="MEDIUM")] | length')
+        low_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[] | select(.Vulnerabilities != null) | .Vulnerabilities[] | select(.Severity=="LOW")] | length')
+        unknown_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[] | select(.Vulnerabilities != null) | .Vulnerabilities[] | select(.Severity=="UNKNOWN")] | length')
 
         if [ "$critical_vulnerabilities_count" -eq 0 ] && [ "$high_vulnerabilities_count" -eq 0 ] && [ "$medium_vulnerabilities_count" -eq 0 ] && [ "$low_vulnerabilities_count" -eq 0 ] && [ "$unknown_vulnerabilities_count" -eq 0 ]; then
           echo 'No vulnerabilities found.'
