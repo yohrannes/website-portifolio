@@ -109,7 +109,7 @@ build-check-image-security:
       docker build -f ./build-app/Dockerfile -t $IMAGE_NAME .
       docker image ls
     - IMAGE_ID=$(docker images -q | head -n 1)
-    - trivy_output=$(docker run --rm -v ~/.cache:/root/.cache aquasec/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json 
+    - trivy_output=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v ~/.cache:/root/.cache aquasec/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json 
      "$IMAGE_ID")
 
     - |
