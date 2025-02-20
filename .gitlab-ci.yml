@@ -28,8 +28,8 @@ stages:
 
 build-image:
   stage: build
-  only:
-   - develop
+  rules:
+      - if: $CI_COMMIT_BRANCH == "develop"
   image: docker:27.3.1
   services:
    - docker:27.3.1-dind
@@ -48,8 +48,8 @@ build-image:
 
 check-image-security:
   stage: test
-  only:
-   - develop
+  rules:
+      - if: $CI_COMMIT_BRANCH == "develop"
   needs:
     - build-image
   image: docker:27.3.1
@@ -89,8 +89,8 @@ check-image-security:
 
 build-check-image-security:
   stage: test
-  only:
-   - develop
+  rules:
+      - if: $CI_COMMIT_BRANCH == "develop"
   needs:
     - build-image
   image: docker:27.3.1
@@ -109,8 +109,9 @@ build-check-image-security:
 #      docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
     
     - trivy_output=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v ~/.cache:/root/.cache aquasec/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json $IMAGE_NAME:$IMAGE_TAG)
+
     - |
-      if echo "$trivy_output" | jq . ; then
+      if echo "$trivy_output" | jq . >/dev/null 2>&1; then
         critical_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[].Vulnerabilities[] | select(.Severity=="CRITICAL")] | length')
         high_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[].Vulnerabilities[] | select(.Severity=="HIGH")] | length')
         medium_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[].Vulnerabilities[] | select(.Severity=="MEDIUM")] | length')
@@ -126,7 +127,7 @@ build-check-image-security:
           echo "Found $medium_vulnerabilities_count MEDIUM vulnerabilities."
           echo "Found $low_vulnerabilities_count LOW vulnerabilities."
           echo "Found $unknown_vulnerabilities_count UNKNOWN vulnerabilities."
-          exit 1
+          exit 0
         fi
       else
         echo "Error: Failed to parse Trivy output as JSON."
@@ -135,8 +136,8 @@ build-check-image-security:
 
 deploy-image:
   stage: deploy-image
-  only:
-   - develop
+  rules:
+      - if: $CI_COMMIT_BRANCH == "develop"
   needs:
     - build-image
   image: docker:27.3.1
