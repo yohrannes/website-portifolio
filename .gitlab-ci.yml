@@ -106,7 +106,7 @@ build-check-image-security:
       cd repos-gitlab
       git clone https://gitlab.com/yohrannes/website-portifolio.git
       cd website-portifolio
-      docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
+      docker build -f ./build-app/Dockerfile -t $IMAGE_NAME .
       docker image ls
     
     - trivy_output=$(docker run --rm -v ~/.cache:/root/.cache aquasec/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json 
