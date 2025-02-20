@@ -102,11 +102,11 @@ build-check-image-security:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
     - |
-#      mkdir repos-gitlab
-#      cd repos-gitlab
-#      git clone https://gitlab.com/yohrannes/website-portifolio.git
-#      cd website-portifolio
-#      docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
+      mkdir repos-gitlab
+      cd repos-gitlab
+      git clone https://gitlab.com/yohrannes/website-portifolio.git
+      cd website-portifolio
+      docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
     
     - trivy_output=$(docker run --rm -v ~/.cache:/root/.cache alpine/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json $IMAGE_NAME:$IMAGE_TAG)
 
@@ -127,7 +127,7 @@ build-check-image-security:
           echo "Found $medium_vulnerabilities_count MEDIUM vulnerabilities."
           echo "Found $low_vulnerabilities_count LOW vulnerabilities."
           echo "Found $unknown_vulnerabilities_count UNKNOWN vulnerabilities."
-          exit 0
+          exit 1
         fi
       else
         echo "Error: Failed to parse Trivy output as JSON."
