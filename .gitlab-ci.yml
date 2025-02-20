@@ -122,6 +122,7 @@ build-check-image-security:
 
         if [ "$critical_vulnerabilities_count" -eq 0 ] && [ "$high_vulnerabilities_count" -eq 0 ] && [ "$medium_vulnerabilities_count" -eq 0 ] && [ "$low_vulnerabilities_count" -eq 0 ] && [ "$unknown_vulnerabilities_count" -eq 0 ]; then
           echo 'No vulnerabilities found.'
+  ###### DOCKER IMAGE BUILDED!!! PUSH!!
           exit 0
         else
           echo "Found $critical_vulnerabilities_count CRITICAL vulnerabilities."
