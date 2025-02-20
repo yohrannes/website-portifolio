@@ -107,8 +107,9 @@ build-check-image-security:
       git clone https://gitlab.com/yohrannes/website-portifolio.git
       cd website-portifolio
       docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
+      docker image ls
     
-    - trivy_output=$(docker run --rm -v ~/.cache:/root/.cache alpine/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json $IMAGE_NAME:$IMAGE_TAG)
+    - trivy_output=$(docker run --rm -v ~/.cache:/root/.cache alpine/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json --offline $IMAGE_NAME:$IMAGE_TAG)
 
     - |
       if echo "$trivy_output" | jq . >/dev/null 2>&1; then
