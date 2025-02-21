@@ -54,16 +54,10 @@ check-image-security:
       - if: $CI_COMMIT_BRANCH == "develop"
   needs:
     - build-image
-  image: docker:27.3.1
-  services:
-   - docker:27.3.1-dind
-  variables:
-    DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: "/certs"
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
-    - trivy_output=$(docker run --rm -v ~/.cache:/root/.cache alpine/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json docker.io/$IMAGE_NAME:$IMAGE_TAG)
+    - trivy_output=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v ~/.cache:/root/.cache alpine/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json docker.io/$IMAGE_NAME:$IMAGE_TAG)
     
     - |
       if echo "$trivy_output" | jq . >/dev/null 2>&1; then
