@@ -154,18 +154,18 @@ deploy-image:
     - cd website-portifolio
     - git checkout develop
 
-    - OLD_TAG=$(./usefull-scripts/old-dk-img-version.sh)
+    - OLD_TAG=v$(./usefull-scripts/old-dk-img-version.sh)
     - docker pull $IMAGE_NAME:v$OLD_TAG
 
     - docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
-    - NEW_TAG=$(./usefull-scripts/nx-dk-img-version.sh)
-    - docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:v$NEW_TAG
+    - NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh)
+    - docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$NEW_TAG
 
-    - echo docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:v$NEW_TAG
+    - echo docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$NEW_TAG
     - docker image ls
 
-    - local_image_id=$(docker images --format '{{.ID}}' $IMAGE_NAME:v$OLD_TAG)
-    - new_image_id=$(docker images --format '{{.ID}}' $IMAGE_NAME:v$NEW_TAG)
+    - local_image_id=$(docker images --format '{{.ID}}' $IMAGE_NAME:$OLD_TAG)
+    - new_image_id=$(docker images --format '{{.ID}}' $IMAGE_NAME:$NEW_TAG)
 
     - |
       if [ "$local_image_id" -eq "$new_image_id" ]; then
