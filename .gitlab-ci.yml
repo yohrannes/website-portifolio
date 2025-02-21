@@ -152,14 +152,34 @@ deploy-image:
     - cd repos-gitlab
     - git clone https://gitlab.com/yohrannes/website-portifolio.git
     - cd website-portifolio
-    - IMAGE_ID=$(docker images -q | head -n 1)
-    - docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
     - git checkout develop
+
+    - OLD_TAG=$(./usefull-scripts/old-dk-img-version.sh)
+    - docker pull $IMAGE_NAME:$OLD_TAG
+
+    - docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
     - NEW_TAG=$(./usefull-scripts/nx-dk-img-version.sh)
     - docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$NEW_TAG
+
     - echo docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$NEW_TAG
     - docker image ls
-#      ... if Dockerfile =! last_commit_Dockerfile || check_image_security_job_error
-#      docker push $IMAGE_NAME:$NEW_TAG
-#      docker tag $IMAGE_NAME:$NEW_TAG $IMAGE_NAME:latest
-#      docker push $IMAGE_NAME:latest
+
+    - local_image_id=$(docker images --format '{{.ID}}' $IMAGE_NAME:$OLD_TAG)
+    - new_image_id=$(docker images --format '{{.ID}}' $IMAGE_NAME:$NEW_TAG)
+
+    - |
+      if [ "$local_image_id" -eq "$new_image_id" ]; then
+        echo "image-not-changed"
+        exit 1
+      else
+        echo "image-changed"
+        echo "Old imageid: $local_image_id in version $OLD_TAG changed to the new imageid: $new_image_id on the new version $NEW_TAG"
+        exit 0
+      fi
+
+#        docker push $IMAGE_NAME:$NEW_TAG
+#        docker push $IMAGE_NAME:latest
+
+#      ... if dockerimage =! last_commit_dockerimage || check_image_security_job_error
+
+    
