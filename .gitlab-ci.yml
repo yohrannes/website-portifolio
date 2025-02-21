@@ -1,13 +1,15 @@
 include:
+  - local: 'gitlab-ci-cd/runner-controler.yml'
+
   - local: 'gitlab-ci-cd/infra-amd.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-amd"
 
-  - local: 'gitlab-ci-cd/infra-gcp-amd.yml'
+  - local: 'gitlab-ci-cd/infra-runner-gcp-amd.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-gcp-amd"
 
-  - local: 'gitlab-ci-cd/infra-runner.yml'
+  - local: 'gitlab-ci-cd/infra-runner-oci-arm.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner"
 # - local: 'gitlab-ci-cd/infra-k8s.yml'
@@ -21,10 +23,10 @@ stages:
   - test-infra
   - deploy-infra
 
+  - prepare
   - build
   - test
   - deploy-image
-
 
 build-image:
   stage: build
