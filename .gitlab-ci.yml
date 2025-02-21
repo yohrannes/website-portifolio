@@ -156,8 +156,7 @@ deploy-image:
     - IMAGE_ID=$(docker images -q | head -n 1)
       docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
       git checkout develop
-      cd usefull-scripts
-      NEW_TAG=$(sh nx-dk-img-version.sh)
+      NEW_TAG=$(./usefull-scripts/nx-dk-img-version.sh)
       docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$NEW_TAG
       echo docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$NEW_TAG
       docker image ls
