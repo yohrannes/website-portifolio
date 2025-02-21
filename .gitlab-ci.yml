@@ -174,11 +174,11 @@ deploy-image:
       else
         echo "image-changed"
         echo "Old imageid: $local_image_id in version $OLD_TAG changed to the new imageid: $new_image_id on the new version $NEW_TAG"
+        docker push $IMAGE_NAME:$NEW_TAG
+        docker push $IMAGE_NAME:latest
         exit 0
       fi
 
-#        docker push $IMAGE_NAME:$NEW_TAG
-#        docker push $IMAGE_NAME:latest
 
 #      ... if dockerimage =! last_commit_dockerimage || check_image_security_job_error
 
