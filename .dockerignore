@@ -3,3 +3,5 @@ venv
 kubernetes
 nginx-conf
 .dist
+gitlab-ci-cd
+docker-compose
