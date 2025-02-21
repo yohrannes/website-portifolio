@@ -134,7 +134,7 @@ deploy-image:
   rules:
       - if: $CI_COMMIT_BRANCH == "develop"
   needs:
-    - build-image
+    - build-check-image-security
   image: docker:27.3.1
   services:
    - docker:27.3.1-dind
