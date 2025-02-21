@@ -106,11 +106,8 @@ build-check-image-security:
       cd repos-gitlab
       git clone https://gitlab.com/yohrannes/website-portifolio.git
       cd website-portifolio
-      docker build -f ./build-app/Dockerfile -t $IMAGE_NAME .
-      docker image ls
-    - IMAGE_ID=$(docker images -q | head -n 1)
-    - trivy_output=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v ~/.cache:/root/.cache aquasec/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json 
-     "$IMAGE_ID")
+      docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
+    - trivy_output=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v ~/.cache:/root/.cache aquasec/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json $IMAGE_NAME:$IMAGE_TAG)
 
     - |
       if echo "$trivy_output" | jq . >/dev/null 2>&1; then
@@ -120,17 +117,16 @@ build-check-image-security:
         low_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[] | select(.Vulnerabilities != null) | .Vulnerabilities[] | select(.Severity=="LOW")] | length')
         unknown_vulnerabilities_count=$(echo "$trivy_output" | jq '[.Results[] | select(.Vulnerabilities != null) | .Vulnerabilities[] | select(.Severity=="UNKNOWN")] | length')
 
-        if [ "$critical_vulnerabilities_count" -eq 0 ] && [ "$high_vulnerabilities_count" -eq 0 ] && [ "$medium_vulnerabilities_count" -eq 0 ] && [ "$low_vulnerabilities_count" -eq 0 ] && [ "$unknown_vulnerabilities_count" -eq 0 ]; then
-          echo 'No vulnerabilities found.'
-  ###### DOCKER IMAGE BUILDED!!! PUSH!!
-          exit 0
-        else
-          echo "Found $critical_vulnerabilities_count CRITICAL vulnerabilities."
-          echo "Found $high_vulnerabilities_count HIGH vulnerabilities."
-          echo "Found $medium_vulnerabilities_count MEDIUM vulnerabilities."
-          echo "Found $low_vulnerabilities_count LOW vulnerabilities."
-          echo "Found $unknown_vulnerabilities_count UNKNOWN vulnerabilities."
-          exit 1
+      if [ "$critical_vulnerabilities_count" -eq 0 ] && [ "$high_vulnerabilities_count" -eq 0 ] && [ "$medium_vulnerabilities_count" -eq 0 ] && [ "$low_vulnerabilities_count" -eq 0 ] && [ "$unknown_vulnerabilities_count" -eq 0 ]; then
+        echo 'No vulnerabilities found.'
+        exit 0
+      else
+        echo "Found $critical_vulnerabilities_count CRITICAL vulnerabilities."
+        echo "Found $high_vulnerabilities_count HIGH vulnerabilities."
+        echo "Found $medium_vulnerabilities_count MEDIUM vulnerabilities."
+        echo "Found $low_vulnerabilities_count LOW vulnerabilities."
+        echo "Found $unknown_vulnerabilities_count UNKNOWN vulnerabilities."
+        exit 1
         fi
       else
         echo "Error: Failed to parse Trivy output as JSON."
@@ -157,14 +153,15 @@ deploy-image:
       cd repos-gitlab
       git clone https://gitlab.com/yohrannes/website-portifolio.git
       cd website-portifolio
+    - IMAGE_ID=$(docker images -q | head -n 1)
       docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
       git checkout develop
       cd usefull-scripts
       NEW_TAG=$(sh nx-dk-img-version.sh)
-      echo "docker tag "$IMAGE_NAME":latest "$IMAGE_NAME":"$NEW_TAG
+      docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$NEW_TAG
+      echo docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$NEW_TAG
       docker image ls
-#      ... if Dockerfile =! last_commit_Dockerfile || check_image_security_job_error
-#      docker tag $IMAGE_NAME:latest $IMAGE_NAME:$NEW_TAG
+      #      ... if Dockerfile =! last_commit_Dockerfile || check_image_security_job_error
 #      docker push $IMAGE_NAME:$NEW_TAG
 #      docker tag $IMAGE_NAME:$NEW_TAG $IMAGE_NAME:latest
 #      docker push $IMAGE_NAME:latest
