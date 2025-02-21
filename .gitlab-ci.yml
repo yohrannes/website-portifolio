@@ -148,19 +148,18 @@ deploy-image:
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
-    - |
-      mkdir repos-gitlab
-      cd repos-gitlab
-      git clone https://gitlab.com/yohrannes/website-portifolio.git
-      cd website-portifolio
+    - mkdir repos-gitlab
+    - cd repos-gitlab
+    - git clone https://gitlab.com/yohrannes/website-portifolio.git
+    - cd website-portifolio
     - IMAGE_ID=$(docker images -q | head -n 1)
-      docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
-      git checkout develop
-      NEW_TAG=$(./usefull-scripts/nx-dk-img-version.sh)
-      docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$NEW_TAG
-      echo docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$NEW_TAG
-      docker image ls
-      #      ... if Dockerfile =! last_commit_Dockerfile || check_image_security_job_error
+    - docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
+    - git checkout develop
+    - NEW_TAG=$(./usefull-scripts/nx-dk-img-version.sh)
+    - docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$NEW_TAG
+    - echo docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$NEW_TAG
+    - docker image ls
+#      ... if Dockerfile =! last_commit_Dockerfile || check_image_security_job_error
 #      docker push $IMAGE_NAME:$NEW_TAG
 #      docker tag $IMAGE_NAME:$NEW_TAG $IMAGE_NAME:latest
 #      docker push $IMAGE_NAME:latest
