@@ -155,7 +155,7 @@ deploy-image:
     - git checkout develop
 
     - OLD_TAG=v$(./usefull-scripts/old-dk-img-version.sh)
-    - docker pull $IMAGE_NAME:v$OLD_TAG
+    - docker pull $IMAGE_NAME:$OLD_TAG
 
     - docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
     - NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh)
