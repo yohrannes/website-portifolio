@@ -8,7 +8,13 @@ resource "oci_identity_compartment" "yohapp-comp" {
   compartment_id = var.compartment_id
   description    = var.compartment_description
   #name           = "${local.cmpt_name_prefix}-${var.compartment_name}-${local.time_f}"
-  name           = var.compartment_name
+  name = var.compartment_name
+
+  #lifecycle {
+  #  
+  #}
+
+  #depends_on = [  ]
 }
 
 resource "oci_core_vcn" "example_vcn" {
@@ -46,7 +52,7 @@ resource "oci_core_security_list" "security_list_pub" {
 
   ingress_security_rules {
     protocol = "17"
-    source = "0.0.0.0/0"
+    source   = "0.0.0.0/0"
     udp_options {
       min = 443
       max = 443
@@ -72,7 +78,7 @@ resource "oci_core_security_list" "security_list_pub" {
   }
 
   egress_security_rules {
-    protocol = "all"
+    protocol    = "all"
     destination = "0.0.0.0/0"
   }
 }
@@ -83,7 +89,7 @@ resource "oci_core_subnet" "subnetA_pub" {
   vcn_id         = oci_core_vcn.example_vcn.id
   cidr_block     = var.subnetA_pub.cidr_block
   #Optional
-  security_list_ids = [oci_core_security_list.security_list_pub.id]
+  security_list_ids          = [oci_core_security_list.security_list_pub.id]
   display_name               = var.subnetA_pub.display_name
   prohibit_public_ip_on_vnic = !var.subnetA_pub.is_public
   prohibit_internet_ingress  = !var.subnetA_pub.is_public
@@ -121,7 +127,7 @@ resource "oci_core_instance" "ic_pub_vm-A" {
     source_type = "image"
   }
 
-    dynamic "shape_config" {
+  dynamic "shape_config" {
     for_each = [true]
     content {
       #Optional
@@ -139,7 +145,7 @@ resource "oci_core_instance" "ic_pub_vm-A" {
   metadata = {
     #ssh_authorized_keys = join("\n", [for k in local.ssh_authorized_keys : chomp(k)])
     ssh_authorized_keys = file("~/.ssh/id_rsa.pub")
-    user_data = base64encode(file("${path.module}/scripts/startup-script.sh"))
+    user_data           = base64encode(file("${path.module}/scripts/startup-script.sh"))
   }
 
 }
