@@ -36,8 +36,11 @@ resource "oci_core_security_list" "security_list_pub" {
 
     # 80 (HTTP)
     tcp_options {
-      min = 80
-      max = 80
+      source_port_range {
+        #Required
+        max = 80
+        min = 80
+      }
     }
   }
 
