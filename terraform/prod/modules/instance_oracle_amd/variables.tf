@@ -2,18 +2,21 @@ variable "compartment_id" {
   description = "The OCID of the compartment"
   type        = string
   default     = "ocid1.tenancy.oc1..aaaaaaaawb7j4hswwgcjncr2ezu5mptw6o5n6h7ixvef5lzqsqkbtmwk44aq"
+  sensitive   = true
 }
 
 variable "compartment_name" {
   description = "Compartment Name"
   type        = string
   default     = "port-comp"
+  sensitive   = true
 }
 
 variable "compartment_description" {
   description = "Compartment Description"
   type        = string
   default     = "test-compartment description"
+  sensitive   = true
 }
 
 variable "vcn1" {
@@ -22,6 +25,7 @@ variable "vcn1" {
     cidr_blocks : ["10.23.0.0/20"]
     display_name : "vcn01"
   }
+  sensitive = true
 }
 
 variable "subnetA_pub" {
@@ -35,6 +39,7 @@ variable "subnetA_pub" {
       description  = "routeTable-Apub"
     }
   }
+  sensitive = true
 }
 
 variable "internet_gateway_A" {
@@ -43,12 +48,14 @@ variable "internet_gateway_A" {
     display_name : "IC_IG-A"
     ig_destination = "0.0.0.0/0"
   }
+  sensitive = true
 }
 
 variable "ssh_authorized_keys_path" {
   description = "Path to the SSH public key file"
   type        = string
   default     = "~/.ssh/id_rsa.pub"
+  sensitive   = true
 }
 
 variable "ic_pub_vm_A" {
