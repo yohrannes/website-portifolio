@@ -9,7 +9,6 @@ variable "compartment_name" {
   description = "Compartment Name"
   type        = string
   default     = "port-comp"
-  sensitive   = true
 }
 
 variable "compartment_description" {
