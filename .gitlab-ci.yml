@@ -12,6 +12,7 @@ include:
   - local: 'gitlab-ci-cd/infra-runner-oci-arm.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner"
+      
 # - local: 'gitlab-ci-cd/infra-k8s.yml'
 
 variables:
@@ -19,11 +20,12 @@ variables:
   IMAGE_TAG: latest
 
 stages:
+  - prepare
+
   - create-infra
   - test-infra
   - deploy-infra
 
-  - prepare
   - build
   - test
   - deploy-image
