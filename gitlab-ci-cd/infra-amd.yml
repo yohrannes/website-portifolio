@@ -87,11 +87,6 @@ check-startup-script:
     - if: $CI_COMMIT_BRANCH == "infra-amd"
   needs:
     - create-oracle-instance
-  image: docker:27.3.1
-  services:
-    - docker:27.3.1-dind
-  variables:
-    DOCKER_DRIVER: overlay2
   script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
@@ -126,11 +121,7 @@ configure_fail2ban:
     - if: $CI_COMMIT_BRANCH == "infra-amd"
   needs:
     - check-startup-script
-  image: docker:27.3.1
-  services:
-    - docker:27.3.1-dind
   variables:
-    DOCKER_DRIVER: overlay2
   before_script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
@@ -175,11 +166,6 @@ deploy-containers-amd:
     - if: $CI_COMMIT_BRANCH == "infra-amd"
   needs:
     - configure_fail2ban
-  image: docker:27.3.1
-  services:
-    - docker:27.3.1-dind
-  variables:
-    DOCKER_DRIVER: overlay2
   before_script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
@@ -203,11 +189,6 @@ update_dns:
     - if: $CI_COMMIT_BRANCH == "infra-amd"
   needs:
     - check-startup-script
-  image: docker:27.3.1
-  services:
-    - docker:27.3.1-dind
-  variables:
-    DOCKER_DRIVER: overlay2
   script:
     - |
       curl --request PUT \
@@ -231,11 +212,6 @@ deploy_fail2ban:
     - if: $CI_COMMIT_BRANCH == "infra-amd"
   needs:
     - check-startup-script
-  image: docker:27.3.1
-  services:
-    - docker:27.3.1-dind
-  variables:
-    DOCKER_DRIVER: overlay2
   before_script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa

@@ -1,3 +1,5 @@
+# First runner provision, execute this pipeline locally using gl runner type docker
+
 create-oci-gl-runner-instance:
   stage: create-infra
   rules:
