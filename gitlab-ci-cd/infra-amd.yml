@@ -79,7 +79,10 @@ create-oracle-instance:
         terraform init -reconfigure
         terraform workspace select web_port_dev
         terraform plan -detailed-exitcode -target=module.instance_oracle_amd -out=plan | grep "Plan:"
-        terraform apply plan | grep -o -E 'oci[^.]*.'
+        terraform apply plan | tee /dev/tty | grep -o -E 'oci[^.]*.'
+        exit_code=${PIPESTATUS[0]}
+        echo "Exit Code: $exit_code"
+        exit $exit_code
       "
 
     #EXPORT INSTANCE IP 
