@@ -98,7 +98,7 @@ resource "oci_core_subnet" "subnetA_pub" {
   vcn_id         = oci_core_vcn.example_vcn.id
   cidr_block     = var.subnetA_pub.cidr_block
   #Optional
-  security_list_ids          = [oci_core_security_list.security_list_pub.id]
+  security_list_ids          = [oci_core_security_list.public-security-list.id]
   display_name               = var.subnetA_pub.display_name
   prohibit_public_ip_on_vnic = !var.subnetA_pub.is_public
   prohibit_internet_ingress  = !var.subnetA_pub.is_public
