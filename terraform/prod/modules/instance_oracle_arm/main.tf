@@ -23,9 +23,9 @@ resource "oci_core_subnet" "tf_subnet" {
   compartment_id = oci_identity_compartment.runner-comp.id
   vcn_id         = oci_core_vcn.tf_vcn.id
   #cidr_block     = var.tf_subnet.cidr_block
-  cidr_block     = local.cird_block_subnets
+  cidr_block = local.cird_block_subnets
   #Optional
-  security_list_ids = [oci_core_security_list.tf_sec_list.id]
+  security_list_ids          = [oci_core_security_list.tf_sec_list.id]
   display_name               = var.tf_subnet.display_name
   prohibit_public_ip_on_vnic = !var.tf_subnet.is_public
   prohibit_internet_ingress  = !var.tf_subnet.is_public
@@ -63,7 +63,7 @@ resource "oci_core_instance" "tf_gitlab_runner" {
     source_type = "image"
   }
 
-    dynamic "shape_config" {
+  dynamic "shape_config" {
     for_each = [true]
     content {
       #Optional
@@ -79,7 +79,7 @@ resource "oci_core_instance" "tf_gitlab_runner" {
 
   metadata = {
     ssh_authorized_keys = local.ssh_key
-    user_data = base64encode(file("${path.module}/scripts/startup-script-runner.sh"))
+    user_data           = base64encode(file("${path.module}/scripts/startup-script-runner.sh"))
   }
 
 }
@@ -128,7 +128,7 @@ resource "oci_core_security_list" "tf_sec_list" {
   }
 
   egress_security_rules {
-    protocol = "all"
+    protocol    = "all"
     destination = "0.0.0.0/0"
   }
 }
