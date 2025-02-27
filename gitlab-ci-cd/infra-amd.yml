@@ -134,7 +134,8 @@ configure_fail2ban:
   stage: create-infra
   rules:
     - if: $CI_COMMIT_BRANCH == "infra-amd"
-  variables:
+  needs:
+    - create-oracle-instance
   before_script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
@@ -173,7 +174,7 @@ configure_fail2ban:
       EOF
 
 
-deploy-containers-amd:
+deploy-containers:
   stage: deploy-infra
   rules:
     - if: $CI_COMMIT_BRANCH == "infra-amd"
@@ -224,7 +225,7 @@ deploy_fail2ban:
   rules:
     - if: $CI_COMMIT_BRANCH == "infra-amd"
   needs:
-    - check-startup-script
+    - deploy-containers
   before_script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
