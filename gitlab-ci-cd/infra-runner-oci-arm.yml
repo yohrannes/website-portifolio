@@ -37,6 +37,9 @@ create-oci-gl-runner-instance:
 
     # Prepare SSH files to enable ssh conection with instance
     - cat /etc/*release*
+    - apk update
+    - apk upgrade
+    - apk add --no-cache openssh curl
     - apk add --no-cache openssh curl
     - mkdir -p ~/.ssh
     - (echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa 2>/dev/null)
