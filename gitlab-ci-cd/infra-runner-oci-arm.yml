@@ -50,6 +50,8 @@ create-oci-gl-runner-instance:
       docker run -d --name terraform-container \
       --entrypoint "" hashicorp/terraform:latest sleep 3600
     - docker cp $CI_PROJECT_DIR/terraform/prod terraform-container:/app > /dev/null 2>&1
+    - ls -lahtr $CI_PROJECT_DIR/terraform/prod
+    - echo $CI_PROJECT_DIR/terraform/prod
     - docker cp /root/.oci terraform-container:/root/.oci > /dev/null 2>&1
     - docker cp /root/.aws terraform-container:/root/.aws > /dev/null 2>&1
     - docker cp /root/.gcp terraform-container:/root/.gcp > /dev/null 2>&1
@@ -60,6 +62,7 @@ create-oci-gl-runner-instance:
       docker exec -w /app terraform-container sh -c "
         terraform init -reconfigure
         terraform workspace select web_port_dev
+        ls -lahtr
         terraform plan -detailed-exitcode -target=module.oci_aftier_flex_arm -out=plan | grep "Plan:"
         terraform apply plan | grep "Apply complete!"
       "
