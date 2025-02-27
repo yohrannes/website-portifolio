@@ -135,7 +135,7 @@ configure_fail2ban:
   rules:
     - if: $CI_COMMIT_BRANCH == "infra-amd"
   needs:
-    - create-oracle-instance
+    - check-startup-script
   before_script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
