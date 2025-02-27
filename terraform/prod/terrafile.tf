@@ -22,3 +22,8 @@ module "instance_gcp_amd" {
   source       = "git::https://github.com/yohrannes/terraform_gcp_instance_aways_free.git?ref=v1.0.5"
   project_name = "website-portifolio"
 }
+
+module "gcp_ftier_micro_amd" {
+  source       = "git::https://github.com/yohrannes/terraform_gcp_instance_aways_free.git?ref=v1.0.5"
+  project_name = "website-portifolio"
+}
