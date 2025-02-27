@@ -52,8 +52,7 @@ resource "oci_core_security_list" "public-security-list" {
 
     # For ICMP type and code see: https://www.iana.org/assignments/icmp-parameters/icmp-parameters.xhtml
     icmp_options {
-      type = 3
-      code = 4
+      type = 8
     }
   }
 
@@ -65,17 +64,6 @@ resource "oci_core_security_list" "public-security-list" {
     tcp_options {
       min = 80
       max = 80
-    }
-  }
-
-  ingress_security_rules {
-    stateless   = false
-    source      = "0.0.0.0/0"
-    source_type = "CIDR_BLOCK"
-    protocol    = "6"
-    tcp_options {
-      min = 443
-      max = 443
     }
   }
 
