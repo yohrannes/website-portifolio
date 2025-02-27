@@ -1,7 +1,8 @@
 include:
   - local: 'gitlab-ci-cd/runner-controler.yml'
     rules:
-      - if: $CI_COMMIT_BRANCH != "infra-runner"
+      - if: $CI_COMMIT_BRANCH != "infra-runner" # When using gitlab runner locally.
+
   - local: 'gitlab-ci-cd/infra-amd.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-amd"
@@ -13,7 +14,7 @@ include:
   - local: 'gitlab-ci-cd/infra-runner-oci-arm.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner"
-      
+
 # - local: 'gitlab-ci-cd/infra-k8s.yml'
 
 variables:
