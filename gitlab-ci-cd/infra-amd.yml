@@ -134,8 +134,6 @@ configure_fail2ban:
   stage: create-infra
   rules:
     - if: $CI_COMMIT_BRANCH == "infra-amd"
-  needs:
-    - check-startup-script
   variables:
   before_script:
     - mkdir -p ~/.ssh
