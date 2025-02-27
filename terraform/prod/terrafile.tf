@@ -10,8 +10,12 @@ module "instance_oracle_arm" {
   source = "./modules/instance_oracle_arm"
 }
 
-module "instance_oracle_amd" {
-  source = "./modules/instance_oracle_amd"
+module "oci_aftier_flex_arm" {
+  source = "./modules/oci_aftier_flex_arm"
+}
+
+module "oci_aftier_micro_amd" {
+  source = "./modules/oci_aftier_micro_amd"
 }
 
 module "instance_gcp_amd" {
