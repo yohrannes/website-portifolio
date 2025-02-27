@@ -38,14 +38,6 @@ create-oracle-instance:
     - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa.pub 2>/dev/null)
     - chmod 644 $HOME/.ssh/id_rsa.pub
 
-    # Check old terraform containers
-    - |
-      if [ "$(sudo docker ps -a -q -f name=^terraform-container$)" ]; then
-        echo "Old terraform container found removing..."
-        sudo docker stop terraform-container
-        sudo docker rm terraform-container
-      fi
-
     # Build terraform container for host architecture (auto-detected)
     - |
       ARCH=$(uname -m)
@@ -202,7 +194,7 @@ update_dns:
   rules:
     - if: $CI_COMMIT_BRANCH == "infra-amd"
   needs:
-    - create-oracle-instance
+    - deploy-containers
   script:
     - |
       curl --request PUT \
@@ -233,13 +225,14 @@ deploy_fail2ban:
   script:
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
-        echo sudo systemctl enable fail2ban
         sudo systemctl enable fail2ban
-        echo sudo systemctl start fail2ban
         sudo systemctl start fail2ban
-        echo sudo fail2ban-client reload
-        sudo fail2ban-client reload
-        echo sudo fail2ban-client status nginx-injection
-        sudo fail2ban-client status nginx-injection
+        if sudo systemctl is-active --quiet fail2ban; then
+          sudo fail2ban-client reload
+          sudo fail2ban-client status nginx-injection
+        else
+          sudo systemctl status fail2ban
+          exit 1
+        fi
       "
         
