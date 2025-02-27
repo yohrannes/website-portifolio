@@ -40,7 +40,6 @@ create-oci-gl-runner-instance:
     - apk update
     - apk upgrade
     - apk add --no-cache openssh curl
-    - apk add --no-cache openssh curl
     - mkdir -p ~/.ssh
     - (echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa 2>/dev/null)
     - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa.pub 2>/dev/null)

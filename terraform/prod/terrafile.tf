@@ -1,7 +1,3 @@
-module "bucket_aws" {
-  source = "./modules/bucket_aws"
-}
-
 module "aws_bucket" {
   source = "./modules/bucket_aws"
 }
