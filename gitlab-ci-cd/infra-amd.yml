@@ -202,7 +202,7 @@ update_dns:
   rules:
     - if: $CI_COMMIT_BRANCH == "infra-amd"
   needs:
-    - check-startup-script
+    - create-oracle-instance
   script:
     - |
       curl --request PUT \
@@ -233,9 +233,13 @@ deploy_fail2ban:
   script:
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
+        echo sudo systemctl enable fail2ban
         sudo systemctl enable fail2ban
+        echo sudo systemctl start fail2ban
         sudo systemctl start fail2ban
+        echo sudo fail2ban-client reload
         sudo fail2ban-client reload
+        echo sudo fail2ban-client status nginx-injection
         sudo fail2ban-client status nginx-injection
       "
         
