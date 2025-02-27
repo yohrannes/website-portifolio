@@ -227,12 +227,11 @@ deploy_fail2ban:
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
         sudo systemctl enable fail2ban
         sudo systemctl start fail2ban
-        if sudo systemctl is-active --quiet fail2ban; then
-          sudo fail2ban-client reload
+        sudo systemctl status fail2ban
+        while ! sudo systemctl is-active --quiet fail2ban; do
+          sleep 1
+        done
           sudo fail2ban-client status nginx-injection
-        else
-          sudo systemctl status fail2ban
-          exit 1
-        fi
+          sudo fail2ban-client reload
       "
         
