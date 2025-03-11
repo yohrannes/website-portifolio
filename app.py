@@ -13,7 +13,8 @@ def get_server_info():
     hostname = os.popen('hostname').read().strip().lower()
     date_command = 'date +"%Y-%m-%d %H:%M:%S"'
     last_updated = os.popen(date_command).read().strip().lower()
-    response = f"oke cluster pod - {hostname} - up at {last_updated}"
+    #response = f"oke cluster pod - {hostname} - up at {last_updated}"
+    response = f"temporary oci instance"
     return response
 
 @app.template_filter('nl2br') # Filter to use in route response
