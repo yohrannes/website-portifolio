@@ -47,7 +47,7 @@ create-oracle-instance:
         *) echo "Arch not suported: $ARCH"; exit 1 ;;
       esac
 
-      sudo docker buildx build --name multiarch-builder -f ./build-tf-arm64-v8/Dockerfile \
+      sudo docker buildx build  -f ./build-tf-arm64-v8/Dockerfile \
         --platform $PLATFORM \
         -t yohrannes/terraform:latest \
         --build-arg PRODUCT=terraform \
