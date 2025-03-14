@@ -34,6 +34,14 @@ function install-usefull-packages () {
     sudo apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tmux
 }
 
+function allow-swap-memory () {
+    sudo fallocate -l 1G /swapfile
+    sudo chmod 600 /swapfile
+    sudo mkswap /swapfile
+    sudo swapon /swapfile
+    echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+}
+
 function install-gitlab-runner () {
     sudo curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" | sudo bash
     sudo apt-get install gitlab-runner -y
@@ -51,6 +59,7 @@ else
     install-docker-engine
     allow-ports
     install-usefull-packages
+    allow-swap-memory
     install-gitlab-runner
     
     # Leave this command bellow by least (used for pipeline checks)
