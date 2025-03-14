@@ -7,5 +7,5 @@ output "instance_oracle_arm_pub_ip" {
 }
 
 output "gcp_instance_amd_public_ip" {
-  value = module.instance_gcp_amd.instance_public_ip
+  value = module.gcp_ftier_micro_amd.instance_public_ip
 }
