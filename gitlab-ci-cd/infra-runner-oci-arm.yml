@@ -75,8 +75,8 @@ create-oci-gl-runner-instance:
         --form "value=$INSTANCE_PUBLIC_IP" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/RUNNER_INSTANCE_PUBLIC_IP" \
         > /dev/null 2>&1
-    - docker stop terraform-container
-    - docker rm terraform-container
+    - sudo docker stop $(docker ps -a -q)
+    - sudo docker rm $(docker ps -a -q)
 
 check-startup-script:
   stage: test-infra

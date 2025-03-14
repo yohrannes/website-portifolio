@@ -51,7 +51,7 @@ create-gcp-instance:
 
     # Build terraform container for arm64/v8
     - |
-      sudo docker buildx build -f ./build-tf-arm64-v8/Dockerfile --platform linux/arm64 -t yohrannes/terraform:latest --build-arg PRODUCT=terraform --build-arg VERSION=1.7.2 --load .
+      sudo docker buildx build --name multiarch-builder -f ./build-tf-arm64-v8/Dockerfile --platform linux/arm64 -t yohrannes/terraform:latest --build-arg PRODUCT=terraform --build-arg VERSION=1.7.2 --load .
 
     # Run terraform-container 
     - |
@@ -88,8 +88,8 @@ create-gcp-instance:
         --form "value=$INSTANCE_PUBLIC_IP" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/TF_GCP_INSTANCE_PUBLIC_IP" \
         > /dev/null 2>&1
-    - sudo docker stop terraform-container
-    - sudo docker rm terraform-container
+    - sudo docker stop $(docker ps -a -q)
+    - sudo docker rm $(docker ps -a -q)
 
 check-startup-script:
   stage: create-infra
