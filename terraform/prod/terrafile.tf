@@ -18,7 +18,9 @@ module "oci_aftier_micro_amd" {
   source = "./modules/oci_aftier_micro_amd"
 }
 
-module "gcp_ftier_micro_amd" {
-  source       = "git::https://github.com/yohrannes/terraform_gcp_instance_aways_free.git?ref=v1.0.5"
+module "e2-micro" {
+  source  = "yohrannes/e2-micro/google"
+  version = "1.0.8"
+  credentials_path = "~/.gcp/credentials.json"
   project_name = "website-portifolio"
 }
