@@ -51,7 +51,7 @@ create-gcp-instance:
 
     # Build terraform container for arm64/v8
     - |
-      sudo docker buildx build --name multiarch-builder -f ./build-tf-arm64-v8/Dockerfile --platform linux/arm64 -t yohrannes/terraform:latest --build-arg PRODUCT=terraform --build-arg VERSION=1.7.2 --load .
+      sudo docker buildx build -f ./build-tf-arm64-v8/Dockerfile --platform linux/arm64 -t yohrannes/terraform:latest --build-arg PRODUCT=terraform --build-arg VERSION=1.7.2 --load .
 
     # Run terraform-container 
     - |
