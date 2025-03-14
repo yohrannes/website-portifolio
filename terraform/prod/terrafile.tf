@@ -23,5 +23,5 @@ module "gcp_ftier_micro_amd" {
   version = "1.1.1"
   credentials_path = "~/.gcp/credentials.json" #Required
   startup_script_path = "./startup-files/startup-script.sh"
-  ssh_key_path = "~/.ssh/id_rsa.pub" #Required
+  ssh_key_path = "~/.ssh/id_rsa.pub" #Required 
 }
