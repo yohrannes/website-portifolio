@@ -8,7 +8,7 @@ module "service-account" {
 }
 
 module "gcp_ftier_micro_amd" {
-  project_id = "website-portifolio"
+  project_id = var.project_id # Required
   source  = "yohrannes/e2-micro-free-tier/google"
   version = "1.2.7" 
   credentials_path = "~/.gcp/credentials.json" #Required
@@ -40,3 +40,12 @@ module "oci_aftier_micro_amd" {
   source = "./modules/oci_aftier_micro_amd"
 }
 
+#module "oci_oke_cluster_arm" {
+#  source = "./modules/oci_oke_cluster_arm"
+#  ssh_public_key = "./ssh/id_rsa.pub"
+#  fingerprint
+#  private_key_path
+#  tenancy_ocid
+#  user_ocid
+#  oci_profile
+#}

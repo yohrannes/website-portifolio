@@ -1,0 +1,7 @@
+export TF_VAR_tenancy_ocid=<your tenancy ocid>
+export TF_VAR_user_ocid=<your user ocid>
+export TF_VAR_fingerprint=<your fingerprint>
+export TF_VAR_private_key_path=~/.oci/oci_api_key.pem
+export TF_VAR_ssh_public_key=$(cat ssh/id_rsa.pub)
+# Optional if you want to use a different profile name change the value below
+export TF_VAR_oci_profile="DEFAULT"
