@@ -18,5 +18,3 @@ kubectl create clusterrolebinding yoh-admin-binding --clusterrole=cluster-admin 
 kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.10.1/deploy/static/provider/cloud/deploy.yaml
 
 # Deletar cluster > network load balancer > load balancer > vcn > compartment
-# Ip atual 129.213.94.180
-# Ip atual 143.47.98.197

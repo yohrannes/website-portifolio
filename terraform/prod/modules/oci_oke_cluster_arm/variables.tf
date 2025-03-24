@@ -24,7 +24,8 @@ variable "ocpus_per_node" {
 
 variable "memory_in_gbs_per_node" {
   type    = number
-  default = 7
+  default = 3
+#  default = 7
 }
 
 variable "image_id" {
