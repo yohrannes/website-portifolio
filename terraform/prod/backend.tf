@@ -5,7 +5,8 @@ terraform {
     region  = "us-east-1"
     encrypt = true
     # --- ENABLE TF STATE LOCK -- 
-    dynamodb_table = "tf-state-lock"
+    use_lockfile = true
+    #dynamodb_table = "tf-state-lock"
     # --- OBS: firstly provide the aws_dynamodb_table, and then uncomment --- 
     # --- See modules/dynamodb_lock_state folder ---
   }

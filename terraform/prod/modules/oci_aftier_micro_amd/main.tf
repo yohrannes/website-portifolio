@@ -1,3 +1,12 @@
+terraform {
+  required_providers {
+    oci = {
+      source  = "oracle/oci"
+      version = ">= 6.31.0"
+    }
+  }
+}
+
 locals {
   # cmpt_name_prefix = "A506"
   # time_f           = formatdate("HHmmss", timestamp())
@@ -145,13 +154,4 @@ resource "oci_core_instance" "ic_pub_vm-A" {
     user_data           = base64encode(file("${path.module}/scripts/startup-script.sh"))
   }
 
-}
-
-terraform {
-  required_providers {
-    oci = {
-      source  = "oracle/oci"
-      version = ">= 4.0.0"
-    }
-  }
 }
