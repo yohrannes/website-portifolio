@@ -28,6 +28,8 @@ module "dynamodb" {
 
 #Oracle cloud provider
 
+#Oracle cloud provider
+
 module "aws_dynamodb" {
   source = "./modules/dynamodb_lock_state"
 }
