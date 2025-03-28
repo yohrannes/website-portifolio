@@ -24,9 +24,10 @@ else:
     
 if actual_commit_sha != latest_commit_sha:
     print ("updating website folders....")
-    workdir = "/root/website-portifolio"
+    workdir = "/root/website-portifolio/docker-compose"
     os.chdir(workdir)
     command = "git fetch origin main;git pull origin main;echo 'updated at '$(date)"
+    # command = "docker-compose down;docker-compose up -d"
     os.system(command)
 else:
     print ("commits up-to-date")

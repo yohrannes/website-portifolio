@@ -1,21 +1,21 @@
 include:
-  - local: 'gitlab-ci-cd/runner-controler.yml'
+  - local: 'pipelines/gitlab-ci-cd/runner-controler.yml'
     rules:
       - if: $CI_COMMIT_BRANCH != "infra-runner" # When using gitlab runner locally.
 
-  - local: 'gitlab-ci-cd/infra-amd.yml'
+  - local: 'pipelines/gitlab-ci-cd/infra-amd.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-amd"
 
-  - local: 'gitlab-ci-cd/infra-runner-gcp-amd.yml'
+  - local: 'pipelines/gitlab-ci-cd/infra-runner-gcp-amd.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-gcp-amd"
 
-  - local: 'gitlab-ci-cd/infra-runner-oci-arm.yml'
+  - local: 'pipelines/gitlab-ci-cd/infra-runner-oci-arm.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner"
 
-# - local: 'gitlab-ci-cd/infra-k8s.yml'
+# - local: 'pipelines/gitlab-ci-cd/infra-k8s.yml'
 
 variables:
   IMAGE_NAME: yohrannes/website-portifolio
