@@ -45,7 +45,7 @@ create-oci-gl-runner-instance:
     - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa.pub 2>/dev/null)
     - chmod 644 ~/.ssh/id_rsa.pub
 
-    # Run terraform-container 
+    # Run terraform-container
     - |
       docker run -d --name terraform-container \
       --entrypoint "" hashicorp/terraform:latest sleep 3600
