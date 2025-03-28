@@ -51,7 +51,7 @@ create-oracle-instance:
         --platform $PLATFORM \
         -t yohrannes/terraform:latest \
         --build-arg PRODUCT=terraform \
-        --build-arg VERSION=1.11 \
+        --build-arg VERSION=1.11.0 \
         --load .
 
     # Run terraform-container 
