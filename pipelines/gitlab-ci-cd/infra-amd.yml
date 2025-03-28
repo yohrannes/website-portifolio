@@ -54,18 +54,15 @@ create-oracle-instance:
     #     --build-arg VERSION=1.7.2 \
     #     --load .
 
-   # Run terraform-container 
+    # Run terraform-container 
     - |
-      docker run -d --name terraform-container \
-      --entrypoint "" hashicorp/terraform:latest sleep 3600
-    - docker cp $CI_PROJECT_DIR/terraform/prod terraform-container:/app > /dev/null 2>&1
-    - ls -lahtr $CI_PROJECT_DIR/terraform/prod
-    - echo $CI_PROJECT_DIR/terraform/prod
-    - docker cp /root/.oci terraform-container:/root/.oci > /dev/null 2>&1
-    - docker cp /root/.aws terraform-container:/root/.aws > /dev/null 2>&1
-    - docker cp /root/.gcp terraform-container:/root/.gcp > /dev/null 2>&1
-    - docker exec -w /app terraform-container mkdir /root/.ssh
-    - docker cp /root/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
+      sudo docker run -d --name terraform-container yohrannes/terraform:latest sleep 3600
+    - sudo docker cp $CI_PROJECT_DIR/terraform/prod terraform-container:/app > /dev/null 2>&1
+    - sudo docker cp $HOME/.oci terraform-container:/root/.oci > /dev/null 2>&1
+    - sudo docker cp $HOME/.aws terraform-container:/root/.aws > /dev/null 2>&1
+    - sudo docker cp $HOME/.gcp terraform-container:/root/.gcp > /dev/null 2>&1
+    - sudo docker exec -w /app terraform-container mkdir /root/.ssh
+    - sudo docker cp $HOME/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
 
   script:
     - |
