@@ -7,6 +7,8 @@ module "vcn" {
   source                            = "oracle-terraform-modules/vcn/oci"
   version                           = "3.6.0"
 
+  depends_on                        = [ module.compartment ]
+
   compartment_id                    = module.compartment.compartment_id
   region                            = var.region
 
@@ -25,6 +27,7 @@ module "vcn" {
 
 module "network" {
   source                            = "./network"
+  depends_on = [ module.vcn ]
   compartment_id                    = module.compartment.compartment_id
   vcn_id                            = module.vcn.vcn_id
   nat_route_id                      = module.vcn.nat_route_id

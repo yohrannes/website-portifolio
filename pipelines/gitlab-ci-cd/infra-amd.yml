@@ -25,12 +25,6 @@ create-oracle-instance:
     - chmod 600 $HOME/.aws/credentials
     - chmod 600 $HOME/.aws/config
 
-    #Autencicate with GCP
-    - mkdir -p $HOME/.gcp
-    - echo "$GOOGLE_APPLICATION_CREDENTIALS" | base64 -d > $HOME/.gcp/credentials.json
-    - chmod 775 $HOME/.gcp
-    - chmod 664 $HOME/.gcp/credentials.json
-
     # Prepare SSH files to enable ssh conection with instance
     - sudo apt-get install -y openssh-client openssh-server curl
     - mkdir -p $HOME/.ssh
@@ -60,7 +54,6 @@ create-oracle-instance:
     - sudo docker cp $CI_PROJECT_DIR/terraform/prod terraform-container:/app > /dev/null 2>&1
     - sudo docker cp $HOME/.oci terraform-container:/root/.oci > /dev/null 2>&1
     - sudo docker cp $HOME/.aws terraform-container:/root/.aws > /dev/null 2>&1
-    - sudo docker cp $HOME/.gcp terraform-container:/root/.gcp > /dev/null 2>&1
     - sudo docker exec -w /app terraform-container mkdir /root/.ssh
     - sudo docker cp $HOME/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
 
