@@ -17,7 +17,7 @@ create-oci-oke-cluster:
     - docker cp $CI_PROJECT_DIR/terraform/prod terraform-container:/app > /dev/null 2>&1
     - ls -lahtr $CI_PROJECT_DIR/terraform/prod
     - echo $CI_PROJECT_DIR/terraform/prod
-    - sudo docker cp /root/.oci terraform-container:/root/.oci > /dev/null 2>&1
+    - docker cp /root/.oci terraform-container:/root/.oci
     - docker cp /root/.aws terraform-container:/root/.aws > /dev/null 2>&1
     - docker exec -w /app terraform-container mkdir /root/.ssh
     - docker cp /root/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
