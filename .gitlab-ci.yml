@@ -15,6 +15,10 @@ include:
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner"
 
+  - local: 'pipelines/gitlab-ci-cd/infra-oci-oke-arm.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "infra-oci-oke-arm"
+
 # - local: 'pipelines/gitlab-ci-cd/infra-k8s.yml'
 
 variables:

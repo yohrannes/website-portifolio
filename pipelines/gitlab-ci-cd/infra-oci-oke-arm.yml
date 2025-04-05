@@ -2,8 +2,6 @@
 
 create-oci-oke-cluster:
   stage: create-infra
-  rules:
-    - if: $CI_COMMIT_BRANCH == "infra-oci-oke-arm"
   image: docker:27.3.1
   services:
     - docker:27.3.1-dind
