@@ -10,16 +10,6 @@ create-oci-oke-cluster:
     AWS_DEFAULT_REGION: "us-east-1" #Check if that's really necessary
   before_script:
 
-    # Prepare SSH files to enable ssh conection with instance
-    - cat /etc/*release*
-    - apk update
-    - apk upgrade
-    - apk add --no-cache openssh curl
-    - mkdir -p ~/.ssh
-    - (echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa 2>/dev/null)
-    - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa.pub 2>/dev/null)
-    - chmod 644 ~/.ssh/id_rsa.pub
-
     # Run terraform-container
     - |
       docker run -d --name terraform-container \
