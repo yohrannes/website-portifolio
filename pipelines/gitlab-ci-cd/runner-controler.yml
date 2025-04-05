@@ -4,6 +4,7 @@ clean-docker-engine:
 #      - if: $CI_COMMIT_BRANCH == "develop"
 
   # Run in 2 runners simultaneously
-  #parallel: 2
+  parallel: 2
   script:
+    - docker stop terraform-container
     - docker system prune -a -f
