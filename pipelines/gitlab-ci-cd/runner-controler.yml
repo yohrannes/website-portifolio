@@ -10,7 +10,7 @@ docker-controler:
 
   before_script:
       - |
-        if docker ps -a | grep -q "terraform-container"; then
+        if docker ps -a | grep -q "/terraform-container"; then
           docker stop terraform-container
           echo "Terraform container stopped."
         else
