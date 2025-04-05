@@ -1,10 +1,20 @@
-clean-docker-engine:
+
+
+# Run in jobs in all runners simultaneously
+#parallel: 2
+
+docker-controler:
   stage: prepare
 #  rules:
 #      - if: $CI_COMMIT_BRANCH == "develop"
 
-  # Run in 2 runners simultaneously
-  #parallel: 2
+  before_script:
+      - |
+        if docker ps -a | grep -q "terraform-container"; then
+          docker stop terraform-container
+          echo "Terraform container stopped."
+        else
+          echo "Terraform container not exists."
+        fi
   script:
-    - docker stop terraform-container
     - docker system prune -a -f
