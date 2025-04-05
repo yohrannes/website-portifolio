@@ -17,8 +17,7 @@ include:
 
   - local: 'pipelines/gitlab-ci-cd/infra-oci-oke-arm.yml'
     rules:
-    #  - if: $CI_COMMIT_BRANCH == "infra-oci-oke-arm"
-      - if: $CI_COMMIT_BRANCH == ""
+      - if: $CI_COMMIT_BRANCH == "infra-oci-oke-arm"
 
 variables:
   IMAGE_NAME: yohrannes/website-portifolio
