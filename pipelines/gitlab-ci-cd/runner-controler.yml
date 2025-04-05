@@ -1,7 +1,7 @@
 
 
 # Run in jobs in all runners simultaneously
-#parallel: 2
+parallel: 2
 
 docker-controler:
   stage: prepare
