@@ -59,7 +59,6 @@ create-gcp-instance:
         terraform init -reconfigure
         terraform workspace select web_port_dev
         terraform plan -detailed-exitcode -target=module.gcp_ftier_micro_amd -out=plan | grep "Plan:"
-        apk add oci-cli
         terraform apply plan | tee /dev/tty | grep -o -E 'google[^.]*.'
         exit_code=${PIPESTATUS[0]}
         echo "Exit Code: $exit_code"
