@@ -1,7 +1,7 @@
 create-oci-oke-cluster:
   stage: create-infra
   before_script:
-      #Autencicate with OCI 
+    # Autencicate with OCI 
     - mkdir -p $HOME/.oci
     - echo "$OCI_CONFIG_BASE64" | base64 -d > $HOME/.oci/config
     - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.oci/oci_api_key.pem
@@ -100,5 +100,5 @@ update-load-balancer-shape:
      docker exec -w /app terraform-container sh -c "
        export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
        export LOAD_BALANCER_ID=$(oci lb load-balancer list --compartment-id $COMPARTMENT_ID | jq '.data[0].id' | sed 's/"//g')
-       yes | oci lb load-balancer update-load-balancer-shape --load-balancer-id $LOAD_BALANCER_ID --shape-name flexible --shape-details '{"maximum-bandwidth-in-mbps": 10,"minimum-bandwidth-in-mbps": 10}'
+       yes | oci lb load-balancer update-load-balancer-shape --load-balancer-id $LOAD_BALANCER_ID --shape-name flexible --shape-details '{\"maximum-bandwidth-in-mbps\": 10,\"minimum-bandwidth-in-mbps\": 10}'
      "
