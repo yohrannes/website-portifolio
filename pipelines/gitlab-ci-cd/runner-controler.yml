@@ -1,20 +1,17 @@
-
-
-
 docker-controler:
   stage: prepare
   # Run in jobs in all runners simultaneously
-  parallel: 2
+#  parallel: 2
 #  rules:
 #      - if: $CI_COMMIT_BRANCH == "develop"
 
-  before_script:
-      - |
-        if docker ps -a | grep "terraform-container"; then
-          docker stop terraform-container
-          echo "Terraform container stopped."
-        else
-          echo "Terraform container not exists."
-        fi
+  # before_script:
+  #     - |
+  #       if docker ps -a | grep "terraform-container"; then
+  #         docker stop terraform-container
+  #         echo "Terraform container stopped."
+  #       else
+  #         echo "Terraform container not exists."
+  #       fi
   script:
     - docker system prune -a -f
