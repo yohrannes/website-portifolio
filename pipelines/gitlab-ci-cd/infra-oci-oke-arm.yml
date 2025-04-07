@@ -63,16 +63,16 @@ create-oci-oke-cluster:
     - docker cp $HOME/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
     - |
       docker exec -w /app terraform-container sh -c "
-       terraform init -reconfigure
-       terraform workspace select oci_oke_web_port_prod
-       terraform plan -detailed-exitcode -target=module.oci_oke_cluster_arm -out=plan | tee /dev/tty | grep -o -E 'module.oci_oke_cluster_arm[^.]*.'
-       apk add oci-cli
+        terraform init -reconfigure
+        terraform workspace select oci_oke_web_port_prod
+        terraform plan -detailed-exitcode -target=module.oci_oke_cluster_arm -out=plan | tee /dev/tty | grep -o -E 'module.oci_oke_cluster_arm[^.]*.'
+        apk add oci-cli
       "
 
   script:
     - |
       docker exec -w /app terraform-container sh -c "
-       terraform apply plan | tee /dev/tty | grep -o -E 'oci[^.]*.'
+        terraform apply plan | tee /dev/tty | grep -o -E 'oci[^.]*.'
       "
 
 install-ingress-nginx:
@@ -82,9 +82,9 @@ install-ingress-nginx:
   before_script:
     - |
       docker exec -w /app terraform-container sh -c "
-       apk add curl jq
-       curl -LO 'https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl'
-       install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+        apk add curl jq
+        curl -LO 'https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl'
+        install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
       "
   script:
     - |
@@ -96,10 +96,10 @@ update-load-balancer-shape:
   needs:
     - install-ingress-nginx
   stage: create-infra
-  before_script:
+  script:
     - |
       docker exec -w /app terraform-container sh -c "
-       export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
-       export LOAD_BALANCER_ID=$(oci lb load-balancer list --compartment-id $COMPARTMENT_ID | jq '.data[0].id' | sed 's/"//g')
-       yes | oci lb load-balancer update-load-balancer-shape --load-balancer-id $LOAD_BALANCER_ID --shape-name flexible --shape-details '{\"maximum-bandwidth-in-mbps\": 10,\"minimum-bandwidth-in-mbps\": 10}'
+        export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
+        export LOAD_BALANCER_ID=$(oci lb load-balancer list --compartment-id $COMPARTMENT_ID | jq '.data[0].id' | sed 's/"//g')
+        yes | oci lb load-balancer update-load-balancer-shape --load-balancer-id $LOAD_BALANCER_ID --shape-name flexible --shape-details '{\"maximum-bandwidth-in-mbps\": 10,\"minimum-bandwidth-in-mbps\": 10}'
       "
