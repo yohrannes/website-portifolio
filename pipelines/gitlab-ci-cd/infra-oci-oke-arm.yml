@@ -1,7 +1,5 @@
 create-oci-oke-cluster:
   stage: create-infra
-  variables:
-    AWS_DEFAULT_REGION: "us-east-1" #Check if that's really necessary
   before_script:
       #Autencicate with OCI 
     - mkdir -p $HOME/.oci
@@ -37,7 +35,7 @@ create-oci-oke-cluster:
         *) echo "Arch not suported: $ARCH"; exit 1 ;;
       esac
 
-      sudo docker buildx build  -f ./build-tf-arm64-v8/Dockerfile \
+      docker buildx build  -f ./build-tf-arm64-v8/Dockerfile \
         --platform $PLATFORM \
         -t yohrannes/terraform:latest \
         --build-arg PRODUCT=terraform \
@@ -46,10 +44,10 @@ create-oci-oke-cluster:
 
     # Check old terraform containers and remove them
     - |
-      if [ "$(sudo docker ps -a -q -f name=^terraform-container$)" ]; then
+      if [ "$(docker ps -a -q -f name=^terraform-container$)" ]; then
         echo "Old terraform container found removing..."
-        sudo docker stop terraform-container
-        sudo docker rm terraform-container
+        docker stop terraform-container
+        docker rm terraform-container
       fi
 
     # Prepare and run terraform-container
@@ -84,7 +82,7 @@ install-ingress-nginx:
     - |
      docker exec -w /app terraform-container sh -c "
        apk add curl jq
-       curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+       curl -LO 'https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl'
        install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
      "
   script:
