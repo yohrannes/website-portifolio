@@ -1,5 +1,5 @@
 ---
-before_script:
+script:
   # Autencicate with OCI
   - mkdir -p $HOME/.oci
   - echo "$OCI_CONFIG_BASE64" | base64 -d > $HOME/.oci/config
