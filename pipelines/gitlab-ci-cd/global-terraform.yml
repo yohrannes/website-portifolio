@@ -1,5 +1,5 @@
 ---
-run-terraaform-container:
+run-terraform-container:
   parallel: 2
   before_script:
     # Autencicate with OCI
