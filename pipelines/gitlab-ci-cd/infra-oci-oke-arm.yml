@@ -1,6 +1,4 @@
 ---
-include:
-  - local: './global-terraform.yml'
 create-oci-oke-cluster:
   stage: create-infra
   before_script:
