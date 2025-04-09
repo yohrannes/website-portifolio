@@ -1,5 +1,6 @@
 ---
 run-terraaform-container:
+  parallel: 2
   before_script:
     # Autencicate with OCI
     - mkdir -p $HOME/.oci
