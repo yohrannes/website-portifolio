@@ -95,8 +95,9 @@ install-ingress-nginx:
     - |
       docker exec -w /app terraform-container sh -c "
         apk add curl jq
-        curl -LO 'https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl'
-        install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+        export STABLE_RELEASE=$(curl -L -s https://dl.k8s.io/release/stable.txt)
+        curl -LO 'https://dl.k8s.io/release/$STABLE_RELEASE/bin/linux/amd64/kubectl'
+        install -o gitlab-runner -g gitlab-runner -m 0755 kubectl /usr/local/bin/kubectl
       "
   script:
     - |
