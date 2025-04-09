@@ -1,6 +1,8 @@
 ---
+.default-tags:
+  tags:
+    - oci-runner-arm
 run-terraform-container:
-  parallel: 2
   before_script:
     # Autencicate with OCI
     - mkdir -p $HOME/.oci
