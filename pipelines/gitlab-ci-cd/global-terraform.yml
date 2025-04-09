@@ -1,6 +1,5 @@
 ---
 run-terraaform-container:
-  stage: prepare
   before_script:
     # Autencicate with OCI
     - mkdir -p $HOME/.oci
