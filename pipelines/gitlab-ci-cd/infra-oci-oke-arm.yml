@@ -104,6 +104,8 @@ install-kubectl:
         export STABLE_RELEASE=$(curl -L -s https://dl.k8s.io/release/stable.txt)
         curl -LO 'https://dl.k8s.io/release/$STABLE_RELEASE/bin/linux/amd64/kubectl'
         install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+        witch kubectl
+        kubectl version --client
       "
 
 install-ingress-nginx:
