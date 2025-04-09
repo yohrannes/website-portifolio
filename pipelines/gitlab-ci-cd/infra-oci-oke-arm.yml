@@ -2,6 +2,7 @@
 .default-tags:
   tags:
     - oci-runner-arm
+    
 run-terraform-container:
   before_script:
     # Autencicate with OCI
@@ -63,7 +64,7 @@ run-terraform-container:
     - docker cp $HOME/.aws terraform-container:/root/.aws > /dev/null 2>&1
     - docker exec -w /app terraform-container mkdir /root/.ssh > /dev/null 2>&1
     - docker cp $HOME/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
-    
+
 create-oci-oke-cluster:
   stage: create-infra
   before_script:
