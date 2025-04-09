@@ -32,6 +32,8 @@ multi-cloud-auth:
     - chmod 644 $HOME/.ssh/id_rsa.pub
 
 run-terraform-container:
+  needs:
+    - multi-cloud-auth
   stage: prepare
   before_script:
     # Build terraform container for runner host architecture (auto-detected)
@@ -71,6 +73,8 @@ run-terraform-container:
     - docker cp $HOME/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
 
 create-oci-oke-cluster:
+  needs:
+      - run-terraform-container
   stage: create-infra
   before_script:
     - |
@@ -89,18 +93,23 @@ create-oci-oke-cluster:
         exit $exit_code
       "
 
-install-ingress-nginx:
+install-kubectl:
   needs:
     - create-oci-oke-cluster
   stage: create-infra
-  before_script:
+  script:
     - |
       docker exec -w /app terraform-container sh -c "
         apk add curl jq
         export STABLE_RELEASE=$(curl -L -s https://dl.k8s.io/release/stable.txt)
         curl -LO 'https://dl.k8s.io/release/$STABLE_RELEASE/bin/linux/amd64/kubectl'
-        sudo install -o $USER -g root -m 0755 kubectl /usr/local/bin/kubectl
+        install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
       "
+
+install-ingress-nginx:
+  needs:
+    - install-kubectl
+  stage: create-infra
   script:
     - |
       docker exec -w /app terraform-container sh -c "
