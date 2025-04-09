@@ -54,6 +54,7 @@ run-terraform-container:
         docker stop terraform-container
         docker rm terraform-container
       fi
+
   script:
     # Prepare and run terraform-container
     - |
@@ -69,6 +70,7 @@ run-terraform-container:
 create-oci-oke-cluster:
   stage: create-infra
   before_script:
+    - docker ps -a
     - |
       docker exec -w /app terraform-container sh -c "
         terraform init -reconfigure 2>/dev/null
