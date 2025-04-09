@@ -139,11 +139,12 @@ create-runner-gl-api:
   script:
     - |
       sudo apt-get install -y curl jq
-      RUNNER_TOKEN=$(curl --request POST --url "https://gitlab.com/api/v4/user/runners" --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_CREATOR" --data "runner_type=project_type" --data "project_id=57493833" --data "description=gcp-runner" | jq -r '.token')
+      RUNNER_TOKEN=$(curl --request POST --url "https://gitlab.com/api/v4/user/runners" --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_CREATOR" --data "runner_type=project_type" --data "project_id=57493833" --data "tag_list=gcp-runner-amd" --data "description=gcp-runner" | jq -r '.token')
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --request PUT \
         --form "value=$RUNNER_TOKEN" \
+        --form "tag_list=gcp-runner-amd" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER_TOKEN_CREATED" \
         > /dev/null 2>&1
 
