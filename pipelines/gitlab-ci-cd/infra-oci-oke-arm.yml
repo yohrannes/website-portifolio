@@ -3,7 +3,7 @@
   tags:
     - oci-runner-arm
 
-run-terraform-container:
+multi-cloud-auth:
   stage: prepare
   before_script:
     # Autencicate with OCI
@@ -31,6 +31,9 @@ run-terraform-container:
     - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa.pub 2>/dev/null)
     - chmod 644 $HOME/.ssh/id_rsa.pub
 
+run-terraform-container:
+  stage: prepare
+  before_script:
     # Build terraform container for runner host architecture (auto-detected)
     - |
       ARCH=$(uname -m)
@@ -70,18 +73,17 @@ run-terraform-container:
 create-oci-oke-cluster:
   stage: create-infra
   before_script:
-    - docker ps -a
     - |
       docker exec -w /app terraform-container sh -c "
         terraform init -reconfigure 2>/dev/null
         terraform workspace select oci_oke_web_port_prod 2>/dev/null
-        terraform plan -detailed-exitcode -target=module.oci_oke_cluster_arm -out=plan | tee /dev/tty | grep -o -E 'module.oci_oke_cluster_arm[^.]*.'
+        terraform plan -detailed-exitcode -target=module.oci_oke_cluster_arm -out=plan | grep -o -E 'module.oci_oke_cluster_arm[^.]*.'
         apk add oci-cli
       "
   script:
     - |
       docker exec -w /app terraform-container sh -c "
-        terraform apply plan | tee /dev/tty | grep -o -E 'oci[^.]*.'
+        terraform apply plan | grep -o -E 'oci[^.]*.'
         exit_code=${PIPESTATUS[0]}
         echo "Exit Code: $exit_code"
         exit $exit_code
@@ -97,7 +99,7 @@ install-ingress-nginx:
         apk add curl jq
         export STABLE_RELEASE=$(curl -L -s https://dl.k8s.io/release/stable.txt)
         curl -LO 'https://dl.k8s.io/release/$STABLE_RELEASE/bin/linux/amd64/kubectl'
-        install -o gitlab-runner -g gitlab-runner -m 0755 kubectl /usr/local/bin/kubectl
+        sudo install -o $USER -g root -m 0755 kubectl /usr/local/bin/kubectl
       "
   script:
     - |
