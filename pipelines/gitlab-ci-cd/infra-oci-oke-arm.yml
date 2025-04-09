@@ -2,8 +2,9 @@
 .default-tags:
   tags:
     - oci-runner-arm
-    
+
 run-terraform-container:
+  stage: prepare
   before_script:
     # Autencicate with OCI
     - mkdir -p $HOME/.oci
