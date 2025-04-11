@@ -1,7 +1,4 @@
 ---
-tags:
-  - oci-runner-arm
-
 multi-cloud-auth:
   tags: [ "oci-runner-arm" ]
   stage: prepare
