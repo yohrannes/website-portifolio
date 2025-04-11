@@ -101,7 +101,8 @@ install-kubectl:
     - |
       docker exec -w /app terraform-container sh -c "
         apk add curl jq
-        export STABLE_RELEASE=$(curl -L -s https://dl.k8s.io/release/stable.txt)
+        STABLE_RELEASE=$(curl -L -s https://dl.k8s.io/release/stable.txt)
+        echo $STABLE_RELEASE
         curl -LO 'https://dl.k8s.io/release/$STABLE_RELEASE/bin/linux/amd64/kubectl'
         install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
         witch kubectl
