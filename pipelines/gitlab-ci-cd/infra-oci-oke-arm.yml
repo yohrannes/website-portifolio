@@ -108,6 +108,8 @@ install-kubectl:
         kubectl version --client
       "
 
+# instala o gateway-api https://www.youtube.com/watch?v=i0fLIcij42I
+
 install-ingress-nginx:
   tags: [ "oci-runner-arm" ]
   needs:
