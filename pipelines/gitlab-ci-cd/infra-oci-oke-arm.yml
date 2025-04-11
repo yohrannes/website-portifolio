@@ -1,9 +1,9 @@
 ---
-.default-tags:
-  tags:
-    - oci-runner-arm
+tags:
+  - oci-runner-arm
 
 multi-cloud-auth:
+  tags: [ "oci-runner-arm" ]
   stage: prepare
   script:
     # Autencicate with OCI
@@ -32,6 +32,7 @@ multi-cloud-auth:
     - chmod 644 $HOME/.ssh/id_rsa.pub
 
 run-terraform-container:
+  tags: [ "oci-runner-arm" ]
   needs:
     - multi-cloud-auth
   stage: prepare
@@ -73,6 +74,7 @@ run-terraform-container:
     - docker cp $HOME/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
 
 create-oci-oke-cluster:
+  tags: [ "oci-runner-arm" ]
   needs:
       - run-terraform-container
   stage: create-infra
@@ -94,6 +96,7 @@ create-oci-oke-cluster:
       "
 
 install-kubectl:
+  tags: [ "oci-runner-arm" ]
   needs:
     - create-oci-oke-cluster
   stage: create-infra
@@ -110,6 +113,7 @@ install-kubectl:
       "
 
 install-ingress-nginx:
+  tags: [ "oci-runner-arm" ]
   needs:
     - install-kubectl
   stage: create-infra
@@ -120,6 +124,7 @@ install-ingress-nginx:
       "
 
 update-load-balancer-shape:
+  tags: [ "oci-runner-arm" ]
   needs:
     - install-ingress-nginx
   stage: create-infra
