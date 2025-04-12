@@ -103,7 +103,9 @@ install-kubectl:
         export STABLE_RELEASE=\$(curl -L -s https://dl.k8s.io/release/stable.txt);
         echo \$STABLE_RELEASE;
         curl -LO \"https://dl.k8s.io/release/\$STABLE_RELEASE/bin/linux/amd64/kubectl\";
+        echo "$?"
         install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl;
+        echo "$?"
         kubectl version --client
       "
 
