@@ -105,6 +105,11 @@ install-kubectl:
         chmod +x kubectl
         mv kubectl /usr/local/bin/kubectl
         /usr/local/bin/kubectl version --client
+        export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
+        export CLUSTER_ID=$(oci ce cluster list --compartment-id $COMPARTMENT_ID | jq '.data[0].id' | sed 's/"//g'))
+        mkdir -p ~/.kube
+        export KUBECONFIG=~/.kube/config
+        oci ce cluster create-kubeconfig --cluster-id \$CLUSTER_ID --file ~/.kube/config --token-version 2.0.0 --kube-endpoint PUBLIC_ENDPOINT --profile DEFAULT
       "
 
 install-gateway:
