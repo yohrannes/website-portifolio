@@ -81,7 +81,7 @@ create-oci-oke-cluster:
         terraform init -reconfigure 2>/dev/null
         terraform workspace select oci_oke_web_port_prod 2>/dev/null
         terraform plan -detailed-exitcode -target=module.oci_oke_cluster_arm -out=plan | grep -o -E 'module.oci_oke_cluster_arm[^.]*.'
-        apk add oci-cli curl jq 2>/dev/null
+        apk add oci-cli curl jq --no-cache
       " 2>/dev/null
   script:
     - |
@@ -103,6 +103,7 @@ install-kubectl:
         export STABLE_RELEASE=\$(curl -L -s https://dl.k8s.io/release/stable.txt);
         echo \$STABLE_RELEASE;
         curl -LO \"https://dl.k8s.io/release/\$STABLE_RELEASE/bin/linux/amd64/kubectl\";
+        echo \"https://dl.k8s.io/release/\$STABLE_RELEASE/bin/linux/amd64/kubectl\";
         echo "$?"
         install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl;
         echo "$?"
