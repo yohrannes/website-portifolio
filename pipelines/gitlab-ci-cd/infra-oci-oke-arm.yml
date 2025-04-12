@@ -109,8 +109,8 @@ install-kubectl:
           exit 1
         fi
         chmod +x kubectl
-        mv kubectl /usr/local/bin/
-        kubectl version --client
+        mv kubectl /usr/local/bin/kubectl
+        /usr/local/bin/kubectl version --client --output=yaml
         if [ \$? -ne 0 ]; then
           exit 1
         fi
