@@ -101,19 +101,10 @@ install-kubectl:
     - |
       docker exec -w /app terraform-container sh -c "
         export STABLE_RELEASE=\$(curl -L -s https://dl.k8s.io/release/stable.txt)
-        if [ -z \"\$STABLE_RELEASE\" ]; then
-          exit 1
-        fi
-        curl -LO https://dl.k8s.io/release/\$STABLE_RELEASE/bin/linux/amd64/kubectl
-        if [ ! -f kubectl ]; then
-          exit 1
-        fi
+        curl -LO https://dl.k8s.io/release/\$STABLE_RELEASE/bin/linux/arm64/kubectl
         chmod +x kubectl
         mv kubectl /usr/local/bin/kubectl
         /usr/local/bin/kubectl version --client --output=yaml
-        if [ \$? -ne 0 ]; then
-          exit 1
-        fi
       "
 
 install-gateway-api:
