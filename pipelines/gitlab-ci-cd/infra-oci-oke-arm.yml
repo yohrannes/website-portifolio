@@ -100,17 +100,20 @@ install-kubectl:
   script:
     - |
       docker exec -w /app terraform-container sh -c "
-        export STABLE_RELEASE=\$(curl -L -s https://dl.k8s.io/release/stable.txt);
-        echo \$STABLE_RELEASE;
-        curl -LO \"https://dl.k8s.io/release/\$STABLE_RELEASE/bin/linux/amd64/kubectl\";
-        echo \"https://dl.k8s.io/release/\$STABLE_RELEASE/bin/linux/amd64/kubectl\";
-        curl -LO \"https://dl.k8s.io/release/\$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl\";
-        echo "$?"
-        chmod +x kubectl;
-        ls -la
+        export STABLE_RELEASE=\$(curl -L -s https://dl.k8s.io/release/stable.txt)
+        if [ -z \"\$STABLE_RELEASE\" ]; then
+          exit 1
+        fi
+        curl -LO https://dl.k8s.io/release/\$STABLE_RELEASE/bin/linux/amd64/kubectl
+        if [ ! -f kubectl ]; then
+          exit 1
+        fi
+        chmod +x kubectl
         mv kubectl /usr/local/bin/
-        echo "$?"
         kubectl version --client
+        if [ \$? -ne 0 ]; then
+          exit 1
+        fi
       "
 
 install-gateway-api:
