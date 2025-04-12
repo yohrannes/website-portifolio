@@ -32,3 +32,6 @@ alias tfay='terraform apply -auto-approve'
 alias tfdy='terraform destroy -auto-approve'
 alias tfinu='terraform init -upgrade'
 alias tfpde='terraform plan --destroy'
+alias tfpdey='terraform plan --destroy -auto-approve'
+
+alias k='kubectl'
