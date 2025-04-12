@@ -104,10 +104,10 @@ install-kubectl:
         curl -LO https://dl.k8s.io/release/\$STABLE_RELEASE/bin/linux/arm64/kubectl
         chmod +x kubectl
         mv kubectl /usr/local/bin/kubectl
-        /usr/local/bin/kubectl version --client --output=yaml
+        /usr/local/bin/kubectl version --client
       "
 
-install-gateway-api:
+install-gateway:
   tags: [ "oci-runner-arm" ]
   needs:
     - install-kubectl
@@ -115,18 +115,29 @@ install-gateway-api:
   script:
     - |
       docker exec -w /app terraform-container sh -c "
-        kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.0/standard-install.yaml
+      kubectl kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.2" | kubectl apply -f -
+      kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/crds.yaml
+      kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/default/deploy.yaml
       "
 
-update-load-balancer-shape:
+set-lb-shape:
   tags: [ "oci-runner-arm" ]
   needs:
-    - install-gateway-api
+    - install-gateway
   stage: create-infra
   script:
     - |
       docker exec -w /app terraform-container sh -c "
-        export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
-        export LOAD_BALANCER_ID=$(oci lb load-balancer list --compartment-id $COMPARTMENT_ID | jq '.data[0].id' | sed 's/"//g')
-        yes | oci lb load-balancer update-load-balancer-shape --load-balancer-id $LOAD_BALANCER_ID --shape-name flexible --shape-details '{\"maximum-bandwidth-in-mbps\": 10,\"minimum-bandwidth-in-mbps\": 10}'
+      export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
+      export LOAD_BALANCER_ID=$(oci lb load-balancer list --compartment-id $COMPARTMENT_ID | jq '.data[0].id' | sed 's/"//g')
+      cat <<EOF > shape-details.json
+      {
+        "maximum-bandwidth-in-mbps": 10,
+        "minimum-bandwidth-in-mbps": 10
+      }
+      EOF
+      oci lb load-balancer update-load-balancer-shape \
+        --load-balancer-id \$LOAD_BALANCER_ID \
+        --shape-name flexible \
+        --shape-details file://shape-details.json
       "
