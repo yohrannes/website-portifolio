@@ -122,7 +122,7 @@ install-gateway-api:
 update-load-balancer-shape:
   tags: [ "oci-runner-arm" ]
   needs:
-    - install-ingress-nginx
+    - install-gateway-api
   stage: create-infra
   script:
     - |
