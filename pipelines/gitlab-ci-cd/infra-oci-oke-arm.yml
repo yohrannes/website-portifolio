@@ -108,9 +108,7 @@ install-kubectl:
         kubectl version --client
       "
 
-# instala o gateway-api https://www.youtube.com/watch?v=i0fLIcij42I
-
-install-ingress-nginx:
+install-gateway-api:
   tags: [ "oci-runner-arm" ]
   needs:
     - install-kubectl
@@ -118,7 +116,7 @@ install-ingress-nginx:
   script:
     - |
       docker exec -w /app terraform-container sh -c "
-        kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/cloud/deploy.yaml
+        kubectl apply -f https://github.com/kubernetes-sigs/gateway-api/releases/download/v1.2.0/standard-install.yaml
       "
 
 update-load-balancer-shape:
