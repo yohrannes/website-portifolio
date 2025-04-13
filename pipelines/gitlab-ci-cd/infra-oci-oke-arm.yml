@@ -34,6 +34,16 @@ run-terraform-container:
     - multi-cloud-auth
   stage: prepare
   before_script:
+    # Cleanup old terraform container
+    - |
+      if docker ps -a | grep "terraform-container"; then
+        docker stop terraform-container
+        echo "Terraform container stopped."
+        docker system prune -a -f
+      else
+        echo "Terraform container not exists."
+      fi
+
     # Build terraform container for runner host architecture (auto-detected)
     - |
       ARCH=$(uname -m)
@@ -109,8 +119,8 @@ install-kubectl:
         export CLUSTER_ID=$(oci ce cluster list --compartment-id $COMPARTMENT_ID | jq '.data[0].id' | sed 's/"//g')
         mkdir -p ~/.kube
         export KUBECONFIG=~/.kube/config
-        terraform state rm module.oci_oke_cluster_arm.module.kubeconfig.null_resource.create_kubeconfig
-        terraform plan -out plan --target=module.oci_oke_cluster_arm.module.kubeconfig
+        terraform state rm module.oci_oke_cluster_arm.module.kubeconfig.null_resource.create_kubeconfig 2>/dev/null
+        terraform plan -out plan --target=module.oci_oke_cluster_arm.module.kubeconfig 2>/dev/null
         terraform apply plan 2>/dev/null
       "
 
