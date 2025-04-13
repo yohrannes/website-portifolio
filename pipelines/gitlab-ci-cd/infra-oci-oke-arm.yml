@@ -120,8 +120,8 @@ install-kubectl:
         mkdir -p ~/.kube
         export KUBECONFIG=~/.kube/config
         terraform state rm module.oci_oke_cluster_arm.module.kubeconfig.null_resource.create_kubeconfig 2>/dev/null
-        terraform plan -out plan --target=module.oci_oke_cluster_arm.module.kubeconfig 2>/dev/null
-        terraform apply plan 2>/dev/null
+        terraform plan -out plan -detailed-exitcode --target=module.oci_oke_cluster_arm.module.kubeconfig -out=plan | grep -o -E 'module.oci_oke_cluster_arm[^.]*.' | sort -u
+        terraform apply plan | grep -o -E 'oci[^.]*.'
       "
 
 install-gateway:
@@ -147,14 +147,5 @@ set-lb-shape:
       docker exec -w /app terraform-container sh -c "
       export COMPARTMENT_ID=\$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
       export LOAD_BALANCER_ID=\$(oci lb load-balancer list --compartment-id \$COMPARTMENT_ID | jq '.data[0].id' | sed 's/"//g')
-      cat <<EOF > shape-details.json
-      {
-        "maximum-bandwidth-in-mbps": 10,
-        "minimum-bandwidth-in-mbps": 10
-      }
-      EOF
-      oci lb load-balancer update-load-balancer-shape \
-        --load-balancer-id \$LOAD_BALANCER_ID \
-        --shape-name flexible \
-        --shape-details file://shape-details.json
+      oci lb load-balancer update-load-balancer-shape --load-balancer-id \$LOAD_BALANCER_ID --shape-name flexible --shape-details '{"maximum-bandwidth-in-mbps":10,"minimum-bandwidth-in-mbps":10}' --force
       "
