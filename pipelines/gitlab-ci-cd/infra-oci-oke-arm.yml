@@ -100,16 +100,18 @@ install-kubectl:
   script:
     - |
       docker exec -w /app terraform-container sh -c "
-        export STABLE_RELEASE=\$(curl -L -s https://dl.k8s.io/release/stable.txt)
-        curl -LO https://dl.k8s.io/release/\$STABLE_RELEASE/bin/linux/arm64/kubectl
+        export STABLE_RELEASE=$(curl -L -s https://dl.k8s.io/release/stable.txt)
+        curl -LO https://dl.k8s.io/release/$STABLE_RELEASE/bin/linux/arm64/kubectl
         chmod +x kubectl
         mv kubectl /usr/local/bin/kubectl
         /usr/local/bin/kubectl version --client
         export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
-        export CLUSTER_ID=$(oci ce cluster list --compartment-id $COMPARTMENT_ID | jq '.data[0].id' | sed 's/"//g'))
+        export CLUSTER_ID=$(oci ce cluster list --compartment-id $COMPARTMENT_ID | jq '.data[0].id' | sed 's/"//g')
         mkdir -p ~/.kube
         export KUBECONFIG=~/.kube/config
-        oci ce cluster create-kubeconfig --cluster-id \$CLUSTER_ID --file ~/.kube/config --token-version 2.0.0 --kube-endpoint PUBLIC_ENDPOINT --profile DEFAULT
+        terraform state rm module.oci_oke_cluster_arm.module.kubeconfig.null_resource.create_kubeconfig
+        terraform plan -out plan --target=module.oci_oke_cluster_arm.module.kubeconfig
+        terraform apply plan 2>/dev/null
       "
 
 install-gateway:
