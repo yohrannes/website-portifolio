@@ -151,11 +151,5 @@ set-lb-shape:
         --load-balancer-id \$LOAD_BALANCER_ID \
         --shape-name flexible \
         --shape-details '{\"maximum-bandwidth-in-mbps\":10,\"minimum-bandwidth-in-mbps\":10}' \
-        --force 2>&1 | grep '"message":' | awk -F': ' '{print $2}' | sed 's/[\",]//g' | if grep -q "Cannot update to same shape"; then
-          echo "LB shape already set, cannot update to same shape"
-          exit 1
-        else
-          echo "LB shape set to flexible"
-          exit 1
-        fi
+        --force 2>&1 | grep '"message":' | awk -F': ' '{print $2}' | sed 's/[\",]//g' | if grep -q "Cannot update to same shape"; then echo "LB shape already set, cannot update to same shape"; exit 1; fi;
       "
