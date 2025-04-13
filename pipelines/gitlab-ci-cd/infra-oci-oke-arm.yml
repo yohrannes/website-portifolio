@@ -145,8 +145,8 @@ set-lb-shape:
   script:
     - |
       docker exec -w /app terraform-container sh -c "
-      export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
-      export LOAD_BALANCER_ID=$(oci lb load-balancer list --compartment-id $COMPARTMENT_ID | jq '.data[0].id' | sed 's/"//g')
+      export COMPARTMENT_ID=\$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
+      export LOAD_BALANCER_ID=\$(oci lb load-balancer list --compartment-id \$COMPARTMENT_ID | jq '.data[0].id' | sed 's/"//g')
       cat <<EOF > shape-details.json
       {
         "maximum-bandwidth-in-mbps": 10,
