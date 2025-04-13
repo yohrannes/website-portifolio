@@ -1,7 +1,7 @@
 docker-controler:
   stage: prepare
   # Run in jobs in all runners simultaneously
-  parallel: 2
+#  parallel: 2
 #  rules:
 #      - if: $CI_COMMIT_BRANCH == "develop"
 
