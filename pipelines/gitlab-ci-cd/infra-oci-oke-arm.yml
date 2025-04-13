@@ -90,8 +90,8 @@ create-oci-oke-cluster:
       docker exec -w /app terraform-container sh -c "
         terraform init -reconfigure 2>/dev/null
         terraform workspace select oci_oke_web_port_prod 2>/dev/null
-        terraform plan -detailed-exitcode -target=module.oci_oke_cluster_arm -out=plan | grep -o -E 'module.oci_oke_cluster_arm[^.]*.'
-        apk add oci-cli curl jq --no-cache
+        terraform plan -detailed-exitcode -target=module.oci_oke_cluster_arm -out=plan | grep -o -E 'module.oci_oke_cluster_arm[^.]*.' | sort -u
+        apk add oci-cli curl jq --no-cache --quiet
       " 2>/dev/null
   script:
     - |
