@@ -22,15 +22,11 @@ module "aws_bucket" {
   source = "./modules/bucket_aws"
 }
 
-module "dynamodb" {
+module "aws_dynamodb" {
   source = "./modules/dynamodb_lock_state"
 }
 
 #Oracle cloud provider
-
-module "aws_dynamodb" {
-  source = "./modules/dynamodb_lock_state"
-}
 
 module "oci_aftier_flex_arm" {
   source = "./modules/oci_aftier_flex_arm"

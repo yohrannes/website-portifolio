@@ -26,45 +26,6 @@ resource "oci_core_security_list" "private_subnet_sl" {
     source_type = "CIDR_BLOCK"
     protocol    = "all"
   }
-
-  ingress_security_rules {
-  protocol    = "6"
-  source      = "10.0.0.0/24"
-  source_type = "CIDR_BLOCK"
-  stateless   = false
-      tcp_options {
-          max = 30594
-          min = 30594
-      }
-  }
-  ingress_security_rules {
-      protocol    = "6"
-      source      = "10.0.0.0/24"
-      source_type = "CIDR_BLOCK"
-      stateless   = false
-
-      tcp_options {
-          max = 31013
-          min = 31013
-      }
-  }
-  ingress_security_rules {
-      protocol    = "6"
-      source      = "10.0.0.0/24"
-      source_type = "CIDR_BLOCK"
-      stateless   = false
-
-      tcp_options {
-          max = 31284
-          min = 31284
-      }
-  }
-  ingress_security_rules {
-      protocol    = "all"
-      source      = "0.0.0.0/0"
-      source_type = "CIDR_BLOCK"
-      stateless   = false
-  }
 }
 
 resource "oci_core_security_list" "public_subnet_sl" {
@@ -72,46 +33,6 @@ resource "oci_core_security_list" "public_subnet_sl" {
   vcn_id         = var.vcn_id
 
   display_name = "k8s-public-subnet-sl"
-
-  egress_security_rules {
-      destination      = "0.0.0.0/0"
-      destination_type = "CIDR_BLOCK"
-      protocol         = "all"
-      stateless        = false
-    }
-  egress_security_rules {
-      destination      = "10.0.1.0/24"
-      destination_type = "CIDR_BLOCK"
-      protocol         = "6"
-      stateless        = false
-
-      tcp_options {
-          max = 30594
-          min = 30594
-        }
-    }
-  egress_security_rules {
-      destination      = "10.0.1.0/24"
-      destination_type = "CIDR_BLOCK"
-      protocol         = "6"
-      stateless        = false
-
-      tcp_options {
-          max = 31013
-          min = 31013
-        }
-    }
-  egress_security_rules {
-      destination      = "10.0.1.0/24"
-      destination_type = "CIDR_BLOCK"
-      protocol         = "6"
-      stateless        = false
-
-      tcp_options {
-          max = 31284
-          min = 31284
-        }
-    }
 
   egress_security_rules {
     stateless        = false

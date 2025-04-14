@@ -7,7 +7,7 @@ module "vcn" {
   source                            = "oracle-terraform-modules/vcn/oci"
   version                           = "3.6.0"
 
-  depends_on                        = [ module.compartment ]
+ # depends_on                        = [ module.compartment ]
 
   compartment_id                    = module.compartment.compartment_id
   region                            = var.region
@@ -27,7 +27,7 @@ module "vcn" {
 
 module "network" {
   source                            = "./network"
-  depends_on = [ module.vcn ]
+# depends_on = [ module.vcn ]
   compartment_id                    = module.compartment.compartment_id
   vcn_id                            = module.vcn.vcn_id
   nat_route_id                      = module.vcn.nat_route_id
@@ -36,6 +36,7 @@ module "network" {
 
 module "cluster" {
   source                            = "./cluster"
+#  depends_on = [ module.network, module.compartment, module.vcn ]
   compartment_id                    = module.compartment.compartment_id
   cluster_name                      = var.cluster_name
   k8s_version                       = var.k8s_version
@@ -58,8 +59,10 @@ module "loadbalancer" {
   compartment_id                    = module.compartment.compartment_id
   public_subnet_id                  = module.network.public_subnet_id
   node_size                         = var.node_size
-  node_port                         = var.node_port
-  listerner_port                    = var.listerner_port
+  node_port_http                    = var.node_port_http
+  node_port_https                   = var.node_port_https
+  listener_port_http                = var.listener_port_http
+  listener_port_https               = var.listener_port_https
 }
 
 module "kubeconfig" {
