@@ -120,8 +120,8 @@ install-kubectl:
         mkdir -p ~/.kube
         export KUBECONFIG=~/.kube/config
         terraform state rm module.oci_oke_cluster_arm.module.kubeconfig.null_resource.create_kubeconfig 2>/dev/null
-        terraform plan -out plan -detailed-exitcode --target=module.oci_oke_cluster_arm.module.kubeconfig -out=plan | grep -o -E 'module.oci_oke_cluster_arm[^.]*.' | sort -u
-        terraform apply plan | grep -o -E 'oci[^.]*.' | sort -u
+        terraform plan -out plan -detailed-exitcode --target=module.oci_oke_cluster_arm.module.kubeconfig -out=plan 2>&1 | grep -o -E 'oci[^.]*.' | sort -u
+        terraform apply plan 2>&1 | grep -o -E 'oci[^.]*.' | sort -u
       "
 
 install-gateway:
