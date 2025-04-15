@@ -1,6 +1,6 @@
 ### Terraform infrastructure diagram.
 ---
-![terraform-diagram](./infra-diagram/infra-diagram-website-portifolio.png)
+![terraform-diagram](./diagrams/infra-diagram-website-portifolio.png)
 ---
 ### First provision command (requires docker locally).
 ```

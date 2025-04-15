@@ -1,9 +1,0 @@
-clean-docker-engine:
-  stage: prepare
-#  rules:
-#      - if: $CI_COMMIT_BRANCH == "develop"
-
-  # Run in 2 runners simultaneously
-  #parallel: 2
-  script:
-    - docker system prune -a -f

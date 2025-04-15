@@ -22,15 +22,11 @@ module "aws_bucket" {
   source = "./modules/bucket_aws"
 }
 
-module "dynamodb" {
+module "aws_dynamodb" {
   source = "./modules/dynamodb_lock_state"
 }
 
 #Oracle cloud provider
-
-module "aws_dynamodb" {
-  source = "./modules/dynamodb_lock_state"
-}
 
 module "oci_aftier_flex_arm" {
   source = "./modules/oci_aftier_flex_arm"
@@ -40,6 +36,7 @@ module "oci_aftier_micro_amd" {
   source = "./modules/oci_aftier_micro_amd"
 }
 
+<<<<<<< HEAD
 #module "oci_oke_cluster_arm" {
 #  source = "./modules/oci_oke_cluster_arm"
 #  ssh_public_key = "./ssh/id_rsa.pub"
@@ -49,3 +46,14 @@ module "oci_aftier_micro_amd" {
 #  user_ocid
 #  oci_profile
 #}
+=======
+module "oci_oke_cluster_arm" {
+  source = "./modules/oci_oke_cluster_arm"
+  ssh_public_key = file("~/.ssh/id_rsa.pub")
+  fingerprint = null
+  private_key_path = "~/.oci/oci_api_key.pem"
+  tenancy_ocid = null
+  user_ocid = null
+  oci_profile = "DEFAULT"
+}
+>>>>>>> infr-cluster-oci-arm
