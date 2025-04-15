@@ -16,17 +16,18 @@ include:
 
   - local: 'pipelines/gitlab-ci-cd/4-infra-oci-oke-arm.yml'
     rules:
-      - if: $CI_COMMIT_BRANCH == "infra-oci-oke-arm"
+      - if: $CI_COMMIT_BRANCH == "infr-cluster-oci-arm"
 
 
   - local: 'pipelines/gitlab-ci-cd/runner-controler.yml'
     rules:
-      - if: $CI_COMMIT_BRANCH != "infra-runner" # When using gitlab runner locally.
+      - if: $CI_COMMIT_BRANCH != "infra-runners" # When using gitlab runner locally.
 
 
 variables:
   IMAGE_NAME: yohrannes/website-portifolio
   IMAGE_TAG: latest
+
 
 stages:
   - prepare
