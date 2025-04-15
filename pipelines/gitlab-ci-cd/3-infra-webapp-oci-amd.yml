@@ -7,7 +7,7 @@ create-oracle-instance:
 
   before_script:
 
-    #Autencicate with OCI 
+    #Autencicate with OCI
     - mkdir -p $HOME/.oci
     - echo "$OCI_CONFIG_BASE64" | base64 -d > $HOME/.oci/config
     - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.oci/oci_api_key.pem
@@ -230,4 +230,3 @@ deploy_fail2ban:
           sudo fail2ban-client status
           sudo fail2ban-client reload
       "
-        

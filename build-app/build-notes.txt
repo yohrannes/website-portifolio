@@ -1,4 +1,5 @@
 
+cd ..
 
 docker build -f ./build-app/Dockerfile --rm -t yohrannes/website-portifolio .
 

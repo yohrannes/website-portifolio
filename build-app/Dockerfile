@@ -1,29 +1,25 @@
-#FROM arm64v8/alpine
-FROM alpine
+FROM cgr.dev/chainguard/python:latest-dev as dev
 LABEL maintainer="yohrannes@gmail.com"
-WORKDIR /root
-# Upgrading system # Installing useful programs
-RUN apk update && apk upgrade && apk add --upgrade --no-cache nano git py3-flask py3-requests curl
+WORKDIR /app
 
-#Provide application content
-RUN mkdir /root/website-portifolio
-COPY . /root/website-portifolio
+apk add --upgrade --no-cache nano git curl
+RUN python -m venv venv
+ENV PATH="/app/venv/bin":$PATH
+COPY requirements.txt .
+RUN pip install -r requirements.txt
 
-# Installing python and flask
+FROM cgr.dev/chainguard/python:latest
+COPY --from=dev /app/venv /app/venv
+
+WORKDIR /app
+
+COPY app.py .
+COPY templates/ templates/
+COPY static/ static/
+COPY fonts/ fonts/
+ENV PATH="/app/venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
-RUN apk add --update python3 --no-cache py3-pip
-RUN apk add --upgrade python3 --no-cache py3-pip
-RUN ln -sf python3 /usr/bin/python
+ENV FLASK_ENV=development
 
-RUN set FLASK_ENV=development
-EXPOSE 5000
-
-# Config crond and app
-ADD build-app/crontab.txt /crontab.txt
-ADD build-app/script.sh /script.sh
-ADD build-app/entry.sh /entry.sh
-RUN chmod 755 /script.sh /entry.sh
-RUN /usr/bin/crontab /crontab.txt
-
-CMD ["/entry.sh"]
+ENTRYPOINT ["flask", "run", "--host=0.0.0.0"]
 HEALTHCHECK --timeout=2s CMD curl -f localhost:5000 || exit 1

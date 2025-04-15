@@ -1,23 +1,28 @@
 include:
+  - local: 'pipelines/gitlab-ci-cd/1-pipelocal-infra-runner-oci-arm.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "infra-runner-oci-arm"
+
+
+  - local: 'pipelines/gitlab-ci-cd/2-infra-runner-gcp-amd.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "infra-runner-gcp-amd"
+
+
+  - local: 'pipelines/gitlab-ci-cd/3-infra-webapp-oci-amd.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "infra-webapp-oci-amd"
+
+
+  - local: 'pipelines/gitlab-ci-cd/4-infra-oci-oke-arm.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "infra-oci-oke-arm"
+
+
   - local: 'pipelines/gitlab-ci-cd/runner-controler.yml'
     rules:
       - if: $CI_COMMIT_BRANCH != "infra-runner" # When using gitlab runner locally.
 
-  - local: 'pipelines/gitlab-ci-cd/infra-amd.yml'
-    rules:
-      - if: $CI_COMMIT_BRANCH == "infra-amd"
-
-  - local: 'pipelines/gitlab-ci-cd/infra-runner-gcp-amd.yml'
-    rules:
-      - if: $CI_COMMIT_BRANCH == "infra-gcp-amd"
-
-  - local: 'pipelines/gitlab-ci-cd/infra-runner-oci-arm.yml'
-    rules:
-      - if: $CI_COMMIT_BRANCH == "infra-runner"
-
-  - local: 'pipelines/gitlab-ci-cd/infra-oci-oke-arm.yml'
-    rules:
-      - if: $CI_COMMIT_BRANCH == "infra-oci-oke-arm"
 
 variables:
   IMAGE_NAME: yohrannes/website-portifolio
@@ -54,7 +59,21 @@ build-image:
       cd website-portifolio
       docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
 
-check-image-security:
+
+check-image-security-scout:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+  needs:
+    - build-image
+  before_script:
+    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
+  script:
+    - curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
+    - sh install-scout.sh
+    - docker scout cve --all --json $IMAGE_NAME:$IMAGE_TAG > scout_output.json
+
+check-image-security-trivy:
   stage: test
   rules:
       - if: $CI_COMMIT_BRANCH == "develop"
