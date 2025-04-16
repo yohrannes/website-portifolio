@@ -63,7 +63,6 @@ create-gcp-instance:
         exit_code=${PIPESTATUS[0]}
         echo "Exit Code: $exit_code"
         exit $exit_code
-
       "
     # ${PIPESTATUS[0]} ---> terraform exit code
     # ${PIPESTATUS[1]} ---> tee exit code
