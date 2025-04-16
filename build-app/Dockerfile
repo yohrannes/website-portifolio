@@ -2,7 +2,6 @@ FROM cgr.dev/chainguard/python:latest-dev as dev
 LABEL maintainer="yohrannes@gmail.com"
 WORKDIR /app
 
-apk add --upgrade --no-cache nano git curl
 RUN python -m venv venv
 ENV PATH="/app/venv/bin":$PATH
 COPY requirements.txt .

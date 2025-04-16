@@ -149,5 +149,5 @@ set-lb-shape:
         export LOAD_BALANCER_ID=\$(oci lb load-balancer list --compartment-id \$COMPARTMENT_ID | jq '.data[0].id' | sed 's/\"//g')
         oci lb load-balancer update-load-balancer-shape --load-balancer-id \$LOAD_BALANCER_ID --shape-name flexible --shape-details '{\"maximum-bandwidth-in-mbps\":10,\"minimum-bandwidth-in-mbps\":10}' --force
       "
-# 2>&1 | grep '"message":' | awk -F': ' '{print $2}' | sed 's/[\",]//g' | grep -q "Cannot update to same shape"; then echo "LB shape already set, cannot update to same shape"; exit 1; fi"
+
 
