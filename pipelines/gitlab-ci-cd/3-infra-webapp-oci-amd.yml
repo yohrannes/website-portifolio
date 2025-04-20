@@ -2,8 +2,8 @@ create-oracle-instance:
   stage: create-infra
   rules:
     - if: $CI_COMMIT_BRANCH == "infra-amd"
-  variables:
-    AWS_DEFAULT_REGION: "us-east-1" #Check if that's really necessary...
+#  variables:
+#    AWS_DEFAULT_REGION: "us-east-1" #Check if that's really necessary...
 
   before_script:
 
