@@ -42,8 +42,8 @@ create-oracle-instance:
       sudo docker buildx build  -f ./build-tf-multi-arch/Dockerfile \
         --platform $PLATFORM \
         -t yohrannes/terraform:latest \
-        --build-arg PRODUCT=terraform \
-        --build-arg VERSION=1.11.0 \
+        --build-arg PRODUCT=cgr.dev/chainguard/terraform \
+        --build-arg VERSION=1.10.5 \
         --load .
 
     # Run terraform-container 
@@ -62,7 +62,7 @@ create-oracle-instance:
         terraform init -upgrade -reconfigure
         terraform workspace select web_port_dev
         terraform plan -detailed-exitcode -target=module.oci_aftier_micro_amd -out=plan | grep "Plan:"
-        terraform apply plan | tee /dev/tty | grep -o -E 'oci[^.]*.'
+        terraform apply plan | grep -o -E 'oci[^.]*.' | sort -u
         exit_code=${PIPESTATUS[0]}
         echo "Exit Code: $exit_code"
         exit $exit_code
@@ -164,8 +164,8 @@ deploy-containers:
   script:
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
-        mkdir repos-gitlab
-        cd repos-gitlab
+        mkdir repos-git
+        cd repos-git
         git clone https://gitlab.com/yohrannes/website-portifolio.git
         cd website-portifolio
         git checkout infra-amd
