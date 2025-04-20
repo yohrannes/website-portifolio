@@ -1,7 +1,5 @@
 create-oracle-instance:
   stage: create-infra
-  rules:
-    - if: $CI_COMMIT_BRANCH == "infra-webapp-oci-amd"
 #  variables:
 #    AWS_DEFAULT_REGION: "us-east-1" #Check if that's really   necessary...
 
@@ -83,8 +81,6 @@ create-oracle-instance:
 
 check-startup-script:
   stage: create-infra
-  rules:
-    - if: $CI_COMMIT_BRANCH == "infra-amd"
   needs:
     - create-oracle-instance
   script:
@@ -117,8 +113,6 @@ check-startup-script:
         
 configure_fail2ban:
   stage: create-infra
-  rules:
-    - if: $CI_COMMIT_BRANCH == "infra-amd"
   needs:
     - check-startup-script
   before_script:
@@ -161,8 +155,6 @@ configure_fail2ban:
 
 deploy-containers:
   stage: deploy-infra
-  rules:
-    - if: $CI_COMMIT_BRANCH == "infra-amd"
   needs:
     - configure_fail2ban
   before_script:
@@ -184,8 +176,6 @@ deploy-containers:
 
 update_dns:
   stage: deploy-infra
-  rules:
-    - if: $CI_COMMIT_BRANCH == "infra-amd"
   needs:
     - deploy-containers
   script:
@@ -207,8 +197,6 @@ update_dns:
 
 deploy_fail2ban:
   stage: deploy-infra
-  rules:
-    - if: $CI_COMMIT_BRANCH == "infra-amd"
   needs:
     - deploy-containers
   before_script:
