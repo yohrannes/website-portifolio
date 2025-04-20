@@ -60,7 +60,7 @@ build-image:
       cd website-portifolio
       docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
 
-
+####REVIEW THIS
 check-image-security-scout:
   stage: test
   rules:
@@ -186,6 +186,7 @@ deploy-image:
     - local_image_id=$(docker images --format '{{.ID}}' $IMAGE_NAME:$OLD_TAG)
     - new_image_id=$(docker images --format '{{.ID}}' $IMAGE_NAME:$NEW_TAG)
 
+### VERIFY IF THE IMAGE HAS CHANGED WITH GLAB COMMITS NOT IMAGE ID
     - |
       if [ "$local_image_id" -eq "$new_image_id" ]; then
         echo "image-not-changed"
@@ -198,7 +199,7 @@ deploy-image:
         exit 0
       fi
 
-
-#      ... if dockerimage =! last_commit_dockerimage || check_image_security_job_error
+# Assign image with cosign
+#  cosign sign -key ../../cosign-keys/cosign.key yohrannes/website-portifolio
 
     

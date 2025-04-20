@@ -65,6 +65,7 @@ terraform/modules/cluster_oracle/*.tfstate.*
 # Ignore package instalation
 venv
 __pycache__
+*pycache*
 
 # Ignore VsCode files
 .vscode
