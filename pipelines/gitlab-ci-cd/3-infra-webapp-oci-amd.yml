@@ -42,8 +42,8 @@ create-oracle-instance:
       sudo docker buildx build  -f ./build-tf-multi-arch/Dockerfile \
         --platform $PLATFORM \
         -t yohrannes/terraform:latest \
-        --build-arg PRODUCT=cgr.dev/chainguard/terraform \
-        --build-arg VERSION=1.10.5 \
+        --build-arg PRODUCT=terraform \
+        --build-arg VERSION=1.11.0 \
         --load .
 
     # Run terraform-container 
