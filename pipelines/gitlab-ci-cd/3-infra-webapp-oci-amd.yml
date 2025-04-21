@@ -39,7 +39,7 @@ create-oracle-instance:
         *) echo "Arch not suported: $ARCH"; exit 1 ;;
       esac
 
-      sudo docker buildx build  -f ./build-tf-multi-arch/Dockerfile \
+      sudo docker buildx build  -qf ./build-tf-multi-arch/Dockerfile \
         --platform $PLATFORM \
         -t yohrannes/terraform:latest \
         --build-arg PRODUCT=terraform \
@@ -169,7 +169,7 @@ deploy-containers:
         git clone https://gitlab.com/yohrannes/website-portifolio.git
         cd website-portifolio
         git checkout main
-        sudo docker build -f ./build-app/Dockerfile --network host -t yohrannes/website-portifolio .
+        sudo docker build -qf ./build-app/Dockerfile --network host -t yohrannes/website-portifolio .
         cd docker-compose
         sudo docker compose up -d
       "

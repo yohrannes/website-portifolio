@@ -64,7 +64,7 @@ docker-build-test:
       cd repos-gitlab
       git clone https://gitlab.com/yohrannes/website-portifolio.git
       cd website-portifolio
-      docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
+      docker build -qf ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
 
 ####REVIEW THIS
 #check-image-security-scout:
@@ -134,7 +134,7 @@ localrepo-img-sec-trivy:
       cd repos-gitlab
       git clone https://gitlab.com/yohrannes/website-portifolio.git
       cd website-portifolio
-      docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
+      docker build -qf ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
     - trivy_output=$(docker run --rm -v /var/run/docker.sock:/var/run/docker.sock -v ~/.cache:/root/.cache aquasec/trivy image --severity HIGH,CRITICAL,MEDIUM,LOW,UNKNOWN --format json $IMAGE_NAME:$IMAGE_TAG)
 
     - |
@@ -180,7 +180,7 @@ deploy-dk-hub:
     - OLD_TAG=v$(./usefull-scripts/old-dk-img-version.sh)
     - docker pull $IMAGE_NAME:$OLD_TAG
 
-    - docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
+    - docker build -qf ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
     - NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh)
     - docker tag $IMAGE_NAME:$IMAGE_TAG $IMAGE_NAME:$NEW_TAG
 
