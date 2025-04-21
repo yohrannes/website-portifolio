@@ -19,14 +19,14 @@ include:
       - if: $CI_COMMIT_BRANCH == "infr-cluster-oci-arm"
 
 
-  - local: 'pipelines/gitlab-ci-cd/runner-controler.yml'
-    rules:
-      - if: $CI_COMMIT_BRANCH != "infra-runners" # When using gitlab runner locally.
+#  - local: 'pipelines/gitlab-ci-cd/runner-controler.yml'
+#    rules:
+#     - if: $CI_COMMIT_BRANCH == "infra-runners"
 
 
   - local: 'pipelines/gitlab-ci-cd/deploy.yml'
     rules:
-      - if: $CI_COMMIT_BRANCH != "main"
+      - if: $CI_COMMIT_BRANCH == "main"
 
 
 variables:
