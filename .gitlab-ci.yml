@@ -178,7 +178,7 @@ deploy-dk-hub:
     - git checkout develop
 
     - OLD_TAG=v$(./usefull-scripts/old-dk-img-version.sh)
-    - docker pull $IMAGE_NAME:$OLD_TAG
+    - docker pull -q $IMAGE_NAME:$OLD_TAG
 
     - docker build -qf ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
     - NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh)
@@ -195,8 +195,8 @@ deploy-dk-hub:
       else
         echo "image-changed"
         echo "Old imageid: $local_image_id in version $OLD_TAG changed to the new imageid: $new_image_id on the new version $NEW_TAG"
-        docker push $IMAGE_NAME:$NEW_TAG
-        docker push $IMAGE_NAME:latest
+        docker push -q $IMAGE_NAME:$NEW_TAG
+        docker push -q $IMAGE_NAME:latest
         exit 0
       fi
 
