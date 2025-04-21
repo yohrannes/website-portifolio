@@ -10,9 +10,9 @@ app.config["DEBUG"] = True
 
 @app.route('/pod-info')
 def get_server_info():
-    hostname = os.popen('hostname').read().strip().lower()
-    date_command = 'date +"%Y-%m-%d %H:%M:%S"'
-    last_updated = os.popen(date_command).read().strip().lower()
+    #hostname = os.popen('hostname').read().strip().lower()
+    #date_command = 'date +"%Y-%m-%d %H:%M:%S"'
+    #last_updated = os.popen(date_command).read().strip().lower()
     #response = f"oke cluster pod - {hostname} - up at {last_updated}"
     response = f"temporary oci instance"
     return response
@@ -21,16 +21,16 @@ def get_server_info():
 def nl2br(s):
     return s.replace('\n', '<br>\n')
 
-@app.route('/auto-deploy-log')
-def get_auto_deploy_log():
-    log_file_path = '/var/log/get-last-commit.log'
-    try:
-        with open(log_file_path, 'r') as file:
-            log_content = file.read()
-    except FileNotFoundError:
-        log_content = 'Log file not found.'
-    response = render_template_string('<pre>{{ log_content }}</pre>', log_content=log_content) # Puting line breaks in the HTML response using <pre> tag
-    return response
+#@app.route('/auto-deploy-log')
+#def get_auto_deploy_log():
+#    log_file_path = '/var/log/get-last-commit.log'
+#    try:
+#        with open(log_file_path, 'r') as file:
+#            log_content = file.read()
+#    except FileNotFoundError:
+#        log_content = 'Log file not found.'
+#    response = render_template_string('<pre>{{ log_content }}</pre>', log_content=log_content) # Puting line breaks in the HTML response using <pre> tag
+#    return response
 
 @app.route('/')
 def index():
