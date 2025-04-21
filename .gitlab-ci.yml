@@ -40,7 +40,7 @@ stages:
   - test
   - deploy-image
 
-build-image:
+docker-build-test:
   stage: build
   rules:
       - if: $CI_COMMIT_BRANCH == "develop"
@@ -61,20 +61,20 @@ build-image:
       docker build -f ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
 
 ####REVIEW THIS
-check-image-security-scout:
-  stage: test
-  rules:
-    - if: $CI_COMMIT_BRANCH == "develop"
-  needs:
-    - build-image
-  before_script:
-    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
-  script:
-    - curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
-    - sh install-scout.sh
-    - docker scout cve --all --json $IMAGE_NAME:$IMAGE_TAG > scout_output.json
+#check-image-security-scout:
+#  stage: test
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == "develop"
+#  needs:
+#    - build-image
+#  before_script:
+#    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
+#  script:
+#    - curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
+#   - sh install-scout.sh
+#   - docker scout cve --all --json $IMAGE_NAME:$IMAGE_TAG > scout_output.json
 
-check-image-security-trivy:
+dkhub-img-sec-trivy:
   stage: test
   rules:
       - if: $CI_COMMIT_BRANCH == "develop"
@@ -109,7 +109,7 @@ check-image-security-trivy:
         exit 1
       fi
 
-build-check-image-security:
+localrepo-img-sec-trivy:
   stage: test
   rules:
       - if: $CI_COMMIT_BRANCH == "develop"
@@ -155,18 +155,12 @@ build-check-image-security:
         exit 1
       fi
 
-deploy-image:
+deploy-dk-compose:
   stage: deploy-image
   rules:
       - if: $CI_COMMIT_BRANCH == "develop"
   needs:
     - build-check-image-security
-  image: docker:27.3.1
-  services:
-   - docker:27.3.1-dind
-  variables:
-    DOCKER_DRIVER: overlay2
-    DOCKER_TLS_CERTDIR: "/certs"
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
