@@ -79,7 +79,7 @@ dkhub-img-sec-trivy:
   rules:
       - if: $CI_COMMIT_BRANCH == "develop"
   needs:
-    - build-image
+    - docker-build-test
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
@@ -114,7 +114,7 @@ localrepo-img-sec-trivy:
   rules:
       - if: $CI_COMMIT_BRANCH == "develop"
   needs:
-    - build-image
+    - docker-build-test
   image: docker:27.3.1
   services:
    - docker:27.3.1-dind
@@ -160,7 +160,7 @@ deploy-dk-compose:
   rules:
       - if: $CI_COMMIT_BRANCH == "develop"
   needs:
-    - build-check-image-security
+    - localrepo-img-sec-trivy
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
