@@ -58,7 +58,7 @@ create-oracle-instance:
   script:
     - |
       sudo docker exec -w /app terraform-container sh -c "
-        apk add --no-cache git
+        apk add --no-cache git --quiet
         terraform init -upgrade -reconfigure
         terraform workspace select web_port_dev
         terraform plan -detailed-exitcode -target=module.oci_aftier_micro_amd -out=plan | grep "Plan:"

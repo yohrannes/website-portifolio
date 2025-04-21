@@ -9,7 +9,7 @@
 #  -v $PWD/.shrc:/root/.shrc \
 #  -w /app \
 #  --entrypoint "" hashicorp/terraform:latest sh -c \
-#  "source /root/.shrc && terraform init -reconfigure && apk add oci-cli && ENV=/root/.shrc sh"
+#  "source /root/.shrc && terraform init -reconfigure && apk add oci-cli --quiet && ENV=/root/.shrc sh"
 docker build -t tf-container . -f tfinu/Dockerfile 2>/dev/null
 docker run -it --rm\
   -v ~/.oci:/root/.oci \
