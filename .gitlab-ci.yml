@@ -24,6 +24,11 @@ include:
       - if: $CI_COMMIT_BRANCH != "infra-runners" # When using gitlab runner locally.
 
 
+  - local: 'pipelines/gitlab-ci-cd/deploy.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH != "main"
+
+
 variables:
   IMAGE_NAME: yohrannes/website-portifolio
   IMAGE_TAG: latest
@@ -155,13 +160,13 @@ localrepo-img-sec-trivy:
         exit 1
       fi
 
-deploy-dk-compose:
+deploy-dk-hub:
   stage: deploy-image
   rules:
       - if: $CI_COMMIT_BRANCH == "develop"
   needs:
     - localrepo-img-sec-trivy
-  tags: [ "oci-runner-arm" ]
+  tags: [ "gcp-runner-amd" ]
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
@@ -197,4 +202,3 @@ deploy-dk-compose:
 # Assign image with cosign
 #  cosign sign -key ../../cosign-keys/cosign.key yohrannes/website-portifolio
 
-    
