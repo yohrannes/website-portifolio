@@ -44,6 +44,7 @@ stages:
   - build
   - test
   - deploy-image
+  - deploy
 
 docker-build-test:
   stage: build
