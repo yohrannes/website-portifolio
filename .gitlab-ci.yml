@@ -200,6 +200,6 @@ deploy-dk-hub:
         exit 0
       fi
 
-# Assign image with cosign
+# Assign image with cosign job
 #  cosign sign -key ../../cosign-keys/cosign.key yohrannes/website-portifolio
 
