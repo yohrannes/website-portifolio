@@ -60,25 +60,40 @@ docker-build-test:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
     - |
-      mkdir repos-gitlab
+      mkdir -p repos-gitlab
       cd repos-gitlab
       git clone https://gitlab.com/yohrannes/website-portifolio.git
       cd website-portifolio
       docker build -qf ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
 
-####REVIEW THIS
-#check-image-security-scout:
-#  stage: test
-#  rules:
-#    - if: $CI_COMMIT_BRANCH == "develop"
-#  needs:
-#    - build-image
-#  before_script:
-#    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
-#  script:
-#    - curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
-#   - sh install-scout.sh
-#   - docker scout cve --all --json $IMAGE_NAME:$IMAGE_TAG > scout_output.json
+dkhub-img-sec-dkscout:
+  stage: test
+  rules:
+    - if: $CI_COMMIT_BRANCH == "develop"
+  needs:
+    - build-image
+  before_script:
+    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
+    - curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
+    - sh install-scout.sh
+  script:
+    - |
+      docker scout cves --format gitlab -o /tmp/dk-scout-output.json $IMAGE_NAME:$IMAGE_TAG
+      critical_vuln_count=$(cat /tmp/dk-scout-output.json | jq .vulnerabilities | grep -e "\"severity\":\ \"Critical\"," | wc -l)
+      high_vuln_count=$(cat /tmp/dk-scout-output.json | jq .vulnerabilities | grep -e "\"severity\":\ \"High\"," | wc -l)
+      medium_vuln_count=$(cat /tmp/dk-scout-output.json | jq .vulnerabilities | grep -e "\"severity\":\ \"Medium\"," | wc -l)
+      low_vuln_count=$(cat /tmp/dk-scout-output.json | jq .vulnerabilities | grep -e "\"severity\":\ \"Low\"," | wc -l)
+
+      if [ "$critical_vuln_count" -eq 0 ] && [ "$high_vuln_count" -eq 0 ] && [ "$medium_vuln_count" -eq 0 ] && [ "$low_vuln_count" -eq 0 ]; then
+        echo 'No vulnerabilities found.'
+        exit 0
+      else
+        echo "Found $critical_vuln_count CRITICAL vulnerabilities."
+        echo "Found $high_vuln_count HIGH vulnerabilities."
+        echo "Found $medium_vuln_count MEDIUM vulnerabilities."
+        echo "Found $low_vuln_count LOW vulnerabilities."
+        exit 1
+      fi
 
 dkhub-img-sec-trivy:
   stage: test
@@ -130,7 +145,7 @@ localrepo-img-sec-trivy:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
     - |
-      mkdir repos-gitlab
+      mkdir -p repos-gitlab
       cd repos-gitlab
       git clone https://gitlab.com/yohrannes/website-portifolio.git
       cd website-portifolio
@@ -171,7 +186,7 @@ deploy-dk-hub:
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
-    - mkdir repos-gitlab
+    - mkdir -p repos-gitlab
     - cd repos-gitlab
     - git clone https://gitlab.com/yohrannes/website-portifolio.git
     - cd website-portifolio
