@@ -1,7 +1,7 @@
 create-oracle-instance:
   stage: create-infra
 #  variables:
-#    AWS_DEFAULT_REGION: "us-east-1" #Check if that's really   necessary...
+#    AWS_DEFAULT_REGION: "us-east-1" #Check if that's really   necessary....
 
   before_script:
 
