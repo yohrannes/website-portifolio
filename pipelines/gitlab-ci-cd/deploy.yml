@@ -1,4 +1,4 @@
-deploy-containers:
+deploy-dkcmpose:
   stage: deploy
   before_script:
     - mkdir -p ~/.ssh
@@ -12,7 +12,7 @@ deploy-containers:
         git clone https://gitlab.com/yohrannes/website-portifolio.git
         cd website-portifolio
         git checkout infra-amd
-        sudo docker build -f ./build-app/Dockerfile --network host -t yohrannes/website-portifolio .
+        sudo docker build -f ./build-app/Dockerfile --network host -t yohrannes/website-portifolio:latest .
         cd docker-compose
         sudo docker compose up -d
       "

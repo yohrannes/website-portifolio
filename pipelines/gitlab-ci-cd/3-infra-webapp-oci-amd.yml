@@ -168,7 +168,7 @@ deploy-containers:
         cd repos-git
         git clone https://gitlab.com/yohrannes/website-portifolio.git
         cd website-portifolio
-        git checkout infra-amd
+        git checkout main
         sudo docker build -f ./build-app/Dockerfile --network host -t yohrannes/website-portifolio .
         cd docker-compose
         sudo docker compose up -d
