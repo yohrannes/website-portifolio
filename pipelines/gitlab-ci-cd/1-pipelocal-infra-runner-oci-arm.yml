@@ -72,7 +72,7 @@ create-oci-gl-runner-instance:
     - docker rm $(docker ps -a -q)
 
 check-startup-script:
-  stage: test-infra
+  stage: create-infra
   needs:
     - create-oci-gl-runner-instance
   image: docker:27.3.1
