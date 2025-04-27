@@ -113,7 +113,7 @@ check-startup-script:
 delete-old-runner-gl-api:
   stage: create-infra
   needs:
-    - create-oci-gl-runner-instance
+    - check-startup-script
   image: docker:27.3.1
   services:
     - docker:27.3.1-dind
@@ -133,7 +133,7 @@ delete-old-runner-gl-api:
 create-runner-gl-api:
   stage: create-infra
   needs:
-    - create-oci-gl-runner-instance
+    - delete-old-runner-gl-api
   image: docker:27.3.1
   services:
     - docker:27.3.1-dind
@@ -156,7 +156,6 @@ authorize-runner:
   stage: deploy-infra
   needs:
     - create-runner-gl-api
-    - check-startup-script
   image: docker:27.3.1
   services:
     - docker:27.3.1-dind
