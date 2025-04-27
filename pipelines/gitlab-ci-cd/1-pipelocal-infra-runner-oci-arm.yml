@@ -111,6 +111,29 @@ check-startup-script:
           sleep 5;
         done
 
+
+delete-old-runner-gl-api:
+  stage: create-infra
+  rules:
+    - if: $CI_COMMIT_BRANCH == "infra-runner"
+  needs:
+    - create-oci-gl-runner-instance
+  image: docker:27.3.1
+  services:
+    - docker:27.3.1-dind
+  variables:
+    DOCKER_DRIVER: overlay2
+  before_script:
+    - |
+      apk add --no-cache curl jq --quiet
+      RUNNER_ID=$(curl --request POST --url "https://gitlab.com/api/v4/user/runners" --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_CREATOR" --data "runner_type=project_type" --data "project_id=57493833" --data "tag_list=oci-runner-arm" --data "description=oci-runner" | jq -r '.id')
+  script:
+    - |
+      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+      --request DELETE \
+      "https://gitlab.com/api/v4/runners/$RUNNER_ID" \
+      > /dev/null 2>&1
+
 create-runner-gl-api:
   stage: create-infra
   rules:
@@ -122,23 +145,17 @@ create-runner-gl-api:
     - docker:27.3.1-dind
   variables:
     DOCKER_DRIVER: overlay2
-  script:
+  before_script:
     - |
       apk add --no-cache curl jq --quiet
-
       RUNNER_TOKEN=$(curl --request POST --url "https://gitlab.com/api/v4/user/runners" --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_CREATOR" --data "runner_type=project_type" --data "project_id=57493833" --data "tag_list=oci-runner-arm" --data "description=oci-runner" | jq -r '.token')
 
-      RUNNER_ID=$(curl --silent --header "PRIVATE-TOKEN: $GITLAB_TOKEN" "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/runners" | jq -r '.[] | select(.tag_list | index("'"oci-runner-arm"'")) | .id')
-
-      if [ -n "$RUNNER_ID" ]; then
-        curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" --request DELETE "https://gitlab.com/api/v4/runners/$RUNNER_ID" > /dev/null 2>&1
-      fi
-
+  script:
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --request PUT \
         --form "value=$RUNNER_TOKEN" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER_TOKEN_CREATED" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER_TOKEN_CREATED_OCI_ARM" \
         > /dev/null 2>&1
 
 authorize-runner:
@@ -163,7 +180,7 @@ authorize-runner:
         sudo gitlab-runner register \
         --non-interactive \
         --url "https://gitlab.com/" \
-        --token "$GITLAB_RUNNER_TOKEN_CREATED" \
+        --token "$GITLAB_RUNNER_TOKEN_CREATED_OCI_ARM" \
         --executor "shell" \
         --description "shell-runner-with-sudo"
         sudo EDITOR='tee -a' visudo <<EOF
@@ -178,7 +195,7 @@ authorize-runner:
       [[runners]]
       name = "shell-runner"
       url = "https://gitlab.com/"
-      token = "$GITLAB_RUNNER_TOKEN_CREATED"
+      token = "$GITLAB_RUNNER_TOKEN_CREATED_OCI_ARM"
       executor = "shell"
       [runners.shell]
         tls_verify = false
