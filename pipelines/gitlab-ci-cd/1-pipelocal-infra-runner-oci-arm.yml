@@ -80,7 +80,7 @@ create-oci-gl-runner-instance:
         terraform plan -detailed-exitcode -target=module.oci_aftier_flex_arm -out=plan | grep "Plan:"
         terraform apply plan | grep "Apply complete!"
       "
-    - INSTANCE_PUBLIC_IP=$(docker exec -w /app terraform-container terraform output -raw oracle_instance_arm_runner_public_ip)
+    - INSTANCE_PUBLIC_IP=$(docker exec -w /app terraform-container terraform output -raw instance_oracle_arm_pub_ip)
 
     ### CHECK IF GITLAB_TOKEN IT'S WORKING
     - |
