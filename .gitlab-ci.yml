@@ -88,7 +88,9 @@ deploy-dk-hub:
 #  cosign sign -key ../../cosign-keys/cosign.key yohrannes/website-portifolio
 
 deploy-dkcmpose:
-  stage: deploy
+  stage: deploy 
+  needs:
+    - deploy-dk-hub
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   before_script:
