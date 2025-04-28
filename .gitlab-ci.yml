@@ -51,7 +51,7 @@ deploy-dk-hub:
   stage: deploy-image
   rules:
       - if: $CI_COMMIT_BRANCH == "main"
-  tags: [ "oci-runner-arm" ]
+  tags: [ "gcp-runner-amd" ]
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
