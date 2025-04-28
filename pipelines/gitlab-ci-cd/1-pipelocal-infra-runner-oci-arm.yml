@@ -89,8 +89,7 @@ create-oci-gl-runner-instance:
       --form "value=$INSTANCE_PUBLIC_IP" \
       "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/RUNNER_IP_OCI_ARM" \
       > /dev/null 2>&1
-    - docker stop $(docker ps -a -q)
-    - docker rm $(docker ps -a -q)
+    - docker rm -f $(docker ps -a -q) > /dev/null 2>&1
 
 check-startup-script:
   stage: create-infra
@@ -129,7 +128,7 @@ check-startup-script:
           sleep 5;
         done
 
-
+#### NOT WORKING FIXXME
 delete-old-runner-gl-api:
   stage: create-infra
   needs:
