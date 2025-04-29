@@ -1,5 +1,5 @@
 #!/bin/bash
-current_version=$(echo "$1" | sed 's/^v//')
+current_version=$(echo "$1")
 major=$(echo "$current_version" | cut -d. -f1)
 minor=$(echo "$current_version" | cut -d. -f2)
 patch=$(echo "$current_version" | cut -d. -f3)
