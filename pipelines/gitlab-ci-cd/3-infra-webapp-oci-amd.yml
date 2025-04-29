@@ -74,7 +74,7 @@ create-oracle-instance:
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --request PUT \
         --form "value=$INSTANCE_PUBLIC_IP" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/TF_INSTANCE_PUBLIC_IP" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/IP_OCI_AMD_WEBAPP" \
         > /dev/null 2>&1
     - docker stop terraform-container
     - docker rm terraform-container
@@ -90,7 +90,7 @@ check-startup-script:
     - |
       sleep 30;
         while true; do
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
+          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
             while true; do
               if [ -e /var/log/startup-script.log ]; then
                   if [ -r /var/log/startup-script.log ]; then
@@ -121,7 +121,7 @@ configure_fail2ban:
     - chmod 600 ~/.ssh/id_rsa
   script:
     - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP <<EOF
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP <<EOF
       sudo mkdir -p /var/log/nginx
       sudo mkdir -p /etc/fail2ban/filter.d
       sudo tee /etc/fail2ban/filter.d/nginx-injection.conf > /dev/null <<'FILTER_EOF'
@@ -163,7 +163,7 @@ deploy-containers:
     - chmod 600 ~/.ssh/id_rsa
   script:
     - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
         mkdir -p repos-git
         cd repos-git
         git clone https://gitlab.com/yohrannes/website-portifolio.git
@@ -191,7 +191,7 @@ update_dns:
           "settings": {},
           "tags": [],
           "ttl": 1,
-          "content": "'"$TF_INSTANCE_PUBLIC_IP"'",
+          "content": "'"$IP_OCI_AMD_WEBAPP"'",
           "type": "A"
         }' | jq '.'
 
@@ -205,7 +205,7 @@ deploy_fail2ban:
     - chmod 600 ~/.ssh/id_rsa
   script:
     - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
         sudo systemctl enable fail2ban
         sudo systemctl start fail2ban
         sudo systemctl status fail2ban
