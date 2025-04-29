@@ -48,6 +48,7 @@ stages:
 
 get-image-tag:
   stage: prepare
+  tags: [ "gcp-runner-amd" ]
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   script:
@@ -129,6 +130,7 @@ deploy-dk-hub-arm:
 
 deploy-dk-hub:
   stage: deploy-image
+  tags: [ "oci-runner-arm" ]
   needs:
     - deploy-dk-hub-arm
   rules:
