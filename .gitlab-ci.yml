@@ -139,11 +139,11 @@ deploy-dk-hub:
     - DIGEST_AMD64=$(curl -s "https://registry.hub.docker.com/v2/repositories/yohrannes/website-portifolio/tags?page_size=100" | jq -r --arg tag "$NEW_TAG-amd64" '.results[] | select(.name == $tag) | .digest')
     - DIGEST_ARM64=$(curl -s "https://registry.hub.docker.com/v2/repositories/yohrannes/website-portifolio/tags?page_size=100" | jq -r --arg tag "$NEW_TAG-arm64" '.results[] | select(.name == $tag) | .digest')
 
-    - docker rmi $IMAGE_NAME:$NEW_TAG-arm64
-    - docker rmi $IMAGE_NAME:$NEW_TAG-amd64
+    - docker rmi $IMAGE_NAME:$NEW_TAG
+    - docker rmi $IMAGE_NAME:$NEW_TAG
 
-    - docker pull $IMAGE_NAME:$NEW_TAG-arm64
-    - docker pull $IMAGE_NAME:$NEW_TAG-amd64
+    - docker pull $IMAGE_NAME:$NEW_TAG
+    - docker pull $IMAGE_NAME:$NEW_TAG
 
     - |
       docker manifest create $IMAGE_NAME:$NEW_TAG \
