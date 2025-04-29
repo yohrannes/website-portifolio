@@ -189,7 +189,7 @@ deploy-dkcmpose:
     - chmod 600 ~/.ssh/id_rsa
   script:
     - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$TF_INSTANCE_PUBLIC_IP "
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
         mkdir -p repos-git
         cd repos-git
         git clone https://gitlab.com/yohrannes/website-portifolio.git
