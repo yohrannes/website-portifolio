@@ -51,9 +51,9 @@ get-image-tag:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   script:
-    - apt-get install -y no-cache curl jq
     - cat /etc/*release*
     - whoami
+    - sudo apt-get install -y no-cache curl jq
     
     - OLD_TAG=v$(./usefull-scripts/old-dk-img-version.sh)
     - NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh)
