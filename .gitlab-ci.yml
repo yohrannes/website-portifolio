@@ -54,7 +54,9 @@ get-image-tag:
   script:
     - sudo apt-get install -y curl jq
     
+    - ./usefull-scripts/old-dk-img-version.sh
     - OLD_TAG=$(./usefull-scripts/old-dk-img-version.sh)
+    - ./usefull-scripts/nx-dk-img-version.sh $OLD_TAG patch
     - NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh $OLD_TAG patch)
 
     - |
@@ -64,12 +66,16 @@ get-image-tag:
       "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/DOCKER_IMAGE_ACTUAL_TAG" \
       > /dev/null 2>&1
 
+      echo $DOCKER_IMAGE_ACTUAL_TAG
+
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
       --request PUT \
       --form "value=$NEW_TAG" \
       "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/DOCKER_IMAGE_NEW_TAG" \
       > /dev/null 2>&1
+
+      echo $DOCKER_IMAGE_NEW_TAG
 
 deploy-dk-hub-amd:
   stage: deploy-image
