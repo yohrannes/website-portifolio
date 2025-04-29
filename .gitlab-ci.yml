@@ -46,8 +46,16 @@ stages:
   - deploy-image
   - deploy
 
+docker-controler-deploy:
+  stage: prepare
+  parallel: 2
+  script:
+    - docker system prune -a -f
+
 get-image-tag:
   stage: prepare
+  needs:
+    - docker-controler-deploy
   tags: [ "gcp-runner-amd" ]
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
@@ -97,10 +105,10 @@ deploy-dk-hub-amd:
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
 
     - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-    - docker buildx rm multiarchbuilder
-    - docker buildx create --use --name multiarchbuilder
+    - docker buildx rm -q multiarchbuilder
+    - docker buildx create -q --use --name multiarchbuilder
 
-    - docker buildx build -f build-app/Dockerfile --platform linux/amd64 -t $IMAGE_NAME:$NEW_TAG-amd64 --load .
+    - docker buildx build -fq build-app/Dockerfile --platform linux/amd64 -t $IMAGE_NAME:$NEW_TAG-amd64 --load .
 
     - docker push $IMAGE_NAME:$NEW_TAG-amd64
 
@@ -129,7 +137,7 @@ deploy-dk-hub-arm:
 #    - docker buildx create --use --name multiarchbuilder
 
 #    - docker buildx build -f build-app/Dockerfile --platform linux/arm64 -t $IMAGE_NAME:$NEW_TAG-arm64 --load .
-    - docker build -f build-app/Dockerfile -t $IMAGE_NAME:$NEW_TAG-arm64 .
+    - docker build -fq build-app/Dockerfile -t $IMAGE_NAME:$NEW_TAG-arm64 .
 
     - docker push $IMAGE_NAME:$NEW_TAG-arm64
 
