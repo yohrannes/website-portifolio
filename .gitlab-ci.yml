@@ -105,8 +105,8 @@ deploy-dk-hub-amd:
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
 
     - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-    - docker buildx rm -q multiarchbuilder
-    - docker buildx create -q --use --name multiarchbuilder
+    - docker buildx rm multiarchbuilder
+    - docker buildx create --use --name multiarchbuilder
 
     - docker buildx build -fq build-app/Dockerfile --platform linux/amd64 -t $IMAGE_NAME:$NEW_TAG-amd64 --load .
 
