@@ -1,19 +1,22 @@
 #!/bin/bash
-current_version=$(curl -s "https://registry.hub.docker.com/v2/repositories/yohrannes/website-portifolio/tags?page_size=100" | jq -r '.results[].name' | grep -v "latest" | head -n 1 | sed 's/^v//')
-first=$(echo "$current_version" | cut -d. -f1)
-second=$(echo "$current_version" | cut -d. -f2)
-third=$(echo "$current_version" | cut -d. -f3)
-third=$((third + 1))
+current_version=$(echo "$1" | sed 's/^v//')
+major=$(echo "$current_version" | cut -d. -f1)
+minor=$(echo "$current_version" | cut -d. -f2)
+patch=$(echo "$current_version" | cut -d. -f3)
 
-if [ "$third" -eq 10 ]; then
-  third=0
-  second=$((second + 1))
+if [ "$2" == "patch" ]; then
+  patch=$((patch + 1))
+elif [ "$2" == "minor" ]; then
+  minor=$((minor + 1))
+  patch=0
+elif [ "$2" == "major" ]; then
+  major=$((major + 1))
+  minor=0
+  patch=0
+else
+  echo "Invalid argument. Use 'patch', 'minor', or 'major'."
+  exit 1
 fi
 
-if [ "$second" -eq 10 ]; then
-  second=0
-  first=$((first + 1))
-fi
-
-new_version="$first.$second.$third"
+new_version="$major.$minor.$patch"
 echo "$new_version"
