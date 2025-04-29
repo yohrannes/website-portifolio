@@ -46,6 +46,27 @@ stages:
   - deploy-image
   - deploy
 
+get-image-tag:
+  stage: prepare
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+  script:
+    - OLD_TAG=v$(./usefull-scripts/old-dk-img-version.sh)
+    - NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh)
+
+    - |
+      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+      --request PUT \
+      --form "value=$OLD_TAG" \
+      "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/DOCKER_IMAGE_ACTUAL_TAG" \
+      > /dev/null 2>&1
+
+    - |
+      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+      --request PUT \
+      --form "value=$NEW_TAG" \
+      "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/DOCKER_IMAGE_NEW_TAG" \
+      > /dev/null 2>&1
 
 deploy-dk-hub-amd:
   stage: deploy-image
@@ -61,8 +82,8 @@ deploy-dk-hub-amd:
     - cd website-portifolio
     - git checkout develop
 
-    - OLD_TAG=v$(./usefull-scripts/old-dk-img-version.sh)
-    - NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh)
+    - OLD_TAG=$DOCKER_IMAGE_ACTUAL_TAG
+    - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
 
     - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
     - docker buildx rm multiarchbuilder
@@ -89,8 +110,8 @@ deploy-dk-hub-arm:
     - cd website-portifolio
     - git checkout develop
 
-    - OLD_TAG=v$(./usefull-scripts/old-dk-img-version.sh)
-    - NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh)
+    - OLD_TAG=$DOCKER_IMAGE_ACTUAL_TAG
+    - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
 
 #    - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 #    - docker buildx rm multiarchbuilder
@@ -126,8 +147,8 @@ deploy-dk-hub:
         ${IMAGE_NAME}@${DIGEST_ARM64} --amend
       
       docker manifest create $IMAGE_NAME:latest \
-        ${IMAGE_NAME}@${DIGEST_AMD64}-amd64 --amend\
-        ${IMAGE_NAME}@${DIGEST_ARM64}-arm64 --amend
+        ${IMAGE_NAME}@${DIGEST_AMD64} --amend\
+        ${IMAGE_NAME}@${DIGEST_ARM64} --amend
 
     - docker manifest push $IMAGE_NAME:$NEW_TAG
     - docker manifest push $IMAGE_NAME:latest
