@@ -108,7 +108,7 @@ deploy-dk-hub-amd:
     - docker buildx rm multiarchbuilder
     - docker buildx create --use --name multiarchbuilder
 
-    - docker buildx build -fq build-app/Dockerfile --platform linux/amd64 -t $IMAGE_NAME:$NEW_TAG-amd64 --load .
+    - docker buildx build -f build-app/Dockerfile --platform linux/amd64 -t $IMAGE_NAME:$NEW_TAG-amd64 --load .
 
     - docker push $IMAGE_NAME:$NEW_TAG-amd64
 
@@ -137,7 +137,7 @@ deploy-dk-hub-arm:
 #    - docker buildx create --use --name multiarchbuilder
 
 #    - docker buildx build -f build-app/Dockerfile --platform linux/arm64 -t $IMAGE_NAME:$NEW_TAG-arm64 --load .
-    - docker build -fq build-app/Dockerfile -t $IMAGE_NAME:$NEW_TAG-arm64 .
+    - docker build -f build-app/Dockerfile -t $IMAGE_NAME:$NEW_TAG-arm64 .
 
     - docker push $IMAGE_NAME:$NEW_TAG-arm64
 
