@@ -65,6 +65,8 @@ deploy-dk-hub-amd:
     - NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh)
 
     - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+    - docker buildx ls
+    - docker buildx rm multiarchbuilder
     - docker buildx create --use --name multiarchbuilder
 
     - docker buildx build -f build-app/Dockerfile --platform linux/arm64 -t $IMAGE_NAME:$NEW_TAG-amd64 --load .
