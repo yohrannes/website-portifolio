@@ -46,11 +46,15 @@ stages:
   - deploy-image
   - deploy
 
+
 docker-controler-deploy:
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
   stage: prepare
   parallel: 2
   script:
     - docker system prune -a -f
+
 
 get-image-tag:
   stage: prepare
@@ -85,6 +89,7 @@ get-image-tag:
 
       echo $DOCKER_IMAGE_NEW_TAG
 
+
 deploy-dk-hub-amd:
   stage: deploy-image
   needs:
@@ -99,7 +104,6 @@ deploy-dk-hub-amd:
     - cd repos-gitlab
     - git clone https://gitlab.com/yohrannes/website-portifolio.git
     - cd website-portifolio
-    - git checkout develop
 
     - OLD_TAG=$DOCKER_IMAGE_ACTUAL_TAG
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
@@ -125,7 +129,6 @@ deploy-dk-hub-arm:
     - cd repos-gitlab
     - git clone https://gitlab.com/yohrannes/website-portifolio.git
     - cd website-portifolio
-    - git checkout develop
 
     - OLD_TAG=$DOCKER_IMAGE_ACTUAL_TAG
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
