@@ -47,7 +47,7 @@ stages:
   - deploy
 
 
-deploy-dk-hub:
+deploy-dk-hub-amd:
   stage: deploy-image
   rules:
       - if: $CI_COMMIT_BRANCH == "main"
@@ -67,16 +67,64 @@ deploy-dk-hub:
     - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
     - docker buildx create --use --name multiarchbuilder
 
-    - docker buildx build -f build-app/Dockerfile --platform linux/arm64 -t $IMAGE_NAME:$NEW_TAG-arm64 --push .
-    - docker buildx build -f build-app/Dockerfile --platform linux/arm64 -t $IMAGE_NAME:$NEW_TAG-amd64 --push .
+    - docker buildx build -f build-app/Dockerfile --platform linux/arm64 -t $IMAGE_NAME:$NEW_TAG-amd64 --load .
 
+    - docker push $IMAGE_NAME:$NEW_TAG-amd64
+
+
+deploy-dk-hub-arm:
+  stage: deploy-image
+  needs:
+    - deploy-dk-hub-amd
+  rules:
+      - if: $CI_COMMIT_BRANCH == "main"
+  tags: [ "oci-runner-arm" ]
+  before_script:
+    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
+  script:
+    - mkdir -p repos-gitlab
+    - cd repos-gitlab
+    - git clone https://gitlab.com/yohrannes/website-portifolio.git
+    - cd website-portifolio
+    - git checkout develop
+
+    - OLD_TAG=v$(./usefull-scripts/old-dk-img-version.sh)
+    - NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh)
+
+    - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+    - docker buildx create --use --name multiarchbuilder
+
+    - docker buildx build -f build-app/Dockerfile --platform linux/arm64 -t $IMAGE_NAME:$NEW_TAG-arm64 --load .
+
+    - docker push $IMAGE_NAME:$NEW_TAG-arm64
+
+
+deploy-dk-hub:
+  stage: deploy-image
+  needs:
+    - deploy-dk-hub-arm
+  rules:
+      - if: $CI_COMMIT_BRANCH == "main"
+  before_script:
+    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
+  script:
     - DIGEST_AMD64=$(curl -s "https://registry.hub.docker.com/v2/repositories/yohrannes/website-portifolio/tags?page_size=100" | jq -r --arg tag "$NEW_TAG-amd64" '.results[] | select(.name == $tag) | .digest')
     - DIGEST_ARM64=$(curl -s "https://registry.hub.docker.com/v2/repositories/yohrannes/website-portifolio/tags?page_size=100" | jq -r --arg tag "$NEW_TAG-arm64" '.results[] | select(.name == $tag) | .digest')
 
+    - docker rmi $IMAGE_NAME:$NEW_TAG-arm64
+    - docker rmi $IMAGE_NAME:$NEW_TAG-amd64
+
+    - docker pull $IMAGE_NAME:$NEW_TAG-arm64
+    - docker pull $IMAGE_NAME:$NEW_TAG-amd64
+
     - |
       docker manifest create $IMAGE_NAME:$NEW_TAG \
-          --amend $IMAGE_NAME@$DIGEST_AMD64 \
-          --amend $IMAGE_NAME@$DIGEST_ARM64
+        ${IMAGE_NAME}@${DIGEST_AMD64} --amend\
+        ${IMAGE_NAME}@${DIGEST_ARM64} --amend
+      
+      docker manifest create $IMAGE_NAME:latest \
+        ${IMAGE_NAME}@${DIGEST_AMD64}-amd64 --amend\
+        ${IMAGE_NAME}@${DIGEST_ARM64}-arm64 --amend
 
     - docker manifest push $IMAGE_NAME:$NEW_TAG
     - docker manifest push $IMAGE_NAME:latest
@@ -84,7 +132,7 @@ deploy-dk-hub:
     - echo "image-changed"
     - echo "Old version $OLD_TAG changed to the new version $NEW_TAG"
 
-# Assign image with cosign job
+# Assign image with cosign  job
 #  cosign sign -key ../../cosign-keys/cosign.key yohrannes/website-portifolio
 
 deploy-dkcmpose:
