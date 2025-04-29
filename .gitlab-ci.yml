@@ -55,7 +55,7 @@ get-image-tag:
     - sudo apt-get install -y curl jq
     
     - OLD_TAG=$DOCKER_IMAGE_ACTUAL_TAG
-    - NEW_TAG=$(nx-dk-img-version.sh $OLD_TAG patch)
+    - NEW_TAG=$(./nx-dk-img-version.sh $OLD_TAG patch)
 
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
