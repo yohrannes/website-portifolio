@@ -51,6 +51,8 @@ get-image-tag:
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   script:
+    - apk add --no-cache curl jq
+    
     - OLD_TAG=v$(./usefull-scripts/old-dk-img-version.sh)
     - NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh)
 
@@ -70,6 +72,8 @@ get-image-tag:
 
 deploy-dk-hub-amd:
   stage: deploy-image
+  needs:
+    - get-image-tag
   rules:
       - if: $CI_COMMIT_BRANCH == "main"
   tags: [ "gcp-runner-amd" ]
