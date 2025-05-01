@@ -4,6 +4,9 @@ docker-controler:
 #  parallel: 2
   rules:
       - if: $CI_COMMIT_BRANCH != "main"
+  tags:
+    - oci-runner-arm
+    - gcp-runner-amd
 
   # before_script:
   #     - |
