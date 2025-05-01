@@ -1,4 +1,4 @@
-docker-controler:
+runner-controler-start:
   stage: prepare
   # Run in jobs in all runners simultaneously
 #  parallel: 2
@@ -6,17 +6,21 @@ docker-controler:
       - if: $CI_COMMIT_BRANCH != "main"
   tags:
     - oci-runner-arm
-
-  # before_script:
-  #     - |
-  #       if docker ps -a | grep "terraform-container"; then
-  #         docker stop terraform-container
-  #         echo "Terraform container stopped."
-  #       else
-  #         echo "Terraform container not exists."
-  #       fi
   script:
-#    - docker info
     - docker rm -f $(docker ps -aq)
     - docker volume rm $(docker volume ls -q)
     - docker system prune -af
+
+runner-controler-stop:
+  stage: check-infra
+  # Run in jobs in all runners simultaneously
+#  parallel: 2
+  rules:
+      - if: $CI_COMMIT_BRANCH != "main"
+  tags:
+    - oci-runner-arm
+  script:
+    - docker rm -f $(docker ps -aq)
+    - docker volume rm $(docker volume ls -q)
+    - docker system prune -af
+    - systemctl restart gitlab-runner

@@ -46,6 +46,8 @@ stages:
   - deploy-image
   - deploy
 
+  - check-infra
+
 
 docker-controler-deploy:
   rules:
