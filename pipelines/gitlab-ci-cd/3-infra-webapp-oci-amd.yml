@@ -225,9 +225,6 @@ disable-ssh:
   script:
     - |
       sudo docker exec -w /app terraform-container sh -c "
-       terraform plan -detailed-exitcode -target=module.oci_aftier_micro_amd.oci_core_security_list.public-security-list -out=plan -var="disable_ssh_port=true
+       terraform plan -detailed-exitcode -target=module.oci_aftier_micro_amd.oci_core_security_list.public-security-list -out=plan -var="disable_ssh_port=true | grep "Plan:"
        terraform apply plan | grep -o -E 'oci[^.]*.' | sort -u
-        exit_code=${PIPESTATUS[0]}
-        echo "Exit Code: $exit_code"
-        exit $exit_code
       "
