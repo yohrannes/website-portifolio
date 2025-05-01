@@ -197,7 +197,7 @@ update-dns:
 deploy-fail2ban:
   stage: deploy-infra
   needs:
-    - check-startup-script
+    - update-dns
   before_script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
@@ -221,7 +221,7 @@ deploy-fail2ban:
 disable-ssh:
   stage: deploy-infra
   needs:
-    - check-startup-script
+    - deploy-fail2ban
   script:
     - |
       sudo docker exec -w /app terraform-container sh -c "
