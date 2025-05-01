@@ -57,6 +57,11 @@ variable "ssh_authorized_keys_path" {
   sensitive   = true
 }
 
+variable "disable_ssh_port" {
+  description = "Disable SSH port"
+  type        = bool
+}
+
 variable "ic_pub_vm_A" {
   description = "The details of the compute instance"
   default = {

@@ -34,6 +34,7 @@ module "oci_aftier_flex_arm" {
 
 module "oci_aftier_micro_amd" {
   source = "./modules/oci_aftier_micro_amd"
+  disable_ssh_port = var.disable_ssh_port
 }
 
 module "oci_oke_cluster_arm" {

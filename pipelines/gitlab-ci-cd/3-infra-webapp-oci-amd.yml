@@ -77,8 +77,6 @@ create-oracle-instance:
         --form "value=$INSTANCE_PUBLIC_IP" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/IP_OCI_AMD_WEBAPP" \
         > /dev/null 2>&1
-    - docker stop terraform-container
-    - docker rm terraform-container
 
 check-startup-script:
   stage: create-infra
@@ -112,7 +110,7 @@ check-startup-script:
           sleep 5;
         done
         
-configure_fail2ban:
+configure-fail2ban:
   stage: create-infra
   needs:
     - check-startup-script
@@ -157,7 +155,7 @@ configure_fail2ban:
 deploy-containers:
   stage: deploy-infra
   needs:
-    - configure_fail2ban
+    - configure-fail2ban
   before_script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
@@ -175,7 +173,7 @@ deploy-containers:
         sudo docker compose up -d --quiet-pull
       " > /dev/null
 
-update_dns:
+update-dns:
   stage: deploy-infra
   needs:
     - deploy-containers
@@ -196,10 +194,10 @@ update_dns:
           "type": "A"
         }' | jq '.'
 
-deploy_fail2ban:
+deploy-fail2ban:
   stage: deploy-infra
   needs:
-    - deploy-containers
+    - check-startup-script
   before_script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
@@ -218,4 +216,18 @@ deploy_fail2ban:
           sudo fail2ban-client start
           sudo fail2ban-client status
           sudo fail2ban-client reload
+      "
+
+disable-ssh:
+  stage: deploy-infra
+  needs:
+    - check-startup-script
+  script:
+    - |
+      sudo docker exec -w /app terraform-container sh -c "
+       terraform plan -detailed-exitcode -target=module.oci_aftier_micro_amd.oci_core_security_list.public-security-list -out=plan -var="disable_ssh_port=true
+       terraform apply plan | grep -o -E 'oci[^.]*.' | sort -u
+        exit_code=${PIPESTATUS[0]}
+        echo "Exit Code: $exit_code"
+        exit $exit_code
       "
