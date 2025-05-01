@@ -223,6 +223,15 @@ disable-ssh:
   stage: deploy-infra
   needs:
     - deploy-fail2ban
+  before_script:
+    # Run terraform-container 
+    - |
+      sudo docker run -d --name terraform-container yohrannes/terraform:latest sleep 3600
+    - sudo docker cp $CI_PROJECT_DIR/terraform/prod terraform-container:/app > /dev/null 2>&1
+    - sudo docker cp $HOME/.oci terraform-container:/root/.oci > /dev/null 2>&1
+    - sudo docker cp $HOME/.aws terraform-container:/root/.aws > /dev/null 2>&1
+    - sudo docker exec -w /app terraform-container mkdir /root/.ssh
+    - sudo docker cp $HOME/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
   script:
     - |
       sudo docker exec -w /app terraform-container sh -c "
@@ -231,4 +240,4 @@ disable-ssh:
        terraform plan -detailed-exitcode -target=module.oci_aftier_micro_amd.oci_core_security_list.public-security-list -out=plan -var="disable_ssh_port=true | grep "Plan:"
        terraform apply plan | grep -o -E 'oci[^.]*.' | sort -u
       "
-      
+
