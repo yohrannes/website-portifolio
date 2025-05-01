@@ -63,7 +63,7 @@ create-oracle-instance:
         TF_IN_AUTOMATION=true
         terraform init -upgrade -reconfigure
         terraform workspace select web_port_dev
-        terraform plan -auto-approve -compact-warnings -input=false -target=module.oci_aftier_micro_amd -out=plan | grep "Plan:"
+        terraform plan -compact-warnings -input=false -target=module.oci_aftier_micro_amd -out=plan | grep "Plan:"
         terraform apply plan | grep -o -E 'oci[^.]*.' | sort -u
         exit_code=${PIPESTATUS[0]}
         echo "Exit Code: $exit_code"
