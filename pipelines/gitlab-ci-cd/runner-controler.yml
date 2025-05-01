@@ -15,4 +15,4 @@ docker-controler:
   #       fi
   script:
     - docker info
-    - docker system prune -a -f
+    - docker system prune -afq

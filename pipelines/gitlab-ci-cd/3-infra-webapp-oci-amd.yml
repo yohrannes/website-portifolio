@@ -24,7 +24,7 @@ create-oracle-instance:
     - chmod 600 $HOME/.aws/config
 
     # Prepare SSH files to enable ssh conection with instance
-    - sudo apt-get install -y openssh-client openssh-server curl
+    - sudo apt-get install -yq openssh-client openssh-server curl
     - mkdir -p $HOME/.ssh
     - (echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa 2>/dev/null)
     - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa.pub 2>/dev/null)
@@ -59,6 +59,7 @@ create-oracle-instance:
     - |
       sudo docker exec -w /app terraform-container sh -c "
         apk add --no-cache git --quiet
+        TF_IN_AUTOMATION=true
         terraform init -upgrade -reconfigure
         terraform workspace select web_port_dev
         terraform plan -detailed-exitcode -target=module.oci_aftier_micro_amd -out=plan | grep "Plan:"
@@ -121,7 +122,7 @@ configure_fail2ban:
     - chmod 600 ~/.ssh/id_rsa
   script:
     - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP <<EOF
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP > /dev/null <<EOF
       sudo mkdir -p /var/log/nginx
       sudo mkdir -p /etc/fail2ban/filter.d
       sudo tee /etc/fail2ban/filter.d/nginx-injection.conf > /dev/null <<'FILTER_EOF'
@@ -171,8 +172,8 @@ deploy-containers:
         git checkout main
         sudo docker build -qf ./build-app/Dockerfile --network host -t yohrannes/website-portifolio .
         cd docker-compose
-        sudo docker compose up -d
-      "
+        sudo docker compose up -d --quiet-pull
+      " > /dev/null
 
 update_dns:
   stage: deploy-infra
