@@ -225,6 +225,7 @@ disable-ssh:
     - deploy-fail2ban
   before_script:
     # Run terraform-container 
+    - sudo docker rm -f terraform-container
     - |
       sudo docker run -d --name terraform-container yohrannes/terraform:latest sleep 3600
     - sudo docker cp $CI_PROJECT_DIR/terraform/prod terraform-container:/app > /dev/null 2>&1
