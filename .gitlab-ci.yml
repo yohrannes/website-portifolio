@@ -167,6 +167,8 @@ deploy-dk-hub:
         ${IMAGE_NAME}@${DIGEST_AMD64} --amend\
         ${IMAGE_NAME}@${DIGEST_ARM64} --amend
 
+      docker manifest rm $IMAGE_NAME:latest
+
       docker manifest create $IMAGE_NAME:latest \
         ${IMAGE_NAME}@${DIGEST_AMD64} --amend\
         ${IMAGE_NAME}@${DIGEST_ARM64} --amend
