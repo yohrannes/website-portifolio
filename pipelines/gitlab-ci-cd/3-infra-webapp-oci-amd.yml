@@ -231,4 +231,4 @@ disable-ssh:
        terraform plan -detailed-exitcode -target=module.oci_aftier_micro_amd.oci_core_security_list.public-security-list -out=plan -var="disable_ssh_port=true | grep "Plan:"
        terraform apply plan | grep -o -E 'oci[^.]*.' | sort -u
       "
-      docker rm -f terraform-container
+      
