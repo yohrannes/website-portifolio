@@ -3,3 +3,9 @@ variable "project_id" {
   type        = string
   default = "website-portifolio"
 }
+
+variable "disable_ssh_port" {
+  description = "Disable SSH port"
+  type        = bool
+  default     = false
+}
