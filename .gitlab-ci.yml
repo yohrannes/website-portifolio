@@ -201,7 +201,12 @@ deploy-dkcmpose:
         git clone https://gitlab.com/yohrannes/website-portifolio.git
         cd website-portifolio
         git checkout main
-        sudo docker build -qf ./build-app/Dockerfile --network host -t yohrannes/website-portifolio:latest .
+        sudo docker build -qf ./build-app/Dockerfile -t yohrannes/website-portifolio:latest .
+        sudo docker build -qf ./build-app/Dockerfile-nginx -t yohrannes/nginx:latest .
         cd docker-compose
+        sudo docker compose down
+        sudo docker pull yohrannes/website-portifolio:latest
+        sudo docker pull yohrannes/nginx:latest
         sudo docker compose up -d
       "
+#        sudo docker build -qf ./build-app/Dockerfile --network host -t yohrannes/website-portifolio:latest .
