@@ -31,6 +31,7 @@ include:
 
 variables:
   IMAGE_NAME: yohrannes/website-portifolio
+  NGINX_IMAGE_NAME: yohrannes/nginx
   IMAGE_TAG: latest
 
 
@@ -114,8 +115,10 @@ deploy-dk-hub-amd:
     - docker buildx create --use --name multiarchbuilder
 
     - docker buildx build -f build-app/Dockerfile --platform linux/amd64 -t $IMAGE_NAME:$NEW_TAG-amd64 --load .
+    - docker buildx build -f build-app/Dockerfile --platform linux/amd64 -t $NGINX_IMAGE_NAME:$NEW_TAG-amd64 --load .
 
     - docker push $IMAGE_NAME:$NEW_TAG-amd64
+    - docker push $NGINX_NAME:$NEW_TAG-amd64
 
 
 deploy-dk-hub-arm:
@@ -140,8 +143,10 @@ deploy-dk-hub-arm:
 
 #    - docker buildx build -f build-app/Dockerfile --platform linux/arm64 -t $IMAGE_NAME:$NEW_TAG-arm64 --load .
     - docker build -f build-app/Dockerfile -t $IMAGE_NAME:$NEW_TAG-arm64 .
+    - docker build -f build-app/Dockerfile -t $NGINX_IMAGE_NAME:$NEW_TAG-arm64 .
 
     - docker push $IMAGE_NAME:$NEW_TAG-arm64
+    - docker push $NGINX_IMAGE_NAME:$NEW_TAG-arm64
 
 
 deploy-dk-hub:
@@ -160,6 +165,9 @@ deploy-dk-hub:
     - docker pull $IMAGE_NAME:$NEW_TAG-amd64
     - docker pull $IMAGE_NAME:$NEW_TAG-arm64
 
+    - docker pull $NGINX_IMAGE_NAME:$NEW_TAG-amd64
+    - docker pull $NGINX_IMAGE_NAME:$NEW_TAG-arm64
+
     - DIGEST_AMD64=$(curl -s "https://registry.hub.docker.com/v2/repositories/yohrannes/website-portifolio/tags?page_size=100" | jq -r --arg tag "$NEW_TAG-amd64" '.results[] | select(.name == $tag) | .digest')
     - DIGEST_ARM64=$(curl -s "https://registry.hub.docker.com/v2/repositories/yohrannes/website-portifolio/tags?page_size=100" | jq -r --arg tag "$NEW_TAG-arm64" '.results[] | select(.name == $tag) | .digest')
 
@@ -176,6 +184,20 @@ deploy-dk-hub:
 
     - docker manifest push $IMAGE_NAME:$NEW_TAG
     - docker manifest push $IMAGE_NAME:latest
+
+    - |
+      docker manifest create $NGINX_IMAGE_NAME:$NEW_TAG \
+        ${NGINX_IMAGE_NAME}@${DIGEST_AMD64} --amend\
+        ${NGINX_IMAGE_NAME}@${DIGEST_ARM64} --amend
+
+      docker manifest rm $NGINX_IMAGE_NAME:latest
+
+      docker manifest create $NGINX_IMAGE_NAME:latest \
+        ${NGINX_IMAGE_NAME}@${DIGEST_AMD64} --amend\
+        ${NGINX_IMAGE_NAME}@${DIGEST_ARM64} --amend
+
+    - docker manifest push $NGINX_IMAGE_NAME:$NEW_TAG
+    - docker manifest push $NGINX_IMAGE_NAME:latest
 
     - echo "image-changed"
     - echo "Old version $OLD_TAG changed to the new version $NEW_TAG"
