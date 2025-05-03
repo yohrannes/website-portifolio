@@ -14,10 +14,20 @@ get-image-tag:
   script:
     - sudo apt-get install -y curl jq
     
+      echo $DOCKER_IMAGE_NEW_TAG
+      #v0.0.0
     - ./usefull-scripts/old-dk-img-version.sh
+      #v0.0.0
+    
     - OLD_TAG=$(./usefull-scripts/old-dk-img-version.sh)
+      #v0.0.0
+    
     - ./usefull-scripts/nx-dk-img-version.sh $OLD_TAG patch
+      #v0.0.1
+    
     - NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh $OLD_TAG patch)
+      #v0.0.1
+
 
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
@@ -27,6 +37,8 @@ get-image-tag:
       > /dev/null 2>&1
 
       echo $DOCKER_IMAGE_ACTUAL_TAG
+ #v0.0.0
+
 
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
@@ -34,8 +46,8 @@ get-image-tag:
       --form "value=$NEW_TAG" \
       "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/DOCKER_IMAGE_NEW_TAG" \
       > /dev/null 2>&1
+ #v0.0.1
 
-      echo $DOCKER_IMAGE_NEW_TAG
 
 
 deploy-dk-hub-amd:
@@ -51,7 +63,6 @@ deploy-dk-hub-amd:
     - git clone https://gitlab.com/yohrannes/website-portifolio.git
     - cd website-portifolio
 
-    - OLD_TAG=$DOCKER_IMAGE_ACTUAL_TAG
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
 
     - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
@@ -61,7 +72,7 @@ deploy-dk-hub-amd:
     - docker buildx build -f build-app/Dockerfile --platform linux/amd64 -t $IMAGE_NAME:$NEW_TAG-amd64 --load .
     - docker buildx build -f build-app/Dockerfile --platform linux/amd64 -t $NGINX_IMAGE_NAME:$NEW_TAG-amd64 --load .
 
-    - echo "docker push ${NGINX_NAME}:${NEW_TAG}-amd64
+    - echo "docker push ${NGINX_NAME}:${NEW_TAG}-amd64"
     - docker image ls
     - docker manifest inspect $NGINX_NAME:$NEW_TAG-amd64
     - docker push $IMAGE_NAME:$NEW_TAG-amd64
