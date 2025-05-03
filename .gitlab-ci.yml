@@ -73,6 +73,6 @@ deploy-dkcmpose:
   script:
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
-        sudo docker compose up -d
+        sudo docker compose -f repos-git/website-portifolio/docker-compose/docker-compose.yml up -d
       "
 #        sudo docker build -qf ./build-app/Dockerfile --network host -t yohrannes/website-portifolio:latest .
