@@ -51,8 +51,7 @@ deploy-dk-hub-amd:
 
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
 
-    - docker run \
-      --rm \
+    - docker run --rm \
       --privileged multiarch/qemu-user-static \
       --reset -p yes
     
@@ -108,8 +107,7 @@ deploy-dk-hub:
     - deploy-dk-hub-amd
     - deploy-dk-hub-arm
   before_script:
-    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes \
-      --password-stdin
+    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
     - docker system prune -a -f
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
     - docker pull $IMAGE_NAME:$NEW_TAG-amd64
