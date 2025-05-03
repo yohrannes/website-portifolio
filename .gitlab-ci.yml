@@ -32,13 +32,6 @@ include:
     rules:
       - if: $CI_COMMIT_BRANCH == "dev-dk-img"
 
-
-variables:
-  IMAGE_NAME: yohrannes/website-portifolio
-  NGINX_IMAGE_NAME: yohrannes/nginx
-  IMAGE_TAG: latest
-
-
 stages:
   - prepare
 

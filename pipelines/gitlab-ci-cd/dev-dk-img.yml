@@ -1,4 +1,9 @@
 ---
+variables:
+  IMAGE_NAME: yohrannes/website-portifolio
+  NGINX_IMAGE_NAME: yohrannes/nginx
+  IMAGE_TAG: latest
+
 docker-controler-deploy:
   stage: prepare
   parallel: 2
@@ -13,21 +18,8 @@ get-image-tag:
 
   script:
     - sudo apt-get install -y curl jq
-    
-      echo $DOCKER_IMAGE_NEW_TAG
-      #v0.0.0
-    - ./usefull-scripts/old-dk-img-version.sh
-      #v0.0.0
-    
     - OLD_TAG=$(./usefull-scripts/old-dk-img-version.sh)
-      #v0.0.0
-    
-    - ./usefull-scripts/nx-dk-img-version.sh $OLD_TAG patch
-      #v0.0.1
-    
     - NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh $OLD_TAG patch)
-      #v0.0.1
-
 
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
@@ -36,18 +28,12 @@ get-image-tag:
       "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/DOCKER_IMAGE_ACTUAL_TAG" \
       > /dev/null 2>&1
 
-      echo $DOCKER_IMAGE_ACTUAL_TAG
- #v0.0.0
-
-
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
       --request PUT \
       --form "value=$NEW_TAG" \
       "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/DOCKER_IMAGE_NEW_TAG" \
       > /dev/null 2>&1
- #v0.0.1
-
 
 
 deploy-dk-hub-amd:
@@ -65,12 +51,21 @@ deploy-dk-hub-amd:
 
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
 
-    - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+    - docker run \
+      --rm \
+      --privileged multiarch/qemu-user-static \
+      --reset -p yes
+    
     - docker buildx rm multiarchbuilder
-    - docker buildx create --use --name multiarchbuilder
+    - docker buildx create \
+      --use --name multiarchbuilder
 
-    - docker buildx build -f build-app/Dockerfile --platform linux/amd64 -t $IMAGE_NAME:$NEW_TAG-amd64 --load .
-    - docker buildx build -f build-app/Dockerfile --platform linux/amd64 -t $NGINX_IMAGE_NAME:$NEW_TAG-amd64 --load .
+    - docker buildx build -f build-app/Dockerfile \
+      --platform linux/amd64 -t $IMAGE_NAME:$NEW_TAG-amd64 \
+      --load .
+    - docker buildx build -f build-app/Dockerfile \
+      --platform linux/amd64 -t $NGINX_IMAGE_NAME:$NEW_TAG-amd64 \
+      --load .
 
     - echo "docker push ${NGINX_NAME}:${NEW_TAG}-amd64"
     - docker image ls
@@ -83,7 +78,8 @@ deploy-dk-hub-arm:
   stage: deploy-image
   tags: [ "oci-runner-arm" ]
   before_script:
-    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
+    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes \
+      --password-stdin
   script:
     - mkdir -p repos-gitlab
     - cd repos-gitlab
@@ -112,7 +108,8 @@ deploy-dk-hub:
     - deploy-dk-hub-amd
     - deploy-dk-hub-arm
   before_script:
-    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
+    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes \
+      --password-stdin
     - docker system prune -a -f
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
     - docker pull $IMAGE_NAME:$NEW_TAG-amd64
