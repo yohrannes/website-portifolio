@@ -201,6 +201,7 @@ deploy-dkcmpose:
         git clone https://gitlab.com/yohrannes/website-portifolio.git
         cd website-portifolio
         git checkout main
+        git pull origin main
         sudo docker system prune -a -f
         sudo docker build -qf ./build-app/Dockerfile -t yohrannes/website-portifolio:latest .
         sudo docker build -qf ./build-app/Dockerfile-nginx -t yohrannes/nginx:latest .
