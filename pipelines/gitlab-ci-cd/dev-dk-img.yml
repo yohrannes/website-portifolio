@@ -51,20 +51,13 @@ deploy-dk-hub-amd:
 
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
 
-    - docker run --rm \
-      --privileged multiarch/qemu-user-static \
-      --reset -p yes
+    - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
     
     - docker buildx rm multiarchbuilder
-    - docker buildx create \
-      --use --name multiarchbuilder
+    - docker buildx create --use --name multiarchbuilder
 
-    - docker buildx build -f build-app/Dockerfile \
-      --platform linux/amd64 -t $IMAGE_NAME:$NEW_TAG-amd64 \
-      --load .
-    - docker buildx build -f build-app/Dockerfile \
-      --platform linux/amd64 -t $NGINX_IMAGE_NAME:$NEW_TAG-amd64 \
-      --load .
+    - docker buildx build -f build-app/Dockerfile --platform linux/amd64 -t $IMAGE_NAME:$NEW_TAG-amd64 --load .
+    - docker buildx build -f build-app/Dockerfile --platform linux/amd64 -t $NGINX_IMAGE_NAME:$NEW_TAG-amd64 --load .
 
     - echo "docker push ${NGINX_NAME}:${NEW_TAG}-amd64"
     - docker image ls
@@ -77,8 +70,7 @@ deploy-dk-hub-arm:
   stage: deploy-image
   tags: [ "oci-runner-arm" ]
   before_script:
-    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes \
-      --password-stdin
+    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
     - mkdir -p repos-gitlab
     - cd repos-gitlab
