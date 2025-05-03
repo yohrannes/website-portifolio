@@ -55,19 +55,20 @@ deploy-dkcmpose:
     - chmod 600 ~/.ssh/id_rsa
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
+        sudo docker system prune -a -f
+
         mkdir -p repos-git
         cd repos-git
         git clone https://gitlab.com/yohrannes/website-portifolio.git
         cd website-portifolio
         git checkout main
+        
         git pull origin main
-        sudo docker system prune -a -f
-        sudo docker build -qf ./build-app/Dockerfile -t yohrannes/website-portifolio:latest .
-        sudo docker build -qf ./build-app/Dockerfile-nginx -t yohrannes/nginx:latest .
-        cd docker-compose
-        sudo docker compose down
         sudo docker pull yohrannes/website-portifolio:latest
         sudo docker pull yohrannes/nginx:latest
+        
+        cd docker-compose
+        sudo docker compose down
       "
   script:
     - |
