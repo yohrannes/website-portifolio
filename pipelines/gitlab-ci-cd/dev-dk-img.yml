@@ -61,9 +61,11 @@ deploy-dk-hub-amd:
     - docker buildx build -f build-app/Dockerfile --platform linux/amd64 -t $IMAGE_NAME:$NEW_TAG-amd64 --load .
     - docker buildx build -f build-app/Dockerfile --platform linux/amd64 -t $NGINX_IMAGE_NAME:$NEW_TAG-amd64 --load .
 
+    - echo "docker push ${NGINX_NAME}:${NEW_TAG}-amd64
+    - docker image ls
+    - docker manifest inspect $NGINX_NAME:$NEW_TAG-amd64
     - docker push $IMAGE_NAME:$NEW_TAG-amd64
     - docker push $NGINX_NAME:$NEW_TAG-amd64
-    - echo "docker push ${NGINX_NAME}:${NEW_TAG}-amd64
 
 
 deploy-dk-hub-arm:
