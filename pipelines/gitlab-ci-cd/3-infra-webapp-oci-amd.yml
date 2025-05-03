@@ -25,7 +25,7 @@ create-oracle-instance:
     - chmod 600 $HOME/.aws/config
 
     # Prepare SSH files to enable ssh conection with instance
-    - sudo apt-get install -yq openssh-client openssh-server curl
+    - apt-get install -yq openssh-client openssh-server curl
     - mkdir -p $HOME/.ssh
     - (echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa 2>/dev/null)
     - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa.pub 2>/dev/null)
@@ -40,7 +40,7 @@ create-oracle-instance:
         *) echo "Arch not suported: $ARCH"; exit 1 ;;
       esac
 
-      sudo docker buildx build  -qf ./build-tf-multi-arch/Dockerfile \
+      docker buildx build  -qf ./build-tf-multi-arch/Dockerfile \
         --platform $PLATFORM \
         -t yohrannes/terraform:latest \
         --build-arg PRODUCT=terraform \
@@ -49,16 +49,16 @@ create-oracle-instance:
 
     # Run terraform-container 
     - |
-      sudo docker run -d --name terraform-container yohrannes/terraform:latest sleep infinity
-    - sudo docker cp $CI_PROJECT_DIR/terraform/prod terraform-container:/app > /dev/null 2>&1
-    - sudo docker cp $HOME/.oci terraform-container:/root/.oci > /dev/null 2>&1
-    - sudo docker cp $HOME/.aws terraform-container:/root/.aws > /dev/null 2>&1
-    - sudo docker exec -w /app terraform-container mkdir /root/.ssh
-    - sudo docker cp $HOME/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
+      docker run -d --name terraform-container yohrannes/terraform:latest sleep infinity
+    - docker cp $CI_PROJECT_DIR/terraform/prod terraform-container:/app > /dev/null 2>&1
+    - docker cp $HOME/.oci terraform-container:/root/.oci > /dev/null 2>&1
+    - docker cp $HOME/.aws terraform-container:/root/.aws > /dev/null 2>&1
+    - docker exec -w /app terraform-container mkdir /root/.ssh
+    - docker cp $HOME/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
 
   script:
     - |
-      sudo docker exec -w /app terraform-container sh -c "
+      docker exec -w /app terraform-container sh -c "
         apk add --no-cache git --quiet
         TF_IN_AUTOMATION=true
         terraform init -upgrade -reconfigure
@@ -124,6 +124,10 @@ configure-fail2ban:
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP > /dev/null <<EOF
       sudo mkdir -p /var/log/nginx
       sudo mkdir -p /etc/fail2ban/filter.d
+
+      if [ -f /etc/fail2ban/jail.local ]; then
+        sudo rm -f /etc/fail2ban/jail.local
+      fi
 
       # NGINX Injection
       sudo tee /etc/fail2ban/filter.d/nginx-injection.conf > /dev/null <<'FILTER_EOF'
@@ -260,7 +264,7 @@ disable-ssh:
     - deploy-fail2ban
   script:
     - |
-      sudo docker exec -w /app terraform-container sh -c "
+      docker exec -w /app terraform-container sh -c "
        terraform init -upgrade -reconfigure
        terraform workspace select web_port_dev
        terraform plan -detailed-exitcode -target=module.oci_aftier_micro_amd.oci_core_security_list.public-security-list -out=plan -var="disable_ssh_port=true" | grep "Plan:"

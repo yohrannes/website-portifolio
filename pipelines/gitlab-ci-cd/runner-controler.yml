@@ -12,7 +12,9 @@ runner-controler-start:
     - docker system prune -af
 
 runner-controler-stop:
-  stage: check-infra
+  stage: clean-runner
+  needs:
+    - runner-controler-start
   # Run in jobs in all runners simultaneously
 #  parallel: 2
   rules:
@@ -23,4 +25,3 @@ runner-controler-stop:
     - docker rm -f $(docker ps -aq)
     - docker volume rm $(docker volume ls -q)
     - docker system prune -af
-    - systemctl restart gitlab-runner

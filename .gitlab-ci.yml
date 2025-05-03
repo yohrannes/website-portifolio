@@ -40,13 +40,12 @@ stages:
   - create-infra
   - test-infra
   - deploy-infra
-
   - build
   - test
   - deploy-image
   - deploy
 
-  - check-infra
+  - clean-runner
 
 
 docker-controler-deploy:
