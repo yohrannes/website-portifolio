@@ -120,9 +120,6 @@ deploy-dk-hub:
         ${NGINX_IMAGE_NAME}@${DIGEST_AMD64} --amend\
         ${NGINX_IMAGE_NAME}@${DIGEST_ARM64} --amend
 
-    - docker ps -a
-    - docker image ls
-
   script:
 
     - docker manifest push $IMAGE_NAME:$NEW_TAG
