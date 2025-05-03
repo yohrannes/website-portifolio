@@ -108,12 +108,18 @@ deploy-dk-hub:
       docker manifest create $IMAGE_NAME:$NEW_TAG \
         ${IMAGE_NAME}@${DIGEST_AMD64} --amend\
         ${IMAGE_NAME}@${DIGEST_ARM64} --amend
+      docker manifest create $IMAGE_NAME:latest \
+        ${IMAGE_NAME}@${DIGEST_AMD64} --amend\
+        ${IMAGE_NAME}@${DIGEST_ARM64} --amend
 
     - |
       docker manifest create $NGINX_IMAGE_NAME:$NEW_TAG \
         ${NGINX_IMAGE_NAME}@${DIGEST_AMD64} --amend\
         ${NGINX_IMAGE_NAME}@${DIGEST_ARM64} --amend
-  
+      docker manifest create $NGINX_IMAGE_NAME:latest \
+        ${NGINX_IMAGE_NAME}@${DIGEST_AMD64} --amend\
+        ${NGINX_IMAGE_NAME}@${DIGEST_ARM64} --amend
+
     - docker ps -a
     - docker image ls
 
