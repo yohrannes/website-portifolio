@@ -1,0 +1,6 @@
+FROM cgr.dev/chainguard/nginx:latest-dev as dev
+LABEL maintainer="yohrannes@gmail.com"
+
+FROM cgr.dev/chainguard/nginx:latest
+
+HEALTHCHECK --timeout=2s CMD curl -f localhost:80 || exit 1
