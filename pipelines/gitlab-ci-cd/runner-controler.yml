@@ -13,8 +13,8 @@ runner-controler-start:
 
 runner-controler-stop:
   stage: clean-runner
-  needs:
-    - runner-controler-start
+#########################3 needs:
+  ###############  - runner-controler-start  xxxxxxxxxxxxx - all jobs finished
   # Run in jobs in all runners simultaneously
 #  parallel: 2
   rules:
