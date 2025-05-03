@@ -28,6 +28,10 @@ include:
     rules:
       - if: $CI_COMMIT_BRANCH == "develop"
 
+  - local: 'pipelines/gitlab-ci-cd/dev-dk-img.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "dev-dk-img"
+
 
 variables:
   IMAGE_NAME: yohrannes/website-portifolio
@@ -48,167 +52,6 @@ stages:
 
   - clean-runner
 
-
-docker-controler-deploy:
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-  stage: prepare
-  parallel: 2
-  script:
-    - docker system prune -a -f
-
-
-get-image-tag:
-  stage: prepare
-  needs:
-    - docker-controler-deploy
-  tags: [ "gcp-runner-amd" ]
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-  script:
-    - sudo apt-get install -y curl jq
-    
-    - ./usefull-scripts/old-dk-img-version.sh
-    - OLD_TAG=$(./usefull-scripts/old-dk-img-version.sh)
-    - ./usefull-scripts/nx-dk-img-version.sh $OLD_TAG patch
-    - NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh $OLD_TAG patch)
-
-    - |
-      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-      --request PUT \
-      --form "value=$OLD_TAG" \
-      "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/DOCKER_IMAGE_ACTUAL_TAG" \
-      > /dev/null 2>&1
-
-      echo $DOCKER_IMAGE_ACTUAL_TAG
-
-    - |
-      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-      --request PUT \
-      --form "value=$NEW_TAG" \
-      "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/DOCKER_IMAGE_NEW_TAG" \
-      > /dev/null 2>&1
-
-      echo $DOCKER_IMAGE_NEW_TAG
-
-
-deploy-dk-hub-amd:
-  stage: deploy-image
-  needs:
-    - get-image-tag
-  rules:
-      - if: $CI_COMMIT_BRANCH == "main"
-  tags: [ "gcp-runner-amd" ]
-  before_script:
-    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
-  script:
-    - mkdir -p repos-gitlab
-    - cd repos-gitlab
-    - git clone https://gitlab.com/yohrannes/website-portifolio.git
-    - cd website-portifolio
-
-    - OLD_TAG=$DOCKER_IMAGE_ACTUAL_TAG
-    - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
-
-    - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-    - docker buildx rm multiarchbuilder
-    - docker buildx create --use --name multiarchbuilder
-
-    - docker buildx build -f build-app/Dockerfile --platform linux/amd64 -t $IMAGE_NAME:$NEW_TAG-amd64 --load .
-    - docker buildx build -f build-app/Dockerfile --platform linux/amd64 -t $NGINX_IMAGE_NAME:$NEW_TAG-amd64 --load .
-
-    - docker push $IMAGE_NAME:$NEW_TAG-amd64
-    - docker push $NGINX_NAME:$NEW_TAG-amd64
-
-
-deploy-dk-hub-arm:
-  stage: deploy-image
-  rules:
-      - if: $CI_COMMIT_BRANCH == "main"
-  tags: [ "oci-runner-arm" ]
-  before_script:
-    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
-  script:
-    - mkdir -p repos-gitlab
-    - cd repos-gitlab
-    - git clone https://gitlab.com/yohrannes/website-portifolio.git
-    - cd website-portifolio
-
-    - OLD_TAG=$DOCKER_IMAGE_ACTUAL_TAG
-    - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
-
-#   - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-#    - docker buildx rm multiarchbuilder
-#    - docker buildx create --use --name multiarchbuilder
-
-#    - docker buildx build -f build-app/Dockerfile --platform linux/arm64 -t $IMAGE_NAME:$NEW_TAG-arm64 --load .
-    - docker build -f build-app/Dockerfile -t $IMAGE_NAME:$NEW_TAG-arm64 .
-    - docker build -f build-app/Dockerfile -t $NGINX_IMAGE_NAME:$NEW_TAG-arm64 .
-
-    - docker push $IMAGE_NAME:$NEW_TAG-arm64
-    - docker push $NGINX_IMAGE_NAME:$NEW_TAG-arm64
-
-
-deploy-dk-hub:
-  stage: deploy-image
-  tags: [ "oci-runner-arm" ]
-  needs:
-    - deploy-dk-hub-amd
-    - deploy-dk-hub-arm
-  rules:
-      - if: $CI_COMMIT_BRANCH == "main"
-  before_script:
-    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
-    - docker system prune -a -f
-    - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
-    - docker pull $IMAGE_NAME:$NEW_TAG-amd64
-    - docker pull $IMAGE_NAME:$NEW_TAG-arm64
-
-    - docker pull $NGINX_IMAGE_NAME:$NEW_TAG-amd64
-    - docker pull $NGINX_IMAGE_NAME:$NEW_TAG-arm64
-
-    - DIGEST_AMD64=$(curl -s "https://registry.hub.docker.com/v2/repositories/yohrannes/website-portifolio/tags?page_size=100" | jq -r --arg tag "$NEW_TAG-amd64" '.results[] | select(.name == $tag) | .digest')
-    - DIGEST_ARM64=$(curl -s "https://registry.hub.docker.com/v2/repositories/yohrannes/website-portifolio/tags?page_size=100" | jq -r --arg tag "$NEW_TAG-arm64" '.results[] | select(.name == $tag) | .digest')
-
-    - |
-      docker manifest create $IMAGE_NAME:$NEW_TAG \
-        ${IMAGE_NAME}@${DIGEST_AMD64} --amend\
-        ${IMAGE_NAME}@${DIGEST_ARM64} --amend
-
-      docker manifest rm $IMAGE_NAME:latest
-
-      docker manifest create $IMAGE_NAME:latest \
-        ${IMAGE_NAME}@${DIGEST_AMD64} --amend\
-        ${IMAGE_NAME}@${DIGEST_ARM64} --amend
-
-
-    - |
-      docker manifest create $NGINX_IMAGE_NAME:$NEW_TAG \
-        ${NGINX_IMAGE_NAME}@${DIGEST_AMD64} --amend\
-        ${NGINX_IMAGE_NAME}@${DIGEST_ARM64} --amend
-
-      docker manifest rm $NGINX_IMAGE_NAME:latest
-
-      docker manifest create $NGINX_IMAGE_NAME:latest \
-        ${NGINX_IMAGE_NAME}@${DIGEST_AMD64} --amend\
-        ${NGINX_IMAGE_NAME}@${DIGEST_ARM64} --amend
-
-    - docker ps -a
-    - docker image ls
-
-  script:
-
-    - docker manifest push $IMAGE_NAME:$NEW_TAG
-    - docker manifest push $IMAGE_NAME:latest
-    - docker manifest push $NGINX_IMAGE_NAME:$NEW_TAG
-    - docker manifest push $NGINX_IMAGE_NAME:latest
-
-    - echo "image-changed"
-    - echo "Old version $OLD_TAG changed to the new version $NEW_TAG"
-
-# Assign image with cosign  job
-#  cosign sign -key ../../cosign-keys/cosign.key yohrannes/website-portifolio
-
 deploy-dkcmpose:
   stage: deploy 
   needs:
@@ -219,7 +62,7 @@ deploy-dkcmpose:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-  script:
+  before_script:
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
         mkdir -p repos-git
@@ -234,6 +77,11 @@ deploy-dkcmpose:
         cd docker-compose
         sudo docker compose down
         sudo docker pull yohrannes/website-portifolio:latest
+        sudo docker pull yohrannes/nginx:latest
+      "
+  script:
+    - |
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
         sudo docker compose up -d
       "
 #        sudo docker build -qf ./build-app/Dockerfile --network host -t yohrannes/website-portifolio:latest .
