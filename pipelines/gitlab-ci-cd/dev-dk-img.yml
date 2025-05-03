@@ -1,7 +1,5 @@
 ---
 docker-controler-deploy:
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
   stage: prepare
   parallel: 2
   script:
@@ -12,8 +10,7 @@ get-image-tag:
   needs:
     - docker-controler-deploy
   tags: [ "gcp-runner-amd" ]
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
+
   script:
     - sudo apt-get install -y curl jq
     
@@ -45,8 +42,6 @@ deploy-dk-hub-amd:
   stage: deploy-image
   needs:
     - get-image-tag
-  rules:
-      - if: $CI_COMMIT_BRANCH == "main"
   tags: [ "gcp-runner-amd" ]
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
@@ -73,8 +68,6 @@ deploy-dk-hub-amd:
 
 deploy-dk-hub-arm:
   stage: deploy-image
-  rules:
-      - if: $CI_COMMIT_BRANCH == "main"
   tags: [ "oci-runner-arm" ]
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
@@ -105,8 +98,6 @@ deploy-dk-hub:
   needs:
     - deploy-dk-hub-amd
     - deploy-dk-hub-arm
-  rules:
-      - if: $CI_COMMIT_BRANCH == "main"
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
     - docker system prune -a -f
