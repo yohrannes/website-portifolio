@@ -7,9 +7,7 @@ runner-controler-start:
   tags:
     - oci-runner-arm
   script:
-    - docker stop $(docker ps -aq)
-    - docker rm $(docker ps -aq)
-    - docker volume rm $(docker volume ls -q)
+    - docker volume prune -f
     - docker system prune -af
 
 runner-controler-stop:
@@ -23,7 +21,5 @@ runner-controler-stop:
   tags:
     - oci-runner-arm
   script:
-    - docker stop $(docker ps -aq)
-    - docker rm $(docker ps -aq)
-    - docker volume rm $(docker volume ls -q)
+    - docker volume prune -f
     - docker system prune -af
