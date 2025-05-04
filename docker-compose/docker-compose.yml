@@ -10,7 +10,7 @@ services:
       - portfolio-network
 
   nginx:
-    image: yohrannes/nginx
+    image: nginx
     container_name: nginx-container
     ports:
       - "80:80"

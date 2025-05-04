@@ -18,6 +18,7 @@ resource "oci_network_load_balancer_network_load_balancer" "nlb" {
 
   is_private                     = false
   is_preserve_source_destination = false
+
 }
 
 resource "oci_network_load_balancer_backend_set" "nlb_backend_set_http" {
@@ -30,6 +31,12 @@ resource "oci_network_load_balancer_backend_set" "nlb_backend_set_http" {
   depends_on               = [oci_network_load_balancer_network_load_balancer.nlb]
 
   is_preserve_source = false
+
+  lifecycle {
+    replace_triggered_by = [
+      oci_network_load_balancer_network_load_balancer.nlb.id
+    ]
+  }
 }
 
 resource "oci_network_load_balancer_backend_set" "nlb_backend_set_https" {
@@ -42,6 +49,13 @@ resource "oci_network_load_balancer_backend_set" "nlb_backend_set_https" {
   depends_on               = [oci_network_load_balancer_network_load_balancer.nlb]
 
   is_preserve_source = false
+
+  lifecycle {
+    replace_triggered_by = [
+      oci_network_load_balancer_network_load_balancer.nlb.id
+    ]
+  }
+
 }
 
 resource "oci_network_load_balancer_backend" "nlb_backend_http" {
@@ -51,6 +65,13 @@ resource "oci_network_load_balancer_backend" "nlb_backend_http" {
   depends_on               = [oci_network_load_balancer_backend_set.nlb_backend_set_http]
   count                    = var.node_size
   target_id                = data.oci_core_instances.instances.instances[count.index].id
+
+  lifecycle {
+    replace_triggered_by = [
+      oci_network_load_balancer_backend_set.nlb_backend_set_http.id
+    ]
+  }
+
 }
 
 resource "oci_network_load_balancer_backend" "nlb_backend_https" {
@@ -60,6 +81,13 @@ resource "oci_network_load_balancer_backend" "nlb_backend_https" {
   depends_on               = [oci_network_load_balancer_backend_set.nlb_backend_set_https]
   count                    = var.node_size
   target_id                = data.oci_core_instances.instances.instances[count.index].id
+
+  lifecycle {
+    replace_triggered_by = [
+      oci_network_load_balancer_backend_set.nlb_backend_set_https.id
+    ]
+  }
+  
 }
 
 resource "oci_network_load_balancer_listener" "nlb_listener_http" {
@@ -69,6 +97,7 @@ resource "oci_network_load_balancer_listener" "nlb_listener_http" {
   port                     = var.listener_port_http
   protocol                 = "TCP"
   depends_on               = [oci_network_load_balancer_backend.nlb_backend_http]
+
 }
 
 resource "oci_network_load_balancer_listener" "nlb_listener_https" {
@@ -78,4 +107,5 @@ resource "oci_network_load_balancer_listener" "nlb_listener_https" {
   port                     = var.listener_port_https
   protocol                 = "TCP"
   depends_on               = [oci_network_load_balancer_backend.nlb_backend_https]
+
 }
