@@ -48,6 +48,7 @@ deploy-dk-hub-amd:
     - cd repos-gitlab
     - git clone https://gitlab.com/yohrannes/website-portifolio.git
     - cd website-portifolio
+    - git pull origin main
 
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
 
@@ -75,6 +76,7 @@ deploy-dk-hub-arm:
     - cd repos-gitlab
     - git clone https://gitlab.com/yohrannes/website-portifolio.git
     - cd website-portifolio
+    - git pull origin main
 
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
 
