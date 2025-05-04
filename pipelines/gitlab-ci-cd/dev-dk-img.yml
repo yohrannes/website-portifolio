@@ -136,5 +136,5 @@ deploy-dk-hub:
     - echo "image-changed"
     - echo "Old version $OLD_TAG changed to the new version $NEW_TAG"
 
-# Assign image with cosign  job
+# Assign image with cosign job
 #  cosign sign -key ../../cosign-keys/cosign.key yohrannes/website-portifolio
