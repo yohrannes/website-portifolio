@@ -3,10 +3,28 @@ from flask import Flask, abort, render_template, request, redirect, jsonify, ren
 import subprocess
 import os
 
-# Intern routes
+from prometheus_flask_exporter import PrometheusMetrics
+from opentelemetry.instrumentation.flask import FlaskInstrumentor
+from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.export import BatchSpanProcessor
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 
+# Intern routes
+# Start flask
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
+
+# Start prometheus
+metrics = PrometheusMetrics(app)
+
+# Start opentelemetry
+trace_exporter = OTLPSpanExporter(endpoint="http://localhost:2525")
+provider = TracerProvider()
+processor = BatchSpanProcessor(trace_exporter)
+provider.add_span_processor(processor)
+
+# Flask instrumentation
+FlaskInstrumentor().instrument_app(app)
 
 @app.route('/pod-info')
 def get_server_info():
@@ -71,4 +89,5 @@ def gitlab_redirect():
     return redirect('https://gitlab.com/yohrannes')
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", debug=True, port="5000")
+    app.run(host="0.0.0.0", debug=False, port="5000")
+#    app.run(host="0.0.0.0", debug=True, port="5000")

@@ -33,6 +33,7 @@ resource "oci_containerengine_cluster" "k8s_cluster" {
     }
     service_lb_subnet_ids = [var.public_subnet_id]
   }
+
 }
 
 resource "oci_containerengine_node_pool" "k8s_node_pool" {
