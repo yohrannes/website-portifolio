@@ -95,6 +95,7 @@ deploy-dk-hub:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
     - docker system prune -a -f
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
+    
     - docker pull $IMAGE_NAME:$NEW_TAG-amd64
     - docker pull $IMAGE_NAME:$NEW_TAG-arm64
 
@@ -103,6 +104,9 @@ deploy-dk-hub:
 
     - DIGEST_AMD64=$(curl -s "https://registry.hub.docker.com/v2/repositories/yohrannes/website-portifolio/tags?page_size=100" | jq -r --arg tag "$NEW_TAG-amd64" '.results[] | select(.name == $tag) | .digest')
     - DIGEST_ARM64=$(curl -s "https://registry.hub.docker.com/v2/repositories/yohrannes/website-portifolio/tags?page_size=100" | jq -r --arg tag "$NEW_TAG-arm64" '.results[] | select(.name == $tag) | .digest')
+
+    - DIGEST_NGINX_AMD64=$(curl -s "https://registry.hub.docker.com/v2/repositories/yohrannes/nginx/tags?page_size=100" | jq -r --arg tag "$NEW_TAG-amd64" '.results[] | select(.name == $tag) | .digest')
+    - DIGEST_NGINX_ARM64=$(curl -s "https://registry.hub.docker.com/v2/repositories/yohrannes/nginx/tags?page_size=100" | jq -r --arg tag "$NEW_TAG-arm64" '.results[] | select(.name == $tag) | .digest')
 
     - |
       docker manifest create $IMAGE_NAME:$NEW_TAG \
@@ -114,11 +118,11 @@ deploy-dk-hub:
 
     - |
       docker manifest create $NGINX_IMAGE_NAME:$NEW_TAG \
-        ${NGINX_IMAGE_NAME}@${DIGEST_AMD64} --amend\
-        ${NGINX_IMAGE_NAME}@${DIGEST_ARM64} --amend
+        ${NGINX_IMAGE_NAME}@${DIGEST_NGINX_AMD64} --amend\
+        ${NGINX_IMAGE_NAME}@${DIGEST_NGINX_ARM64} --amend
       docker manifest create $NGINX_IMAGE_NAME:latest \
-        ${NGINX_IMAGE_NAME}@${DIGEST_AMD64} --amend\
-        ${NGINX_IMAGE_NAME}@${DIGEST_ARM64} --amend
+        ${NGINX_IMAGE_NAME}@${DIGEST_NGINX_AMD64} --amend\
+        ${NGINX_IMAGE_NAME}@${DIGEST_NGINX_ARM64} --amend
 
   script:
 
