@@ -19,7 +19,8 @@ COPY static/ static/
 COPY fonts/ fonts/
 ENV PATH="/app/venv/bin:$PATH"
 ENV PYTHONUNBUFFERED=1
-ENV FLASK_ENV=development
+#ENV FLASK_ENV=development
 
-ENTRYPOINT ["python3", "app.py"]
+#ENTRYPOINT ["python3", "app.py"]
+ENTRYPOINT ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
 HEALTHCHECK --timeout=2s CMD curl -f localhost:5000 || exit 1
