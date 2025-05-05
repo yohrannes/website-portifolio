@@ -1,4 +1,4 @@
-FROM cgr.dev/chainguard/python:latest-dev as dev
+FROM cgr.dev/chainguard/python:latest-dev AS dev
 LABEL maintainer="yohrannes@gmail.com"
 WORKDIR /app
 
