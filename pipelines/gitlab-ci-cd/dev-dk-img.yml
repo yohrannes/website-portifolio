@@ -86,6 +86,8 @@ deploy-dk-hub-arm:
     - docker push $IMAGE_NAME:$NEW_TAG-arm64
     - docker push $NGINX_IMAGE_NAME:$NEW_TAG-arm64
 
+# Assign image with cosign job
+#  cosign sign -key ../../cosign-keys/cosign.key yohrannes/website-portifolio
 
 deploy-dk-hub:
   stage: deploy-image
@@ -135,6 +137,3 @@ deploy-dk-hub:
 
     - echo "image-changed"
     - echo "Old version $OLD_TAG changed to the new version $NEW_TAG"
-
-# Assign image with cosign job
-#  cosign sign -key ../../cosign-keys/cosign.key yohrannes/website-portifolio
