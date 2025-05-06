@@ -46,6 +46,6 @@ else
     install-docker-engine
     allow-ports
     install-usefull-packages
-    # Leave this command bellow by least (used for pipeline checks).
+    # Leave this command bellow by least (used for pipeline).
     echo "startup-script-finished"
 fi
