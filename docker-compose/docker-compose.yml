@@ -1,9 +1,7 @@
-version: '3.8'
-
 services:
-  flask-app:
+  webport:
     image: yohrannes/website-portifolio
-    container_name: port-container
+    container_name: webport
     expose:
       - "5000"
     networks:
@@ -11,7 +9,7 @@ services:
 
   nginx:
     image: yohrannes/nginx
-    container_name: nginx-container
+    container_name: nginx
     ports:
       - "80:80"
       - "443:443"
@@ -20,7 +18,7 @@ services:
       - ./nginx/conf.d/yohrannes.com.conf:/etc/nginx/conf.d/yohrannes.com.conf:ro
       - /var/log/nginx:/var/log/nginx
     depends_on:
-      - flask-app
+      - webport
     networks:
       - portfolio-network
 
