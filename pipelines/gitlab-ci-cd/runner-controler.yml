@@ -8,8 +8,6 @@ runner-controler-start:
   tags:
     - oci-runner-arm
   script:
-    - docker stop terraform-container
-    - docker rm terraform-container
     - docker system prune -af
     - docker volume prune -f
 #runner-controler-stop:
