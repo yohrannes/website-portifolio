@@ -3,6 +3,9 @@
 exec > /var/log/startup-script.log 2>&1
 set -x
 
+USER=ubuntu
+HOME=/home/ubuntu
+
 function install-docker-engine () {
     sudo apt-get update
     sudo apt-get upgrade
@@ -19,7 +22,6 @@ function install-docker-engine () {
     sudo systemctl enable containerd
     sudo systemctl start docker
     docker buildx create --use --name multiarch-builder
-    sudo usermod -aG docker $USER
 }
 
 function allow-ports () {
