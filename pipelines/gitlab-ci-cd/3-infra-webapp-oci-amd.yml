@@ -207,7 +207,8 @@ deploy-containers:
         cd repos-git
         git clone https://gitlab.com/yohrannes/website-portifolio.git
         cd website-portifolio
-        git checkout main
+        git checkout infra-webapp-oci-amd
+        git pull origin infra-webapp-oci-amd
         sudo docker build -qf ./build-app/Dockerfile --network host -t yohrannes/website-portifolio .
         cd docker-compose
         sudo docker compose up -d --quiet-pull
