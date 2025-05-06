@@ -260,6 +260,8 @@ deploy-fail2ban:
 
 disable-ssh:
   stage: deploy-infra
+  tags:
+    - oci-runner-arm
   needs:
     - deploy-fail2ban
   script:
