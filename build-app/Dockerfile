@@ -9,16 +9,16 @@ RUN pip install -qr requirements.txt --no-cache
 #RUN pip install --upgrade --upgrade-strategy <JUST_PACKAGE_NAMES> <JUST_PACKAGE_NAMES> <...> --no-cache
 
 FROM cgr.dev/chainguard/python:latest
-COPY --from=dev /app/venv /app/venv
 
 WORKDIR /app
+ENV PATH="/app/venv/bin:$PATH"
+ENV PYTHONUNBUFFERED=1
 
+COPY --from=dev /app/venv /app/venv
 COPY app.py .
 COPY templates/ templates/
 COPY static/ static/
 COPY fonts/ fonts/
-ENV PATH="/app/venv/bin:$PATH"
-ENV PYTHONUNBUFFERED=1
 #ENV FLASK_ENV=development
 
 #ENTRYPOINT ["python3", "app.py"]
