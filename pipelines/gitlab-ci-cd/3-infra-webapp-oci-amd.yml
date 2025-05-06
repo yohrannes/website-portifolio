@@ -249,8 +249,6 @@ deploy-fail2ban:
   script:
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
-        sudo systemctl enable fail2ban
-        sudo systemctl start fail2ban
         sudo systemctl status fail2ban
         while ! sudo systemctl is-active --quiet fail2ban; do
           sleep 1
