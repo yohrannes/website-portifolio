@@ -10,17 +10,16 @@ runner-controler-start:
   script:
     - docker system prune -af
     - docker volume prune -f
-
-runner-controler-stop:
-  stage: clean-runner
-#########################3 needs:
+#runner-controler-stop:
+#  stage: clean-runner
+##########################3 needs:
   ###############  - runner-controler-start  xxxxxxxxxxxxx - all jobs finished
   # Run in jobs in all runners simultaneously
 #  parallel: 2
-  rules:
-      - if: $CI_COMMIT_BRANCH != "main"
-  tags:
-    - oci-runner-arm
-  script:
-    - docker volume prune -f
-    - docker system prune -af
+#  rules:
+#      - if: $CI_COMMIT_BRANCH != "main"
+#  tags:
+#    - oci-runner-arm
+#  script:
+#    - docker volume prune -f
+#    - docker system prune -af
