@@ -25,7 +25,7 @@ create-oracle-instance:
     - chmod 600 $HOME/.aws/config
 
     # Prepare SSH files to enable ssh conection with instance
-    - apt-get install -yq openssh-client openssh-server curl
+    - sudo apt-get install -yq openssh-client openssh-server curl
     - mkdir -p $HOME/.ssh
     - (echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa 2>/dev/null)
     - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa.pub 2>/dev/null)
