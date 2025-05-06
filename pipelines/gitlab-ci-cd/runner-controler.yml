@@ -10,6 +10,10 @@ runner-controler-start:
   script:
     - docker system prune -af
     - docker volume prune -f
+    - |
+      if [ "$(docker ps -aq -f name=terraform-container)" ]; then
+        docker rm -f terraform-container || docker stop terraform-container && docker rm terraform-container
+      fi
 #runner-controler-stop:
 #  stage: clean-runner
 ##########################3 needs:
