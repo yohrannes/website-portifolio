@@ -135,7 +135,7 @@ deploy-containers:
       " > /dev/null
         
 configure-fail2ban:
-  stage: create-infra
+  stage: deploy-infra
   needs:
     - deploy-containers
   before_script:
