@@ -119,16 +119,16 @@ deploy-dk-hub:
         ${IMAGE_NAME}@${DIGEST_AMD64} --amend\
         ${IMAGE_NAME}@${DIGEST_ARM64} --amend
       docker manifest create $IMAGE_NAME:latest \
-        ${IMAGE_NAME}@${DIGEST_AMD64} --amend\
-        ${IMAGE_NAME}@${DIGEST_ARM64} --amend
+        ${IMAGE_NAME}@${DIGEST_AMD64} \
+        ${IMAGE_NAME}@${DIGEST_ARM64}
 
     - |
       docker manifest create $NGINX_IMAGE_NAME:$NEW_TAG \
         ${NGINX_IMAGE_NAME}@${DIGEST_NGINX_AMD64} --amend\
         ${NGINX_IMAGE_NAME}@${DIGEST_NGINX_ARM64} --amend
       docker manifest create $NGINX_IMAGE_NAME:latest \
-        ${NGINX_IMAGE_NAME}@${DIGEST_NGINX_AMD64} --amend\
-        ${NGINX_IMAGE_NAME}@${DIGEST_NGINX_ARM64} --amend
+        ${NGINX_IMAGE_NAME}@${DIGEST_NGINX_AMD64} \
+        ${NGINX_IMAGE_NAME}@${DIGEST_NGINX_ARM64}
 
   script:
 
@@ -138,4 +138,4 @@ deploy-dk-hub:
     - docker manifest push $NGINX_IMAGE_NAME:latest
 
     - echo "image-changed"
-    - echo "Old version $OLD_TAG changed to the new version $NEW_TAG"
+    - echo "Old version $DOCKER_IMAGE_ACTUAL_TAG changed to the new version $NEW_TAG"
