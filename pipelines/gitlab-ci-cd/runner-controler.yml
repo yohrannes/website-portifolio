@@ -8,8 +8,9 @@ runner-controler-start:
   tags:
     - oci-runner-arm
   script:
-    - docker volume prune -f
-    - docker system prune -af
+    - sudo docker stop $(sudo docker ps -aq)
+    - sudo docker system prune -af
+    - sudo docker volume prune -f
 
 runner-controler-stop:
   stage: clean-runner
