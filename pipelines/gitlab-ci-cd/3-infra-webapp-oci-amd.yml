@@ -190,6 +190,8 @@ configure-fail2ban:
       JAIL_EOF
 
       sudo systemctl restart fail2ban
+      sudo systemctl enable fail2ban
+      sudo systemctl status fail2ban
       EOF
 
 deploy-containers:
