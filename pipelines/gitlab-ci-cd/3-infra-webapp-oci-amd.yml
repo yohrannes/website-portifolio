@@ -121,7 +121,7 @@ configure-fail2ban:
     - chmod 600 ~/.ssh/id_rsa
   script:
     - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP > /dev/null <<EOF
+      ssh -T -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP > /dev/null <<EOF
       sudo mkdir -p /var/log/nginx
       sudo chmod -R 755 /var/log/nginx
       sudo mkdir -p /etc/fail2ban/filter.d
@@ -190,11 +190,13 @@ configure-fail2ban:
       maxretry = 1
       bantime = 86400
       JAIL_EOF
-
-      sudo systemctl restart fail2ban
-      sudo systemctl enable fail2ban
-      sudo systemctl status fail2ban
       EOF
+    - |
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
+        sudo systemctl restart fail2ban
+        sudo systemctl enable fail2ban
+        sudo systemctl status fail2ban
+      "
 
 deploy-containers:
   stage: deploy-infra
