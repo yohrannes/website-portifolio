@@ -16,8 +16,10 @@ function install-docker-engine () {
     sudo chown "$USER":"$USER" /home/"$USER"/.docker -R
     sudo chmod g+rwx "$HOME/.docker" -R
     sudo systemctl enable docker
+    sudo systemctl enable containerd
     sudo systemctl start docker
     docker buildx create --use --name multiarch-builder
+    sudo usermod -aG docker $USER
 }
 
 function allow-ports () {
@@ -31,6 +33,7 @@ function allow-ports () {
 
 function install-usefull-packages () {
     sudo apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tmux fail2ban
+    sudo usermod -aG root $USER
 }
 
 if [[ $1 == "install-docker" ]]; then

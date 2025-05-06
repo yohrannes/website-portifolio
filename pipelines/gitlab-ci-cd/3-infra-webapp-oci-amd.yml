@@ -110,11 +110,96 @@ check-startup-script:
           " && break || echo 'Retrying connection...';
           sleep 5;
         done
+        
+configure-fail2ban:
+  stage: create-infra
+  needs:
+    - check-startup-script
+  before_script:
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+  script:
+    - |
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP > /dev/null <<EOF
+      mkdir -p /var/log/nginx
+      chmod -R 755 /var/log/nginx
+      mkdir -p /etc/fail2ban/filter.d
+      chmod -R 755 /etc/fail2ban/filter.d
+
+      if [ -f /etc/fail2ban/jail.local ]; then
+        echo > /etc/fail2ban/jail.local
+      fi
+
+      # NGINX Injection
+      tee /etc/fail2ban/filter.d/nginx-injection.conf > /dev/null <<'FILTER_EOF'
+      [Definition]
+      failregex = ^<HOST> -.*"(GET|POST).*HTTP.*" 403
+      FILTER_EOF
+      tee /etc/fail2ban/jail.local > /dev/null <<'JAIL_EOF'
+      [nginx-injection]
+      enabled = true
+      port    = http,https
+      filter  = nginx-injection
+      logpath = /var/log/nginx/yohrannes.com-access.log
+      maxretry = 5
+      bantime = 3600
+      JAIL_EOF
+
+      # WordPress Injection
+      tee /etc/fail2ban/filter.d/wp-injection.conf > /dev/null <<'FILTER_EOF'
+      [Definition]
+      failregex = ^<HOST> -.*"(GET|POST).*wp*.*HTTP.*" 404
+      FILTER_EOF
+      tee -a /etc/fail2ban/jail.local > /dev/null <<'JAIL_EOF'
+      [wp-injection]
+      enabled = true
+      port    = http,https
+      filter  = wp-injection
+      logpath = /var/log/nginx/yohrannes.com-access.log
+      maxretry = 5
+      bantime = 3600
+      JAIL_EOF
+
+      # Nessus/Generic Pentest Tools - Block common scanner user-agents
+      tee /etc/fail2ban/filter.d/scanner-useragents.conf > /dev/null <<'FILTER_EOF'
+      [Definition]
+      failregex = <HOST> -.*"(GET|POST).*HTTP.*" 200.*"(.*Nessus|Nikto|sqlmap|acunetix|netsparker|OpenVAS|w3af|arachni|AppScan|Metasploit|ZAP|Burp|DirBuster|Fuzz|OWASP).*"
+      FILTER_EOF
+      tee -a /etc/fail2ban/jail.local > /dev/null <<'JAIL_EOF'
+      [scanner-useragents]
+      enabled = true
+      port    = http,https
+      filter  = scanner-useragents
+      logpath = /var/log/nginx/yohrannes.com-access.log
+      maxretry = 1
+      bantime = 86400
+      JAIL_EOF
+
+      # Nessus/Generic Pentest Tools - Block common scanner paths
+      tee /etc/fail2ban/filter.d/scanner-paths.conf > /dev/null <<'FILTER_EOF'
+      [Definition]
+      failregex = <HOST> -.*"(GET|POST).*(\/nessus|\/nikto|\/acunetix|\/sqlmap|\/netsparker|\/w3af|\/arachni|\/appscan|\/metasploit|\/zap|\/burp|\/dirbuster|\/fuzz|\/owasp).*HTTP.*"
+      FILTER_EOF
+      tee -a /etc/fail2ban/jail.local > /dev/null <<'JAIL_EOF'
+      [scanner-paths]
+      enabled = true
+      port    = http,https
+      filter  = scanner-paths
+      logpath = /var/log/nginx/yohrannes.com-access.log
+      maxretry = 1
+      bantime = 86400
+      JAIL_EOF
+
+      systemctl restart fail2ban
+      systemctl enable fail2ban
+      systemctl status fail2ban
+      EOF
 
 deploy-containers:
   stage: deploy-infra
   needs:
-    - check-startup-script
+    - configure-fail2ban
   before_script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
@@ -129,98 +214,15 @@ deploy-containers:
         cd website-portifolio
         git checkout infra-webapp-oci-amd
         git pull origin infra-webapp-oci-amd
-        sudo docker build -qf ./build-app/Dockerfile --network host -t yohrannes/website-portifolio .
+        docker build -qf ./build-app/Dockerfile --network host -t yohrannes/website-portifolio .
         cd docker-compose
-        sudo docker compose up -d --quiet-pull
+        docker compose up -d --quiet-pull
       " > /dev/null
-        
-configure-fail2ban:
-  stage: deploy-infra
-  needs:
-    - deploy-containers
-  before_script:
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-  script:
-    - |
-      ls -la ~/.ssh
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP > /dev/null <<EOF
-      sudo mkdir -p /var/log/nginx
-      sudo mkdir -p /etc/fail2ban/filter.d
-
-      if [ -f /etc/fail2ban/jail.local ]; then
-        sudo rm -f /etc/fail2ban/jail.local
-      fi
-
-      # NGINX Injection
-      sudo tee /etc/fail2ban/filter.d/nginx-injection.conf > /dev/null <<'FILTER_EOF'
-      [Definition]
-      failregex = ^<HOST> -.*"(GET|POST).*HTTP.*" 403
-      FILTER_EOF
-      sudo tee /etc/fail2ban/jail.local > /dev/null <<'JAIL_EOF'
-      [nginx-injection]
-      enabled = true
-      port    = http,https
-      filter  = nginx-injection
-      logpath = /var/log/nginx/yohrannes.com-access.log
-      maxretry = 5
-      bantime = 3600
-      JAIL_EOF
-
-      # WordPress Injection
-      sudo tee /etc/fail2ban/filter.d/wp-injection.conf > /dev/null <<'FILTER_EOF'
-      [Definition]
-      failregex = ^<HOST> -.*"(GET|POST).*wp*.*HTTP.*" 404
-      FILTER_EOF
-      sudo tee -a /etc/fail2ban/jail.local > /dev/null <<'JAIL_EOF'
-      [wp-injection]
-      enabled = true
-      port    = http,https
-      filter  = wp-injection
-      logpath = /var/log/nginx/yohrannes.com-access.log
-      maxretry = 5
-      bantime = 3600
-      JAIL_EOF
-
-      # Nessus/Generic Pentest Tools - Block common scanner user-agents
-      sudo tee /etc/fail2ban/filter.d/scanner-useragents.conf > /dev/null <<'FILTER_EOF'
-      [Definition]
-      failregex = <HOST> -.*"(GET|POST).*HTTP.*" 200.*"(.*Nessus|Nikto|sqlmap|acunetix|netsparker|OpenVAS|w3af|arachni|AppScan|Metasploit|ZAP|Burp|DirBuster|Fuzz|OWASP).*"
-      FILTER_EOF
-      sudo tee -a /etc/fail2ban/jail.local > /dev/null <<'JAIL_EOF'
-      [scanner-useragents]
-      enabled = true
-      port    = http,https
-      filter  = scanner-useragents
-      logpath = /var/log/nginx/yohrannes.com-access.log
-      maxretry = 1
-      bantime = 86400
-      JAIL_EOF
-
-      # Nessus/Generic Pentest Tools - Block common scanner paths
-      sudo tee /etc/fail2ban/filter.d/scanner-paths.conf > /dev/null <<'FILTER_EOF'
-      [Definition]
-      failregex = <HOST> -.*"(GET|POST).*(\/nessus|\/nikto|\/acunetix|\/sqlmap|\/netsparker|\/w3af|\/arachni|\/appscan|\/metasploit|\/zap|\/burp|\/dirbuster|\/fuzz|\/owasp).*HTTP.*"
-      FILTER_EOF
-      sudo tee -a /etc/fail2ban/jail.local > /dev/null <<'JAIL_EOF'
-      [scanner-paths]
-      enabled = true
-      port    = http,https
-      filter  = scanner-paths
-      logpath = /var/log/nginx/yohrannes.com-access.log
-      maxretry = 1
-      bantime = 86400
-      JAIL_EOF
-
-      sudo systemctl restart fail2ban
-
-      EOF
 
 update-dns:
   stage: deploy-infra
   needs:
-    - configure-fail2ban
+    - deploy-containers
   script:
     - |
       curl --request PUT \
@@ -249,12 +251,15 @@ deploy-fail2ban:
   script:
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
-        sudo systemctl status fail2ban
-        while ! sudo systemctl is-active --quiet fail2ban; do
+        systemctl status fail2ban
+        while ! systemctl is-active --quiet fail2ban; do
           sleep 1
         done
-          sudo fail2ban-client status
-          sudo fail2ban-client reload
+          fail2ban-client status nginx-injection
+          fail2ban-client status
+          fail2ban-client start
+          fail2ban-client status
+          fail2ban-client reload
       "
 
 disable-ssh:
