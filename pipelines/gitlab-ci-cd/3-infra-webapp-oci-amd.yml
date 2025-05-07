@@ -136,7 +136,7 @@ run-containers:
 configure-fail2ban:
   stage: configure-infra
   needs:
-    - deploy-containers
+    - run-containers
   before_script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
