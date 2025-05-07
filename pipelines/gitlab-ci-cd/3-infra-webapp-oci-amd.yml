@@ -109,11 +109,34 @@ check-startup-script:
           " && break || echo 'Retrying connection...';
           sleep 5;
         done
-        
-configure-fail2ban:
-  stage: create-infra
+
+run-containers:
+  stage: configure-infra
   needs:
     - check-startup-script
+  before_script:
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+  script:
+    - |
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
+        rm -rf repos-git
+        mkdir -p repos-git
+        cd repos-git
+        git clone https://gitlab.com/yohrannes/website-portifolio.git
+        cd website-portifolio
+        git checkout infra-webapp-oci-amd
+        git pull origin infra-webapp-oci-amd
+        sudo docker build -qf ./build-app/Dockerfile --network host -t yohrannes/website-portifolio .
+        cd docker-compose
+        sudo docker compose up -d --quiet-pull
+      " > /dev/null
+        
+configure-fail2ban:
+  stage: configure-infra
+  needs:
+    - deploy-containers
   before_script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
@@ -197,54 +220,10 @@ configure-fail2ban:
         sudo systemctl status fail2ban
       "
 
-deploy-containers:
-  stage: deploy-infra
-  needs:
-    - configure-fail2ban
-  before_script:
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-  script:
-    - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
-        rm -rf repos-git
-        mkdir -p repos-git
-        cd repos-git
-        git clone https://gitlab.com/yohrannes/website-portifolio.git
-        cd website-portifolio
-        git checkout infra-webapp-oci-amd
-        git pull origin infra-webapp-oci-amd
-        sudo docker build -qf ./build-app/Dockerfile --network host -t yohrannes/website-portifolio .
-        cd docker-compose
-        sudo docker compose up -d --quiet-pull
-      " > /dev/null
-
-update-dns:
-  stage: deploy-infra
-  needs:
-    - deploy-containers
-  script:
-    - |
-      curl --request PUT \
-        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_YO_COM \
-        --header "Content-Type: application/json" \
-        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
-        --data '{
-          "comment": "Domain verification record",
-          "name": "yohrannes.com",
-          "proxied": true,
-          "settings": {},
-          "tags": [],
-          "ttl": 1,
-          "content": "'"$IP_OCI_AMD_WEBAPP"'",
-          "type": "A"
-        }' | jq '.'
-
 deploy-fail2ban:
   stage: deploy-infra
   needs:
-    - update-dns
+    - configure-fail2ban
   before_script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
@@ -262,6 +241,28 @@ deploy-fail2ban:
           sudo fail2ban-client status
           sudo fail2ban-client reload
       "
+
+update-dns:
+  stage: deploy-infra
+  needs:
+    - deploy-fail2ban
+  script:
+    - |
+      curl --request PUT \
+        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_YO_COM \
+        --header "Content-Type: application/json" \
+        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
+        --data '{
+          "comment": "Domain verification record",
+          "name": "yohrannes.com",
+          "proxied": true,
+          "settings": {},
+          "tags": [],
+          "ttl": 1,
+          "content": "'"$IP_OCI_AMD_WEBAPP"'",
+          "type": "A"
+        }' | jq '.'
+
 
 disable-ssh:
   stage: deploy-infra
