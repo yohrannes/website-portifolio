@@ -36,7 +36,7 @@ stages:
   - prepare
 
   - create-infra
-  - test-infra
+  - configure-infra
   - deploy-infra
   - build
   - test
