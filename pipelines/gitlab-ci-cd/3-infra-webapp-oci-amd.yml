@@ -70,7 +70,6 @@ create-oracle-instance:
         exit $exit_code
       "
 
-    #EXPORT INSTANCE IP 
     - INSTANCE_PUBLIC_IP=$(docker exec -w /app terraform-container terraform output -raw oci_aftier_micro_amd_pub_ip)
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
