@@ -1,6 +1,11 @@
 FROM cgr.dev/chainguard/nginx:latest-dev AS dev
 LABEL maintainer="yohrannes@gmail.com"
 
+COPY --chown=nginx:nginx ./nginx/nginx.conf /etc/nginx/nginx.conf
+COPY --chown=nginx:nginx ./nginx/conf.d/yohrannes.com.conf /etc/nginx/conf.d/yohrannes.com.conf
+
 FROM cgr.dev/chainguard/nginx:latest
+
+EXPOSE 80
 
 HEALTHCHECK --timeout=2s CMD curl -f localhost:80 || exit 1
