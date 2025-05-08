@@ -8,13 +8,13 @@ services:
       - portfolio-network
 
   nginx:
-    image: nginx
+    image: yohrannes/nginx
     container_name: nginx
     ports:
       - "80:8080"
     volumes:
-      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
-      - ./nginx/conf.d/yohrannes.com.conf:/etc/nginx/conf.d/yohrannes.com.conf:ro
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/conf.d/yohrannes.com.conf:/etc/nginx/conf.d/yohrannes.com.conf
       - /var/log/nginx:/var/log/nginx
     depends_on:
       - webport
