@@ -3,4 +3,6 @@ LABEL maintainer="yohrannes@gmail.com"
 
 FROM cgr.dev/chainguard/nginx:latest
 
+USER root
+
 HEALTHCHECK --timeout=2s CMD curl -f localhost:8080 || exit 1
