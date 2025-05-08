@@ -1,0 +1,71 @@
+create-oracle-instance:
+  stage: create-infra
+#  variables:
+#    AWS_DEFAULT_REGION: "us-east-1" #Check if that's really   necessary......
+  tags:
+    - oci-runner-arm
+  before_script:
+
+    #Autencicate with OCI
+    - mkdir -p $HOME/.oci
+    - echo "$OCI_CONFIG_BASE64" | base64 -d > $HOME/.oci/config
+    - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.oci/oci_api_key.pem
+    - chmod 700 $HOME/.oci
+    - chmod 600 $HOME/.oci/oci_api_key.pem
+    - chmod 600 $HOME/.oci/config
+    - export TF_VAR_compartment_id=$OCI_COMPARTMENT_OCID
+    - export TF_VAR_region=$OCI_REGION
+
+    #Autencicate with AWS
+    - mkdir -p $HOME/.aws
+    - echo "$AWS_CONFIG_BASE64" | base64 -d > $HOME/.aws/config
+    - echo "$AWS_CREDENTIALS_BASE64" | base64 -d > $HOME/.aws/credentials
+    - chmod 700 $HOME/.aws
+    - chmod 600 $HOME/.aws/credentials
+    - chmod 600 $HOME/.aws/config
+
+    #Autencicate with GCP
+    - mkdir -p $HOME/.gcp
+    - echo "$GOOGLE_APPLICATION_CREDENTIALS" | base64 -d > $HOME/.gcp/credentials.json
+    - chmod 775 $HOME/.gcp
+    - chmod 664 $HOME/.gcp/credentials.json
+
+    # Prepare SSH files to enable ssh conection with instance
+    - sudo apt-get install -yq openssh-client openssh-server curl
+    - mkdir -p $HOME/.ssh
+    - (echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa 2>/dev/null)
+    - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa.pub 2>/dev/null)
+    - chmod 644 $HOME/.ssh/id_rsa.pub
+
+    # Build terraform container for host architecture (auto-detected)
+    - |
+      ARCH=$(uname -m)
+      case $ARCH in
+        "x86_64") PLATFORM="linux/amd64" ;;
+        "aarch64") PLATFORM="linux/arm64" ;;
+        *) echo "Arch not suported: $ARCH"; exit 1 ;;
+      esac
+
+      docker buildx build  -qf ./build-tf-multi-arch/Dockerfile \
+        --platform $PLATFORM \
+        -t yohrannes/terraform:latest \
+        --build-arg PRODUCT=terraform \
+        --build-arg VERSION=1.11.0 \
+        --load .
+
+    # Run terraform-container 
+    - |
+      docker run -d --name terraform-container yohrannes/terraform:latest sleep infinity
+    - docker cp $CI_PROJECT_DIR/terraform/prod terraform-container:/app > /dev/null 2>&1
+    - docker cp $HOME/.oci terraform-container:/root/.oci > /dev/null 2>&1
+    - docker cp $HOME/.aws terraform-container:/root/.aws > /dev/null 2>&1
+    - docker exec -w /app terraform-container mkdir /root/.ssh
+    - docker cp $HOME/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
+
+  script:
+    - |
+      docker exec -w /app terraform-container sh -c "
+        apk add --no-cache git --quiet
+        TF_IN_AUTOMATION=true
+        terraform init -upgrade -reconfigure
+      "
