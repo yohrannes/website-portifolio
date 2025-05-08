@@ -154,7 +154,7 @@ configure-fail2ban:
         sudo touch /etc/fail2ban/jail.local
       fi
 
-      # NGINX Injection - 404
+      # NGINX Injection 404
       sudo tee /etc/fail2ban/filter.d/nginx-injection-404.conf > /dev/null <<'FILTER_EOF'
       [Definition]
       failregex = ^<HOST> -.*"(GET|POST).*HTTP.*" 404
