@@ -21,7 +21,7 @@ function install-docker-engine () {
     sudo systemctl enable docker
     sudo systemctl enable containerd
     sudo systemctl start docker
-    docker buildx create --use --name multiarch-builder
+#    docker buildx create --use --name multiarch-builder
 }
 
 function allow-ports () {
