@@ -25,6 +25,8 @@ services:
       - webport
     networks:
       - portifolio-network
+    mem_limit: 300m
+    cpus: '0.5'
 
   grafana:
     image: grafana/grafana
@@ -38,7 +40,7 @@ services:
     environment:
       - GF_SERVER_ROOT_URL=http://localhost:3000
     mem_limit: 512m
-    cpus: 1
+    cpus: '0.5'
 
   prometheus:
     image: prom/prometheus
@@ -50,7 +52,25 @@ services:
     volumes:
       - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml
     mem_limit: 512m
-    cpus: 1
+    cpus: '1'
+
+  cadvisor:
+    image: gcr.io/cadvisor/cadvisor:v0.38.4
+    container_name: cadvisor
+    ports:
+      - "8081:8080"
+    volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
+      - /dev/kmsg:/dev/kmsg
+    restart: always
+    networks:
+      - portifolio-network
+    mem_limit: 256m
+    cpus: '0.5'
 
 networks:
   portifolio-network:
