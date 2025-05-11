@@ -4,4 +4,8 @@ global:
 scrape_configs:
   - job_name: 'webport'
     static_configs:
-      - targets: ['webport']
+      - targets: ['webport:5000']
+
+  - job_name: 'cadvisor'
+    static_configs:
+      - targets: ['cadvisor:8080']
