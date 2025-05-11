@@ -38,6 +38,14 @@ function install-usefull-packages () {
     sudo usermod -aG root $USER
 }
 
+function allow-swap-memory () {
+    sudo fallocate -l 1G /swapfile
+    sudo chmod 600 /swapfile
+    sudo mkswap /swapfile
+    sudo swapon /swapfile
+    echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+}
+
 if [[ $1 == "install-docker" ]]; then
     install-docker-engine
 elif [[ $1 == "allow-ports" ]]; then
@@ -46,6 +54,7 @@ else
     install-docker-engine
     allow-ports
     install-usefull-packages
+    allow-swap-memory
     # Leave this command bellow by least (used for pipeline).
     echo "startup-script-finished"
 fi
