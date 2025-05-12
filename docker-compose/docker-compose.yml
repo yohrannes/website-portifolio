@@ -48,14 +48,26 @@ services:
     volumes:
       - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
+    command:
+      - "--storage.tsdb.retention.time=7d"
     mem_limit: 512m
     cpus: '1'
 
   cadvisor:
-    image: gcr.io/cadvisor/cadvisor:v0.38.4
+    image: gcr.io/cadvisor/cadvisor:v0.52.0
     container_name: cadvisor
+    ports:
+      - "8081:8080"
     volumes:
+      - /:/rootfs:ro
+      - /var/run:/var/run:ro
+      - /sys:/sys:ro
+      - /var/lib/docker/:/var/lib/docker:ro
       - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/machine-id:/etc/machine-id:ro
+      - /dev/kmsg:/dev/kmsg:ro
+    security_opt:
+      - apparmor=unconfined
     restart: always
     networks:
       - portifolio-network
