@@ -16,6 +16,7 @@ ENV PYTHONUNBUFFERED=1
 
 COPY --from=dev /app/venv /app/venv
 COPY app.py .
+COPY healthcheck.py .
 COPY templates/ templates/
 COPY static/ static/
 COPY fonts/ fonts/
@@ -23,4 +24,4 @@ COPY fonts/ fonts/
 
 #ENTRYPOINT ["python3", "app.py"]
 ENTRYPOINT ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
-HEALTHCHECK --timeout=2s CMD curl -f localhost:5000 || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD ["python3", "/app/healthcheck.py"]
