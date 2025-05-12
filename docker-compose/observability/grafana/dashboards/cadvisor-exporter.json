@@ -474,7 +474,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 10,
+        "h": 13,
         "w": 12,
         "x": 0,
         "y": 42
@@ -578,7 +578,7 @@
         "overrides": []
       },
       "gridPos": {
-        "h": 10,
+        "h": 13,
         "w": 12,
         "x": 12,
         "y": 42
@@ -626,7 +626,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 52
+        "y": 55
       },
       "id": 19,
       "panels": [
@@ -831,13 +831,13 @@
     ]
   },
   "time": {
-    "from": "now-12h",
+    "from": "now-1h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "",
   "title": "Cadvisor exporter",
   "uid": "pMEd7m0Mz",
-  "version": 15,
+  "version": 17,
   "weekStart": ""
 }

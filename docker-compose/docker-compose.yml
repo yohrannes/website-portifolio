@@ -49,6 +49,8 @@ services:
       - ./observability/prometheus.yml:/etc/prometheus/prometheus.yml
       - prometheus-data:/prometheus
     command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+      - "--storage.tsdb.path=/prometheus"
       - "--storage.tsdb.retention.time=7d"
     mem_limit: 512m
     cpus: '1'
