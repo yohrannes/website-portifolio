@@ -26,7 +26,7 @@ dkhub-img-sec-dkscout:
     - sh install-scout.sh
   script:
     - |
-      docker scout cves --format gitlab -o /tmp/dk-scout-output.json $IMAGE_NAME:$IMAGE_TAG
+      sudo docker scout cves --format gitlab -o /tmp/dk-scout-output.json $IMAGE_NAME:$IMAGE_TAG
       critical_vuln_count=$(cat /tmp/dk-scout-output.json | jq .vulnerabilities | grep -e "\"severity\":\ \"Critical\"," | wc -l)
       high_vuln_count=$(cat /tmp/dk-scout-output.json | jq .vulnerabilities | grep -e "\"severity\":\ \"High\"," | wc -l)
       medium_vuln_count=$(cat /tmp/dk-scout-output.json | jq .vulnerabilities | grep -e "\"severity\":\ \"Medium\"," | wc -l)
