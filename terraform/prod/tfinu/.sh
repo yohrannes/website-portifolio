@@ -10,7 +10,9 @@
 #  -w /app \
 #  --entrypoint "" hashicorp/terraform:latest sh -c \
 #  "source /root/.shrc && terraform init -reconfigure && apk add oci-cli --quiet && ENV=/root/.shrc sh"
-docker build -t tf-container . -f tfinu/Dockerfile 2>/dev/null
+
+docker build -t tf-container . -f tfinu/Dockerfile
+
 docker run -it --rm\
   -v ~/.oci:/root/.oci \
   -v ~/.aws:/root/.aws \
@@ -18,4 +20,4 @@ docker run -it --rm\
   -v ~/.gcp:/root/.gcp \
   -v ~/.kube/config:/root/.kube/config \
   -v $PWD:/app \
-  tf-container 2>/dev/null
+  tf-container
