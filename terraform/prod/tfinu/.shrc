@@ -37,4 +37,5 @@ alias tfpdey='terraform plan --destroy -auto-approve'
 
 alias k='kubectl'
 
-alias dssh='terraform plan -detailed-exitcode -target=module.oci_aftier_micro_amd.oci_core_security_list.public-security-list -out=plan -var="disable_ssh_port=$1"'
+alias disable-ssh='./modules/oci_aftier_micro_amd/scripts/disable_ssh.sh true'
+alias enable-ssh='./modules/oci_aftier_micro_amd/scripts/disable_ssh.sh false'
