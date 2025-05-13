@@ -6,7 +6,7 @@ RUN python -m venv venv
 ENV PATH="/app/venv/bin":$PATH
 COPY requirements.txt .
 RUN pip install -qr requirements.txt --no-cache
-#RUN pip install --upgrade --upgrade-strategy <JUST_PACKAGE_NAMES> <JUST_PACKAGE_NAMES> <...> --no-cache
+#RUN pip install --upgrade --upgrade-strategy <JUST_PACKAGE_NAMES> <JUST_PACKAGE_NAMES> <..> --no-cache
 
 FROM cgr.dev/chainguard/python:latest
 
