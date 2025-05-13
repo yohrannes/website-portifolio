@@ -66,11 +66,7 @@ deploy-dkcmpose:
         git clone https://gitlab.com/yohrannes/website-portifolio.git
         cd website-portifolio
         git checkout main
-        
         git pull origin main
-        sudo docker pull yohrannes/website-portifolio:latest
-        sudo docker pull yohrannes/nginx:latest
-        
         cd docker-compose
         sudo docker compose down
       "
@@ -79,4 +75,3 @@ deploy-dkcmpose:
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
         sudo docker compose -f repos-git/website-portifolio/docker-compose/docker-compose.yml up -d
       "
-#        sudo docker build -qf ./build-app/Dockerfile --network host -t yohrannes/website-portifolio:latest .
