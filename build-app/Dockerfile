@@ -23,5 +23,5 @@ COPY fonts/ fonts/
 #ENV FLASK_ENV=development
 
 #ENTRYPOINT ["python3", "app.py"]
-ENTRYPOINT ["gunicorn", "--bind", "0.0.0.0:5000", "app:app"]
+ENTRYPOINT ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "2", "--threads", "4", "app:app"]
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD ["python3", "/app/healthcheck.py"]
