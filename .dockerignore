@@ -1,8 +1,0 @@
-terraform
-venv
-kubernetes
-nginx-conf
-.dist
-gitlab-ci-cd
-docker-compose
-.gitlab-ci.yml
