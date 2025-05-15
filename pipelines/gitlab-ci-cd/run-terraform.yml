@@ -56,7 +56,7 @@ create-oracle-instance:
     # Run terraform-container 
     - |
       docker run -d --name terraform-container yohrannes/terraform:latest sleep infinity
-    - docker cp $CI_PROJECT_DIR/terraform/prod terraform-container:/app > /dev/null 2>&1
+    - docker cp $CI_PROJECT_DIR/iac/terraform/prod terraform-container:/app > /dev/null 2>&1
     - docker cp $HOME/.oci terraform-container:/root/.oci > /dev/null 2>&1
     - docker cp $HOME/.aws terraform-container:/root/.aws > /dev/null 2>&1
     - docker exec -w /app terraform-container mkdir /root/.ssh
