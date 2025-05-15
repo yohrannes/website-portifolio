@@ -18,6 +18,21 @@ services:
     mem_limit: 300m
     cpus: '1'
 
+  nginx-exporter:
+    image: nginx/nginx-prometheus-exporter:latest
+    container_name: nginx-exporter
+    ports:
+      - "9113:9113"
+    depends_on:
+      - nginx
+    environment:
+      - NGINX_HOST=http://nginx:8080
+      - NGINX_PORT=8080
+    networks:
+      - portifolio-network
+    mem_limit: 100m
+    cpus: "0.2"
+
   webport:
     build:
       context: ..
