@@ -50,7 +50,7 @@ create-oracle-instance:
     # Run terraform-container 
     - |
       docker run -d --name terraform-container yohrannes/terraform:latest sleep infinity
-    - docker cp $CI_PROJECT_DIR/iac/terraform/prod terraform-container:/app > /dev/null 2>&1
+    - docker cp $CI_PROJECT_DIR/iac/iac/terraform/prod terraform-container:/app > /dev/null 2>&1
     - docker cp $HOME/.oci terraform-container:/root/.oci > /dev/null 2>&1
     - docker cp $HOME/.aws terraform-container:/root/.aws > /dev/null 2>&1
     - docker exec -w /app terraform-container mkdir /root/.ssh
@@ -162,7 +162,7 @@ configure-fail2ban:
       port    = http,https
       filter  = injection
       logpath = /var/log/nginx/yohrannes.com-access.log
-      /var/log/nginx/grafana.yohrannes.com-access.log
+                /var/log/nginx/grafana.yohrannes.com-access.log
       maxretry = 5
       bantime = 3600
       ignoremissing = true
@@ -179,7 +179,7 @@ configure-fail2ban:
       port    = http,https
       filter  = wp-injection
       logpath = /var/log/nginx/yohrannes.com-access.log
-      /var/log/nginx/grafana.yohrannes.com-access.log
+                /var/log/nginx/grafana.yohrannes.com-access.log
       maxretry = 5
       bantime = 3600
       ignoremissing = true
@@ -196,7 +196,7 @@ configure-fail2ban:
       port    = http,https
       filter  = scanner-useragents
       logpath = /var/log/nginx/yohrannes.com-access.log
-      /var/log/nginx/grafana.yohrannes.com-access.log
+                /var/log/nginx/grafana.yohrannes.com-access.log
       maxretry = 1
       bantime = 86400
       ignoremissing = true
@@ -213,7 +213,7 @@ configure-fail2ban:
       port    = http,https
       filter  = scanner-paths
       logpath = /var/log/nginx/yohrannes.com-access.log
-      /var/log/nginx/grafana.yohrannes.com-access.log
+                /var/log/nginx/grafana.yohrannes.com-access.log
       maxretry = 1
       bantime = 86400
       ignoremissing = true

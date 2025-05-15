@@ -64,9 +64,9 @@ create-oci-gl-runner-instance:
     - |
       docker run -d --name terraform-container \
       --entrypoint "" hashicorp/terraform:latest sleep 3600
-    - docker cp $CI_PROJECT_DIR/terraform/prod terraform-container:/app > /dev/null 2>&1
-#    - ls -lahtr $CI_PROJECT_DIR/terraform/prod
-    - echo $CI_PROJECT_DIR/terraform/prod
+    - docker cp $CI_PROJECT_DIR/iac/terraform/prod terraform-container:/app > /dev/null 2>&1
+#    - ls -lahtr $CI_PROJECT_DIR/iac/terraform/prod
+    - echo $CI_PROJECT_DIR/iac/terraform/prod
     - docker cp /root/.oci terraform-container:/root/.oci > /dev/null 2>&1
     - docker cp /root/.aws terraform-container:/root/.aws > /dev/null 2>&1
     - docker exec -w /app terraform-container mkdir /root/.ssh
