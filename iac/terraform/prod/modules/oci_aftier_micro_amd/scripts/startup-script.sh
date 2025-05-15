@@ -46,6 +46,12 @@ function allow-swap-memory () {
     echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 }
 
+function set-timezone () {
+    sudo timedatectl set-timezone America/Sao_Paulo
+    sudo timedatectl set-ntp true
+    sudo timedatectl    
+}
+
 if [[ $1 == "install-docker" ]]; then
     install-docker-engine
 elif [[ $1 == "allow-ports" ]]; then
@@ -55,6 +61,7 @@ else
     allow-ports
     install-usefull-packages
     allow-swap-memory
+    set-timezone
     # Leave this command bellow by least (used for pipeline).
     echo "startup-script-finished"
 fi

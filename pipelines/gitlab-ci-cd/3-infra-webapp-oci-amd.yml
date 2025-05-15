@@ -160,7 +160,7 @@ configure-fail2ban:
       [injection]
       enabled = true
       port    = http,https
-      filter  = nginx-injection
+      filter  = injection
       logpath = /var/log/nginx/yohrannes.com-access.log
                 /var/log/nginx/grafana.yohrannes.com-access.log
       maxretry = 5
