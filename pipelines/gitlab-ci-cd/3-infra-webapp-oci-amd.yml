@@ -265,7 +265,7 @@ update-dns:
           "tags": [],
           "ttl": 1,
           "content": "yohrannes.com",
-          "type": "CNAME
+          "type": "CNAME"
         }' | jq '.'
 
 
