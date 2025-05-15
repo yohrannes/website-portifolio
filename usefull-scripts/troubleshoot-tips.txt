@@ -1,0 +1,2 @@
+docker exec -it nginx apk add curl
+docker exec -it nginx curl -H Host: yohrannes.com http://localhost
