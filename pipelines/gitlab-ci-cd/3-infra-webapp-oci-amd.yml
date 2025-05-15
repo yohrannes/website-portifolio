@@ -162,7 +162,7 @@ configure-fail2ban:
       port    = http,https
       filter  = injection
       logpath = /var/log/nginx/yohrannes.com-access.log
-                /var/log/nginx/grafana.yohrannes.com-access.log
+      /var/log/nginx/grafana.yohrannes.com-access.log
       maxretry = 5
       bantime = 3600
       ignoremissing = true
@@ -179,7 +179,7 @@ configure-fail2ban:
       port    = http,https
       filter  = wp-injection
       logpath = /var/log/nginx/yohrannes.com-access.log
-                /var/log/nginx/grafana.yohrannes.com-access.log
+      /var/log/nginx/grafana.yohrannes.com-access.log
       maxretry = 5
       bantime = 3600
       ignoremissing = true
@@ -196,7 +196,7 @@ configure-fail2ban:
       port    = http,https
       filter  = scanner-useragents
       logpath = /var/log/nginx/yohrannes.com-access.log
-                /var/log/nginx/grafana.yohrannes.com-access.log
+      /var/log/nginx/grafana.yohrannes.com-access.log
       maxretry = 1
       bantime = 86400
       ignoremissing = true
@@ -213,7 +213,7 @@ configure-fail2ban:
       port    = http,https
       filter  = scanner-paths
       logpath = /var/log/nginx/yohrannes.com-access.log
-                /var/log/nginx/grafana.yohrannes.com-access.log
+      /var/log/nginx/grafana.yohrannes.com-access.log
       maxretry = 1
       bantime = 86400
       ignoremissing = true
