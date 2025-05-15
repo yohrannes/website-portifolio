@@ -148,36 +148,19 @@ configure-fail2ban:
       sudo mkdir -p /var/log/nginx
       sudo chmod -R 755 /var/log/nginx
       sudo mkdir -p /etc/fail2ban/filter.d
-      sudo chmod -R 755 /etc/fail2ban/filter.d
 
       # Injection
-      sudo tee /etc/fail2ban/filter.d/injection.conf > /dev/null <<'FILTER_EOF'
+      sudo tee /etc/fail2ban/filter.d/http-injection.conf > /dev/null <<'FILTER_EOF'
       [Definition]
       failregex = ^<HOST> -.*"(GET|POST).*HTTP.*" 403
                   ^<HOST> -.*"(GET|POST).*HTTP.*" 404
+                  ^<HOST> -.*"(GET|POST).*wp*.*HTTP.*" 404
       FILTER_EOF
       sudo tee /etc/fail2ban/jail.local > /dev/null <<'JAIL_EOF'
-      [injection]
+      [http-injection]
       enabled = true
       port    = http,https
-      filter  = injection
-      logpath = /var/log/nginx/yohrannes.com-access.log
-                /var/log/nginx/grafana.yohrannes.com-access.log
-      maxretry = 5
-      bantime = 3600
-      ignoremissing = true
-      JAIL_EOF
-
-      # WordPress Injection
-      sudo tee /etc/fail2ban/filter.d/wp-injection.conf > /dev/null <<'FILTER_EOF'
-      [Definition]
-      failregex = ^<HOST> -.*"(GET|POST).*wp*.*HTTP.*" 404
-      FILTER_EOF
-      sudo tee -a /etc/fail2ban/jail.local > /dev/null <<'JAIL_EOF'
-      [wp-injection]
-      enabled = true
-      port    = http,https
-      filter  = wp-injection
+      filter  = http-injection
       logpath = /var/log/nginx/yohrannes.com-access.log
                 /var/log/nginx/grafana.yohrannes.com-access.log
       maxretry = 5
@@ -219,6 +202,9 @@ configure-fail2ban:
       ignoremissing = true
       JAIL_EOF
       EOF
+
+      sudo chmod -R 755 /etc/fail2ban/filter.d
+
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
         sudo systemctl restart fail2ban
