@@ -148,6 +148,7 @@ configure-fail2ban:
       sudo mkdir -p /var/log/nginx
       sudo chmod -R 755 /var/log/nginx
       sudo mkdir -p /etc/fail2ban/filter.d
+      sudo chmod -R 755 /etc/fail2ban/filter.d
 
       # Injection
       sudo tee /etc/fail2ban/filter.d/http-injection.conf > /dev/null <<'FILTER_EOF'
@@ -165,7 +166,6 @@ configure-fail2ban:
                 /var/log/nginx/grafana.yohrannes.com-access.log
       maxretry = 5
       bantime = 3600
-      ignoremissing = true
       JAIL_EOF
 
       # Nessus/Generic Pentest Tools - Block common scanner user-agents
@@ -182,7 +182,6 @@ configure-fail2ban:
                 /var/log/nginx/grafana.yohrannes.com-access.log
       maxretry = 1
       bantime = 86400
-      ignoremissing = true
       JAIL_EOF
 
       # Nessus/Generic Pentest Tools - Block common scanner paths
@@ -199,11 +198,9 @@ configure-fail2ban:
                 /var/log/nginx/grafana.yohrannes.com-access.log
       maxretry = 1
       bantime = 86400
-      ignoremissing = true
       JAIL_EOF
       EOF
 
-      sudo chmod -R 755 /etc/fail2ban/filter.d
 
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
