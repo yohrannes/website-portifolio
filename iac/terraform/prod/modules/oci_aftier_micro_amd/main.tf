@@ -78,16 +78,16 @@ resource "oci_core_security_list" "public-security-list" {
     }
   }
 
-  ingress_security_rules {
-    stateless   = false
-    source      = "0.0.0.0/0"
-    source_type = "CIDR_BLOCK"
-    protocol    = "6"
-    tcp_options {
-      min = 443
-      max = 443
-    }
-  }
+#  ingress_security_rules {
+#    stateless   = false
+#    source      = "0.0.0.0/0"
+#    source_type = "CIDR_BLOCK"
+#    protocol    = "6"
+#    tcp_options {
+#      min = 443
+#      max = 443
+#   }
+#  }
 
 }
 
