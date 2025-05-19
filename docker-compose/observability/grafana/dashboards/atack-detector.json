@@ -253,7 +253,10 @@
   ],
   "refresh": "5s",
   "schemaVersion": 41,
-  "tags": [],
+  "tags": [
+    "flask",
+    "prometheus"
+  ],
   "templating": {
     "list": []
   },
@@ -263,7 +266,7 @@
   },
   "timepicker": {},
   "timezone": "browser",
-  "title": "Atack Detector",
+  "title": "Atack Detector - Flask exporter",
   "uid": "d1600453-7d81-406b-9d11-db9ea1809fe0",
   "version": 3,
   "weekStart": ""
