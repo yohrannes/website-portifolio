@@ -21,10 +21,16 @@ RUN git clone https://github.com/vozlt/nginx-module-vts.git  /tmp/nginx-module-v
     && ./configure --prefix=/etc/nginx --add-module=/tmp/nginx-module-vts \
     && make && make install
 
-FROM alpine:3.19
+#FROM alpine:3.19
 LABEL maintainer="yohrannes@gmail.com"
 RUN apk add --no-cache pcre zlib openssl
-COPY --from=build /etc/nginx /etc/nginx
+
+
+#COPY --from=build /etc/nginx /etc/nginx
+
+###COMMENT TO RUN IN PRODUCTION
+COPY ./conf.d/vts.conf /etc/nginx/conf.d/vts.conf
+
 COPY nginx.conf /etc/nginx/conf/nginx.conf
 ENV PATH="/etc/nginx/sbin:$PATH"
 USER root
