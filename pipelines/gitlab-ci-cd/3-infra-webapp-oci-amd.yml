@@ -156,6 +156,8 @@ configure-fail2ban:
       failregex = ^<HOST> -.*"(GET|POST).*HTTP.*" 403
                   ^<HOST> -.*"(GET|POST).*HTTP.*" 404
                   ^<HOST> -.*"(GET|POST).*wp*.*HTTP.*" 404
+                  ^<HOST> -.*"(GET|POST).*(/users|/help/badges/|/catalog|/subscriptions|/users/sign_up|/yohrannes/accesshub|/yohrannes/htmlcss-projeto-login|/contact-us|/login|/xmlrpc\.php|/sitemap\.xml\.gz|/auto-deploy-log).*HTTP.*" 404
+      ignoreregex =
       FILTER_EOF
       sudo tee /etc/fail2ban/jail.local > /dev/null <<'JAIL_EOF'
       [http-injection]
@@ -165,7 +167,8 @@ configure-fail2ban:
       logpath = /var/log/nginx/yohrannes.com-access.log
                 /var/log/nginx/grafana.yohrannes.com-access.log
       maxretry = 5
-      bantime = 3600
+      bantime = 86400
+      findtime = 300
       JAIL_EOF
 
       # Nessus/Generic Pentest Tools - Block common scanner user-agents
