@@ -148,6 +148,8 @@ configure-fail2ban:
       sudo mkdir -p /etc/fail2ban/filter.d
       sudo chmod -R 755 /etc/fail2ban/filter.d
 
+      echo "$FAILREGEXB64" | base64 --decode
+
       # Injection
       sudo tee /etc/fail2ban/filter.d/http-injection.conf > /dev/null <<FILTER_EOF
       [Definition]
