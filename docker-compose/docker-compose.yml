@@ -1,5 +1,24 @@
-
+# task RECONFIGURE FAIL2BAN TO DOCKER IMAGE https://hub.docker.com/r/linuxserver/fail2ban
 services:
+  fail2ban:
+    image: linuxserver/fail2ban
+    container_name: fail2ban
+    cap_add:
+      - NET_ADMIN
+      - NET_RAW
+    #network_mode: host
+    networks:
+      - portifolio-network
+    volumes:
+      - ./fail2ban/jail.local:/etc/fail2ban/jail.local
+      - ./fail2ban/filter.d:/etc/fail2ban/filter.d
+      - /var/log:/var/log
+      - /var/run/fail2ban:/var/run/fail2ban
+      - /etc/localtime:/etc/localtime:ro
+    environment:
+      - PUID=0
+      - PGID=0
+    restart: unless-stopped
   nginx:
     build:
       context: ./nginx
@@ -16,8 +35,15 @@ services:
       - webport
     networks:
       - portifolio-network
-    mem_limit: 300m
-    cpus: '1'
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 300M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
 
   nginx-exporter:
     image: sophos/nginx-vts-exporter
@@ -28,8 +54,15 @@ services:
       - nginx
     networks:
       - portifolio-network
-    mem_limit: 100m
-    cpus: "0.2"
+    deploy:
+      resources:
+        limits:
+          cpus: '0.2'
+          memory: 100m
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
 
   webport:
     build:
@@ -38,6 +71,15 @@ services:
     container_name: webport
     networks:
       - portifolio-network
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 300M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
 
   grafana:
     image: grafana/grafana
@@ -48,8 +90,15 @@ services:
       - portifolio-network
     environment:
       - GF_SERVER_ROOT_URL=http://localhost:3000
-    mem_limit: 512m
-    cpus: '1'
+    deploy:
+      resources:
+        limits:
+          cpus: '1'
+          memory: 512m
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
 
   prometheus:
     image: prom/prometheus:v3.3.1
