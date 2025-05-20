@@ -142,18 +142,19 @@ configure-fail2ban:
     - chmod 600 ~/.ssh/id_rsa
   script:
     - |
+      scp -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa $FAILREGEX ubuntu@$IP_OCI_AMD_WEBAPP:/etc/fail2ban/filter.d/http-injection.conf
       ssh -T -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP > /dev/null <<EOF
       sudo mkdir -p /var/log/nginx
       sudo chmod -R 755 /var/log/nginx
       sudo mkdir -p /etc/fail2ban/filter.d
       sudo chmod -R 755 /etc/fail2ban/filter.d
 
-      echo "$FAILREGEXB64" | base64 --decode
+      export FAILREGEX_DECODED=$(echo "$FAILREGEXB64" | base64 --decode)
 
       # Injection
       sudo tee /etc/fail2ban/filter.d/http-injection.conf > /dev/null <<FILTER_EOF
       [Definition]
-      failregex = $(echo "$FAILREGEXB64" | base64 --decode))
+      failregex = $FAILREGEX_DECODED
                   ^<HOST> -.*"(GET|POST).*wp*.*HTTP.*" 404
                   ^<HOST> -.*"(GET|POST).*HTTP.*" 403
       ignoreregex =
