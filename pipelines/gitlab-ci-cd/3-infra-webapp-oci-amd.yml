@@ -167,6 +167,7 @@ configure-fail2ban:
       bantime = 86400
       findtime = 300
       JAIL_EOF
+      EOF
 
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
