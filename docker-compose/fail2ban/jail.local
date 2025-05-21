@@ -3,7 +3,7 @@ enabled = true
 port    = http,https
 filter  = scanner-useragents
 logpath = /var/log/nginx/yohrannes.com-access.log
-          /var/log/nginx/grafana.yohrannes.com-access.log
+logpath = /var/log/nginx/grafana.yohrannes.com-access.log
 maxretry = 1
 bantime = 86400
 action = iptables-multiport[name=ScannerUA, port="http,https", protocol=tcp]
@@ -13,7 +13,7 @@ enabled = true
 port    = http,https
 filter  = scanner-paths
 logpath = /var/log/nginx/yohrannes.com-access.log
-          /var/log/nginx/grafana.yohrannes.com-access.log
+logpath = /var/log/nginx/grafana.yohrannes.com-access.log
 maxretry = 1
 bantime = 86400
 action = iptables-multiport[name=ScannerPath, port="http,https", protocol=tcp]

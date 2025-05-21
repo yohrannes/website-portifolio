@@ -6,9 +6,9 @@ services:
     cap_add:
       - NET_ADMIN
       - NET_RAW
-    #network_mode: host
-    networks:
-      - portifolio-network
+    network_mode: host
+    #networks:
+    #  - portifolio-network
     volumes:
       - ./fail2ban/jail.local:/etc/fail2ban/jail.local
       - ./fail2ban/filter.d:/etc/fail2ban/filter.d
@@ -19,6 +19,15 @@ services:
       - PUID=0
       - PGID=0
     restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 200M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
   nginx:
     build:
       context: ./nginx
