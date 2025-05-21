@@ -126,79 +126,20 @@ run-containers:
         cd website-portifolio
         git checkout infra-webapp-oci-amd
         git pull origin infra-webapp-oci-amd
+
+        sudo mkdir -p /var/log/nginx
+        sudo chmod -R 755 /var/log/nginx
+        sudo mkdir -p /etc/fail2ban/filter.d
+        sudo chmod -R 755 /etc/fail2ban/filter.d
+
+        export FAILREGEX_DECODED=$(echo "$FAILREGEXB64" | base64 --decode)
+
         cd docker-compose
         sudo docker compose down
         sudo docker system prune -a -f
         sudo docker compose up -d --quiet-pull
       " > /dev/null
         
-configure-fail2ban:
-  stage: configure-infra
-  needs:
-    - run-containers
-  before_script:
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-  script:
-    - |
-      ssh -T -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP > /dev/null <<EOF
-      sudo mkdir -p /var/log/nginx
-      sudo chmod -R 755 /var/log/nginx
-      sudo mkdir -p /etc/fail2ban/filter.d
-      sudo chmod -R 755 /etc/fail2ban/filter.d
-
-      export FAILREGEX_DECODED=$(echo "$FAILREGEXB64" | base64 --decode)
-
-      # Injection
-      sudo tee /etc/fail2ban/filter.d/http-injection.conf > /dev/null <<FILTER_EOF
-      [Definition]
-      failregex = $FAILREGEX_DECODED
-                  ^<HOST> -.*"(GET|POST).*wp*.*HTTP.*" 404
-                  ^<HOST> -.*"(GET|POST).*HTTP.*" 403
-      ignoreregex =
-      FILTER_EOF
-      sudo tee /etc/fail2ban/jail.local > /dev/null <<'JAIL_EOF'
-      [http-injection]
-      enabled = true
-      port    = http,https
-      filter  = http-injection
-      logpath = /var/log/nginx/yohrannes.com-access.log
-                /var/log/nginx/grafana.yohrannes.com-access.log
-      maxretry = 5
-      bantime = 86400
-      findtime = 300
-      JAIL_EOF
-      EOF
-
-    - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
-        sudo systemctl restart fail2ban
-        sudo systemctl enable fail2ban
-        sudo systemctl status fail2ban
-      "
-
-deploy-fail2ban:
-  stage: deploy-infra
-  needs:
-    - configure-fail2ban
-  before_script:
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-  script:
-    - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
-        sudo systemctl status fail2ban
-        while ! sudo systemctl is-active --quiet fail2ban; do
-          sleep 1
-        done
-          sudo fail2ban-client status nginx-injection
-          sudo fail2ban-client status
-          sudo fail2ban-client start
-          sudo fail2ban-client status
-          sudo fail2ban-client reload
-      "
 
 update-dns:
   stage: deploy-infra
