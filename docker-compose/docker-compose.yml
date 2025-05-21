@@ -19,6 +19,7 @@ services:
     environment:
       - PUID=0
       - PGID=0
+      - FAILREGEX_DECODED=${FAILREGEX_DECODED}
     restart: unless-stopped
     deploy:
       resources:
