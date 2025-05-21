@@ -144,7 +144,7 @@ run-containers:
 update-dns:
   stage: deploy-infra
   needs:
-    - deploy-fail2ban
+    - run-containers
   script:
     - |
       curl --request PUT \
@@ -184,7 +184,7 @@ disable-ssh:
   tags:
     - oci-runner-arm
   needs:
-    - deploy-fail2ban
+    - run-containers
   script:
     - |
       docker exec -w /app terraform-container sh -c "
