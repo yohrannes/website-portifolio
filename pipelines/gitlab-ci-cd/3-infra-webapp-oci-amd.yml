@@ -132,7 +132,8 @@ run-containers:
         sudo mkdir -p /etc/fail2ban/filter.d
         sudo chmod -R 755 /etc/fail2ban/filter.d
 
-        export FAILREGEX_DECODED="$(echo "$FAILREGEXB64" | base64 --decode)"
+        sudo export FAILREGEX_DECODED="$(echo "$FAILREGEXB64" | base64 --decode)" docker compose up -d --quiet-pull
+        sudo FAILREGEX_DECODED="$(echo "$FAILREGEXB64" | base64 --decode)" docker compose up -d --quiet-pull
 
         cd docker-compose
         sudo docker compose down
