@@ -136,9 +136,7 @@ run-containers:
         sudo FAILREGEX_DECODED="$(echo "$FAILREGEXB64" | base64 --decode)" docker compose up -d --quiet-pull
 
         cd docker-compose
-        sudo docker compose down
-        sudo docker system prune -a -f
-        sudo docker compose up -d --quiet-pull
+        sudo docker compose up -d --quiet-pull --build
       " > /dev/null
         
 
