@@ -128,6 +128,8 @@ run-containers:
         git fetch origin infra-webapp-oci-amd
         git pull origin infra-webapp-oci-amd
 
+
+
         export FAILREGEXB64=\"${FAILREGEXB64}\"
         export FAILREGEX_DECODED=\"\$(echo \$FAILREGEXB64 | base64 --decode)\"
 
