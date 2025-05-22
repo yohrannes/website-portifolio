@@ -145,7 +145,7 @@ services:
     networks:
       - portifolio-network
     mem_limit: 40m
-    cpus: '0.2'
+    cpus: '0.4'
 
 networks:
   portifolio-network:
