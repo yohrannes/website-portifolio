@@ -86,7 +86,7 @@ services:
       resources:
         limits:
           cpus: '0.3'
-          memory: 120M
+          memory: 200M
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -105,7 +105,7 @@ services:
       resources:
         limits:
           cpus: '0.3'
-          memory: 120M
+          memory: 150M
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -124,7 +124,7 @@ services:
       - "--storage.tsdb.path=/prometheus"
       - "--storage.tsdb.retention.time=7d"
     mem_limit: 120m
-    cpus: '0.3'
+    cpus: '0.2'
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.52.0
@@ -145,7 +145,7 @@ services:
     networks:
       - portifolio-network
     mem_limit: 40m
-    cpus: '0.1'
+    cpus: '0.2'
 
 networks:
   portifolio-network:
