@@ -105,7 +105,7 @@ services:
       resources:
         limits:
           cpus: '0.3'
-          memory: 100M
+          memory: 150M
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -144,7 +144,7 @@ services:
     restart: always
     networks:
       - portifolio-network
-    mem_limit: 105M
+    mem_limit: 150M
     cpus: '0.4'
 
 networks:
