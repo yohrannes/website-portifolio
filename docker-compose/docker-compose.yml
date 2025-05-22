@@ -24,8 +24,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.5'
-          memory: 200M
+          cpus: '0.2'
+          memory: 80M
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -49,8 +49,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'
-          memory: 300M
+          cpus: '0.3'
+          memory: 100M
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -68,8 +68,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.2'
-          memory: 100m
+          cpus: '0.1'
+          memory: 40M
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -85,8 +85,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'
-          memory: 300M
+          cpus: '0.3'
+          memory: 120M
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -104,8 +104,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '1'
-          memory: 512m
+          cpus: '0.3'
+          memory: 120M
       restart_policy:
         condition: on-failure
         delay: 5s
@@ -123,8 +123,8 @@ services:
       - "--config.file=/etc/prometheus/prometheus.yml"
       - "--storage.tsdb.path=/prometheus"
       - "--storage.tsdb.retention.time=7d"
-    mem_limit: 512m
-    cpus: '1'
+    mem_limit: 120m
+    cpus: '0.3'
 
   cadvisor:
     image: gcr.io/cadvisor/cadvisor:v0.52.0
@@ -144,8 +144,8 @@ services:
     restart: always
     networks:
       - portifolio-network
-    mem_limit: 200m
-    cpus: '0.3'
+    mem_limit: 40m
+    cpus: '0.1'
 
 networks:
   portifolio-network:
