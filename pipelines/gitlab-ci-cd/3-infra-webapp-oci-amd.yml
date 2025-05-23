@@ -119,7 +119,7 @@ run-containers:
   script:
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
-        rm -rf repos-git
+        sudo rm -rf repos-git
         mkdir -p repos-git
         cd repos-git
         git clone https://gitlab.com/yohrannes/website-portifolio.git
