@@ -12,13 +12,13 @@ services:
     #networks:
     #  - portifolio-network
     volumes:
-      - ./fail2ban/jail.local:/etc/fail2ban/jail.local
+      - ./fail2ban/config/jail.local:/config/jail.local
       - /var/log/auth.log:/var/log/auth.log
       - /var/log/nginx:/var/log/nginx
-      - ./fail2ban/99-disable-defaults.conf:/etc/fail2ban/jail.d/99-disable-defaults.conf
+      - ./fail2ban/config/99-disable-defaults.conf:/etc/fail2ban/jail.d/99-disable-defaults.conf
     environment:
-      - PUID=0
-      - PGID=0
+      - PUID=1000
+      - PGID=1000
       - FAILREGEX_DECODED=${FAILREGEX_DECODED}
       - TZ=America/Sao_Paulo
     restart: unless-stopped
