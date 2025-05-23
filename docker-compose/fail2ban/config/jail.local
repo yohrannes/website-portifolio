@@ -8,8 +8,8 @@ maxretry = 5
 bantime = 86400
 findtime = 300
 
+[sshd-ddos]
+enabled = false
+
 [sshd]
-enabled = true
-port    = ssh
-logpath = /var/log/auth.log
-backend = systemd
+enabled = false
