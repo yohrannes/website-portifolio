@@ -132,6 +132,7 @@ run-containers:
         export FAILREGEX_DECODED=\"\$(echo \$FAILREGEXB64 | base64 --decode)\"
 
         cd docker-compose
+        sudo docker system prune -a -f
         sudo -E docker compose up -d --build
       " > /dev/null
         
