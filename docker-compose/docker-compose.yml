@@ -13,7 +13,8 @@ services:
     #  - portifolio-network
     volumes:
       - ./fail2ban/jail.local:/etc/fail2ban/jail.local
-      - /var/log:/var/log:ro
+      - /var/log/auth.log:/var/log/auth.log
+      - /var/log/nginx:/var/log/nginx
     environment:
       - PUID=0
       - PGID=0
