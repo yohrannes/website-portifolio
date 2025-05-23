@@ -27,3 +27,9 @@ maxretry = 2
 bantime  = 86400
 findtime = 300
 backend  = systemd
+
+[alpine-sshd-ddos]
+enabled = false
+
+[alpine-sshd]
+enabled = false

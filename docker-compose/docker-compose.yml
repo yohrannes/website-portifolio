@@ -12,15 +12,13 @@ services:
     #networks:
     #  - portifolio-network
     volumes:
-      - ./fail2ban/config:/config
+      - ./fail2ban/jail.local:/etc/fail2ban/jail.local
       - /var/log:/var/log:ro
-      - /etc/localtime:/etc/localtime:ro
     environment:
-      - PUID=1000
-      - PGID=1000
-      - TZ=America/Sao_Paulo
-      - VERBOSITY=-vv
+      - PUID=0
+      - PGID=0
       - FAILREGEX_DECODED=${FAILREGEX_DECODED}
+      - TZ=America/Sao_Paulo
     restart: unless-stopped
     deploy:
       resources:
