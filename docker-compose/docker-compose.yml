@@ -15,7 +15,7 @@ services:
       - ./fail2ban/jail.local:/etc/fail2ban/jail.local
       - /var/log/auth.log:/var/log/auth.log
       - /var/log/nginx:/var/log/nginx
-      - /var/run/fail2ban:/var/run/fail2ban
+      - ./fail2ban/99-disable-defaults.conf:/etc/fail2ban/jail.d/99-disable-defaults.conf
     environment:
       - PUID=0
       - PGID=0
