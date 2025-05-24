@@ -1,2 +1,11 @@
+action.d
 fail2ban
+filter.d
+jail.d
 log
+fail2ban.conf
+fail2ban.sqlite3
+jail.conf
+paths-common.conf
+paths-lsio.conf
+README.md
