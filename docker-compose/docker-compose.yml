@@ -57,7 +57,7 @@ services:
         max_attempts: 3
 
   nginx-exporter:
-    image: sophos/nginx-vts-exporter
+    image: sophos/nginx-vts-exporter:v0.10.7
     container_name: nginx-exporter
     environment:
       - NGINX_STATUS=http://nginx:9001/status/format/json
@@ -93,7 +93,7 @@ services:
         max_attempts: 3
 
   grafana:
-    image: grafana/grafana
+    image: grafana/grafana:12.0.1
     container_name: grafana
     volumes:
       - grafana-data:/var/lib/grafana
