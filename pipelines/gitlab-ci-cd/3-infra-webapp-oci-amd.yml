@@ -129,9 +129,11 @@ run-containers:
         git pull origin infra-webapp-oci-amd
 
         export F2B_HTTP_INJ_FILTER_B64=${F2B_HTTP_INJ_FILTER_B64}
+        echo ${F2B_HTTP_INJ_FILTER_B64}
+        ech${F2B_HTTP_INJ_FILTER_B64}
         
-        if [ -n "$F2B_HTTP_INJ_FILTER_B64" ]; then
-          export F2B_HTTP_INJ_FILTER_DECODED="$(echo $F2B_HTTP_INJ_FILTER_B64 | base64 --decode)"
+        if [ -n \"\$F2B_HTTP_INJ_FILTER_B64\" ]; then
+          export F2B_HTTP_INJ_FILTER_DECODED=\"\$(echo \$F2B_HTTP_INJ_FILTER_B64 | base64 --decode)\"
         fi
 
         export MY_UID=$(id -u)
@@ -140,10 +142,10 @@ run-containers:
 
         cd docker-compose
         sudo docker compose down --remove-orphans
-        sudo docker system prune -a -f
         sudo -E docker compose up -d --build --force-recreate --remove-orphans --quiet-pull
       " > /dev/null
         
+#  sudo docker system prune -a -f
 
 update-dns:
   stage: deploy-infra
