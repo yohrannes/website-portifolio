@@ -128,15 +128,20 @@ run-containers:
         git fetch origin infra-webapp-oci-amd
         git pull origin infra-webapp-oci-amd
 
-        export F2B_HTTP_INJ_FILTER_B64=\"${F2B_HTTP_INJ_FILTER_B64}\"
-        export F2B_HTTP_INJ_FILTER_DECODED=\"\$(echo \$F2B_HTTP_INJ_FILTER_B64 | base64 --decode)\"
-        export UID=$(id -u)
-        export GID=$(id -g)
+        export F2B_HTTP_INJ_FILTER_B64=${F2B_HTTP_INJ_FILTER_B64}
+        
+        if [ -n "$F2B_HTTP_INJ_FILTER_B64" ]; then
+          export F2B_HTTP_INJ_FILTER_DECODED="$(echo $F2B_HTTP_INJ_FILTER_B64 | base64 --decode)"
+        fi
+
+        export MY_UID=$(id -u)
+        export MY_GID=$(id -g)
+
 
         cd docker-compose
         sudo docker compose down --remove-orphans
         sudo docker system prune -a -f
-        sudo -E docker compose up -d --build
+        sudo -E docker compose up -d --build --force-recreate --remove-orphans --quiet-pull
       " > /dev/null
         
 

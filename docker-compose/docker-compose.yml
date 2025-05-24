@@ -16,8 +16,8 @@ services:
       - /var/log/auth.log:/var/log/auth.log
       - /var/log/nginx:/var/log/nginx
     environment:
-      - PUID=${UID}
-      - PGID=${GID}
+      - PUID=${MY_UID}
+      - PGID=${MY_GID}
       - F2B_HTTP_INJ_FILTER_DECODED=${F2B_HTTP_INJ_FILTER_DECODED}
       - TZ=America/Sao_Paulo
     restart: unless-stopped
