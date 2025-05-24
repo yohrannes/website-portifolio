@@ -12,7 +12,7 @@ services:
     #networks:
     #  - portifolio-network
     volumes:
-      - ./fail2ban/config:/config
+      - ./fail2ban/config:/config/fail2ban
       - /var/log/auth.log:/var/log/auth.log
       - /var/log/nginx:/var/log/nginx
     environment:
