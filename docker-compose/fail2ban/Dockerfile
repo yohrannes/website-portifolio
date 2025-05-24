@@ -1,4 +1,5 @@
-FROM linuxserver/fail2ban
+FROM linuxserver/fail2ban:1.1.0
+
 LABEL maintainer="yohrannes@gmail.com"
 
 USER root

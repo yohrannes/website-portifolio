@@ -130,6 +130,8 @@ run-containers:
 
         export FAILREGEXB64=\"${FAILREGEXB64}\"
         export FAILREGEX_DECODED=\"\$(echo \$FAILREGEXB64 | base64 --decode)\"
+        export UID=$(id -u)
+        export GID=$(id -g)
 
         cd docker-compose
         sudo docker compose down --remove-orphans
