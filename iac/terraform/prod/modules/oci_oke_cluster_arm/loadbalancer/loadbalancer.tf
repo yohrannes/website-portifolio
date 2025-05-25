@@ -7,6 +7,32 @@ terraform {
   }
 }
 
+resource "null_resource" "wait_for_nlb_deletion" {
+  triggers = {
+    nlb_id = oci_network_load_balancer_network_load_balancer.nlb.id
+  }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = <<EOT
+      echo "Waiting for REAL deletion of NLB ${self.triggers.nlb_id}..."
+      for i in {1..30}; do
+        STATUS=$(oci nlb network-load-balancer get --network-load-balancer-id ${self.triggers.nlb_id} --query 'data."lifecycle-state"' --raw-output 2>/dev/null || echo "NOT_FOUND")
+        echo "Final status: $STATUS"
+        if [ "$STATUS" = "NOT_FOUND" ] || [ "$STATUS" = "DELETED" ]; then
+          echo "NLB removed!"
+          exit 0
+        fi
+        sleep 10
+      done
+      echo "Timeout waiting NLB to be removed!"
+      exit 1
+    EOT
+    interpreter = ["/bin/bash", "-c"]
+  }
+  depends_on = [oci_network_load_balancer_network_load_balancer.nlb]
+}
+
 data "oci_core_instances" "instances" {
   compartment_id = var.compartment_id
 }
