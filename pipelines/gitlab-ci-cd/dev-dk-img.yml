@@ -65,7 +65,7 @@ deploy-dk-hub-amd:
     - cd $APP_DIR
     - docker buildx build --platform linux/amd64 -t $IMAGE_NAME:$NEW_TAG-amd64 --load .
 
-    - cd ../$NGINX_DIR
+    - cd ../../$NGINX_DIR
     - docker buildx build --platform linux/amd64 -t $NGINX_IMAGE_NAME:$NEW_TAG-amd64 --load .
 
     - docker push $IMAGE_NAME:$NEW_TAG-amd64
