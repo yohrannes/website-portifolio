@@ -10,8 +10,8 @@ oke-cluster-runner-controler-start:
     - docker volume prune -f
     - |
       if docker ps -a --format '{{.Names}}' | grep -wq terraform-container; then
-        docker stop terraform-container
-        docker rm terraform-container
+       docker stop terraform-container
+       docker rm terraform-container
       fi
 
 multi-cloud-auth:
