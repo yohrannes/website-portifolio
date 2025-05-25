@@ -1,9 +1,9 @@
 ---
 variables:
-  APP_DOCKERFILE: docker-compose/webport/Dockerfile
+  APP_DIR: docker-compose/webport
   IMAGE_NAME: yohrannes/website-portifolio
 
-  NGINX_DOCKERFILE: docker-compose/nginx/Dockerfile
+  NGINX_DIR: docker-compose/nginx
   NGINX_IMAGE_NAME: yohrannes/nginx
   
   IMAGE_TAG: latest
@@ -61,9 +61,12 @@ deploy-dk-hub-amd:
     
     - docker buildx rm multiarchbuilder
     - docker buildx create --use --name multiarchbuilder
+    
+    - cd $APP_DIR
+    - docker buildx build --platform linux/amd64 -t $IMAGE_NAME:$NEW_TAG-amd64 --load .
 
-    - docker buildx build -f $APP_DOCKERFILE --platform linux/amd64 -t $IMAGE_NAME:$NEW_TAG-amd64 --load .
-    - docker buildx build -f $NGINX_DOCKERFILE --platform linux/amd64 -t $NGINX_IMAGE_NAME:$NEW_TAG-amd64 --load .
+    - cd ../$NGINX_DIR
+    - docker buildx build --platform linux/amd64 -t $NGINX_IMAGE_NAME:$NEW_TAG-amd64 --load .
 
     - docker push $IMAGE_NAME:$NEW_TAG-amd64
     - docker push $NGINX_IMAGE_NAME:$NEW_TAG-amd64
