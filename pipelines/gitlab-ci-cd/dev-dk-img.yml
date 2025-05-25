@@ -92,7 +92,7 @@ deploy-dk-hub-arm:
     - cd $APP_DIR
     - docker build -t $IMAGE_NAME:$NEW_TAG-arm64 .
     
-    - cd ../$NGINX_DIR
+    - cd ../../$NGINX_DIR
     - docker build -t $NGINX_IMAGE_NAME:$NEW_TAG-arm64 .  
 
     - docker push $IMAGE_NAME:$NEW_TAG-arm64
