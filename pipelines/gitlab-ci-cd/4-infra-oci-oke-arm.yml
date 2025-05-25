@@ -1,6 +1,19 @@
 ---
 variables:
   TF_IMG_DIR: docker-compose/tf-multi-arch
+
+oke-cluster-runner-controler-start:
+  stage: prepare
+  tags: [ "oci-runner-arm" ]
+  script:
+    - docker system prune -af
+    - docker volume prune -f
+    - |
+      if docker ps -a --format '{{.Names}}' | grep -wq terraform-container; then
+        docker stop terraform-container
+        docker rm terraform-container
+      fi
+
 multi-cloud-auth:
   tags: [ "oci-runner-arm" ]
   stage: prepare
@@ -36,16 +49,6 @@ run-terraform-container:
     - multi-cloud-auth
   stage: prepare
   before_script:
-    # Cleanup old terraform container
-    - |
-      if docker ps -a | grep "terraform-container"; then
-        docker stop terraform-container
-        echo "Terraform container stopped."
-        docker system prune -a -f
-      else
-        echo "Terraform container not exists."
-      fi
-
     # Build terraform container for runner host architecture (auto-detected)
     - |
       ARCH=$(uname -m)
