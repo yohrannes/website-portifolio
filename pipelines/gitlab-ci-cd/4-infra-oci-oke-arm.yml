@@ -127,6 +127,13 @@ install-kubectl:
         terraform plan -out plan -detailed-exitcode --target=module.oci_oke_cluster_arm.module.kubeconfig -out=plan 2>&1 | grep -o -E 'oci[^.]*.' | sort -u
         terraform apply plan 2>&1 | grep -o -E 'oci[^.]*.' | sort -u
       "
+    - KUBECONFIG_CONTENT=$(docker exec -w /app terraform-container sh -c cat ~/.kube/config)
+    - |
+      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+        --request PUT \
+        --form "value=$KUBECONFIG_CONTENT" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/OCI_KUBECONFIG_CONTENT" \
+        > /dev/null 2>&1
 
 install-gateway:
   tags: [ "oci-runner-arm" ]
@@ -153,5 +160,4 @@ set-lb-shape:
         export LOAD_BALANCER_ID=\$(oci lb load-balancer list --compartment-id \$COMPARTMENT_ID | jq '.data[0].id' | sed 's/\"//g')
         oci lb load-balancer update-load-balancer-shape --load-balancer-id \$LOAD_BALANCER_ID --shape-name flexible --shape-details '{\"maximum-bandwidth-in-mbps\":10,\"minimum-bandwidth-in-mbps\":10}' --force
       "
-
 
