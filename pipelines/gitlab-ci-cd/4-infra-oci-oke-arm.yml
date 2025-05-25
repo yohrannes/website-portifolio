@@ -127,7 +127,7 @@ install-kubectl:
         terraform plan -out plan -detailed-exitcode --target=module.oci_oke_cluster_arm.module.kubeconfig -out=plan 2>&1 | grep -o -E 'oci[^.]*.' | sort -u
         terraform apply plan 2>&1 | grep -o -E 'oci[^.]*.' | sort -u
       "
-    - KUBECONFIG_CONTENT=$(docker exec -w /app terraform-container sh -c cat ~/.kube/config)
+    - KUBECONFIG_CONTENT=$(docker exec -w /app terraform-container sh -c cat ~/.kube/config | base64)
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --request PUT \
