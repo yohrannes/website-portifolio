@@ -1,6 +1,6 @@
 ---
 variables:
-  APP_DOCKERFILE: docker-compose/webport/Dockerfile-test
+  APP_DOCKERFILE: docker-compose/webport/Dockerfile
   IMAGE_NAME: yohrannes/website-portifolio
 
   NGINX_DOCKERFILE: docker-compose/nginx/Dockerfile
