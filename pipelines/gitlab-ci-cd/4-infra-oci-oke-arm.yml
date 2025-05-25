@@ -1,4 +1,6 @@
 ---
+variables:
+  TF_IMG_DIR: docker-compose/tf-multi-arch
 multi-cloud-auth:
   tags: [ "oci-runner-arm" ]
   stage: prepare
@@ -53,7 +55,9 @@ run-terraform-container:
         *) echo "Arch not suported: $ARCH"; exit 1 ;;
       esac 2>/dev/null
 
-      docker buildx build  -f ./build-tf-multi-arch/Dockerfile \
+      cd $TF_IMG_DIR
+
+      docker buildx build \
         --platform $PLATFORM \
         -t yohrannes/terraform:latest \
         --build-arg PRODUCT=terraform \
