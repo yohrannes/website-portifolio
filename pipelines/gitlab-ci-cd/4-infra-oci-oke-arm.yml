@@ -119,7 +119,7 @@ install-kubectl:
         terraform apply plan 2>&1 | grep -o -E 'oci[^.]*.' | sort -u
       "
     - KUBECONFIG_CONTENT=$(docker exec -w /app terraform-container sh -c cat ~/.kube/config | base64)
-    - echo "KUBECONFIG_CONTENT: $KUBECONFIG_CONTENT"
+    - echo KUBECONFIG_CONTENT $KUBECONFIG_CONTENT
     - docker exec -w /app terraform-container sh -c cat ~/.kube/config
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
