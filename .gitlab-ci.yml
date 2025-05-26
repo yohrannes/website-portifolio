@@ -23,6 +23,7 @@ include:
   - local: 'pipelines/gitlab-ci-cd/runner-controler.yml'
     rules:
       - if: $CI_COMMIT_BRANCH != "infra-runner-oci-arm"
+      - if: $CI_COMMIT_BRANCH != "infra-oke-oci-arm"
 
   - local: 'pipelines/gitlab-ci-cd/develop.yml'
     rules:
