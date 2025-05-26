@@ -66,8 +66,8 @@ run-terraform-container:
   script:
     # Prepare and run terraform-container
     - |
-      docker run -d --name terraform-container \
-      --entrypoint "" hashicorp/terraform:latest sleep 3600
+      sudo docker run -d --name terraform-container \
+      --entrypoint "" hashicorp/terraform:latest sleep infinity
     - docker cp $CI_PROJECT_DIR/iac/terraform/prod terraform-container:/app > /dev/null 2>&1
     - echo $CI_PROJECT_DIR/iac/terraform/prod
     - docker cp $HOME/.oci terraform-container:/root/.oci
@@ -81,6 +81,7 @@ create-oci-oke-cluster:
       - run-terraform-container
   stage: create-infra
   before_script:
+    - docker ps -a
     - |
       docker exec -w /app terraform-container sh -c "
         terraform init -reconfigure 2>/dev/null
