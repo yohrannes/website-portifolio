@@ -1,6 +1,6 @@
 #!/bin/sh
 
-# Clone project
+# Clone pro
 #git clone https://github.com/yohrannes/website-portifolio.git /root/website-portifolio
 
 # Activate environment variable
