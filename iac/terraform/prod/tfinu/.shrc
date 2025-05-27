@@ -39,3 +39,4 @@ alias k='kubectl'
 
 alias disable-ssh='./modules/oci_aftier_micro_amd/scripts/disable_ssh.sh true'
 alias enable-ssh='./modules/oci_aftier_micro_amd/scripts/disable_ssh.sh false'
+alias get-kconfig='./modules/oci_oke_cluster_arm/get-kconfig.sh'
