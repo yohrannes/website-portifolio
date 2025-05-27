@@ -1,0 +1,24 @@
+# task RECONFIGURE FAIL2BAN TO DOCKER IMAGE https://hub.docker.com/r/linuxserver/fail2ban
+services:
+  webport:
+    build:
+      context: ./webport
+      dockerfile: Dockerfile
+    container_name: webport
+    ports:
+      - "80:5000"
+    networks:
+      - portifolio-network
+    deploy:
+      resources:
+        limits:
+          cpus: '0.3'
+          memory: 175M
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+
+networks:
+  portifolio-network:
+    driver: bridge
