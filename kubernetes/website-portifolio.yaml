@@ -17,7 +17,7 @@ spec:
       resources:
         limits:
           cpu: 300m
-          memory: "183500800"
+          memory: ""
 
     - image: yohrannes/nginx:latest
       name: nginx
