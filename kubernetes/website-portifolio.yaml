@@ -16,7 +16,7 @@ spec:
           protocol: TCP
       resources:
         limits:
-          cpu: 300m
+          cpu: "300m"
           memory: ""
 
     - image: yohrannes/nginx:latest
