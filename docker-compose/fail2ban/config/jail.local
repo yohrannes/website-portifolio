@@ -4,10 +4,11 @@ port    = http,https
 filter  = http-injection
 logpath = /var/log/nginx/yohrannes.com-access.log
           /var/log/nginx/grafana.yohrannes.com-access.log
-maxretry = 3
+maxretry = 2
 bantime = 86400
-findtime = 60
+findtime = 30
 protocol = tcp
+banaction = nftables-multiport[blocktype=drop]
 
 [sshd]
 enabled  = true

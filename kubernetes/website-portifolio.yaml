@@ -1,0 +1,59 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  labels:
+    app: webport-pod
+  name: webport-pod
+  namespace: website-portifolio
+spec:
+  containers:
+  
+    - image: yohrannes/website-portifolio:latest
+      name: webport
+      ports:
+        - containerPort: 5000
+          protocol: TCP
+      resources:
+        limits:
+          cpu: 300m
+          memory: "183500800"
+
+    - image: yohrannes/nginx:latest
+      name: nginx
+      ports:
+        - containerPort: 80
+          protocol: TCP
+      resources:
+        limits:
+          cpu: 300m
+          memory: "104857600"
+
+    - image: sophos/nginx-vts-exporter:v0.10.7
+      name: nginx-exporter
+      env:
+        - name: NGINX_STATUS
+          value: http://nginx:9001/status/format/json
+      resources:
+        limits:
+          cpu: 100m
+          memory: "41943040"
+
+  restartPolicy: OnFailure
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: webport-svc
+  name: webport-svc
+  namespace: website-portifolio
+spec:
+  ports:
+    - name: "80"
+      port: 80
+      targetPort: 5000
+  selector:
+    app: webport-pod
+  type: ClusterIP
+---
