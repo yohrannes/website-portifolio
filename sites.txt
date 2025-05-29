@@ -1,0 +1,220 @@
+
+Top IP addresses accessing the website:
+
+     21 172.68.164.128
+     18 172.69.138.137
+     13 172.69.11.35
+     12 172.69.138.179
+     12 172.69.138.150
+     12 162.158.103.117
+     11 172.71.238.129
+     11 172.69.90.117
+     11 172.69.138.93
+     11 172.69.138.68
+     11 172.68.18.36
+     11 172.68.18.254
+     10 172.70.140.87
+     10 172.69.138.74
+     10 172.69.138.249
+     10 172.69.138.136
+      9 172.71.10.185
+      9 172.69.39.121
+      8 172.71.183.56
+      8 172.71.10.184
+
+Top Urls accessed:
+
+     32 /signup
+     32 /search/feedback
+     24 /.git/config
+     20 /.env
+     16 /config.json
+     16 /.vscode/sftp.json
+     14 /v2/_catalog
+     14 /telescope/requests
+     14 /server-status
+     14 /server
+     14 /login.action
+     14 /info.php
+     14 /ecp/Current/exporttool/microsoft.exchange.ediscovery.exporttool.application
+     14 /debug/default/view?panel=config
+     14 /actuator/env
+     14 /about
+     14 /_all_dbs
+     14 /@vite/env
+     14 /?rest_route=/wp/v2/users/
+     14 /.DS_Store
+      8 /yohrannes/htmlcss-projeto-login/tree/main/imagens
+      8 /yohrannes/htmlcss-projeto-login/tree/main/estilos
+      8 /yohrannes/htmlcss-projeto-login/tags
+      8 /yohrannes/htmlcss-projeto-login/stargazers
+      8 /yohrannes/htmlcss-projeto-login/security
+      8 /yohrannes/htmlcss-projeto-login/pulse
+      8 /yohrannes/htmlcss-projeto-login/pulls
+      8 /yohrannes/htmlcss-projeto-login/projects
+      8 /yohrannes/htmlcss-projeto-login/issues
+      8 /yohrannes/htmlcss-projeto-login/forks
+      8 /yohrannes/htmlcss-projeto-login/commits/main/
+      8 /yohrannes/htmlcss-projeto-login/branches
+      8 /yohrannes/htmlcss-projeto-login/blob/main/README.md
+      8 /yohrannes/htmlcss-projeto-login/blob/main/LICENSE
+      8 /yohrannes/htmlcss-projeto-login/blob/main/.gitattributes
+      8 /yohrannes/htmlcss-projeto-login/activity
+      8 /yohrannes/htmlcss-projeto-login/actions
+      8 /yohrannes/htmlcss-projeto-login
+      8 /yohrannes/accesshub/wiki
+      8 /yohrannes/accesshub/tags
+      8 /yohrannes/accesshub/stargazers
+      8 /yohrannes/accesshub/security
+      8 /yohrannes/accesshub/pulls
+      8 /yohrannes/accesshub/projects
+      8 /yohrannes/accesshub/issues
+      8 /yohrannes/accesshub/forks
+      8 /yohrannes/accesshub/branches
+      8 /yohrannes/accesshub/blob/main/LICENSE
+      8 /yohrannes/accesshub/activity
+      8 /yohrannes/accesshub/actions
+      8 /yohrannes/accesshub
+      8 /users/sign_up
+      8 /subscriptions
+      8 /profile-comparison
+      8 /products?categories=Tests_Profiles
+      8 /products?categories=AdminAccounts_EPIC
+      8 /products/everything-disc-workplace-profile
+      8 /login
+      8 /everything-disc/catalyst-profiles
+      8 /en-US/Checkout/ShoppingCart
+      8 /contact-us
+      8 /catalog
+      8 /blog/workplace-culture
+      8 /blog/team-building-performance
+      8 /blog/personal-career-development/disc-styles-of-salespeople
+      8 /blog/personal-career-development
+      8 /blog/leadership-management/disc-management-styles
+      8 /blog/leadership-management
+      8 /blog
+      7 /users/19536006/yohrannes-santos-bigoli?tab=topactivity
+      7 /users/19536006/yohrannes-santos-bigoli?tab=tags
+      7 /users/19536006/yohrannes-santos-bigoli?tab=profile
+      7 /users/19536006/yohrannes-santos-bigoli
+      7 /questions/76526981/add-a-new-indexed-variable-on-the-script-automatically
+      7 /help/badges/31/commentator?userid=19536006
+      7 /help/badges/2/student?userid=19536006
+      7 /help/badges/10/scholar?userid=19536006
+      6 /users
+      4 /test
+      4 /sitemap.xml
+      4 /auto-deploy-log
+      4 //index
+      3 /xmlrpc.php
+      3 /vendor/.env
+      3 /staging/.env
+      3 /server/.env
+      3 /phpinfo.php
+      3 /media/.env
+      3 /crm/.env
+      3 /backend/.env
+      3 /app/.env
+      3 /api/.env
+      3 /admin/.env
+      3 /?phpinfo=-1
+      3 /.env.production
+      3 /.env.example
+      3 /.aws/credentials
+      2 /twilio/.env
+      2 /stage/.env
+      2 /sftp-config.json
+      2 /s/13e28343e21323e2430313/_/;/META-INF/maven/com.atlassian.jira/jira-webapp-dist/pom.properties
+      2 /s/13e26393e21323e2430313/_/;/META-INF/maven/com.atlassian.jira/jira-webapp-dist/pom.properties
+      2 /s/13e26313e21323e2430313/_/;/META-INF/maven/com.atlassian.jira/jira-webapp-dist/pom.properties
+      2 /s/13e24363e21323e2430313/_/;/META-INF/maven/com.atlassian.jira/jira-webapp-dist/pom.properties
+      2 /s/13e22333e21323e2430313/_/;/META-INF/maven/com.atlassian.jira/jira-webapp-dist/pom.properties
+      2 /s/13e2231313e21323e2430313/_/;/META-INF/maven/com.atlassian.jira/jira-webapp-dist/pom.properties
+      2 /s/13e20383e21323e2430313/_/;/META-INF/maven/com.atlassian.jira/jira-webapp-dist/pom.properties
+      2 /info
+      2 /config/.env
+      2 /ajax/libs/jquery/3.6.0/jquery.min.js
+      2 /?url=.env
+      2 /.well-known/index.php
+      2 /.well-known/acme-challenge/about.php
+      2 /.json
+      2 /.env.save
+      1 /yohrannes.zip
+      1 /yohrannes.com.zip
+      1 /xmlrpc.php?rsd
+      1 /wp2/wp-includes/wlwmanifest.xml
+      1 /wp1/wp-includes/wlwmanifest.xml
+      1 /wp/wp-includes/wlwmanifest.xml
+      1 /wp-login.php
+      1 /wp-includes/wlwmanifest.xml
+      1 /wp-content/themes/include.php
+      1 /wp-content/themes/hello_dolly_v2.php
+      1 /wp-content/plugins/HelloDollyV2/hello_dolly_v2.php
+      1 /wp-content/plugins/HelloDollyV2-1/hello_dolly_v2.php
+      1 /wordpress/wp-includes/wlwmanifest.xml
+      1 /word%70ress/
+      1 /website/wp-includes/wlwmanifest.xml
+      1 /web/wp-includes/wlwmanifest.xml
+      1 /test/wp-includes/wlwmanifest.xml
+      1 /style.php
+      1 /static/js/anim-back-menu.js
+      1 /sito/wp-includes/wlwmanifest.xml
+      1 /sites/all/modules/elfinder/elfinder.html
+      1 /sites/all/libraries/elfinder-1.2/connectors/php/connector.php
+      1 /site/wp-includes/wlwmanifest.xml
+      1 /shop/wp-includes/wlwmanifest.xml
+      1 /security.txt
+      1 /news/wp-includes/wlwmanifest.xml
+      1 /media/wp-includes/wlwmanifest.xml
+      1 /llms.txt
+      1 /js/elfinder/php/connector.php
+      1 /js/elfinder/php/connector.minimal.php
+      1 /images/images/cache.php?pass=3a0e007c895888c9c4bf234e2772a0dd
+      1 /humans.txt
+      1 /contact/
+      1 /cms/wp-includes/wlwmanifest.xml
+      1 /blog/wp-includes/wlwmanifest.xml
+      1 /ads.txt
+      1 /2019/wp-includes/wlwmanifest.xml
+      1 /2018/wp-includes/wlwmanifest.xml
+      1 /.well-known/security.txt
+      1 /.well-known/pki-validation/wp-login.php
+
+Top 20 User Agents:
+
+    509 Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36
+    411 Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Safari/537.36
+    260 Go-http-client/1.1
+     91 Mozilla/5.0 (iPhone; CPU iPhone OS 13_2_3 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/13.0.3 Mobile/15E148 Safari/604.1
+     35 -
+     32 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36
+     27 Mozilla/5.0 (compatible; Dataprovider.com)
+     22 Mozilla/5.0 (Linux; Android 6.0.1; Nexus 5X Build/MMB29P) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.7103.92 Mobile Safari/537.36 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)
+     21 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3904.108 Safari/537.36
+     16 Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/125.0.6422.60 Safari/537.36
+     15 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/79.0.3945.79 Safari/537.36
+     15 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.5938.132 Safari/537.36
+     14 Mozilla/5.0 (Linux; Android 6.0; HTC One M9 Build/MRA58K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.98 Mobile Safari/537.3
+     13 Googlebot-Image/1.0
+     11 Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; Googlebot/2.1; +http://www.google.com/bot.html) Chrome/136.0.7103.92 Safari/537.36
+     10 Mozilla/5.0 AppleWebKit/537.36 (KHTML, like Gecko; compatible; bingbot/2.0; +http://www.bing.com/bingbot.htm) Chrome/116.0.1938.76 Safari/537.36
+      8 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0.0.0 Safari/537.36
+      7 Mozilla/5.0 (X11; Linux x86_64; rv:136.0) Gecko/20100101 Firefox/136.0
+      7 Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko)
+      7 Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36
+
+Top 20 Referrers:
+
+   1270 -
+      1 https://yohrannes.com/xmlrpc.php
+      1 https://yohrannes.com/wp-login.php
+
+Top 20 Status Codes: 
+
+    921 404
+    584 200
+    187 304
+     39 502
+      2 405
+      1 499
+

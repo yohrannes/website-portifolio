@@ -139,6 +139,7 @@ run-containers:
         export MY_UID=$(id -u)
         export MY_GID=$(id -g)
 
+        export COMPOSE_BAKE=true
 
         cd docker-compose
         sudo docker compose down --remove-orphans
