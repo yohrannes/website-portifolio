@@ -85,28 +85,28 @@ check-startup-script:
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - |
-      sleep 30;
-        while true; do
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
-            while true; do
-              if [ -e /var/log/startup-script.log ]; then
-                  if [ -r /var/log/startup-script.log ]; then
-                      last_line=\$(tail -n1 /var/log/startup-script.log 2>/dev/null)
-                      if [ \"\$last_line\" = 'startup-script-finished' ]; then
-                          echo 'Startup script finished!';
-                          exit 0;
-                      fi
-                  else
-                      echo '/var/log/startup-script.log exists but is not readable.';
+      sleep 30
+      while true; do
+        ssh -o StrictHostKeyChecking=no \
+            -o ConnectTimeout=10 \
+            -o ServerAliveInterval=30 \
+            -i ~/.ssh/id_rsa \
+            ubuntu@$IP_OCI_AMD_WEBAPP \
+            "timeout 300 bash -c '
+              while true; do
+                if [ -f /var/log/startup-script.log ] && [ -r /var/log/startup-script.log ]; then
+                  if tail -n1 /var/log/startup-script.log 2>/dev/null | grep -q \"startup-script-finished\"; then
+                    echo \"Startup script finished!\"
+                    exit 0
                   fi
-              else
-                  echo '/var/log/startup-script.log does not exist yet.';
-              fi
-              sleep 1
-            done
-          " && break || echo 'Retrying connection...';
-          sleep 5;
-        done
+                else
+                  echo \"Waiting for startup script log...\"
+                fi
+                sleep 3
+              done
+            '" && break || echo 'Retrying connection in 5 seconds...'
+        sleep 5
+      done
 
 run-containers:
   stage: configure-infra
