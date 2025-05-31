@@ -66,6 +66,10 @@ def whoami():
 def websitespecs():
     return render_template('devops.html')
 
+@app.route('/books')
+def biblic_readings():
+    return render_template('books.html')
+
 # Redirects routes
 
 @app.route('/gcp')
