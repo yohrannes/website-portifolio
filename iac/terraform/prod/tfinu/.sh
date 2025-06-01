@@ -18,6 +18,7 @@ docker run -it --rm\
   -v ~/.aws:/root/.aws \
   -v ~/.ssh:/root/.ssh \
   -v ~/.gcp:/root/.gcp \
+  -v ~/.config/gcloud \
   -v ~/.kube/config:/root/.kube/config \
   -v $PWD:/app \
   tf-container

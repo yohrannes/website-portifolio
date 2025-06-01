@@ -16,6 +16,11 @@ module "gcp_ftier_micro_amd" {
   ssh_key_path = "~/.ssh/id_rsa.pub" #Required 
 }
 
+module "webport_bucket" {
+  source = "./modules/bucket_gcp"
+  project_id = var.project_id # Required
+}
+
 #AWS provider
 
 module "aws_bucket" {

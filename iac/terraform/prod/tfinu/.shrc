@@ -35,6 +35,8 @@ alias tfinu='terraform init -upgrade'
 alias tfpde='terraform plan --destroy'
 alias tfpdey='terraform plan --destroy -auto-approve'
 
+alias gcloud=/root/google-cloud-sdk/bin/gcloud
+
 alias k='kubectl'
 
 alias disable-ssh='./modules/oci_aftier_micro_amd/scripts/disable_ssh.sh true'
