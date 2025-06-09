@@ -7,6 +7,39 @@ terraform {
   }
 }
 
+resource "null_resource" "wait_for_cluster_deletion" {
+  triggers = {
+    cluster_id = oci_containerengine_cluster.k8s_cluster.id
+  }
+
+  provisioner "local-exec" {
+    when    = destroy
+    command = <<EOT
+      echo "Checking and deleting cluster ${self.triggers.cluster_id} if necessary..."
+      CURRENT_STATE=$(oci ce cluster get --cluster-id ${self.triggers.cluster_id} --query 'data.lifecycle-state' --raw-output 2>/dev/null || echo "NOT_FOUND")
+      if [ "$CURRENT_STATE" != "NOT_FOUND" ] && [ "$CURRENT_STATE" != "DELETED" ]; then
+        echo "Cluster in state $CURRENT_STATE. Attempting deletion..."
+        oci ce cluster delete --cluster-id ${self.triggers.cluster_id} --force
+      fi
+
+      echo "Waiting for REAL deletion of cluster ${self.triggers.cluster_id}..."
+      for i in {1..30}; do
+        STATE=$(oci ce cluster get --cluster-id ${self.triggers.cluster_id} --query 'data.lifecycle-state' --raw-output 2>/dev/null || echo "NOT_FOUND")
+        echo "Final status: $STATE"
+        if [ "$STATE" = "NOT_FOUND" ] || [ "$STATE" = "DELETED" ]; then
+          echo "Cluster removed!"
+          exit 0
+        fi
+        sleep 10
+      done
+      echo "Timeout waiting for cluster to be removed!"
+      exit 1
+    EOT
+    interpreter = ["/bin/sh", "-c"]
+  }
+  depends_on = [oci_containerengine_cluster.k8s_cluster]
+}
+
 data "oci_identity_availability_domains" "ads" {
   compartment_id = var.compartment_id
 }

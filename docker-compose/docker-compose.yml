@@ -146,7 +146,7 @@ services:
       - portifolio-network
     mem_limit: 150M
     cpus: '0.4'
-
+    
 networks:
   portifolio-network:
     driver: bridge

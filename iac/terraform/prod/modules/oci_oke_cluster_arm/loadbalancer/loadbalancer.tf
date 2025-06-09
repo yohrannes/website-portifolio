@@ -15,6 +15,13 @@ resource "null_resource" "wait_for_nlb_deletion" {
   provisioner "local-exec" {
     when    = destroy
     command = <<EOT
+      echo "Checking and deleting NLB ${self.triggers.nlb_id} if necessary..."
+      CURRENT_STATE=$(oci nlb network-load-balancer get --network-load-balancer-id ${self.triggers.nlb_id} --query 'data."lifecycle-state"' --raw-output 2>/dev/null || echo "NOT_FOUND")
+      if [ "$CURRENT_STATE" != "NOT_FOUND" ] && [ "$CURRENT_STATE" != "DELETED" ]; then
+        echo "NLB on state $CURRENT_STATE. Try deleting..."
+        oci nlb network-load-balancer delete --network-load-balancer-id ${self.triggers.nlb_id} --force
+      fi
+
       echo "Waiting for REAL deletion of NLB ${self.triggers.nlb_id}..."
       for i in {1..30}; do
         STATUS=$(oci nlb network-load-balancer get --network-load-balancer-id ${self.triggers.nlb_id} --query 'data."lifecycle-state"' --raw-output 2>/dev/null || echo "NOT_FOUND")
@@ -28,7 +35,7 @@ resource "null_resource" "wait_for_nlb_deletion" {
       echo "Timeout waiting NLB to be removed!"
       exit 1
     EOT
-    interpreter = ["/bin/bash", "-c"]
+    interpreter = ["/bin/sh", "-c"]
   }
   depends_on = [oci_network_load_balancer_network_load_balancer.nlb]
 }
