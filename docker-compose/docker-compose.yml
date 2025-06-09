@@ -154,6 +154,9 @@ services:
     restart: always
     networks:
       - portifolio-network
+    command:
+      - "--docker_only=true"
+      - "--housekeeping_interval=30s"
     mem_limit: 150M
     cpus: '0.4'
     
