@@ -145,6 +145,7 @@ run-containers:
           export F2B_HTTP_INJ_FILTER_DECODED=\"\$(echo \$F2B_HTTP_INJ_FILTER_B64 | base64 --decode)\"
         fi
 
+        echo ${F2B_HTTP_INJ_FILTER_DECODED} >> /temp/export.txt
 
         cd docker-compose
         sudo docker compose down --remove-orphans
