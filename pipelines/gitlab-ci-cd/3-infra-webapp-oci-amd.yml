@@ -129,17 +129,22 @@ run-containers:
         git pull origin infra-webapp-oci-amd
 
         export F2B_HTTP_INJ_FILTER_B64=${F2B_HTTP_INJ_FILTER_B64}
-        echo ${F2B_HTTP_INJ_FILTER_B64}
-        ech${F2B_HTTP_INJ_FILTER_B64}
+        export COMPOSE_BAKE=true
+        export MY_UID=$(id -u)
+        export MY_GID=$(id -g)
+
+        echo ${F2B_HTTP_INJ_FILTER_B64} >> /temp/export.txt
+        echo >> /temp/export.txt
+        echo ${MY_UID} >> /temp/export.txt
+        echo >> /temp/export.txt
+        echo ${MY_GID} >> /temp/export.txt
+        echo >> /temp/export.txt
+        echo ${COMPOSE_BAKE} >> /temp/export.txt
         
         if [ -n \"\$F2B_HTTP_INJ_FILTER_B64\" ]; then
           export F2B_HTTP_INJ_FILTER_DECODED=\"\$(echo \$F2B_HTTP_INJ_FILTER_B64 | base64 --decode)\"
         fi
 
-        export MY_UID=$(id -u)
-        export MY_GID=$(id -g)
-
-        export COMPOSE_BAKE=true
 
         cd docker-compose
         sudo docker compose down --remove-orphans
