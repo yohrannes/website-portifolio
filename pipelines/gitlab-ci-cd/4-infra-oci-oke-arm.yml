@@ -142,6 +142,8 @@ install-gateway:
         kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/default/deploy.yaml
       "
 
+### Verify Load Balancer (not network load balancer) destruction on terraform destroy process
+
 set-lb-shape:
   tags: [ "oci-runner-arm" ]
   needs:
