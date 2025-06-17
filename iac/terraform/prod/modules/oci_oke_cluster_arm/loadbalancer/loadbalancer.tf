@@ -7,18 +7,34 @@ terraform {
   }
 }
 
+#### delete load bancer before NLB deletion
+
 resource "null_resource" "wait_for_nlb_deletion" {
   triggers = {
     nlb_id = oci_network_load_balancer_network_load_balancer.nlb.id
   }
-
   provisioner "local-exec" {
-    when    = destroy
+    when = destroy
     command = <<EOT
+      export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
+
+      echo "Checking for any non-NLB load balancers in compartment $COMPARTMENT_ID..."
+      
+      LB_IDS=$(oci lb load-balancer list --compartment-id $COMPARTMENT_ID --query 'data[].id' --raw-output)
+      if [ -n "$LB_IDS" ]; then
+        for LB_ID in $LB_IDS; do
+          echo "Deleting load balancer $LB_ID..."
+          oci lb load-balancer delete --load-balancer-id $LB_ID --force
+        done
+      else
+        echo "No non-NLB load balancers found."
+      fi
+
+      # Agora trata o NLB
       echo "Checking and deleting NLB ${self.triggers.nlb_id} if necessary..."
       CURRENT_STATE=$(oci nlb network-load-balancer get --network-load-balancer-id ${self.triggers.nlb_id} --query 'data."lifecycle-state"' --raw-output 2>/dev/null || echo "NOT_FOUND")
       if [ "$CURRENT_STATE" != "NOT_FOUND" ] && [ "$CURRENT_STATE" != "DELETED" ]; then
-        echo "NLB on state $CURRENT_STATE. Try deleting..."
+        echo "NLB in state $CURRENT_STATE. Try deleting..."
         oci nlb network-load-balancer delete --network-load-balancer-id ${self.triggers.nlb_id} --force
       fi
 
@@ -32,7 +48,7 @@ resource "null_resource" "wait_for_nlb_deletion" {
         fi
         sleep 10
       done
-      echo "Timeout waiting NLB to be removed!"
+      echo "Timeout waiting for NLB to be removed!"
       exit 1
     EOT
     interpreter = ["/bin/sh", "-c"]
