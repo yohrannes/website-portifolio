@@ -1,7 +1,7 @@
 git tag -d v1.0.0  # Remove tag
 
-git push origin --delete v1.0.0  # Remove tag from remote repo
+git push origin --delete v1.0.0 # Remove tag from remote repo
  
-git tag -a v1.0.0 -m 'Update '# Create tag
+git tag -a v1.0.0 -m 'Update ' # Create tag
 
 git push origin v1.0.0
