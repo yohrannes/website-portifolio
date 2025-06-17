@@ -31,11 +31,11 @@ multi-cloud-auth:
     - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa.pub 2>/dev/null)
     - chmod 644 $HOME/.ssh/id_rsa.pub
 
-run-terraform-container:
+create-oci-oke-cluster:
   tags: [ "oci-runner-arm" ]
   needs:
     - multi-cloud-auth
-  stage: prepare
+  stage: create-infra
   before_script:
     # Build terraform container for runner host architecture (auto-detected)
     - |
@@ -63,7 +63,7 @@ run-terraform-container:
         docker rm terraform-container
       fi
 
-  script:
+
     # Prepare and run terraform-container
     - |
       sudo docker run -d --name terraform-container \
@@ -75,12 +75,7 @@ run-terraform-container:
     - docker exec -w /app terraform-container mkdir /root/.ssh > /dev/null 2>&1
     - docker cp $HOME/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
 
-create-oci-oke-cluster:
-  tags: [ "oci-runner-arm" ]
-  needs:
-      - run-terraform-container
-  stage: create-infra
-  before_script:
+    # Plan
     - docker ps -a
     - |
       docker exec -w /app terraform-container sh -c "
@@ -142,7 +137,7 @@ install-gateway:
         kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/default/deploy.yaml
       "
 
-### Verify Load Balancer (not network load balancer) destruction on terraform destroy process
+### Verify Load Balancer (not network load balancer) destruction on terraform
 
 set-lb-shape:
   tags: [ "oci-runner-arm" ]
