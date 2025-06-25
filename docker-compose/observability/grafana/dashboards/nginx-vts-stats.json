@@ -15,7 +15,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "12.0.0"
+      "version": "12.0.1"
     },
     {
       "type": "datasource",
@@ -133,7 +133,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -231,7 +231,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -331,19 +331,21 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
+          "editorMode": "code",
           "expr": "sum(irate(nginx_server_requests{instance=~\"$Instance\", code!=\"total\"}[5m])) by (code)",
           "format": "time_series",
           "interval": "",
           "intervalFactor": 2,
           "legendFormat": "{{ code }}",
           "metric": "nginx_server_requests",
+          "range": true,
           "refId": "A",
           "step": 240
         }
@@ -432,7 +434,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -532,7 +534,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -632,7 +634,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -732,7 +734,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -753,7 +755,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "auto",
+  "refresh": "30s",
   "schemaVersion": 41,
   "tags": [
     "prometheus",
@@ -807,13 +809,13 @@
     ]
   },
   "time": {
-    "from": "now-1h",
+    "from": "now-6h",
     "to": "now"
   },
   "timepicker": {},
   "timezone": "browser",
   "title": "Nginx VTS Stats",
   "uid": "1c1185d3-0998-43b8-93d1-980b2afc3608",
-  "version": 1,
+  "version": 4,
   "weekStart": ""
 }

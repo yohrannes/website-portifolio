@@ -15,7 +15,7 @@
       "type": "grafana",
       "id": "grafana",
       "name": "Grafana",
-      "version": "12.0.0"
+      "version": "12.0.1"
     },
     {
       "type": "datasource",
@@ -52,6 +52,161 @@
   "id": null,
   "links": [],
   "panels": [
+    {
+      "datasource": {
+        "type": "prometheus",
+        "uid": "${DS_PROMETHEUS}"
+      },
+      "description": "Taxa de erros HTTP 5xx (pode indicar exploração de vulnerabilidades).",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "custom": {
+            "axisBorderShow": false,
+            "axisCenteredZero": false,
+            "axisColorMode": "text",
+            "axisLabel": "",
+            "axisPlacement": "auto",
+            "barAlignment": 0,
+            "barWidthFactor": 0.6,
+            "drawStyle": "line",
+            "fillOpacity": 0,
+            "gradientMode": "none",
+            "hideFrom": {
+              "legend": false,
+              "tooltip": false,
+              "viz": false
+            },
+            "insertNulls": false,
+            "lineInterpolation": "linear",
+            "lineWidth": 1,
+            "pointSize": 5,
+            "scaleDistribution": {
+              "type": "linear"
+            },
+            "showPoints": "auto",
+            "spanNulls": false,
+            "stacking": {
+              "group": "A",
+              "mode": "none"
+            },
+            "thresholdsStyle": {
+              "mode": "off"
+            }
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green"
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 6,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 4,
+      "options": {
+        "legend": {
+          "calcs": [],
+          "displayMode": "list",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "hideZeros": false,
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "pluginVersion": "12.0.1",
+      "targets": [
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "sum by(status) (increase(flask_http_request_total{status=\"200\"}[$__rate_interval]))",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "B",
+          "useBackend": false
+        },
+        {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "sum by(status) (increase(flask_http_request_total{status=\"404\"}[5m]))",
+          "fullMetaSearch": false,
+          "hide": false,
+          "includeNullMetadata": true,
+          "instant": false,
+          "legendFormat": "__auto",
+          "range": true,
+          "refId": "A",
+          "useBackend": false
+        }
+      ],
+      "title": "Real requests status",
+      "transformations": [
+        {
+          "id": "calculateField",
+          "options": {
+            "binary": {
+              "left": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "404"
+                }
+              },
+              "operator": "/",
+              "right": {
+                "matcher": {
+                  "id": "byName",
+                  "options": "200"
+                }
+              }
+            },
+            "mode": "binary",
+            "reduce": {
+              "include": [
+                "200",
+                "404"
+              ],
+              "reducer": "median"
+            },
+            "replaceFields": true,
+            "unary": {
+              "fieldName": "404",
+              "operator": "round"
+            }
+          }
+        }
+      ],
+      "type": "timeseries"
+    },
     {
       "datasource": {
         "type": "prometheus",
@@ -115,7 +270,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 0
+        "y": 6
       },
       "id": 3,
       "options": {
@@ -131,22 +286,22 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
+          "datasource": {
+            "type": "prometheus",
+            "uid": "${DS_PROMETHEUS}"
+          },
           "disableTextWrap": false,
-          "editorMode": "code",
+          "editorMode": "builder",
           "expr": "count(flask_http_request_created) by (method)",
           "fullMetaSearch": false,
           "includeNullMetadata": true,
           "legendFormat": "__auto",
           "range": true,
           "refId": "A",
-          "useBackend": false,
-          "datasource": {
-            "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
-          }
+          "useBackend": false
         }
       ],
       "title": "Http Methods",
@@ -216,7 +371,7 @@
         "h": 6,
         "w": 24,
         "x": 0,
-        "y": 6
+        "y": 12
       },
       "id": 1,
       "options": {
@@ -232,20 +387,24 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
             "type": "prometheus",
             "uid": "${DS_PROMETHEUS}"
           },
-          "editorMode": "code",
-          "expr": "sum by (status) (increase(flask_http_request_total[5m])) ",
+          "disableTextWrap": false,
+          "editorMode": "builder",
+          "expr": "sum by(status) (increase(flask_http_request_total[5m]))",
+          "fullMetaSearch": false,
           "hide": false,
+          "includeNullMetadata": true,
           "instant": false,
           "legendFormat": "__auto",
           "range": true,
-          "refId": "B"
+          "refId": "B",
+          "useBackend": false
         }
       ],
       "title": "Requests status",
@@ -315,7 +474,7 @@
         "h": 5,
         "w": 24,
         "x": 0,
-        "y": 12
+        "y": 18
       },
       "id": 2,
       "options": {
@@ -331,7 +490,7 @@
           "sort": "none"
         }
       },
-      "pluginVersion": "12.0.0",
+      "pluginVersion": "12.0.1",
       "targets": [
         {
           "datasource": {
@@ -351,7 +510,7 @@
       "type": "timeseries"
     }
   ],
-  "refresh": "auto",
+  "refresh": "30s",
   "schemaVersion": 41,
   "tags": [
     "flask",

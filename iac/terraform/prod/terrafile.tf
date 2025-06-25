@@ -42,6 +42,10 @@ module "oci_aftier_micro_amd" {
   disable_ssh_port = var.disable_ssh_port
 }
 
+module "oci_aftier_micro_amd_packer_image" {
+  source = "./modules/oci_aftier_micro_amd_packer_image"
+}
+
 module "oci_oke_cluster_arm" {
   source = "./modules/oci_oke_cluster_arm"
   ssh_public_key = file("~/.ssh/id_rsa.pub")

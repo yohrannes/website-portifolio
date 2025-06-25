@@ -137,9 +137,8 @@ install-gateway:
         kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/default/deploy.yaml
       "
 
-### Verify Load Balancer (not network load balancer) destruction on terraform
 
-set-lb-shape:
+set-lb-shape: # This job doesn't works imadiately after the cluster creation, it needs to be run manually. Implement a check to ensure the load balancer is ready to be updated.
   tags: [ "oci-runner-arm" ]
   needs:
     - install-gateway
@@ -160,3 +159,5 @@ set-lb-shape:
         fi
       "
 
+
+### Verify Load Balancer (not network load balancer) destruction on terraform
