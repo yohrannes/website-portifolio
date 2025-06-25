@@ -25,3 +25,11 @@ output "oci_core_instances_2" {
 output "oci_core_instances_3" {
   value = module.oci_oke_cluster_arm.oci_core_instances_3
 }
+
+output "oci_packer_compartment_ocid" {
+  value = module.oci_aftier_micro_amd_packer_image.packer_compartment_ocid
+}
+
+output "oci_packer_subnet_ocid" {
+  value = module.oci_aftier_micro_amd_packer_image.packer_subnet_ocid
+}
