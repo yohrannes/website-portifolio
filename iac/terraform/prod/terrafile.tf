@@ -44,6 +44,10 @@ module "oci_aftier_micro_amd" {
 
 module "oci_aftier_micro_amd_packer_image" {
   source = "./modules/oci_aftier_micro_amd_packer_image"
+  tenancy_ocid = module.oci_aftier_micro_amd.tenancy_ocid
+  packer_compartment_name = "yohapp-packer-comp"
+  compartment_id = module.oci_aftier_micro_amd.compartment_id
+  availability_domain = module.oci_aftier_micro_amd.availability_domain
 }
 
 module "oci_oke_cluster_arm" {

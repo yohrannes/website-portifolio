@@ -17,3 +17,34 @@ output "packer_user_name" {
 output "packer_group_ocid" {
   value = oci_identity_group.packer_group.id
 }
+
+output "api_key_fingerprint" {
+  value = oci_identity_api_key.user_api_key.fingerprint
+}
+
+output "private_key_path" {
+  value = local_file.private_key.filename
+}
+
+output "public_key_path" {
+  value = local_file.public_key.filename
+}
+
+output "oci_config_path" {
+  value = local_file.oci_config.filename
+}
+
+output "packer_instructions" {
+  value = <<-EOT
+    Packer Instructions:
+
+    1. Config file: ${local_file.oci_config.filename}
+    2. Private key path: ${local_file.private_key.filename}
+    3. API fingerprint: ${oci_identity_api_key.user_api_key.fingerprint}
+    
+    Set this on packer:
+    - config_file_profile: "DEFAULT"
+    - or set the env vars:
+      export OCI_CONFIG_FILE="${local_file.oci_config.filename}"
+  EOT
+}

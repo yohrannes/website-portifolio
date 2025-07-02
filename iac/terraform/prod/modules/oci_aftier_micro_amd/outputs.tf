@@ -10,6 +10,10 @@ output "subnetA_pub_id" {
   value = oci_core_subnet.subnetA_pub.id
 }
 
-#output "module_path" {
-#  value = path.module
-#}
+output "tenancy_ocid" {
+  value = var.tenancy_ocid
+}
+
+output "availability_domain" {
+  value = var.ic_pub_vm_A.availability_domain
+}

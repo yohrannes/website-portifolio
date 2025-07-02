@@ -1,4 +1,7 @@
+FROM hashicorp/packer:latest AS packer
 FROM hashicorp/terraform:latest
+
+COPY --from=packer /bin/packer /bin/packer
 
 WORKDIR /root
 
@@ -11,6 +14,7 @@ RUN yes | ./google-cloud-sdk/install.sh
 WORKDIR /app
 
 COPY tfinu/.shrc /root/.shrc
+COPY tfinu/init-all.sh /root/init-all.sh
 
 ENTRYPOINT []
-CMD ["sh", "-c", "source /root/.shrc && terraform init -reconfigure -input=false && exec env ENV=/root/.shrc sh"]
+CMD ["sh", "-c", "source /root/.shrc && /root/init-all.sh"]
