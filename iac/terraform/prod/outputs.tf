@@ -33,7 +33,7 @@ output "availability_domain" {
 }
 
 
-## PACKER  OUTPUTS
+## PACKER OUTPUTS
 
 output "oci_packer_compartment_ocid" {
   value = module.oci_aftier_micro_amd_packer_image.packer_compartment_ocid
