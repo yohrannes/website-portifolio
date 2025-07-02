@@ -21,4 +21,5 @@ docker run -it --rm\
   -v ~/.config/gcloud \
   -v ~/.kube/config:/root/.kube/config \
   -v $PWD:/app \
+  -e PACKER_PLUGIN_PATH=~/.packer.d/plugins \
   tf-container

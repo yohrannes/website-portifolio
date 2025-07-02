@@ -4,6 +4,14 @@ terraform {
       source  = "oracle/oci"
       version = ">= 7.6.0"
     }
+    tls = {
+      source  = "hashicorp/tls"
+      version = "~> 4.0"
+    }
+    local = {
+      source  = "hashicorp/local"
+      version = "~> 2.0"
+    }
   }
 }
 
@@ -19,14 +27,51 @@ data "oci_identity_availability_domains" "ads" {
   compartment_id = var.compartment_id
 }
 
+# Gerar par de chaves RSA para API
+resource "tls_private_key" "api_key" {
+  algorithm = "RSA"
+  rsa_bits  = 2048
+}
+
+# Salvar chave privada localmente
+resource "local_file" "private_key" {
+  content         = tls_private_key.api_key.private_key_pem
+  filename        = pathexpand("~/.oci/packer/packer_oci_api_key.pem")
+  file_permission = "0600"
+}
+
+# Salvar chave pública localmente
+resource "local_file" "public_key" {
+  content         = tls_private_key.api_key.public_key_pem
+  filename        = pathexpand("~/.oci/packer/packer_oci_api_key_public.pem")
+  file_permission = "0644"
+}
+
+# Adicionar chave pública ao usuário OCI
+resource "oci_identity_api_key" "user_api_key" {
+  user_id   = local.user_ocid
+  key_value = tls_private_key.api_key.public_key_pem
+}
+
 resource "oci_identity_compartment" "yohapp-packer-comp" {
-  compartment_id = var.compartment_id
+  compartment_id = var.tenancy_ocid
   description    = var.packer_compartment_description
   name           = var.packer_compartment_name
 }
 
+resource "oci_identity_group" "packer_group" {
+  compartment_id = var.tenancy_ocid
+  description    = "Grupo para usuários do Packer"
+  name           = "PackerGroup"
+}
+
+resource "oci_identity_user_group_membership" "packer_user_membership" {
+  group_id = oci_identity_group.packer_group.id
+  user_id  = local.user_ocid
+}
+
 resource "oci_identity_policy" "packer_policy" {
-  compartment_id = var.compartment_id
+  compartment_id = var.tenancy_ocid
   description    = "Política para permitir operações do Packer no compartment"
   name           = "packer-policy"
   
@@ -42,17 +87,6 @@ resource "oci_core_vcn" "example_vcn" {
   compartment_id = oci_identity_compartment.yohapp-packer-comp.id
   cidr_blocks    = ["10.0.0.0/16"]
   display_name   = "packer-vcn"
-}
-
-resource "oci_identity_group" "packer_group" {
-  compartment_id = var.compartment_id
-  description    = "Grupo para usuários do Packer"
-  name           = "PackerGroup"
-}
-
-resource "oci_identity_user_group_membership" "packer_user_membership" {
-  group_id = oci_identity_group.packer_group.id
-  user_id  = local.user_ocid
 }
 
 resource "oci_core_internet_gateway" "example_igw" {
@@ -101,4 +135,22 @@ resource "oci_core_subnet" "subnetA_pub" {
   availability_domain = var.availability_domain
   route_table_id      = oci_core_route_table.example_rt.id
   security_list_ids   = [oci_core_security_list.example_sl.id]
+}
+
+resource "local_file" "oci_config" {
+  content = <<-EOT
+[DEFAULT]
+user=${local.user_ocid}
+fingerprint=${oci_identity_api_key.user_api_key.fingerprint}
+key_file=${local_file.private_key.filename}
+tenancy=${var.tenancy_ocid}
+region=us-ashburn-1
+EOT
+  filename        = pathexpand("~/.oci/packer/oci_config")
+  file_permission = "0644"
+  
+  depends_on = [
+    oci_identity_api_key.user_api_key,
+   local_file.private_key
+  ]
 }

@@ -3,11 +3,6 @@ locals {
 }
 
 source "oracle-oci" "basic" {
-  tenancy_ocid = var.tenancy_ocid
-  user_ocid    = var.user_ocid
-  fingerprint  = var.fingerprint
-  key_file     = var.private_key_path
-  region       = var.region
 
   compartment_ocid    = var.compartment_ocid
   availability_domain = var.availability_domain

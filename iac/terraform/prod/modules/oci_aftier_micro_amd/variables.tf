@@ -5,6 +5,13 @@ variable "compartment_id" {
   sensitive   = true
 }
 
+variable "tenancy_ocid" {
+  description = "The OCID of the tenancy"
+  type        = string
+  default     = "ocid1.tenancy.oc1..aaaaaaaawb7j4hswwgcjncr2ezu5mptw6o5n6h7ixvef5lzqsqkbtmwk44aq"
+  sensitive   = true
+}
+
 variable "compartment_name" {
   description = "Compartment Name"
   type        = string
