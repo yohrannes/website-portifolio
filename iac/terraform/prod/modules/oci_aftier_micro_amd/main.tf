@@ -127,7 +127,7 @@ resource "oci_core_default_route_table" "the_route_table" {
 resource "oci_core_instance" "ic_pub_vm-A" {
   compartment_id      = oci_identity_compartment.yohapp-comp.id
   shape               = var.ic_pub_vm_A.shape.name
-  availability_domain = var.ic_pub_vm_A.availability_domain
+  availability_domain = var.availability_domain
   display_name        = var.ic_pub_vm_A.display_name
 
   source_details {

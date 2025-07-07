@@ -69,11 +69,15 @@ variable "disable_ssh_port" {
   type        = bool
 }
 
+variable "availability_domain" {
+  description = "Availability Domain"
+  type        = string
+}
+
 variable "ic_pub_vm_A" {
   description = "The details of the compute instance"
   default = {
     display_name : "pub_vm-A"
-    availability_domain : "lIpY:US-ASHBURN-AD-3" # oci iam availability-domain list # change region on ~/.oci/config
     assign_public_ip : true
     image_ocid : "ocid1.image.oc1.iad.aaaaaaaa2bulxukxsjyv3ap3x45eueiqxxpxpsfrv6qppq7xrwtiima2c2pq" # images in https://docs.oracle.com/en-us/iaas/images/
     shape : {

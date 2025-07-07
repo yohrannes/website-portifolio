@@ -1,12 +1,15 @@
-# Docker command used for tests
-docker run -it \
--v ~/.oci:/root/.oci \
--v ~/.aws:/root/.aws \
--v ~/.ssh:/root/.ssh \
--v ~/.gcp:/root/.gcp \
--v $PWD:/app \
--w /app \
---entrypoint "" hashicorp/terraform:latest sh -c "terraform init -reconfigure && sh"
+# Initialize project cli
+
+cd iac
+./webport-cli/.sh
+
+# Use terraform
+cd /app/terraform/prod
+terraform init, plan, state
+
+# Use packer
+cd /app/packer/prod
+packer build, validate ..
 
 ###Create Bucket to store tf state ....
 mv backend.tf /modules/instance_oracle/.

@@ -1,0 +1,5 @@
+#- src: geerlingguy.docker
+
+- src: https://github.com/geerlingguy/ansible-role-docker.git
+  version: "7.4.7"
+  scm: git

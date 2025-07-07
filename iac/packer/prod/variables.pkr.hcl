@@ -1,3 +1,9 @@
+variable "user" {
+  type        = string
+  description = "Default instance user"
+  default     = "ubuntu"
+}
+
 variable "compartment_ocid" {
   type        = string
   description = "OCID do compartment onde a instância será criada"
@@ -6,6 +12,7 @@ variable "compartment_ocid" {
 variable "availability_domain" {
   type        = string
   description = "Domínio de disponibilidade onde a instância será criada"
+  default     = "lIpY:US-ASHBURN-AD-3"
 }
 
 variable "subnet_ocid" {

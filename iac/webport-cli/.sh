@@ -11,7 +11,7 @@
 #  --entrypoint "" hashicorp/terraform:latest sh -c \
 #  "source /root/.shrc && terraform init -reconfigure && apk add oci-cli --quiet && ENV=/root/.shrc sh"
 
-docker build -t tf-container . -f tfinu/Dockerfile
+docker build -t tf-container . -f webport-cli/Dockerfile
 
 docker run -it --rm\
   -v ~/.oci:/root/.oci \

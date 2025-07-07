@@ -15,5 +15,5 @@ output "tenancy_ocid" {
 }
 
 output "availability_domain" {
-  value = var.ic_pub_vm_A.availability_domain
+  value = var.availability_domain
 }

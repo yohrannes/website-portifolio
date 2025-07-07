@@ -20,7 +20,7 @@ source "oracle-oci" "basic" {
   skip_create_image = false
 
   shape = "VM.Standard.E2.1.Micro"
-  image_name = "Packer_Builder_Test_${local.timestamp}"
+  image_name = "ubuntu2204-e2-1micro-packer-${local.timestamp}"
   disk_size = 50  # Mínimo 50GB
 
   subnet_ocid = var.subnet_ocid
@@ -28,22 +28,19 @@ source "oracle-oci" "basic" {
   ssh_username = "ubuntu"
   ssh_timeout  = "15m"
   
-  metadata = {
-    user_data = base64encode(<<-EOF
-      #!/bin/bash
-      exec > /var/log/startup-script.log 2>&1
-      set -x
-      # Script de pré-bootstrap (equivalente ao pre-bootstrap do classic)
-      echo "exec initial config.."
-      # Adicione seus scripts aqui
-    EOF
-    )
-  }
+  #metadata = {
+  #  user_data = base64encode(<<-EOF
+  #    #!/bin/bash
+  #    exec > /var/log/startup-script.log 2>&1
+  #    set -x
+  #    echo "exec initial config.."
+  #    # Adicione seus scripts aqui
+  #  EOF
+  #  )
+  #}
   
-  # Adicionar configuração de debug
   use_private_ip = false
   
-  # Configurações de validação
   create_vnic_details {
     assign_public_ip = true
     subnet_id        = var.subnet_ocid
