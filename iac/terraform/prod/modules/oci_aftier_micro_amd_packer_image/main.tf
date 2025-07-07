@@ -17,6 +17,19 @@ terraform {
 
 locals {
   user_ocid = trimspace(data.external.user_ocid.result.user_ocid)
+  filtered_images = [
+    for image in data.oci_core_images.existing_images.images :
+    image if can(regex("${var.image_name}\\d{14}", image.display_name))
+  ]
+
+  sorted_times = sort([for img in local.filtered_images : img.time_created])
+
+  sorted_images = [
+    for t in local.sorted_times : 
+    one([for img in local.filtered_images : img if img.time_created == t])
+  ]
+
+  images_to_delete = length(local.sorted_images) > 3 ? slice(local.sorted_images, 0, length(local.sorted_images) - 3) : []
 }
 
 data "external" "user_ocid" {
@@ -27,27 +40,23 @@ data "oci_identity_availability_domains" "ads" {
   compartment_id = var.compartment_id
 }
 
-# Gerar par de chaves RSA para API
 resource "tls_private_key" "api_key" {
   algorithm = "RSA"
   rsa_bits  = 2048
 }
 
-# Salvar chave privada localmente
 resource "local_file" "private_key" {
   content         = tls_private_key.api_key.private_key_pem
   filename        = pathexpand("~/.oci/packer/packer_oci_api_key.pem")
   file_permission = "0600"
 }
 
-# Salvar chave pública localmente
 resource "local_file" "public_key" {
   content         = tls_private_key.api_key.public_key_pem
   filename        = pathexpand("~/.oci/packer/packer_oci_api_key_public.pem")
   file_permission = "0644"
 }
 
-# Adicionar chave pública ao usuário OCI
 resource "oci_identity_api_key" "user_api_key" {
   user_id   = local.user_ocid
   key_value = tls_private_key.api_key.public_key_pem

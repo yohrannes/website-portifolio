@@ -66,9 +66,13 @@ def whoami():
 def websitespecs():
     return render_template('devops.html')
 
-@app.route('/books')
-def biblic_readings():
-    return render_template('books.html')
+#@app.route('/books')
+#def biblic_readings():
+#    return render_template('books.html')
+
+#@app.route('/spotify')
+#def spotify_page():
+#    return render_template('spotify-now-playing.html')
 
 # Redirects routes
 

@@ -18,20 +18,38 @@ output "packer_group_ocid" {
   value = oci_identity_group.packer_group.id
 }
 
-output "api_key_fingerprint" {
+output "packer_api_key_fingerprint" {
   value = oci_identity_api_key.user_api_key.fingerprint
 }
 
-output "private_key_path" {
+output "packer_private_key_path" {
   value = local_file.private_key.filename
 }
 
-output "public_key_path" {
+output "packer_public_key_path" {
   value = local_file.public_key.filename
 }
 
-output "oci_config_path" {
+output "packer_oci_config_path" {
   value = local_file.oci_config.filename
+}
+
+output "packer_image_name" {
+  value = var.image_name
+}
+
+output "packer_images_to_delete_ids" {
+  value = [for image in local.images_to_delete : image.id]
+}
+
+output "debug_filtered_images" {
+  value = [
+    for image in local.filtered_images : {
+      id = image.id
+      display_name = image.display_name
+      time_created = image.time_created
+    }
+  ]
 }
 
 output "packer_instructions" {

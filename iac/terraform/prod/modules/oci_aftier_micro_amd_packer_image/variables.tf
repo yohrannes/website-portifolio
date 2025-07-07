@@ -30,3 +30,8 @@ variable "packer_user_name" {
   type        = string
   default     = "yohrannes"
 }
+
+variable "image_name" {
+  description = "Nome do grupo PackerGroup"
+  type        = string
+}
