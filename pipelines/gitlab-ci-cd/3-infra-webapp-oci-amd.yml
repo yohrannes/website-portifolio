@@ -62,7 +62,7 @@ create-oracle-instance:
   script:
     - |
       docker exec -w /app terraform-container sh -c "
-        apk add --no-cache git --quiet
+        apk add --no-cache git oci-cli jq curl nano --quiet
         TF_IN_AUTOMATION=true
         terraform init -upgrade -reconfigure
         terraform workspace select web_port_dev
