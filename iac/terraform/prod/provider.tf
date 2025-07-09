@@ -10,3 +10,7 @@ terraform {
     }
   }
 }
+
+provider "oci" {
+  # Irá usar automaticamente ~/.oci/config com profile DEFAULT
+}
