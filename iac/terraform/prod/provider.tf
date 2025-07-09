@@ -12,5 +12,5 @@ terraform {
 }
 
 provider "oci" {
-  # Irá usar automaticamente ~/.oci/config com profile DEFAULT
+  # Will use automatically ~/.oci/config with profile DEFAULT
 }
