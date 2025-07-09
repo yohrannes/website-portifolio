@@ -43,15 +43,6 @@ module "oci_aftier_micro_amd" {
   availability_domain = var.availability_domain
 }
 
-module "oci_aftier_micro_amd_packer_image" {
-  source = "./modules/oci_aftier_micro_amd_packer_image"
-  tenancy_ocid = module.oci_aftier_micro_amd.tenancy_ocid
-  packer_compartment_name = "yohapp-packer-comp"
-  compartment_id = module.oci_aftier_micro_amd.compartment_id
-  availability_domain = var.availability_domain
-  image_name = "ubuntu2204-e2-1micro-packer-"
-}
-
 module "oci_oke_cluster_arm" {
   source = "./modules/oci_oke_cluster_arm"
   ssh_public_key = file("~/.ssh/id_rsa.pub")

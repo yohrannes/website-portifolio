@@ -43,67 +43,65 @@ output "oci_core_instances_3" {
 ## PACKER OUTPUTS
 
 output "oci_packer_compartment_ocid" {
-  value = module.oci_aftier_micro_amd_packer_image.packer_compartment_ocid
+  value = module.oci_aftier_micro_amd.oci_packer_compartment_ocid
 }
 
 output "oci_packer_subnet_ocid" {
-  value = module.oci_aftier_micro_amd_packer_image.packer_subnet_ocid
+  value = module.oci_aftier_micro_amd.oci_packer_subnet_ocid
 }
 
 output "packer_compartment_ocid" {
-  value = module.oci_aftier_micro_amd_packer_image.packer_compartment_ocid
+  value = module.oci_aftier_micro_amd.packer_compartment_ocid
 }
 
 output "packer_subnet_ocid" {
-  value = module.oci_aftier_micro_amd_packer_image.packer_subnet_ocid
+  value = module.oci_aftier_micro_amd.packer_subnet_ocid
 }
 
 output "packer_user_ocid" {
-  value = module.oci_aftier_micro_amd_packer_image.packer_user_ocid
+  value = module.oci_aftier_micro_amd.packer_user_ocid
 }
 
 output "packer_user_name" {
-  value = module.oci_aftier_micro_amd_packer_image.packer_user_name
+  value = module.oci_aftier_micro_amd.packer_user_name
 }
 
 output "packer_group_ocid" {
-  value = module.oci_aftier_micro_amd_packer_image.packer_group_ocid
+  value = module.oci_aftier_micro_amd.packer_group_ocid
 }
 
 output "packer_api_key_fingerprint" {
-  value = module.oci_aftier_micro_amd_packer_image.packer_api_key_fingerprint
+  value = module.oci_aftier_micro_amd.packer_api_key_fingerprint
 }
 
 output "packer_private_key_path" {
-  value = module.oci_aftier_micro_amd_packer_image.packer_private_key_path
+  value = module.oci_aftier_micro_amd.packer_private_key_path
 }
 
 output "packer_public_key_path" {
-  value = module.oci_aftier_micro_amd_packer_image.packer_public_key_path
+  value = module.oci_aftier_micro_amd.packer_public_key_path
 }
 
 output "packer_oci_config_path" {
-  value = module.oci_aftier_micro_amd_packer_image.packer_oci_config_path
+  value = module.oci_aftier_micro_amd.packer_oci_config_path
 }
 
 output "packer_image_name" {
-  value = module.oci_aftier_micro_amd_packer_image.packer_image_name
+  value = module.oci_aftier_micro_amd.packer_image_name
 }
 
 output "packer_images_to_delete_ids" {
-  value = module.oci_aftier_micro_amd_packer_image.packer_images_to_delete_ids
+  value = module.oci_aftier_micro_amd.packer_images_to_delete_ids
 }
 
 output "debug_all_images" {
-  value = <<-EOT
-    All Images:
-  EOT 
+  value = module.oci_aftier_micro_amd.debug_all_images
 }
 
 output "debug_filtered_images" {
-  value = module.oci_aftier_micro_amd_packer_image.debug_filtered_images
+  value = module.oci_aftier_micro_amd.debug_filtered_images
 }
 
 output "packer_instructions" {
-  value = module.oci_aftier_micro_amd_packer_image.packer_instructions
+  value = module.oci_aftier_micro_amd.packer_instructions
 }
