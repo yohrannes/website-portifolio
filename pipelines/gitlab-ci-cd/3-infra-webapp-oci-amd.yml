@@ -70,6 +70,8 @@ create-oracle-instance:
         terraform validate -no-color
         terraform fmt -check -recursive
         terraform plan -compact-warnings -input=false -target=module.oci_aftier_micro_amd -out=plan | grep "Plan:" > /dev/null
+        echo \"Plan created successfully\"
+        terraform show -no-color plan | grep -o -E 'oci[^.]*.'
         terraform apply plan -no-color | grep -o -E 'oci[^.]*.' | sort -u > /dev/null
         exit_code=${PIPESTATUS[0]}
         echo "Exit Code: $exit_code"
