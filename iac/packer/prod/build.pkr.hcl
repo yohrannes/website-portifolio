@@ -10,6 +10,11 @@ build {
     roles_path       = "./ansible/roles"
     user = var.user
 
+
     // extra_arguments = ["-vvvv"]
+  }
+  post-processor "manifest" {
+    output = "/tmp/packer/packer-manifest.json"
+    strip_path = true
   }
 }

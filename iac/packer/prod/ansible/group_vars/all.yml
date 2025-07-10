@@ -1,0 +1,33 @@
+---
+# Global variables
+docker_install_compose: true
+user_name: ubuntu
+user_home: /home/ubuntu
+log_file: /var/log/startup-script.log
+
+# Timezone configuration
+system_timezone: America/Sao_Paulo
+
+# Swap configuration
+swap_file_size: 1G
+swap_file_path: /swapfile
+
+# Firewall ports
+firewall_allowed_ports:
+  - { protocol: tcp, port: 22, ctstate: NEW }
+  - { protocol: icmp, icmp_type: echo-request }
+  - { protocol: icmp, icmp_type: echo-reply }
+  - { protocol: tcp, port: 80, ctstate: NEW }
+  - { protocol: tcp, port: 443, ctstate: NEW }
+
+# Utility packages
+utility_packages:
+  - nano
+  - net-tools
+  - wget
+  - curl
+  - jq
+  - htop
+  - traceroute
+  - mtr
+  - dnsutils

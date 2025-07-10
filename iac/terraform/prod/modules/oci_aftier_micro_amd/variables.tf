@@ -49,6 +49,7 @@ variable "subnetA_pub" {
 }
 
 variable "internet_gateway_A" {
+  type        = map(string)
   description = "The details of the internet gateway"
   default = {
     display_name : "IC_IG-A"
