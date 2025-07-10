@@ -66,11 +66,7 @@ create-oracle-instance:
         TF_IN_AUTOMATION=true
         terraform init -upgrade -reconfigure
         terraform workspace select web_port_dev
-        ls -la
-        terraform validate -no-color
-        terraform fmt -check -recursive
         terraform plan -compact-warnings -input=false -target=module.oci_aftier_micro_amd -out=plan | grep "Plan:" > /dev/null
-        echo \"Plan created successfully\"
         terraform show -no-color plan | grep -o -E 'oci[^.]*.'
         terraform apply plan -no-color | grep -o -E 'oci[^.]*.' | sort -u > /dev/null
         exit_code=${PIPESTATUS[0]}

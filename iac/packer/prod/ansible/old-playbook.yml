@@ -1,0 +1,167 @@
+---
+- name: Complete Server Setup - Docker and System Configuration
+  hosts: all
+  remote_user: ubuntu
+  become: true
+  vars:
+    docker_install_compose: true
+    user_name: ubuntu
+    user_home: /home/ubuntu
+    log_file: /var/log/startup-script.log
+
+  tasks:
+    - name: Create startup script log file
+      file:
+        path: "{{ log_file }}"
+        state: touch
+        mode: '0644'
+
+    - name: Log playbook start
+      shell: "echo \"$(date): Ansible playbook started\" >> {{ log_file }}"
+
+    - name: Update apt cache and upgrade packages
+      apt:
+        update_cache: true
+        upgrade: dist
+        cache_valid_time: 3600
+
+    - name: Install required packages for Docker
+      apt:
+        name:
+          - ca-certificates
+          - curl
+        state: present
+
+    - name: Create /etc/apt/keyrings directory
+      file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: '0755'
+
+    - name: Download and install Docker using get.docker.com script
+      shell: curl -fsSL https://get.docker.com/ | bash
+      args:
+        creates: /usr/bin/docker
+
+    - name: Log Docker installation
+      shell: "echo \"$(date): Docker installation completed\" >> {{ log_file }}"
+
+    - name: Create docker group and add user
+      user:
+        name: "{{ user_name }}"
+        groups: docker
+        append: true
+
+    - name: Create .docker directory in user home
+      file:
+        path: "{{ user_home }}/.docker"
+        state: directory
+        owner: "{{ user_name }}"
+        group: "{{ user_name }}"
+        mode: '0775'
+
+    - name: Enable Docker and containerd services
+      systemd:
+        name: "{{ item }}"
+        enabled: true
+        state: started
+      loop:
+        - docker
+        - containerd
+
+    - name: Install iptables-persistent for firewall rules
+      apt:
+        name: iptables-persistent
+        state: present
+
+    - name: Configure iptables rules
+      iptables:
+        chain: INPUT
+        protocol: "{{ item.protocol }}"
+        destination_port: "{{ item.port | default(omit) }}"
+        icmp_type: "{{ item.icmp_type | default(omit) }}"
+        ctstate: "{{ item.ctstate | default(omit) }}"
+        jump: ACCEPT
+        action: insert
+        rule_num: 6
+      loop:
+        - { protocol: tcp, port: 22, ctstate: NEW }
+        - { protocol: icmp, icmp_type: echo-request }
+        - { protocol: icmp, icmp_type: echo-reply }
+        - { protocol: tcp, port: 80, ctstate: NEW }
+        - { protocol: tcp, port: 443, ctstate: NEW }
+
+    - name: Save iptables rules
+      shell: netfilter-persistent save
+
+    - name: Log iptables configuration
+      shell: "echo \"$(date): iptables rules configured and saved\" >> {{ log_file }}"
+
+    - name: Install useful packages
+      apt:
+        name:
+          - nano
+          - net-tools
+          - wget
+          - curl
+          - jq
+          - htop
+          - traceroute
+          - mtr
+          - dnsutils
+        state: present
+
+    - name: Create and configure swapfile
+      block:
+        - name: Create swapfile (1GB)
+          shell: fallocate -l 1G /swapfile
+          args:
+            creates: /swapfile
+
+        - name: Set swapfile permissions
+          file:
+            path: /swapfile
+            mode: '0600'
+
+        - name: Format swapfile
+          shell: mkswap /swapfile
+          args:
+            creates: /swapfile
+
+        - name: Enable swapfile
+          shell: swapon /swapfile
+          ignore_errors: true
+
+        - name: Add swapfile to fstab
+          lineinfile:
+            path: /etc/fstab
+            line: '/swapfile none swap sw 0 0'
+            create: true
+
+    - name: Log swap configuration
+      shell: "echo \"$(date): Swap file configured - 1GB swapfile created and enabled\" >> {{ log_file }}"
+
+    - name: Set timezone to America/Sao_Paulo
+      timezone:
+        name: America/Sao_Paulo
+
+    - name: Enable NTP synchronization
+      shell: timedatectl set-ntp true
+
+    - name: Display current time settings
+      shell: timedatectl
+      register: time_status
+
+    - name: Log timezone and NTP configuration
+      shell: "echo \"$(date): Timezone set to America/Sao_Paulo and NTP enabled\" >> {{ log_file }}"
+
+    - name: Create startup completion marker
+      shell: echo "startup-script-finished"
+      register: completion_marker
+
+    - name: Log completion marker
+      shell: "echo \"$(date): startup-script-finished\" >> {{ log_file }}"
+
+    - name: Display completion message
+      debug:
+        msg: "{{ completion_marker.stdout }} - All setup tasks completed successfully!"
