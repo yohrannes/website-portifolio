@@ -1,14 +1,12 @@
 variable "compartment_id" {
   description = "The OCID of the compartment"
   type        = string
-  default     = "ocid1.tenancy.oc1..aaaaaaaawb7j4hswwgcjncr2ezu5mptw6o5n6h7ixvef5lzqsqkbtmwk44aq"
   sensitive   = true
 }
 
 variable "tenancy_ocid" {
   description = "The OCID of the tenancy"
   type        = string
-  default     = "ocid1.tenancy.oc1..aaaaaaaawb7j4hswwgcjncr2ezu5mptw6o5n6h7ixvef5lzqsqkbtmwk44aq"
   sensitive   = true
 }
 
@@ -73,6 +71,17 @@ variable "disable_ssh_port" {
 variable "availability_domain" {
   description = "Availability Domain"
   type        = string
+}
+
+#variable "instance_image_ocid" {
+#  description = "The OCID of the Ubuntu image to use"
+# type        = string
+#}
+
+variable "packer_module" {
+  type        = bool
+  description = "Flag to indicate if the packer module should be used"
+  default     = null
 }
 
 variable "ic_pub_vm_A" {

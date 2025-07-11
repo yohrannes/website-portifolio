@@ -41,6 +41,9 @@ module "oci_aftier_micro_amd" {
   source = "./modules/oci_aftier_micro_amd"
   disable_ssh_port = var.disable_ssh_port
   availability_domain = var.availability_domain
+  tenancy_ocid = "ocid1.tenancy.oc1..aaaaaaaawb7j4hswwgcjncr2ezu5mptw6o5n6h7ixvef5lzqsqkbtmwk44aq"
+  compartment_id = "ocid1.tenancy.oc1..aaaaaaaawb7j4hswwgcjncr2ezu5mptw6o5n6h7ixvef5lzqsqkbtmwk44aq"
+#  instance_image_ocid = "ocid1.image.oc1.iad.aaaaaaaa2bulxukxsjyv3ap3x45eueiqxxpxpsfrv6qppq7xrwtiima2c2pq"
 }
 
 module "oci_oke_cluster_arm" {
