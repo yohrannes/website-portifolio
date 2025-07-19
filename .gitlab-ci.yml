@@ -37,14 +37,20 @@ include:
 
 
   - local: 'pipelines/gitlab-ci-cd/run-terraform.yml'
-    rules:
-      - if: $CI_COMMIT_BRANCH == "none"
+#    rules:
+#      - if: $CI_COMMIT_BRANCH == "none"
 
 
 stages:
   - prepare
 
-  - create-infra
+## Terraform Cloud implelention
+#  - create-infra
+  - validate
+  - upload-config
+  - trigger-plan
+  - monitor
+
   - configure-infra
   - deploy-infra
   - build

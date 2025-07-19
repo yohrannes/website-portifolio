@@ -1,71 +1,217 @@
-create-oracle-instance:
-  stage: create-infra
-#  variables:
-#    AWS_DEFAULT_REGION: "us-east-1" #Check if that's really   necessary......
+variables:
+  TF_CLOUD_ORG: "org"
+  TF_WORKSPACE: "workspace"
+  TF_CLOUD_API: "https://app.terraform.io/api/v2"
+  
+  TF_ROOT: ${CI_PROJECT_DIR}
+  TF_CONFIG_FILE: "terraform-config.tar.gz"
+
+autenticate:
+  stage: prepare
   tags:
     - oci-runner-arm
   before_script:
 
-    #Autencicate with OCI
-    - mkdir -p $HOME/.oci
-    - echo "$OCI_CONFIG_BASE64" | base64 -d > $HOME/.oci/config
-    - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.oci/oci_api_key.pem
-    - chmod 700 $HOME/.oci
-    - chmod 600 $HOME/.oci/oci_api_key.pem
-    - chmod 600 $HOME/.oci/config
-    - export TF_VAR_compartment_id=$OCI_COMPARTMENT_OCID
-    - export TF_VAR_region=$OCI_REGION
+    #Autenticate
+    echo "$OCI_CONFIG_BASE64" | base64 -d > oci_config.txt
+    echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > oci_private_key.pem
+    echo "$AWS_CONFIG_BASE64" | base64 -d > aws_config.txt
+    echo "$AWS_CREDENTIALS_BASE64" | base64 -d > aws_credentials.txt
+    echo "$GOOGLE_APPLICATION_CREDENTIALS" | base64 -d > gcp_credentials.json
+    echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ssh_private_key.pem
+    echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > ssh_public_key.pub
 
-    #Autencicate with AWS
-    - mkdir -p $HOME/.aws
-    - echo "$AWS_CONFIG_BASE64" | base64 -d > $HOME/.aws/config
-    - echo "$AWS_CREDENTIALS_BASE64" | base64 -d > $HOME/.aws/credentials
-    - chmod 700 $HOME/.aws
-    - chmod 600 $HOME/.aws/credentials
-    - chmod 600 $HOME/.aws/config
-
-    #Autencicate with GCP
-    - mkdir -p $HOME/.gcp
-    - echo "$GOOGLE_APPLICATION_CREDENTIALS" | base64 -d > $HOME/.gcp/credentials.json
-    - chmod 775 $HOME/.gcp
-    - chmod 664 $HOME/.gcp/credentials.json
-
-    # Prepare SSH files to enable ssh conection with instance
-    - sudo apt-get install -yq openssh-client openssh-server curl
-    - mkdir -p $HOME/.ssh
-    - (echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa 2>/dev/null)
-    - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa.pub 2>/dev/null)
-    - chmod 644 $HOME/.ssh/id_rsa.pub
-
-    # Build terraform container for host architecture (auto-detected)
-    - |
-      ARCH=$(uname -m)
-      case $ARCH in
-        "x86_64") PLATFORM="linux/amd64" ;;
-        "aarch64") PLATFORM="linux/arm64" ;;
-        *) echo "Arch not suported: $ARCH"; exit 1 ;;
-      esac
-
-      docker buildx build  -qf ./build-tf-multi-arch/Dockerfile \
-        --platform $PLATFORM \
-        -t yohrannes/terraform:latest \
-        --build-arg PRODUCT=terraform \
-        --build-arg VERSION=1.11.0 \
-        --load .
-
-    # Run terraform-container 
-    - |
-      docker run -d --name terraform-container yohrannes/terraform:latest sleep infinity
-    - docker cp $CI_PROJECT_DIR/iac/terraform/prod terraform-container:/app > /dev/null 2>&1
-    - docker cp $HOME/.oci terraform-container:/root/.oci > /dev/null 2>&1
-    - docker cp $HOME/.aws terraform-container:/root/.aws > /dev/null 2>&1
-    - docker exec -w /app terraform-container mkdir /root/.ssh
-    - docker cp $HOME/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
-
+validate:
+  stage: validate
+  tags:
+  - oci-runner-arm
+  image: hashicorp/terraform:latest
   script:
-    - |
-      docker exec -w /app terraform-container sh -c "
-        apk add --no-cache git --quiet
-        TF_IN_AUTOMATION=true
-        terraform init -upgrade -reconfigure
-      "
+    - cd ${TF_ROOT}
+    - terraform init -backend=false -get-plugins=false
+    - terraform validate
+    - terraform fmt -check=true -diff=true
+  only:
+    changes:
+      - "**/*.tf"
+      - "**/*.tfvars"
+      - ".gitlab-ci.yml"
+  except:
+    - tags
+
+#upload-config:
+#  stage: upload-config
+#  tags:
+#  - oci-runner-arm
+#  image: alpine:latest
+#  before_script:
+#    - apk add --no-cache curl jq tar gzip
+#  script:
+#    - cd ${TF_ROOT}
+#    
+#    - |
+#      tar -czf ${TF_CONFIG_FILE} \
+#        --exclude='.git*' \
+#        --exclude='*.tar.gz' \
+#        --exclude='.terraform*' \
+#        --exclude='terraform.tfstate*' \
+#        --exclude='plan' \
+#        *.tf modules/ startup-files/ 2>/dev/null || true
+#    
+#    - ls -la ${TF_CONFIG_FILE}
+#    - echo "Arquivo criado com $(du -h ${TF_CONFIG_FILE} | cut -f1)"
+#    
+#    - |
+#      CONFIG_VERSION_RESPONSE=$(curl -s \
+#        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+#        --header "Content-Type: application/vnd.api+json" \
+#        --request POST \
+#        --data '{
+#          "data": {
+#            "type": "configuration-versions",
+#            "attributes": {
+#              "auto-queue-runs": false
+#            }
+#          }
+#        }' \
+#        "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/configuration-versions")
+#      
+#      echo "$CONFIG_VERSION_RESPONSE" | jq '.'
+#      
+#      UPLOAD_URL=$(echo "$CONFIG_VERSION_RESPONSE" | jq -r '.data.attributes."upload-url"')
+#      CONFIG_VERSION_ID=$(echo "$CONFIG_VERSION_RESPONSE" | jq -r '.data.id')
+#      
+#      echo "CONFIG_VERSION_ID=$CONFIG_VERSION_ID" >> upload.env
+#      echo "UPLOAD_URL=$UPLOAD_URL" >> upload.env
+#    
+#    - |
+#      curl -s \
+#        --header "Content-Type: application/octet-stream" \
+#        --request PUT \
+#        --data-binary @${TF_CONFIG_FILE} \
+#        "$UPLOAD_URL"
+#  
+#  artifacts:
+#    reports:
+#      dotenv: upload.env
+#    expire_in: 1 hour
+#  
+#  only:
+#    - infra-runner-oci-arm
+#    - infra-runner-gcp-amd
+#    - infra-webapp-oci-amd
+#    - infr-cluster-oci-arm
+#
+#trigger-plan:
+#  stage: trigger-plan
+#  tags:
+#  - oci-runner-arm
+#  image: alpine:latest
+#  dependencies:
+#    - upload-config
+#  before_script:
+#    - apk add --no-cache curl jq
+#  script:
+#    
+#    - |
+#      WORKSPACE_RESPONSE=$(curl -s \
+#        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+#        --header "Content-Type: application/vnd.api+json" \
+#        "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces/${TF_WORKSPACE}")
+#      
+#      WORKSPACE_ID=$(echo "$WORKSPACE_RESPONSE" | jq -r '.data.id')
+#    
+#    - |
+#      RUN_RESPONSE=$(curl -s \
+#        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+#        --header "Content-Type: application/vnd.api+json" \
+#        --request POST \
+#        --data "{
+#          \"data\": {
+#            \"attributes\": {
+#              \"is-destroy\": false,
+#              \"message\": \"GitLab CI Pipeline - Commit: ${CI_COMMIT_SHORT_SHA} - Branch: ${CI_COMMIT_REF_NAME}\"
+#            },
+#            \"type\": \"runs\",
+#            \"relationships\": {
+#              \"workspace\": {
+#                \"data\": {
+#                  \"type\": \"workspaces\",
+#                  \"id\": \"$WORKSPACE_ID\"
+#                }
+#              },
+#              \"configuration-version\": {
+#                \"data\": {
+#                  \"type\": \"configuration-versions\",
+#                  \"id\": \"$CONFIG_VERSION_ID\"
+#                }
+#              }
+#            }
+#          }
+#        }" \
+#        "${TF_CLOUD_API}/runs")
+#      
+#      echo "$RUN_RESPONSE" | jq '.'
+#      
+#      RUN_ID=$(echo "$RUN_RESPONSE" | jq -r '.data.id')
+#      RUN_URL="https://app.terraform.io/app/${TF_CLOUD_ORG}/workspaces/${TF_WORKSPACE}/runs/${RUN_ID}"
+#      
+#      echo "📋 Run ID: $RUN_ID"
+#      echo "🌐 Run URL: $RUN_URL"
+#      
+#      echo "RUN_ID=$RUN_ID" >> run.env
+#      echo "RUN_URL=$RUN_URL" >> run.env
+#      
+#  
+#  artifacts:
+#    reports:
+#      dotenv: run.env
+#    expire_in: 1 hour
+#  
+#  only:
+#    - infra-runner-oci-arm
+#    - infra-runner-gcp-amd
+#    - infra-webapp-oci-amd
+#    - infr-cluster-oci-arm
+#
+#monitor:
+#  stage: monitor
+#  tags:
+#  - oci-runner-arm
+#  image: alpine:latest
+#  dependencies:
+#    - trigger-plan
+#  before_script:
+#    - apk add --no-cache curl jq
+#  script:
+#    - echo "Run ID: $RUN_ID"
+#    - echo "Run URL: $RUN_URL"
+#    
+#    - |
+#      RUN_STATUS_RESPONSE=$(curl -s \
+#        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+#        "${TF_CLOUD_API}/runs/${RUN_ID}")
+#      
+#      STATUS=$(echo "$RUN_STATUS_RESPONSE" | jq -r '.data.attributes.status')
+#      
+#      echo "$RUN_STATUS_RESPONSE" | jq -r '.data.attributes | {
+#        status: .status,
+#        "created-at": ."created-at",
+#        message: .message,
+#        "has-changes": ."has-changes",
+#        "is-destroyable": ."is-destroyable"
+#      }'
+#      
+#      echo ""
+#      echo "   Status: $STATUS"
+#      echo "   Run URL: $RUN_URL"
+#      echo "   Commit: ${CI_COMMIT_SHORT_SHA}"
+#      echo "   Branch: ${CI_COMMIT_REF_NAME}"
+#      echo ""
+#  
+#  only:
+#    - infra-runner-oci-arm
+#    - infra-runner-gcp-amd
+#    - infra-webapp-oci-amd
+#    - infr-cluster-oci-arm
+#  when: on_success

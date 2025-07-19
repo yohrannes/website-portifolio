@@ -1,15 +1,4 @@
 #!/bin/bash
-#docker run -it \
-#  -v ~/.oci:/root/.oci \
-#  -v ~/.aws:/root/.aws \
-#  -v ~/.ssh:/root/.ssh \
-#  -v ~/.gcp:/root/.gcp \
-#  -v ~/.kube/config:/root/.kube/config \
-#  -v $PWD:/app \
-#  -v $PWD/.shrc:/root/.shrc \
-#  -w /app \
-#  --entrypoint "" hashicorp/terraform:latest sh -c \
-#  "source /root/.shrc && terraform init -reconfigure && apk add oci-cli --quiet && ENV=/root/.shrc sh"
 
 docker build -t tf-container . -f webport-cli/Dockerfile
 
@@ -21,5 +10,6 @@ docker run -it --rm\
   -v ~/.config/gcloud \
   -v ~/.kube/config:/root/.kube/config \
   -v $PWD:/app \
+  -v ~/.terraform.d/credentials.tfrc.json:/root/.terraform.d/credentials.tfrc.json \
   -e PACKER_PLUGIN_PATH=~/.packer.d/plugins \
   tf-container
