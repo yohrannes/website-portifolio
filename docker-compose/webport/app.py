@@ -9,6 +9,13 @@ from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor
 from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 
+#Bucket integration
+#...
+#app = flask.Flask(__name__)
+#app.config["STATIC_URL"] = os.environ.get("STATIC_URL", "/static/")
+#...
+
+
 # Intern routes
 # Start flask
 app = flask.Flask(__name__)
