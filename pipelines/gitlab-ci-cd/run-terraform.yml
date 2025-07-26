@@ -36,12 +36,12 @@ validate:
   stage: validate
   script:
     - cd iac
-    - ./webport-cli/pipe.sh
+    - ./webport-cli/pipe.sh > /dev/null 2>&1
     - docker ps -a
-    - docker exec -d tf-container cd terraform/prod
-    - docker exec -d tf-container ls -la
+    - docker exec -d cloud-cli cd terraform/prod
+    - docker exec -d cloud-cli ls -la
     - |
-      docker exec -d tf-container sh -c "
+      docker exec -d cloud-cli sh -c "
         terraform init -input=false -upgrade=true && \
         terraform validate && \
         terraform fmt -check=true -diff=true
