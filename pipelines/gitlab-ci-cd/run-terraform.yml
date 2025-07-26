@@ -25,10 +25,12 @@ validate:
   stage: validate
 #  tags:
 #  - oci-runner-arm
-  image: hashicorp/terraform:latest
+  image: hashicorp/terraform:1.6.6
   script:
     - cd ${TF_ROOT}
     - which terraform
+    - ls -la
+    - pwd
 #    - terraform init -backend=false -get-plugins=false
 #    - terraform validate
 #    - terraform fmt -check=true -diff=true
