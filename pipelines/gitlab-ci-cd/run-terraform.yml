@@ -34,7 +34,7 @@ autenticate:
 
 validate:
   stage: validate
-  image: hashicorp/terraform:latest
+  image: yohrannes/cloud-cli:latest
   volumes:
     - $HOME/.oci:/root/.oci
     - $HOME/.aws:/root/.aws
