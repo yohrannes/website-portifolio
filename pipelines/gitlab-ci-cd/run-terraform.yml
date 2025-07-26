@@ -1,6 +1,6 @@
 variables:
-  TF_CLOUD_ORG: "org"
-  TF_WORKSPACE: "workspace"
+  TF_CLOUD_ORG: "org-website-portifolio"
+  TF_WORKSPACE: "web_port_dev"
   TF_CLOUD_API: "https://app.terraform.io/api/v2"
   
   TF_ROOT: ${CI_PROJECT_DIR}
@@ -38,6 +38,8 @@ validate:
       - ".gitlab-ci.yml"
   except:
     - tags
+
+#test
 
 #upload-config:
 #  stage: upload-config
