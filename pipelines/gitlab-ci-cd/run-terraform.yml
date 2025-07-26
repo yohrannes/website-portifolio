@@ -34,7 +34,7 @@ autenticate:
 
 validate:
   stage: validate
-  image: harborcloud/terraform:latest
+  image: hashicorp/terraform:latest
   volumes:
     - $HOME/.oci:/root/.oci \
     - $HOME/.aws:/root/.aws \
@@ -52,7 +52,7 @@ validate:
     - init
     - validate
     - fmt -check=true -diff=true
-#test
+
 #upload-config:
 #  stage: upload-config
 #  tags:
