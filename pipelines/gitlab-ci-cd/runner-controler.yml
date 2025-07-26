@@ -8,8 +8,8 @@ runner-controler-start:
   tags:
     - oci-runner-arm
   script:
-    - docker stop $(docker ps -a -q)
-    - docker rm $(docker ps -a -q)
+    - docker ps -a -q | xargs -r docker stop
+    - docker ps -a -q | xargs -r docker rm
     - docker volume prune -f
     - docker system prune -af
 
