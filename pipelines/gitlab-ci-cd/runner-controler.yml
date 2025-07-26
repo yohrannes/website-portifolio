@@ -8,11 +8,9 @@ runner-controler-start:
   tags:
     - oci-runner-arm
   script:
-    - sudo chown -r $(whoami) $HOME
-    - docker ps -a -q | xargs -r docker stop
-    - docker volume prune -f
-    - docker system prune -af
-    - docker ps -a -q | xargs -r docker rm
+    - sudo docker ps -a -q | xargs -r docker rm -f
+    - sudo docker volume prune -f
+    - sudo docker system prune -afrm
 
 
 #runner-controler-stop:
