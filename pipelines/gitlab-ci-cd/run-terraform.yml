@@ -24,7 +24,7 @@ validate:
   image: hashicorp/terraform:latest
   script:
     - cd ${TF_ROOT}
-    - init
+    - init -upgrade -reconfigure -input=false
     - validate
     - fmt -check=true -diff=true
 
