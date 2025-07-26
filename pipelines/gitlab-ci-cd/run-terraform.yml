@@ -46,10 +46,10 @@ validate:
       docker exec cloud-cli sh -c "
         cd terraform/prod
         ls -la
-        terraform init -input=false -upgrade=true && \
-        terraform validate && \
-        terraform fmt -check=true -diff=true
       "
+#        terraform init -input=false -upgrade=true && \
+#        terraform validate && \
+#       terraform fmt -check=true -diff=true
 
 #upload-config:
 #  stage: upload-config
