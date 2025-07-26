@@ -6,25 +6,41 @@ variables:
   TF_ROOT: ${CI_PROJECT_DIR}/iac/terraform/prod
   TF_CONFIG_FILE: "terraform-config.tar.gz"
 
-#autenticate:
-#  stage: prepare
- # before_script:
+autenticate:
+  stage: prepare
+  before_script:
 
-    #Autenticate
-#    echo "$OCI_CONFIG_BASE64" | base64 -d > oci_config.txt
-#    echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > oci_private_key.pem
-#    echo "$AWS_CONFIG_BASE64" | base64 -d > aws_config.txt
-#    echo "$AWS_CREDENTIALS_BASE64" | base64 -d > aws_credentials.txt
-#    echo "$GOOGLE_APPLICATION_CREDENTIALS" | base64 -d > gcp_credentials.json
-#   echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ssh_private_key.pem
-#   echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > ssh_public_key.pub
+    #Autencicate with OCI
+    - mkdir -p $HOME/.oci
+    - echo "$OCI_CONFIG_BASE64" | base64 -d > $HOME/.oci/config
+    - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.oci/oci_api_key.pem
+    - chmod 700 $HOME/.oci
+    - chmod 600 $HOME/.oci/oci_api_key.pem
+    - chmod 600 $HOME/.oci/config
+    - export TF_VAR_compartment_id=$OCI_COMPARTMENT_OCID
+    - export TF_VAR_region=$OCI_REGION
+
+    #Autencicate with AWS
+    - mkdir -p $HOME/.aws
+    - echo "$AWS_CONFIG_BASE64" | base64 -d > $HOME/.aws/config
+    - echo "$AWS_CREDENTIALS_BASE64" | base64 -d > $HOME/.aws/credentials
+    - chmod 700 $HOME/.aws
+    - chmod 600 $HOME/.aws/credentials
+    - chmod 600 $HOME/.aws/config
+
+    #Autencicate with Terraform Cloud
+    - mkdir -p $HOME/.terraform.d
+    - echo "$TF_CLOUD_TOKEN_BASE64" | base64 -d > $HOME/.terraform.d/credentials.tfrc.json
 
 validate:
   stage: validate
   image: hashicorp/terraform:latest
   script:
     - cd ${TF_ROOT}
-    - init -upgrade -reconfigure -input=false
+    - ls -la $HOME
+    - ls -la $HOME/.terraform.d
+    - cat $HOME/.terraform.d/credentials.tfrc.json
+    - init
     - validate
     - fmt -check=true -diff=true
 
