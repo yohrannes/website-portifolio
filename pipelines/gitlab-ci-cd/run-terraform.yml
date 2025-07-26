@@ -28,8 +28,6 @@ validate:
     - validate
     - fmt -check=true -diff=true
 
-#test 2
-
 #upload-config:
 #  stage: upload-config
 #  tags:
