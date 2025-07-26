@@ -35,15 +35,15 @@ autenticate:
 validate:
   stage: validate
   image: hashicorp/terraform:latest
-  volumes:
-    - $HOME/.oci:/root/.oci \
-    - $HOME/.aws:/root/.aws \
-    - $HOME/.ssh:/root/.ssh \
-    - $HOME/.gcp:/root/.gcp \
-    - $HOME/.config/gcloud \
-    - $HOME/.kube/config:/root/.kube/config \
-    - $PWD/iac:/app \
-    - $HOME/.terraform.d/credentials.tfrc.json:/root/.terraform.d/credentials.tfrc.json
+#  volumes:
+#    - $HOME/.oci:/root/.oci \
+#    - $HOME/.aws:/root/.aws \
+#    - $HOME/.ssh:/root/.ssh \
+#    - $HOME/.gcp:/root/.gcp \
+#    - $HOME/.config/gcloud \
+#    - $HOME/.kube/config:/root/.kube/config \
+#    - $PWD/iac:/app \
+#    - $HOME/.terraform.d/credentials.tfrc.json:/root/.terraform.d/credentials.tfrc.json
   script:
     - cd ${TF_ROOT}
     - ls -la $HOME
