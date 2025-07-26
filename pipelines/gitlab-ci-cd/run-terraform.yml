@@ -38,7 +38,16 @@ validate:
     - cd iac
     - ./webport-cli/pipe.sh
     - docker ps -a
-#    - init
+    - docker exec -d tf-container cd terraform/prod
+    - docker exec -d tf-container ls -la
+    - |
+      docker exec -d tf-container sh -c "
+        terraform init -input=false -upgrade=true && \
+        terraform validate && \
+        terraform fmt -check=true -diff=true
+      "
+
+
 #    - validate
 #    - fmt -check=true -diff=true
 
