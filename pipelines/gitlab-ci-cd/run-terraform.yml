@@ -43,7 +43,7 @@ validate:
     - ./webport-cli/.sh pipe > /dev/null 2>&1
     - docker ps -a
     - |
-      docker exec -d cloud-cli sh -c "
+      docker exec cloud-cli sh -c "
         cd terraform/prod
         ls -la
         terraform init -input=false -upgrade=true && \
