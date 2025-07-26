@@ -6,8 +6,8 @@ variables:
   TF_ROOT: ${CI_PROJECT_DIR}
   TF_CONFIG_FILE: "terraform-config.tar.gz"
 
-autenticate:
-  stage: prepare
+#autenticate:
+#  stage: prepare
 #  tags:
 #    - oci-runner-arm
  # before_script:
