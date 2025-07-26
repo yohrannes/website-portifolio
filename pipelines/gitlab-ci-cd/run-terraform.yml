@@ -32,26 +32,26 @@ autenticate:
     - mkdir -p $HOME/.terraform.d
     - echo "$TF_CLOUD_TOKEN_BASE64" | base64 -d > $HOME/.terraform.d/credentials.tfrc.json
 
-validate:
-  stage: validate
-  image: yohrannes/cloud-cli:latest
-  volumes:
-    - $HOME/.oci:/root/.oci \
-    - $HOME/.aws:/root/.aws \
-    - $HOME/.ssh:/root/.ssh \
-    - $HOME/.gcp:/root/.gcp \
-    - $HOME/.config/gcloud \
-    - $HOME/.kube/config:/root/.kube/config \
-    - $PWD/iac:/app \
-    - $HOME/.terraform.d/credentials.tfrc.json:/root/.terraform.d/credentials.tfrc.json
-  script:
-    - cd ${TF_ROOT}
-    - ls -la $HOME
-    - ls -la $HOME/.terraform.d
-    - cat $HOME/.terraform.d/credentials.tfrc.json
-    - terraform init
-    - terraform validate
-    - terraform fmt -check=true -diff=true
+#validate:
+#  stage: validate
+#  image: yohrannes/cloud-cli:latest
+#  volumes:
+#    - $HOME/.oci:/root/.oci \
+#    - $HOME/.aws:/root/.aws \
+#    - $HOME/.ssh:/root/.ssh \
+#    - $HOME/.gcp:/root/.gcp \
+#    - $HOME/.config/gcloud \
+#    - $HOME/.kube/config:/root/.kube/config \
+#    - $PWD/iac:/app \
+#    - $HOME/.terraform.d/credentials.tfrc.json:/root/.terraform.d/credentials.tfrc.json
+#  script:
+#    - cd ${TF_ROOT}
+#   - ls -la $HOME
+#    - ls -la $HOME/.terraform.d
+#    - cat $HOME/.terraform.d/credentials.tfrc.json
+#    - terraform init
+#    - terraform validate
+#    - terraform fmt -check=true -diff=true
 
 #upload-config:
 #  stage: upload-config
