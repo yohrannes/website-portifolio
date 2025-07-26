@@ -52,7 +52,7 @@ validate:
     - init
     - validate
     - fmt -check=true -diff=true
-
+#test
 #upload-config:
 #  stage: upload-config
 #  tags:
