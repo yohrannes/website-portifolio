@@ -15,9 +15,9 @@ include:
 #     - if: $CI_COMMIT_BRANCH == "infra-webapp-oci-amd"
 
 
-  - local: 'pipelines/gitlab-ci-cd/4-infra-oci-oke-arm.yml'
-    rules:
-      - if: $CI_COMMIT_BRANCH == "infr-cluster-oci-arm"
+#  - local: 'pipelines/gitlab-ci-cd/4-infra-oci-oke-arm.yml'
+#    rules:
+#      - if: $CI_COMMIT_BRANCH == "infr-cluster-oci-arm"
 
 
   - local: 'pipelines/gitlab-ci-cd/runner-controler.yml'
