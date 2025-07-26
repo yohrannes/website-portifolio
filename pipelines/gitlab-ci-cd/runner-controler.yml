@@ -8,6 +8,7 @@ runner-controler-start:
   tags:
     - oci-runner-arm
   script:
+    - sudo rm -rf ${CI_PROJECT_DIR}
     - docker ps -a -q | xargs -r docker stop
     - docker ps -a -q | xargs -r docker rm
     - docker volume prune -f
