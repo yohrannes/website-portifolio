@@ -14,7 +14,7 @@ runner-controler-start:
     - docker volume prune -f
     - docker system prune -af
 
-
+#test
 #runner-controler-stop:
 #  stage: clean-runner
 ##########################3 needs:
