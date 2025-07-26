@@ -47,10 +47,6 @@ validate:
         terraform fmt -check=true -diff=true
       "
 
-
-#    - validate
-#    - fmt -check=true -diff=true
-
 #upload-config:
 #  stage: upload-config
 #  tags:
