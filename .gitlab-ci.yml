@@ -10,9 +10,9 @@ include:
       - if: $CI_COMMIT_BRANCH == "infra-runner-gcp-amd"
 
 
-  - local: 'pipelines/gitlab-ci-cd/3-infra-webapp-oci-amd.yml'
-    rules:
-      - if: $CI_COMMIT_BRANCH == "infra-webapp-oci-amd"
+#  - local: 'pipelines/gitlab-ci-cd/3-infra-webapp-oci-amd.yml'
+#    rules:
+#     - if: $CI_COMMIT_BRANCH == "infra-webapp-oci-amd"
 
 
   - local: 'pipelines/gitlab-ci-cd/4-infra-oci-oke-arm.yml'
@@ -37,8 +37,8 @@ include:
 
 
   - local: 'pipelines/gitlab-ci-cd/run-terraform.yml'
-#    rules:
-#      - if: $CI_COMMIT_BRANCH == "none"
+    rules:
+      - if: $CI_COMMIT_BRANCH == "infra-webapp-oci-amd"
 
 
 stages:
