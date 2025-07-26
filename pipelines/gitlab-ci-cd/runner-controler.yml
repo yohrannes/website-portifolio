@@ -11,7 +11,7 @@ runner-controler-start:
     - docker system prune -af
     - docker volume prune -f
     - |
-      if docker ps -a --format '{{.Names}}' | grep -wq terraform-container; then
+      if docker ps -a --format '{{.Names}}'; then
         docker stop terraform-container
         docker rm terraform-container
       fi
