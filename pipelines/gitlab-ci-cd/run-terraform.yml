@@ -34,7 +34,7 @@ autenticate:
 
 validate:
   stage: validate
-  image: yohrannes/cloud-cli:latest
+  image: harborcloud/terraform:latest
   volumes:
     - $HOME/.oci:/root/.oci \
     - $HOME/.aws:/root/.aws \
@@ -49,9 +49,9 @@ validate:
     - ls -la $HOME
     - ls -la $HOME/.terraform.d
     - cat $HOME/.terraform.d/credentials.tfrc.json
-    - terraform init
-    - terraform validate
-    - terraform fmt -check=true -diff=true
+    - init
+    - validate
+    - fmt -check=true -diff=true
 
 #upload-config:
 #  stage: upload-config
