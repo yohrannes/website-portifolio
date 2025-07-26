@@ -40,7 +40,7 @@ validate:
     - $HOME/.aws:/root/.aws
     - $HOME/.ssh:/root/.ssh
     - $HOME/.gcp:/root/.gcp
-    - $HOME/.config/gcloud
+    - $HOME/.config/gcloud:/root/.config/gcloud
     - $HOME/.kube/config:/root/.kube/config
     - $PWD/iac:/app
     - $HOME/.terraform.d/credentials.tfrc.json:/root/.terraform.d/credentials.tfrc.json
