@@ -42,10 +42,10 @@ validate:
     - cd iac
     - ./webport-cli/.sh pipe > /dev/null 2>&1
     - docker ps -a
-    - docker exec -d cloud-cli cd terraform/prod
-    - docker exec -d cloud-cli ls -la
     - |
       docker exec -d cloud-cli sh -c "
+        cd terraform/prod
+        ls -la
         terraform init -input=false -upgrade=true && \
         terraform validate && \
         terraform fmt -check=true -diff=true
