@@ -39,7 +39,7 @@ validate:
   except:
     - tags
 
-#test
+#test 2
 
 #upload-config:
 #  stage: upload-config
