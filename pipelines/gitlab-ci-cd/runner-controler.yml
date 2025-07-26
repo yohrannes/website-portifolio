@@ -8,13 +8,12 @@ runner-controler-start:
   tags:
     - oci-runner-arm
   script:
-    - docker system prune -af
+    - docker stop $(docker ps -a -q)
+    - docker rm $(docker ps -a -q)
     - docker volume prune -f
-    - |
-      if docker ps -a --format '{{.Names}}'; then
-        docker stop terraform-container
-        docker rm terraform-container
-      fi
+    - docker system prune -af
+
+
 #runner-controler-stop:
 #  stage: clean-runner
 ##########################3 needs:
