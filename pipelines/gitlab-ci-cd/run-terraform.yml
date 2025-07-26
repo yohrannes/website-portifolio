@@ -36,9 +36,8 @@ validate:
   stage: validate
   script:
     - cd iac
-    - ls -la
-#    - ./webport-cli/pipe.sh
-#    - docker ps -a
+    - ./webport-cli/.sh
+    - docker ps -a
 #    - init
 #    - validate
 #    - fmt -check=true -diff=true
