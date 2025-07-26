@@ -1,6 +1,6 @@
 #!/bin/bash
 
-docker build -t tf-container . -f webport-cli/Dockerfile
+docker build -t cloud-cli . -f webport-cli/Dockerfile
 
 docker run -d --rm\
   -v ~/.oci:/root/.oci \
