@@ -8,6 +8,8 @@ variables:
 
 autenticate:
   stage: prepare
+  tags:
+    - oci-runner-arm
   script:
 
     #Autencicate with OCI
@@ -34,6 +36,8 @@ autenticate:
 
 validate:
   stage: validate
+  tags:
+    - oci-runner-arm
   script:
     - cd iac
     - ./webport-cli/.sh pipe > /dev/null 2>&1
