@@ -12,4 +12,4 @@ docker run -d --rm\
   -v $PWD:/app \
   -v ~/.terraform.d/credentials.tfrc.json:/root/.terraform.d/credentials.tfrc.json \
   -e PACKER_PLUGIN_PATH=~/.packer.d/plugins \
-  tf-container sleep infinity
+  cloud-cli sleep infinity
