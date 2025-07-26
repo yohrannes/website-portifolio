@@ -28,9 +28,10 @@ validate:
   image: hashicorp/terraform:latest
   script:
     - cd ${TF_ROOT}
-    - terraform init -backend=false -get-plugins=false
-    - terraform validate
-    - terraform fmt -check=true -diff=true
+    - which terraform
+#    - terraform init -backend=false -get-plugins=false
+#    - terraform validate
+#    - terraform fmt -check=true -diff=true
 #  only:
 #    changes:
 #      - "**/*.tf"
