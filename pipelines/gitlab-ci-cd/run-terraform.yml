@@ -28,9 +28,9 @@ validate:
   image: hashicorp/terraform:1.6.6
   script:
     - cd ${TF_ROOT}
-    - which terraform
     - ls -la
     - pwd
+    - which terraform
 #    - terraform init -backend=false -get-plugins=false
 #    - terraform validate
 #    - terraform fmt -check=true -diff=true
