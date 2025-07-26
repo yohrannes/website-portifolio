@@ -10,16 +10,16 @@ autenticate:
   stage: prepare
   tags:
     - oci-runner-arm
-  before_script:
+ # before_script:
 
     #Autenticate
-    echo "$OCI_CONFIG_BASE64" | base64 -d > oci_config.txt
-    echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > oci_private_key.pem
-    echo "$AWS_CONFIG_BASE64" | base64 -d > aws_config.txt
-    echo "$AWS_CREDENTIALS_BASE64" | base64 -d > aws_credentials.txt
-    echo "$GOOGLE_APPLICATION_CREDENTIALS" | base64 -d > gcp_credentials.json
-    echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ssh_private_key.pem
-    echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > ssh_public_key.pub
+#    echo "$OCI_CONFIG_BASE64" | base64 -d > oci_config.txt
+#    echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > oci_private_key.pem
+#    echo "$AWS_CONFIG_BASE64" | base64 -d > aws_config.txt
+#    echo "$AWS_CREDENTIALS_BASE64" | base64 -d > aws_credentials.txt
+#    echo "$GOOGLE_APPLICATION_CREDENTIALS" | base64 -d > gcp_credentials.json
+#   echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ssh_private_key.pem
+#   echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > ssh_public_key.pub
 
 validate:
   stage: validate
