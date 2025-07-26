@@ -8,8 +8,8 @@ variables:
 
 autenticate:
   stage: prepare
-  tags:
-    - oci-runner-arm
+#  tags:
+#    - oci-runner-arm
  # before_script:
 
     #Autenticate
@@ -23,21 +23,21 @@ autenticate:
 
 validate:
   stage: validate
-  tags:
-  - oci-runner-arm
+#  tags:
+#  - oci-runner-arm
   image: hashicorp/terraform:latest
   script:
     - cd ${TF_ROOT}
     - terraform init -backend=false -get-plugins=false
     - terraform validate
     - terraform fmt -check=true -diff=true
-  only:
-    changes:
-      - "**/*.tf"
-      - "**/*.tfvars"
-      - ".gitlab-ci.yml"
-  except:
-    - tags
+#  only:
+#    changes:
+#      - "**/*.tf"
+#      - "**/*.tfvars"
+#      - ".gitlab-ci.yml"
+#  except:
+#    - tags
 
 #test 2
 
