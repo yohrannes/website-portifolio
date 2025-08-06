@@ -33,62 +33,42 @@ autenticate:
     #Autencicate with Terraform Cloud
     - mkdir -p $HOME/.terraform.d
     - echo "$TF_CLOUD_TOKEN_BASE64" | base64 -d > $HOME/.terraform.d/credentials.tfrc.json
+    - export TF_CLOUD_TOKEN=$(cat $HOME/.terraform.d/credentials.tfrc.json | jq -r '.credentials."app.terraform.io".token')
 
-validate:
-  stage: validate
-  tags:
-    - oci-runner-arm
+upload-config:
+  stage: configure-infra
+  image: alpine:latest
+  before_script:
+    - apk add --no-cache curl jq tar gzip
   script:
-    - cd iac
-    - ./webport-cli/.sh pipe > /dev/null 2>&1
-    - docker ps -a
+    - cd ${TF_ROOT}
+    
     - |
-      docker exec cloud-cli sh -c "
-        cd terraform/prod
-        ls -la
-      "
-#        terraform init -input=false -upgrade=true && \
-#        terraform validate && \
-#       terraform fmt -check=true -diff=true
-
-#upload-config:
-#  stage: upload-config
-#  tags:
-#  - oci-runner-arm
-#  image: alpine:latest
-#  before_script:
-#    - apk add --no-cache curl jq tar gzip
-#  script:
-#    - cd ${TF_ROOT}
-#    
-#    - |
-#      tar -czf ${TF_CONFIG_FILE} \
-#        --exclude='.git*' \
-#        --exclude='*.tar.gz' \
-#        --exclude='.terraform*' \
-#        --exclude='terraform.tfstate*' \
-#        --exclude='plan' \
-#        *.tf modules/ startup-files/ 2>/dev/null || true
-#    
-#    - ls -la ${TF_CONFIG_FILE}
-#    - echo "Arquivo criado com $(du -h ${TF_CONFIG_FILE} | cut -f1)"
-#    
-#    - |
-#      CONFIG_VERSION_RESPONSE=$(curl -s \
-#        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
-#        --header "Content-Type: application/vnd.api+json" \
-#        --request POST \
-#        --data '{
-#          "data": {
-#            "type": "configuration-versions",
-#            "attributes": {
-#              "auto-queue-runs": false
-#            }
-#          }
-#        }' \
-#        "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/configuration-versions")
-#      
-#      echo "$CONFIG_VERSION_RESPONSE" | jq '.'
+      tar -czf ${TF_CONFIG_FILE} \
+        --exclude='.git*' \
+        --exclude='.terraform*' \
+        --exclude='plan' \
+        *.tf modules/ startup-files/ 2>/dev/null || true
+    
+    - ls -la ${TF_CONFIG_FILE}
+    - echo "$(du -h ${TF_CONFIG_FILE} | cut -f1)"
+    
+    - |
+      CONFIG_VERSION_RESPONSE=$(curl -s \
+        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+        --header "Content-Type: application/vnd.api+json" \
+        --request POST \
+        --data '{
+          "data": {
+            "type": "configuration-versions",
+            "attributes": {
+              "auto-queue-runs": false
+            }
+          }
+        }' \
+        "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/configuration-versions")
+      
+      echo "$CONFIG_VERSION_RESPONSE" | jq '.'
 #      
 #      UPLOAD_URL=$(echo "$CONFIG_VERSION_RESPONSE" | jq -r '.data.attributes."upload-url"')
 #      CONFIG_VERSION_ID=$(echo "$CONFIG_VERSION_RESPONSE" | jq -r '.data.id')
