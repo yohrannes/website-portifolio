@@ -38,7 +38,7 @@ autenticate:
 upload-config:
   stage: configure-infra
   before_script:
-    - apt-get install -y curl jq tar gzip
+    - sudo apt-get install -y curl jq tar gzip
   script:
     - cd ${TF_ROOT}
     
