@@ -37,9 +37,8 @@ autenticate:
 
 upload-config:
   stage: configure-infra
-  image: alpine:latest
   before_script:
-    - apk add --no-cache curl jq tar gzip
+    - apt-get install -y curl jq tar gzip
   script:
     - cd ${TF_ROOT}
     
