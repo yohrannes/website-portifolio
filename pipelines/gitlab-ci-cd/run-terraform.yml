@@ -69,7 +69,7 @@ upload-config:
         "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/configuration-versions")
       
       echo "$CONFIG_VERSION_RESPONSE" | jq '.'
-#      test
+#      t
 #      UPLOAD_URL=$(echo "$CONFIG_VERSION_RESPONSE" | jq -r '.data.attributes."upload-url"')
 #      CONFIG_VERSION_ID=$(echo "$CONFIG_VERSION_RESPONSE" | jq -r '.data.id')
 #      
