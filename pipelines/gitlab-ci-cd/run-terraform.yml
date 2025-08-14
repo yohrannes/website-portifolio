@@ -110,6 +110,9 @@ upload-and-trigger-terraform-run:
       fi
       echo "Configuration file upload conluded successfully."
 
+    - echo "Waiting for configuration version to be processed..."
+    - sleep 10
+
     - echo "Starting o Terraform run..."
     - |
       RUN_RESPONSE=$(curl -s \
