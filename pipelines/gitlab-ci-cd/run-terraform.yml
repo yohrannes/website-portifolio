@@ -58,14 +58,14 @@ upload-and-trigger-terraform-run:
       fi
     - ls -la ${TF_CONFIG_FILE}
 
-    - echo "=== DEBUG TOKEN ==="
-    - echo "Token exists $(test -n "$TF_CLOUD_TOKEN" && echo 'YES' || echo 'NO')"
-    - echo "Token length ${#TF_CLOUD_TOKEN}"
-    - echo "Token first 30 chars '${TF_CLOUD_TOKEN:0:30}...'"
-    - echo "Token has spaces $(echo "$TF_CLOUD_TOKEN" | grep -q ' ' && echo 'YES' || echo 'NO')"
-    - echo "Token has newlines $(echo "$TF_CLOUD_TOKEN" | wc -l)"
-    - echo "Token hex dump (first 50 chars) $(echo -n "${TF_CLOUD_TOKEN:0:50}" | xxd -l 50)"
-    - echo "==================="
+#    - echo "=== DEBUG TOKEN ==="
+#    - echo "Token exists $(test -n "$TF_CLOUD_TOKEN" && echo 'YES' || echo 'NO')"
+#    - echo "Token length ${#TF_CLOUD_TOKEN}"
+#    - echo "Token first 30 chars '${TF_CLOUD_TOKEN:0:30}...'"
+#    - echo "Token has spaces $(echo "$TF_CLOUD_TOKEN" | grep -q ' ' && echo 'YES' || echo 'NO')"
+#    - echo "Token has newlines $(echo "$TF_CLOUD_TOKEN" | wc -l)"
+#    - echo "Token hex dump (first 50 chars) $(echo -n "${TF_CLOUD_TOKEN:0:50}" | xxd -l 50)"
+#    - echo "==================="
 
     - |
       WORKSPACE_RESPONSE=$(curl -s \
