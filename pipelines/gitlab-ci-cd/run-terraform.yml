@@ -38,7 +38,8 @@ authenticate:
 
     - echo "Configuring Terraform Cloud authentication..."
     - mkdir -p $HOME/.terraform.d
-    - echo "Terraform Cloud token obtained."
+    - export TF_CLOUD_TOKEN="$TF_CLOUD_TOKEN"  # ← Adicionar esta linha
+    - echo "Terraform Cloud token configured."
 
 upload-and-trigger-terraform-run:
   stage: configure-infra
@@ -74,13 +75,13 @@ upload-and-trigger-terraform-run:
         "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces?filter%5Bname%5D=${TF_WORKSPACE}")
       WORKSPACE_ID=$(echo "$WORKSPACE_RESPONSE" | jq -r '.data[0].id')
     
-    - |
-      echo "$(curl -s --header "Authorization: Bearer $TF_CLOUD_TOKEN" --header "Content-Type: application/vnd.api+json" --header "Accept: application/vnd.api+json" "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces?filter%5Bname%5D=${TF_WORKSPACE}")"
-    - echo TF_CLOUD_API - $TF_CLOUD_API
-    - echo TF_CLOUD_ORG - $TF_CLOUD_ORG
-    - echo TF_WORKSPACE - $TF_WORKSPACE
-    - echo WORKSPACE_RESPONSE - $WORKSPACE_RESPONSE
-    - echo WORKSPACE_ID - $WORKSPACE_ID
+#    - |
+#      echo "$(curl -s --header "Authorization: Bearer $TF_CLOUD_TOKEN" --header "Content-Type: application/vnd.api+json" --header "Accept: application/vnd.api+json" "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces?filter%5Bname%5D=${TF_WORKSPACE}")"
+#    - echo TF_CLOUD_API - $TF_CLOUD_API
+#    - echo TF_CLOUD_ORG - $TF_CLOUD_ORG
+#    - echo TF_WORKSPACE - $TF_WORKSPACE
+#    - echo WORKSPACE_RESPONSE - $WORKSPACE_RESPONSE
+#    - echo WORKSPACE_ID - $WORKSPACE_ID
     
     - |
       if [ -z "$WORKSPACE_ID" ] || [ "$WORKSPACE_ID" = "null" ]; then
