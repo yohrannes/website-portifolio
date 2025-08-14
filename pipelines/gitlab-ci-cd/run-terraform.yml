@@ -110,6 +110,7 @@ upload_and_trigger_terraform_run:
     - echo "Upload URL obtained: $UPLOAD_URL"
     - echo "Configuration Version ID: $CONFIG_VERSION_ID"
 
+#test
 #    - echo "Uploading Terraform configuration file to the provided URL..."
 #    # **CRITICAL MISSING STEP in the original pipeline: the actual tarball upload**
 #    - |
