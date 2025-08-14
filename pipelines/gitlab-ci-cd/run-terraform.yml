@@ -1,6 +1,5 @@
 ---
 variables:
-  # Terraform Cloud configuration variables
   TF_CLOUD_ORG: "org-website-portifolio"
   TF_WORKSPACE: "web_port_dev"
   TF_CLOUD_API: "https://app.terraform.io/api/v2"
@@ -8,13 +7,13 @@ variables:
   TF_CONFIG_FILE: "terraform-config.tar.gz"
 
 stages:
-  - prepare # For authentication
-  - configure-infra # For configuration upload and run initiation
+  - prepare
+  - configure-infra
 
 authenticate:
   stage: prepare
   tags:
-    - gcp-runner-amd # Runner tags
+    - gcp-runner-amd
   script:
     - echo "Configuring OCI authentication..."
     - mkdir -p $HOME/.oci
@@ -36,10 +35,6 @@ authenticate:
     - chmod 600 $HOME/.aws/config
     - echo "AWS authentication configured."
 
-    - echo "Configuring Terraform Cloud authentication..."
-    - mkdir -p $HOME/.terraform.d
-    - echo "Terraform Cloud token configured"
-
 upload-and-trigger-terraform-run:
   stage: configure-infra
   before_script:
@@ -58,6 +53,7 @@ upload-and-trigger-terraform-run:
       fi
     - ls -la ${TF_CONFIG_FILE}
 
+    - echo "Fetching workspace ID for '${TF_WORKSPACE}'..."
     - |
       WORKSPACE_RESPONSE=$(curl -s \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
@@ -72,7 +68,9 @@ upload-and-trigger-terraform-run:
         echo "Response: $WORKSPACE_RESPONSE"
         exit 1
       fi
+    - echo "Workspace ID $WORKSPACE_ID"
 
+    - echo "Creating new configuration version in Terraform Cloud..."
     - |
       CONFIG_VERSION_RESPONSE=$(curl -s \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
@@ -88,14 +86,101 @@ upload-and-trigger-terraform-run:
         }' \
         "${TF_CLOUD_API}/workspaces/${WORKSPACE_ID}/configuration-versions")
 
-    - echo "$CONFIG_VERSION_RESPONSE" | jq '.'
     - UPLOAD_URL=$(echo "$CONFIG_VERSION_RESPONSE" | jq -r '.data.attributes."upload-url"')
     - CONFIG_VERSION_ID=$(echo "$CONFIG_VERSION_RESPONSE" | jq -r '.data.id')
 
     - |
       if [ -z "$UPLOAD_URL" ] || [ -z "$CONFIG_VERSION_ID" ]; then
         echo "Error: Could not obtain upload URL or configuration version ID."
+        echo "Response: $CONFIG_VERSION_RESPONSE"
         exit 1
       fi
-    - echo "Upload URL obtained - $UPLOAD_URL"
-    - echo "Configuration Version ID - $CONFIG_VERSION_ID"
+    - echo "Upload URL obtained $UPLOAD_URL"
+    - echo "Configuration Version ID $CONFIG_VERSION_ID"
+
+    - echo "Uploading Terraform configuration to Terraform Cloud..."
+    - |
+      curl -s --request PUT \
+        --header "Content-Type: application/octet-stream" \
+        --data-binary "@${TF_CONFIG_FILE}" \
+        "$UPLOAD_URL"
+      
+      if [ $? -ne 0 ]; then
+        echo "Error uploading the configuration file."
+        exit 1
+      fi
+    - echo "Terraform configuration uploaded successfully."
+
+    - echo "Initiating new Terraform run..."
+    - |
+      RUN_RESPONSE=$(curl -s \
+        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+        --header "Content-Type: application/vnd.api+json" \
+        --request POST \
+        --data "{
+          \"data\": {
+            \"type\": \"runs\",
+            \"attributes\": {
+              \"is-destroy\": false
+            },
+            \"relationships\": {
+              \"workspace\": {
+                \"data\": {
+                  \"type\": \"workspaces\",
+                  \"id\": \"${WORKSPACE_ID}\"
+                }
+              },
+              \"configuration-version\": {
+                \"data\": {
+                  \"type\": \"configuration-versions\",
+                  \"id\": \"${CONFIG_VERSION_ID}\"
+                }
+              }
+            }
+          }
+        }" \
+        "${TF_CLOUD_API}/runs")
+
+    - RUN_ID=$(echo "$RUN_RESPONSE" | jq -r '.data.id')
+    - |
+      if [ -z "$RUN_ID" ] || [ "$RUN_ID" = "null" ]; then
+        echo "Error: Could not initiate Terraform run."
+        echo "Response: $RUN_RESPONSE"
+        exit 1
+      fi
+    - echo "Terraform run initiated with ID  $RUN_ID"
+    - echo "Track run at https://app.terraform.io/app/${TF_CLOUD_ORG}/workspaces/${TF_WORKSPACE}/runs/${RUN_ID}"
+
+    - echo "Monitoring Terraform run status..."
+    - |
+      RUN_STATUS=""
+      ATTEMPTS=0
+      MAX_ATTEMPTS=60
+      
+      while [ "$RUN_STATUS" != "applied" ] && [ "$RUN_STATUS" != "errored" ] && [ "$RUN_STATUS" != "discarded" ] && [ "$RUN_STATUS" != "canceled" ] && [ $ATTEMPTS -lt $MAX_ATTEMPTS ]; do
+        sleep 10
+        RUN_DETAILS=$(curl -s --header "Authorization: Bearer $TF_CLOUD_TOKEN" "${TF_CLOUD_API}/runs/${RUN_ID}")
+        RUN_STATUS=$(echo "$RUN_DETAILS" | jq -r '.data.attributes.status')
+        echo "Current run status: $RUN_STATUS (attempt $((ATTEMPTS + 1))/$MAX_ATTEMPTS)"
+        ATTEMPTS=$((ATTEMPTS + 1))
+      done
+
+    - |
+      if [ "$RUN_STATUS" == "applied" ]; then
+        echo "Terraform run completed successfully."
+      elif [ "$RUN_STATUS" == "errored" ]; then
+        echo "Terraform run failed with status: $RUN_STATUS"
+        exit 1
+      elif [ "$RUN_STATUS" == "discarded" ] || [ "$RUN_STATUS" == "canceled" ]; then
+        echo "Terraform run was discarded or canceled. Final status: $RUN_STATUS"
+        exit 1
+      else
+        echo "Terraform run did not complete within expected time. Final status: $RUN_STATUS"
+        echo "Monitor manually at: https://app.terraform.io/app/${TF_CLOUD_ORG}/workspaces/${TF_WORKSPACE}/runs/${RUN_ID}"
+        exit 1
+      fi
+  artifacts:
+    when: always
+    paths:
+      - ${TF_ROOT}/${TF_CONFIG_FILE}
+    expire_in: 1 day
