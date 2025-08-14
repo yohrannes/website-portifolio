@@ -6,8 +6,6 @@ variables:
   TF_CLOUD_API: "https://app.terraform.io/api/v2"
   TF_ROOT: ${CI_PROJECT_DIR}/iac/terraform/prod
   TF_CONFIG_FILE: "terraform-config.tar.gz"
-  # Token como variável de ambiente global - disponível em todos os jobs
-  TF_CLOUD_TOKEN: "$TF_CLOUD_TOKEN"
 
 stages:
   - prepare # For authentication
@@ -45,12 +43,10 @@ authenticate:
 upload-and-trigger-terraform-run:
   stage: configure-infra
   before_script:
-    - echo "Installing necessary tools - curl, jq, tar, gzip..."
     - sudo apt-get update && sudo apt-get install -y curl jq tar gzip
-    - echo "Tools installed."
+    - export TF_CLOUD_TOKEN="$TF_CLOUD_TOKEN"
   script:
     - cd ${TF_ROOT}
-    - echo "Creating Terraform configuration file - ${TF_CONFIG_FILE}..."
     - |
       tar -czf ${TF_CONFIG_FILE} \
       --exclude='.git*' \
@@ -61,11 +57,8 @@ upload-and-trigger-terraform-run:
         echo "Error creating the tar file. Please check source files and paths."
         exit 1
       fi
-    - echo "File created."
     - ls -la ${TF_CONFIG_FILE}
-    - echo "File size - $(du -h ${TF_CONFIG_FILE} | cut -f1)"
 
-    - echo "Fetching workspace ID for '${TF_WORKSPACE}'..."
     - |
       WORKSPACE_RESPONSE=$(curl -s \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
