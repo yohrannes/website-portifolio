@@ -108,4 +108,43 @@ upload-and-trigger-terraform-run:
         echo "Error uploading the configuration file."
         exit 1
       fi
-      echo "Upload do arquivo de configuração concluído."
+      echo "Configuration file upload conluded successfully."
+
+    - echo "Starting o Terraform run..."
+    - |
+      RUN_RESPONSE=$(curl -s \
+      --header "Authorization: Bearer ${TF_CLOUD_TOKEN}" \
+      --header "Content-Type: application/vnd.api+json" \
+      --header "Accept: application/vnd.api+json" \
+      --request POST \
+      --data '{
+        "data": {
+          "type": "runs",
+          "attributes": {
+            "is-destroy": false,
+            "message": "Triggered by GitLab CI"
+          },
+          "relationships": {
+            "workspace": {
+              "data": {
+                "type": "workspaces",
+                "id": "'"${WORKSPACE_ID}"'"
+              }
+            },
+            "configuration-version": {
+              "data": {
+                "type": "configuration-versions",
+                "id": "'"${CONFIG_VERSION_ID}"'"
+              }
+            }
+          }
+        }
+      }' \
+      "${TF_CLOUD_API}/runs")
+
+      if [ $? -ne 0 ]; then
+        echo "Erro ao iniciar o Terraform run."
+        exit 1
+      fi
+      echo "Terraform run initiated."
+      echo "$RUN_RESPONSE" | jq '.'
