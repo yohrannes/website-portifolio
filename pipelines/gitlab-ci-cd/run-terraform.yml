@@ -43,15 +43,15 @@ authenticate:
     - export TF_CLOUD_TOKEN=$(cat $HOME/.terraform.d/credentials.tfrc.json | jq -r '.credentials."app.terraform.io".token')
     - echo "Terraform Cloud token obtained."
 
-#upload_and_trigger_terraform_run:
-#  stage: configure-infra
-#  before_script:
-#    - echo "Installing necessary tools: curl, jq, tar, gzip..."
-#    - sudo apt-get update && sudo apt-get install -y curl jq tar gzip
-#    - echo "Tools installed."
-#  script:
-#    - cd ${TF_ROOT}
-#    - echo "Creating Terraform configuration file: ${TF_CONFIG_FILE}..."
+upload_and_trigger_terraform_run:
+  stage: configure-infra
+  before_script:
+    - echo "Installing necessary tools: curl, jq, tar, gzip..."
+    - sudo apt-get update && sudo apt-get install -y curl jq tar gzip
+    - echo "Tools installed."
+  script:
+    - cd ${TF_ROOT}
+    - echo "Creating Terraform configuration file: ${TF_CONFIG_FILE}..."
 #    - |
 #      tar -czf ${TF_CONFIG_FILE} \
 #      --exclude='.git*' \
