@@ -6,7 +6,7 @@ variables:
   TF_CLOUD_API: "https://app.terraform.io/api/v2"
   TF_ROOT: ${CI_PROJECT_DIR}/iac/terraform/prod
   TF_CONFIG_FILE: "terraform-config.tar.gz"
-  TF_CLOUD_TOKEN: "$TF_CLOUD_TOKEN"
+  TF_CLOUD_TOKEN: $TF_CLOUD_TOKEN
 
 stages:
   - prepare # For authentication
