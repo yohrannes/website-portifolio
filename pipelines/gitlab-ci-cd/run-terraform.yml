@@ -6,6 +6,8 @@ variables:
   TF_CLOUD_API: "https://app.terraform.io/api/v2"
   TF_ROOT: ${CI_PROJECT_DIR}/iac/terraform/prod
   TF_CONFIG_FILE: "terraform-config.tar.gz"
+  # Token como variável de ambiente global - disponível em todos os jobs
+  TF_CLOUD_TOKEN: "$TF_CLOUD_TOKEN"
 
 stages:
   - prepare # For authentication
@@ -38,14 +40,17 @@ authenticate:
 
     - echo "Configuring Terraform Cloud authentication..."
     - mkdir -p $HOME/.terraform.d
-    - echo "Terraform Cloud token configured"
+    - echo "Terraform Cloud token configured - ${TF_CLOUD_TOKEN:0:10}..." # Mostrar só os primeiros 10 caracteres
 
 upload-and-trigger-terraform-run:
   stage: configure-infra
   before_script:
+    - echo "Installing necessary tools - curl, jq, tar, gzip..."
     - sudo apt-get update && sudo apt-get install -y curl jq tar gzip
+    - echo "Tools installed."
   script:
     - cd ${TF_ROOT}
+    - echo "Creating Terraform configuration file - ${TF_CONFIG_FILE}..."
     - |
       tar -czf ${TF_CONFIG_FILE} \
       --exclude='.git*' \
@@ -56,48 +61,77 @@ upload-and-trigger-terraform-run:
         echo "Error creating the tar file. Please check source files and paths."
         exit 1
       fi
+    - echo "File created."
     - ls -la ${TF_CONFIG_FILE}
+    - echo "File size - $(du -h ${TF_CONFIG_FILE} | cut -f1)"
 
+    - echo "Fetching workspace ID for '${TF_WORKSPACE}'..."
+    
+    # DEBUG COMPLETO - Vamos ver exatamente o que está acontecendo
+    - echo "=== DEBUG TOKEN ==="
+    - echo "Token exists - $(test -n "$TF_CLOUD_TOKEN" && echo 'YES' || echo 'NO')"
+    - echo "Token length - ${#TF_CLOUD_TOKEN}"
+    - echo "Token first 30 chars - '${TF_CLOUD_TOKEN:0:30}...'"
+    - echo "Token has spaces - $(echo "$TF_CLOUD_TOKEN" | grep -q ' ' && echo 'YES' || echo 'NO')"
+    - echo "Token has newlines - $(echo "$TF_CLOUD_TOKEN" | wc -l)"
+    - echo "Token hex dump (first 50 chars) - $(echo -n "${TF_CLOUD_TOKEN:0:50}" | xxd -l 50)"
+    - echo "==================="
+    
+    # Limpar possíveis caracteres invisíveis do token
+    - CLEAN_TOKEN=$(echo "$TF_CLOUD_TOKEN" | tr -d '\n\r\t ' | sed 's/[[:space:]]//g')
+    - echo "Clean token length - ${#CLEAN_TOKEN}"
+    - echo "Clean token first 30 - '${CLEAN_TOKEN:0:30}...'"
+    
+    # Testar o curl com verbose para ver exatamente o que está sendo enviado
+    - echo "=== CURL DEBUG ==="
     - |
-      curl -s \
-        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+      curl -v \
+        --header "Authorization: Bearer $CLEAN_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
         --header "Accept: application/vnd.api+json" \
-        "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces?filter%5Bname%5D=${TF_WORKSPACE}"
-#      WORKSPACE_ID=$(echo "$WORKSPACE_RESPONSE" | jq -r '.data[0].id')
+        "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces?filter%5Bname%5D=${TF_WORKSPACE}" \
+        2>&1 | head -20
     
-#    - |
-#      if [ -z "$WORKSPACE_ID" ] || [ "$WORKSPACE_ID" = "null" ]; then
-#        echo "Error: Workspace '${TF_WORKSPACE}' not found or unable to retrieve ID."
-#        echo "Response: $WORKSPACE_RESPONSE"
-#        exit 1
-#      fi
-#    - echo "Workspace ID - $WORKSPACE_ID"
-#
-#    - echo "Creating a new configuration version in Terraform Cloud..."
-#    - |
-#      CONFIG_VERSION_RESPONSE=$(curl -s \
-#        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
-#        --header "Content-Type: application/vnd.api+json" \
-#        --request POST \
-#        --data '{
-#          "data": {
-#            "type": "configuration-versions",
-#            "attributes": {
-#              "auto-queue-runs": false
-#            }
-#          }
-#        }' \
-#        "${TF_CLOUD_API}/workspaces/${WORKSPACE_ID}/configuration-versions")
-#
-#    - echo "$CONFIG_VERSION_RESPONSE" | jq '.'
-#    - UPLOAD_URL=$(echo "$CONFIG_VERSION_RESPONSE" | jq -r '.data.attributes."upload-url"')
-#    - CONFIG_VERSION_ID=$(echo "$CONFIG_VERSION_RESPONSE" | jq -r '.data.id')
-#
-#    - |
-#      if [ -z "$UPLOAD_URL" ] || [ -z "$CONFIG_VERSION_ID" ]; then
-#        echo "Error: Could not obtain upload URL or configuration version ID."
-#        exit 1
-#      fi
-#    - echo "Upload URL obtained - $UPLOAD_URL"
-#    - echo "Configuration Version ID - $CONFIG_VERSION_ID"#
+    - |
+      WORKSPACE_RESPONSE=$(curl -s \
+        --header "Authorization: Bearer $CLEAN_TOKEN" \
+        --header "Content-Type: application/vnd.api+json" \
+        --header "Accept: application/vnd.api+json" \
+        "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces?filter%5Bname%5D=${TF_WORKSPACE}")
+      WORKSPACE_ID=$(echo "$WORKSPACE_RESPONSE" | jq -r '.data[0].id')
+    
+    - |
+      if [ -z "$WORKSPACE_ID" ] || [ "$WORKSPACE_ID" = "null" ]; then
+        echo "Error: Workspace '${TF_WORKSPACE}' not found or unable to retrieve ID."
+        echo "Response: $WORKSPACE_RESPONSE"
+        exit 1
+      fi
+    - echo "Workspace ID - $WORKSPACE_ID"
+
+    - echo "Creating a new configuration version in Terraform Cloud..."
+    - |
+      CONFIG_VERSION_RESPONSE=$(curl -s \
+        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+        --header "Content-Type: application/vnd.api+json" \
+        --request POST \
+        --data '{
+          "data": {
+            "type": "configuration-versions",
+            "attributes": {
+              "auto-queue-runs": false
+            }
+          }
+        }' \
+        "${TF_CLOUD_API}/workspaces/${WORKSPACE_ID}/configuration-versions")
+
+    - echo "$CONFIG_VERSION_RESPONSE" | jq '.'
+    - UPLOAD_URL=$(echo "$CONFIG_VERSION_RESPONSE" | jq -r '.data.attributes."upload-url"')
+    - CONFIG_VERSION_ID=$(echo "$CONFIG_VERSION_RESPONSE" | jq -r '.data.id')
+
+    - |
+      if [ -z "$UPLOAD_URL" ] || [ -z "$CONFIG_VERSION_ID" ]; then
+        echo "Error: Could not obtain upload URL or configuration version ID."
+        exit 1
+      fi
+    - echo "Upload URL obtained - $UPLOAD_URL"
+    - echo "Configuration Version ID - $CONFIG_VERSION_ID"
