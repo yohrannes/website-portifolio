@@ -38,9 +38,6 @@ authenticate:
 
     - echo "Configuring Terraform Cloud authentication..."
     - mkdir -p $HOME/.terraform.d
-    - echo "$TF_CLOUD_TOKEN_BASE64" | base64 -d > $HOME/.terraform.d/credentials.tfrc.json
-    # Extract the token from the credentials.tfrc.json file
-    - export TF_CLOUD_TOKEN=$(cat $HOME/.terraform.d/credentials.tfrc.json | jq -r '.credentials."app.terraform.io".token')
     - echo "Terraform Cloud token obtained."
 
 upload-and-trigger-terraform-run:
