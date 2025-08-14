@@ -73,6 +73,8 @@ upload-and-trigger-terraform-run:
         --header "Accept: application/vnd.api+json" \
         "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces?filter%5Bname%5D=${TF_WORKSPACE}")
       WORKSPACE_ID=$(echo "$WORKSPACE_RESPONSE" | jq -r '.data[0].id')
+      echo $WORKSPACE_RESPONSE
+      echo $WORKSPACE_ID
     - |
       if [ -z "$WORKSPACE_ID" ] || [ "$WORKSPACE_ID" = "null" ]; then
         echo "Error: Workspace '${TF_WORKSPACE}' not found or unable to retrieve ID."
