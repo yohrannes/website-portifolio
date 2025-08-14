@@ -70,9 +70,10 @@ upload-and-trigger-terraform-run:
       WORKSPACE_ID=$(curl -s \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
-        "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces?filter[name]=${TF_WORKSPACE}" | jq -r '.data.id')
+        --header "Accept: application/vnd.api+json" \
+        "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces?filter%5Bname%5D=${TF_WORKSPACE}" | jq -r '.data[0].id')
     - |
-      if [ -z "$WORKSPACE_ID" ]; then
+      if [ -z "$WORKSPACE_ID" ] || [ "$WORKSPACE_ID" = "null" ]; then
         echo "Error: Workspace '${TF_WORKSPACE}' not found or unable to retrieve ID."
         exit 1
       fi
@@ -93,7 +94,7 @@ upload-and-trigger-terraform-run:
             }
           }
         }' \
-        "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces/${WORKSPACE_ID}/configuration-versions") # Corrected address for a specific workspace
+        "${TF_CLOUD_API}/workspaces/${WORKSPACE_ID}/configuration-versions") # Corrected address for a specific workspace
 
     - echo "$CONFIG_VERSION_RESPONSE" | jq '.'
     - UPLOAD_URL=$(echo "$CONFIG_VERSION_RESPONSE" | jq -r '.data.attributes."upload-url"')
