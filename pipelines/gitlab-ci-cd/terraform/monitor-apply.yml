@@ -1,0 +1,105 @@
+---
+variables:
+  TF_CLOUD_ORG: "org-website-portifolio"
+  TF_WORKSPACE: "web_port_dev"
+  TF_CLOUD_API: "https://app.terraform.io/api/v2"
+
+monitor-and-apply-terraform-run:
+  stage: deploy-infra
+  before_script:
+    - sudo apt-get update && sudo apt-get install -y curl jq
+  script:
+    - |
+      WORKSPACE_RESPONSE=$(curl -s \
+        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+        --header "Content-Type: application/vnd.api+json" \
+        "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces?filter%5Bname%5D=${TF_WORKSPACE}")
+      WORKSPACE_ID=$(echo "$WORKSPACE_RESPONSE" | jq -r '.data[0].id')
+
+    - |
+      RUNS_RESPONSE=$(curl -s \
+        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+        --header "Content-Type: application/vnd.api+json" \
+        "${TF_CLOUD_API}/workspaces/${WORKSPACE_ID}/runs?page%5Bsize%5D=1")
+      
+      RUN_ID=$(echo "$RUNS_RESPONSE" | jq -r '.data[0].id')
+      RUN_STATUS=$(echo "$RUNS_RESPONSE" | jq -r '.data[0].attributes.status')
+      
+      echo "Current run ID: $RUN_ID"
+      echo "Initial status: $RUN_STATUS"
+
+    - |
+      echo "Monitoring run status..."
+      while true; do
+        RUN_RESPONSE=$(curl -s \
+          --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+          --header "Content-Type: application/vnd.api+json" \
+          "${TF_CLOUD_API}/runs/${RUN_ID}")
+        
+        CURRENT_STATUS=$(echo "$RUN_RESPONSE" | jq -r '.data.attributes.status')
+        echo "Status: $CURRENT_STATUS"
+        
+        case $CURRENT_STATUS in
+          "planned")
+            echo "Plan completed successfully. Proceeding with apply..."
+            break
+            ;;
+          "errored"|"canceled"|"force_canceled")
+            echo "Run failed with status: $CURRENT_STATUS"
+            exit 1
+            ;;
+          "planning"|"pending"|"fetching")
+            echo "Still planning... waiting 30 seconds"
+            sleep 30
+            ;;
+          *)
+            echo "Unexpected status: $CURRENT_STATUS. Waiting..."
+            sleep 30
+            ;;
+        esac
+      done
+
+#    - |
+#      echo "Applying Terraform run..."
+#      APPLY_RESPONSE=$(curl -s \
+#        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+#        --header "Content-Type: application/vnd.api+json" \
+#        --request POST \
+#        "${TF_CLOUD_API}/runs/${RUN_ID}/actions/apply")
+#      
+#      if [ $? -ne 0 ]; then
+#        echo "Failed to trigger apply"
+#        exit 1
+#      fi
+#      echo "Apply triggered successfully"
+#
+#    - |
+#      echo "Monitoring apply status..."
+#      while true; do
+#        APPLY_STATUS_RESPONSE=$(curl -s \
+#          --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+#          --header "Content-Type: application/vnd.api+json" \
+#          "${TF_CLOUD_API}/runs/${RUN_ID}")
+#        
+#        APPLY_STATUS=$(echo "$APPLY_STATUS_RESPONSE" | jq -r '.data.attributes.status')
+#        echo "Apply status: $APPLY_STATUS"
+#        
+#        case $APPLY_STATUS in
+#          "applied")
+#            echo "Infrastructure successfully applied!"
+#            exit 0
+#            ;;
+#          "errored"|"canceled"|"force_canceled")
+#            echo "Apply failed with status: $APPLY_STATUS"
+#            exit 1
+#            ;;
+#          "applying"|"confirmed")
+#            echo "Still applying... waiting 30 seconds"
+#            sleep 30
+#            ;;
+#          *)
+#            echo "Status: $APPLY_STATUS. Continuing to monitor..."
+#            sleep 30
+#            ;;
+#        esac
+#      done

@@ -36,7 +36,11 @@ include:
       - if: $CI_COMMIT_BRANCH == "dev-dk-img"
 
 
-  - local: 'pipelines/gitlab-ci-cd/run-terraform.yml'
+  - local: 'pipelines/gitlab-ci-cd/terraform/upload-trigger-run.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "infra-webapp-oci-amd"
+
+  - local: 'pipelines/gitlab-ci-cd/terraform/monitor-apply.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-webapp-oci-amd"
 
@@ -51,7 +55,7 @@ stages:
   - trigger-plan
   - monitor
 
-  - configure-infra
+  - config-infra
   - deploy-infra
   - build
   - test
