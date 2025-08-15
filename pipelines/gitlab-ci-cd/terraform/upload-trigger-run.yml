@@ -7,37 +7,8 @@ variables:
   TF_ROOT: ${CI_PROJECT_DIR}/iac/terraform/prod
   TF_CONFIG_FILE: "terraform-config.tar.gz"
 
-stages:
-  - prepare # For authentication
-  - configure-infra # For configuration upload and run initiation
-
-authenticate:
-  stage: prepare
-  tags:
-    - gcp-runner-amd # Runner tags
-  script:
-    - echo "Configuring OCI authentication..."
-    - mkdir -p $HOME/.oci
-    - echo "$OCI_CONFIG_BASE64" | base64 -d > $HOME/.oci/config
-    - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.oci/oci_api_key.pem
-    - chmod 700 $HOME/.oci
-    - chmod 600 $HOME/.oci/oci_api_key.pem
-    - chmod 600 $HOME/.oci/config
-    - export TF_VAR_compartment_id=$OCI_COMPARTMENT_OCID
-    - export TF_VAR_region=$OCI_REGION
-    - echo "OCI authentication configured."
-
-    - echo "Configuring AWS authentication..."
-    - mkdir -p $HOME/.aws
-    - echo "$AWS_CONFIG_BASE64" | base64 -d > $HOME/.aws/config
-    - echo "$AWS_CREDENTIALS_BASE64" | base64 -d > $HOME/.aws/credentials
-    - chmod 700 $HOME/.aws
-    - chmod 600 $HOME/.aws/credentials
-    - chmod 600 $HOME/.aws/config
-    - echo "AWS authentication configured."
-
 upload-and-trigger-terraform-run:
-  stage: configure-infra
+  stage: config-infra
   before_script:
     - sudo apt-get update && sudo apt-get install -y curl jq tar gzip
   script:
@@ -108,7 +79,7 @@ upload-and-trigger-terraform-run:
         echo "Error uploading the configuration file."
         exit 1
       fi
-      echo "Configuration file upload conluded successfully."
+      echo "Configuration file upload concluded successfully."
 
     - echo "Waiting for configuration version to be processed..."
     - sleep 10
