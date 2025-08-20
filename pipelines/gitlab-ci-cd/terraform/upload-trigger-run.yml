@@ -86,7 +86,6 @@ upload-and-trigger-terraform-run:
 
     - echo "Starting o Terraform run..."
     - |
-      TARGET_ADDRS_JSON=$(echo "${TF_TARGET_ADDRS}" | sed 's/^/["/' | sed 's/$/"]/')
       RUN_RESPONSE=$(curl -s \
       --header "Authorization: Bearer ${TF_CLOUD_TOKEN}" \
       --header "Content-Type: application/vnd.api+json" \
@@ -99,7 +98,7 @@ upload-and-trigger-terraform-run:
             "is-destroy": false,
             "message": "Triggered by GitLab CI",
             "plan-only": true,
-            "target-addrs": '${TARGET_ADDRS_JSON}'
+            "target-addrs": [${TF_TARGET_ADDRS}]
           },
           "relationships": {
             "workspace": {
