@@ -3,213 +3,223 @@
 ### Need to implement a way to build the instance AMI using TERRAFORM CLOUD
 #build-instance-ami:
 
-create-oracle-instance:
-  stage: create-infra
-  tags:
-    - oci-runner-arm
-  before_script:
 
-    #Autencicate with OCI
-    - mkdir -p $HOME/.oci
-    - echo "$OCI_CONFIG_BASE64" | base64 -d > $HOME/.oci/config
-    - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.oci/oci_api_key.pem
-    - chmod 700 $HOME/.oci
-    - chmod 600 $HOME/.oci/oci_api_key.pem
-    - chmod 600 $HOME/.oci/config
-    - export TF_VAR_compartment_id=$OCI_COMPARTMENT_OCID
-    - export TF_VAR_region=$OCI_REGION
+---
+variables:
+  TF_TARGET_ADDRS: '"module.oci_aftier_micro_amd"'
 
-    #Autencicate with AWS
-    - mkdir -p $HOME/.aws
-    - echo "$AWS_CONFIG_BASE64" | base64 -d > $HOME/.aws/config
-    - echo "$AWS_CREDENTIALS_BASE64" | base64 -d > $HOME/.aws/credentials
-    - chmod 700 $HOME/.aws
-    - chmod 600 $HOME/.aws/credentials
-    - chmod 600 $HOME/.aws/config
+include:
+  - local: 'upload-trigger-run.yml'
+  - local: 'monitor-apply.yml'
 
-    # Prepare SSH files to enable ssh conection with instance
-    - sudo apt-get install -yq openssh-client openssh-server curl
-    - mkdir -p $HOME/.ssh
-    - (echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa 2>/dev/null)
-    - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa.pub 2>/dev/null)
-    - chmod 644 $HOME/.ssh/id_rsa.pub
-
-    # Build terraform container for host architecture (auto-detected)
-    - |
-      ARCH=$(uname -m)
-      case $ARCH in
-        "x86_64") PLATFORM="linux/amd64" ;;
-        "aarch64") PLATFORM="linux/arm64" ;;
-        *) echo "Arch not suported: $ARCH"; exit 1 ;;
-      esac
-
-      docker buildx build  -qf ./docker-compose/tf-multi-arch/Dockerfile \
-        --platform $PLATFORM \
-        -t yohrannes/terraform:latest \
-        --build-arg PRODUCT=terraform \
-        --build-arg VERSION=1.11.0 \
-        --load .
-
-    # Run terraform-container 
-    - |
-      docker run -d --name terraform-container yohrannes/terraform:latest sleep infinity
-    - docker cp $CI_PROJECT_DIR/iac/terraform/prod terraform-container:/app > /dev/null 2>&1
-    - docker cp $HOME/.oci terraform-container:/root/.oci > /dev/null 2>&1
-    - docker cp $HOME/.aws terraform-container:/root/.aws > /dev/null 2>&1
-    - docker exec -w /app terraform-container mkdir /root/.ssh
-    - docker cp $HOME/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
-
-  script:
-    - |
-      docker exec -w /app terraform-container sh -c "
-        apk add --no-cache git oci-cli jq curl nano --quiet
-        TF_IN_AUTOMATION=true
-        terraform init -upgrade -reconfigure
-        terraform workspace select web_port_dev
-        terraform plan -compact-warnings -input=false -target=module.oci_aftier_micro_amd -out=plan | grep "Plan:" > /dev/null
-        terraform show -no-color plan | grep -o -E 'oci[^.]*.'
-        terraform apply plan -no-color | grep -o -E 'oci[^.]*.' | sort -u > /dev/null
-        exit_code=${PIPESTATUS[0]}
-        echo "Exit Code: $exit_code"
-        exit $exit_code
-      "
-
-    - INSTANCE_PUBLIC_IP=$(docker exec -w /app terraform-container terraform output -raw oci_aftier_micro_amd_pub_ip)
-    - |
-      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-        --request PUT \
-        --form "value=$INSTANCE_PUBLIC_IP" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/IP_OCI_AMD_WEBAPP" \
-        > /dev/null 2>&1
-
-check-startup-script:
-  stage: create-infra
-  needs:
-    - create-oracle-instance
-  script:
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - |
-      sleep 30
-      while true; do
-        ssh -o StrictHostKeyChecking=no \
-            -o ConnectTimeout=10 \
-            -o ServerAliveInterval=30 \
-            -i ~/.ssh/id_rsa \
-            ubuntu@$IP_OCI_AMD_WEBAPP \
-            "timeout 300 bash -c '
-              while true; do
-                if [ -f /var/log/startup-script.log ] && [ -r /var/log/startup-script.log ]; then
-                  if tail -n1 /var/log/startup-script.log 2>/dev/null | grep -q \"startup-script-finished\"; then
-                    echo \"Startup script finished!\"
-                    exit 0
-                  fi
-                else
-                  echo \"Waiting for startup script log...\"
-                fi
-                sleep 3
-              done
-            '" && break || echo 'Retrying connection in 5 seconds...'
-        sleep 5
-      done
-
-run-containers:
-  stage: configure-infra
-  needs:
-    - check-startup-script
-  before_script:
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-  script:
-    - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
-        sudo rm -rf repos-git
-        mkdir -p repos-git
-        cd repos-git
-        git clone https://gitlab.com/yohrannes/website-portifolio.git
-        cd website-portifolio
-        git checkout infra-webapp-oci-amd
-        git fetch origin infra-webapp-oci-amd
-        git pull origin infra-webapp-oci-amd
-
-        export F2B_HTTP_INJ_FILTER_B64=${F2B_HTTP_INJ_FILTER_B64}
-        export COMPOSE_BAKE=true
-        export MY_UID=$(id -u)
-        export MY_GID=$(id -g)
-
-        echo ${F2B_HTTP_INJ_FILTER_B64} >> /temp/export.txt
-        echo >> /temp/export.txt
-        echo ${MY_UID} >> /temp/export.txt
-        echo >> /temp/export.txt
-        echo ${MY_GID} >> /temp/export.txt
-        echo >> /temp/export.txt
-        echo ${COMPOSE_BAKE} >> /temp/export.txt
-        
-        if [ -n \"\$F2B_HTTP_INJ_FILTER_B64\" ]; then
-          export F2B_HTTP_INJ_FILTER_DECODED=\"\$(echo \$F2B_HTTP_INJ_FILTER_B64 | base64 --decode)\"
-        fi
-
-        echo ${F2B_HTTP_INJ_FILTER_DECODED} >> /temp/export.txt
-
-        cd docker-compose
-        sudo docker compose down --remove-orphans
-        sudo -E docker compose up -d --build --force-recreate --remove-orphans --quiet-pull
-      " > /dev/null
-        
-#  sudo docker system prune -a -f
-
-update-dns:
-  stage: deploy-infra
-  needs:
-    - run-containers
-  script:
-    - |
-      curl --request PUT \
-        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_YO_COM \
-        --header "Content-Type: application/json" \
-        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
-        --data '{
-          "comment": "Domain verification record",
-          "name": "yohrannes.com",
-          "proxied": true,
-          "settings": {},
-          "tags": [],
-          "ttl": 1,
-          "content": "'"$IP_OCI_AMD_WEBAPP"'",
-          "type": "A"
-        }' | jq '.'
-
-    - |
-      curl --request PUT \
-        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_GRAF_YO_COM \
-        --header "Content-Type: application/json" \
-        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
-        --data '{
-          "comment": "Domain verification record",
-          "name": "grafana.yohrannes.com",
-          "proxied": true,
-          "settings": {},
-          "tags": [],
-          "ttl": 1,
-          "content": "yohrannes.com",
-          "type": "CNAME"
-        }' | jq '.'
-
-
-disable-ssh:
-  stage: deploy-infra
-  tags:
-    - oci-runner-arm
-  needs:
-    - run-containers
-  script:
-    - |
-      docker exec -w /app terraform-container sh -c "
-       terraform init -upgrade -reconfigure
-       terraform workspace select web_port_dev
-       terraform plan -detailed-exitcode -target=module.oci_aftier_micro_amd.oci_core_security_list.public-security-list -out=plan -var="disable_ssh_port=true" | grep "Plan:"
-       terraform apply plan | grep -o -E 'oci[^.]*.' | sort -u
-      "
-
+#create-oracle-instance:
+#  stage: create-infra
+#  tags:
+#    - oci-runner-arm
+#  before_script:
+#
+#    #Autencicate with OCI
+#    - mkdir -p $HOME/.oci
+#    - echo "$OCI_CONFIG_BASE64" | base64 -d > $HOME/.oci/config
+#    - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.oci/oci_api_key.pem
+#    - chmod 700 $HOME/.oci
+#    - chmod 600 $HOME/.oci/oci_api_key.pem
+#    - chmod 600 $HOME/.oci/config
+#    - export TF_VAR_compartment_id=$OCI_COMPARTMENT_OCID
+#    - export TF_VAR_region=$OCI_REGION
+#
+#    #Autencicate with AWS
+#    - mkdir -p $HOME/.aws
+#    - echo "$AWS_CONFIG_BASE64" | base64 -d > $HOME/.aws/config
+#    - echo "$AWS_CREDENTIALS_BASE64" | base64 -d > $HOME/.aws/credentials
+#    - chmod 700 $HOME/.aws
+#    - chmod 600 $HOME/.aws/credentials
+#    - chmod 600 $HOME/.aws/config
+#
+#    # Prepare SSH files to enable ssh conection with instance
+#    - sudo apt-get install -yq openssh-client openssh-server curl
+#    - mkdir -p $HOME/.ssh
+#    - (echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa 2>/dev/null)
+#    - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa.pub 2>/dev/null)
+#    - chmod 644 $HOME/.ssh/id_rsa.pub
+#
+#    # Build terraform container for host architecture (auto-detected)
+#    - |
+#      ARCH=$(uname -m)
+#      case $ARCH in
+#        "x86_64") PLATFORM="linux/amd64" ;;
+#        "aarch64") PLATFORM="linux/arm64" ;;
+#        *) echo "Arch not suported: $ARCH"; exit 1 ;;
+#      esac
+#
+#      docker buildx build  -qf ./docker-compose/tf-multi-arch/Dockerfile \
+#        --platform $PLATFORM \
+#        -t yohrannes/terraform:latest \
+#        --build-arg PRODUCT=terraform \
+#        --build-arg VERSION=1.11.0 \
+#        --load .
+#
+#    # Run terraform-container 
+#    - |
+#      docker run -d --name terraform-container yohrannes/terraform:latest sleep infinity
+#    - docker cp $CI_PROJECT_DIR/iac/terraform/prod terraform-container:/app > /dev/null 2>&1
+#    - docker cp $HOME/.oci terraform-container:/root/.oci > /dev/null 2>&1
+#    - docker cp $HOME/.aws terraform-container:/root/.aws > /dev/null 2>&1
+#    - docker exec -w /app terraform-container mkdir /root/.ssh
+#    - docker cp $HOME/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
+#
+#  script:
+#    - |
+#      docker exec -w /app terraform-container sh -c "
+#        apk add --no-cache git oci-cli jq curl nano --quiet
+#        TF_IN_AUTOMATION=true
+#        terraform init -upgrade -reconfigure
+#        terraform workspace select web_port_dev
+#        terraform plan -compact-warnings -input=false -target=module.oci_aftier_micro_amd -out=plan | grep "Plan:" > /dev/null
+#        terraform show -no-color plan | grep -o -E 'oci[^.]*.'
+#        terraform apply plan -no-color | grep -o -E 'oci[^.]*.' | sort -u > /dev/null
+#        exit_code=${PIPESTATUS[0]}
+#        echo "Exit Code: $exit_code"
+#        exit $exit_code
+#      "
+#
+#    - INSTANCE_PUBLIC_IP=$(docker exec -w /app terraform-container terraform output -raw oci_aftier_micro_amd_pub_ip)
+#    - |
+#      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+#        --request PUT \
+#        --form "value=$INSTANCE_PUBLIC_IP" \
+#        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/IP_OCI_AMD_WEBAPP" \
+#        > /dev/null 2>&1
+#
+#check-startup-script:
+#  stage: create-infra
+#  needs:
+#    - create-oracle-instance
+#  script:
+#    - mkdir -p ~/.ssh
+#    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
+#    - chmod 600 ~/.ssh/id_rsa
+#    - |
+#      sleep 30
+#      while true; do
+#        ssh -o StrictHostKeyChecking=no \
+#            -o ConnectTimeout=10 \
+#            -o ServerAliveInterval=30 \
+#            -i ~/.ssh/id_rsa \
+#            ubuntu@$IP_OCI_AMD_WEBAPP \
+#            "timeout 300 bash -c '
+#              while true; do
+#                if [ -f /var/log/startup-script.log ] && [ -r /var/log/startup-script.log ]; then
+#                  if tail -n1 /var/log/startup-script.log 2>/dev/null | grep -q \"startup-script-finished\"; then
+#                    echo \"Startup script finished!\"
+#                    exit 0
+#                  fi
+#                else
+#                  echo \"Waiting for startup script log...\"
+#                fi
+#                sleep 3
+#              done
+#            '" && break || echo 'Retrying connection in 5 seconds...'
+#        sleep 5
+#      done
+#
+#run-containers:
+#  stage: configure-infra
+#  needs:
+#    - check-startup-script
+#  before_script:
+#    - mkdir -p ~/.ssh
+#    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
+#    - chmod 600 ~/.ssh/id_rsa
+#  script:
+#    - |
+#      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
+#        sudo rm -rf repos-git
+#        mkdir -p repos-git
+#        cd repos-git
+#        git clone https://gitlab.com/yohrannes/website-portifolio.git
+#        cd website-portifolio
+#        git checkout infra-webapp-oci-amd
+#        git fetch origin infra-webapp-oci-amd
+#        git pull origin infra-webapp-oci-amd
+#
+#        export F2B_HTTP_INJ_FILTER_B64=${F2B_HTTP_INJ_FILTER_B64}
+#        export COMPOSE_BAKE=true
+#        export MY_UID=$(id -u)
+#        export MY_GID=$(id -g)
+#
+#        echo ${F2B_HTTP_INJ_FILTER_B64} >> /temp/export.txt
+#        echo >> /temp/export.txt
+#        echo ${MY_UID} >> /temp/export.txt
+#        echo >> /temp/export.txt
+#        echo ${MY_GID} >> /temp/export.txt
+#        echo >> /temp/export.txt
+#        echo ${COMPOSE_BAKE} >> /temp/export.txt
+#        
+#        if [ -n \"\$F2B_HTTP_INJ_FILTER_B64\" ]; then
+#          export F2B_HTTP_INJ_FILTER_DECODED=\"\$(echo \$F2B_HTTP_INJ_FILTER_B64 | base64 --decode)\"
+#        fi
+#
+#        echo ${F2B_HTTP_INJ_FILTER_DECODED} >> /temp/export.txt
+#
+#        cd docker-compose
+#        sudo docker compose down --remove-orphans
+#        sudo -E docker compose up -d --build --force-recreate --remove-orphans --quiet-pull
+#      " > /dev/null
+#        
+##  sudo docker system prune -a -f
+#
+#update-dns:
+#  stage: deploy-infra
+#  needs:
+#    - run-containers
+#  script:
+#    - |
+#      curl --request PUT \
+#        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_YO_COM \
+#        --header "Content-Type: application/json" \
+#        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
+#        --data '{
+#          "comment": "Domain verification record",
+#          "name": "yohrannes.com",
+#          "proxied": true,
+#          "settings": {},
+#          "tags": [],
+#          "ttl": 1,
+#          "content": "'"$IP_OCI_AMD_WEBAPP"'",
+#          "type": "A"
+#        }' | jq '.'
+#
+#    - |
+#      curl --request PUT \
+#        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_GRAF_YO_COM \
+#        --header "Content-Type: application/json" \
+#        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
+#        --data '{
+#          "comment": "Domain verification record",
+#          "name": "grafana.yohrannes.com",
+#          "proxied": true,
+#          "settings": {},
+#          "tags": [],
+#          "ttl": 1,
+#          "content": "yohrannes.com",
+#          "type": "CNAME"
+#        }' | jq '.'
+#
+#
+#disable-ssh:
+#  stage: deploy-infra
+#  tags:
+#    - oci-runner-arm
+#  needs:
+#    - run-containers
+#  script:
+#    - |
+#      docker exec -w /app terraform-container sh -c "
+#       terraform init -upgrade -reconfigure
+#       terraform workspace select web_port_dev
+#       terraform plan -detailed-exitcode -target=module.oci_aftier_micro_amd.oci_core_security_list.public-security-list -out=plan -var="disable_ssh_port=true" | grep "Plan:"
+#       terraform apply plan | grep -o -E 'oci[^.]*.' | sort -u
+#      "
+#
+#

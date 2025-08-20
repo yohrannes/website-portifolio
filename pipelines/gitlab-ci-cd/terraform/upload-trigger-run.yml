@@ -98,7 +98,7 @@ upload-and-trigger-terraform-run:
             "is-destroy": false,
             "message": "Triggered by GitLab CI",
             "plan-only": true,
-            "target-addrs": ["module.oci_aftier_micro_amd"]
+            "target-addrs": ["${TF_TARGET_ADDRS}"]
           },
           "relationships": {
             "workspace": {
