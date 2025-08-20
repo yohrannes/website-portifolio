@@ -34,6 +34,7 @@ module "aws_dynamodb" {
 #Oracle cloud provider
 
 module "oci_aftier_flex_arm" {
+  ssh_public_key = var.ssh_public_key
   source = "./modules/oci_aftier_flex_arm"
 }
 
@@ -48,8 +49,9 @@ module "oci_aftier_micro_amd" {
 }
 
 module "oci_oke_cluster_arm" {
+  ssh_public_key = var.ssh_public_key
   source = "./modules/oci_oke_cluster_arm"
-  ssh_public_key = file("~/.ssh/id_rsa.pub")
+#  ssh_public_key = file("~/.ssh/id_rsa.pub")
   fingerprint = null
   private_key_path = "~/.oci/oci_api_key.pem"
   tenancy_ocid = null
