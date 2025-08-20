@@ -15,3 +15,9 @@ variable "availability_domain" {
   type        = string
   default     = "lIpY:US-ASHBURN-AD-3"
 }
+
+variable "ssh_public_key" {
+  description = "SSH public key content for instance access"
+  type        = string
+  sensitive   = true
+}

@@ -63,6 +63,12 @@ variable "ssh_authorized_keys_path" {
   sensitive   = true
 }
 
+variable "ssh_public_key" {
+  description = "SSH public key content for instance access"
+  type        = string
+  sensitive   = true
+}
+
 variable "disable_ssh_port" {
   description = "Disable SSH port"
   type        = bool
