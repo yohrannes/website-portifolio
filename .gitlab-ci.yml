@@ -54,7 +54,7 @@ stages:
   - upload-config
   - trigger-plan
   - monitor
-
+  - debug
   - config-infra
   - deploy-infra
   - build
