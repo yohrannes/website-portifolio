@@ -28,7 +28,6 @@ monitor-and-apply-terraform-run:
       echo "Current run ID: $RUN_ID"
       echo "Initial status: $RUN_STATUS"
 
-    # Adicionado: Obter detalhes do plan para debugging
     - |
       PLAN_RESPONSE=$(curl -s \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
@@ -56,11 +55,9 @@ monitor-and-apply-terraform-run:
           "errored"|"canceled"|"force_canceled")
             echo "Run failed with status: $CURRENT_STATUS"
             
-            # Obter logs detalhados do erro
             echo "=== DETAILED ERROR INFORMATION ==="
             echo "$RUN_RESPONSE" | jq '.data.attributes'
             
-            # Tentar obter logs do plan
             if [ "$PLAN_ID" != "null" ] && [ -n "$PLAN_ID" ]; then
               echo "=== PLAN LOGS ==="
               PLAN_LOGS=$(curl -s \
@@ -70,7 +67,6 @@ monitor-and-apply-terraform-run:
               echo "$PLAN_LOGS"
             fi
             
-            # Verificar se há run tasks que falharam
             echo "=== CHECKING RUN TASKS ==="
             TASKS_RESPONSE=$(curl -s \
               --header "Authorization: Bearer $TF_CLOUD_TOKEN" \

@@ -38,6 +38,7 @@ module "oci_aftier_flex_arm" {
 }
 
 module "oci_aftier_micro_amd" {
+  ssh_public_key = var.ssh_public_key
   source = "./modules/oci_aftier_micro_amd"
   disable_ssh_port = var.disable_ssh_port
   availability_domain = var.availability_domain

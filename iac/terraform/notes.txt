@@ -1,3 +1,6 @@
+## Terraform cloud configs
+Don't forget to specify the remote execution mode in org > workspace > settings > general  > execution mode
+
 # Initialize project cli
 
 cd iac
