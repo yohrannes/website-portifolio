@@ -3,14 +3,17 @@
 ### Need to implement a way to build the instance AMI using TERRAFORM CLOUD
 #build-instance-ami:
 
-
 ---
 variables:
-  TF_TARGET_ADDRS: '"module.oci_aftier_micro_amd"'
+  TF_TARGET_ADDRS: 'module.oci_aftier_micro_amd'
 
 include:
   - local: 'terraform/upload-trigger-run.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "infra-webapp-oci-amd"
   - local: 'terraform/monitor-apply.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "infra-webapp-oci-amd"
 
 #create-oracle-instance:
 #  stage: create-infra
