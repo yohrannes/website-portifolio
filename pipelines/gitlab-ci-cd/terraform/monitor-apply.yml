@@ -87,7 +87,6 @@ monitor-and-apply-terraform-run:
         esac
       done
 
-#test
 #    - |
 #      echo "Applying Terraform run..."
 #      APPLY_RESPONSE=$(curl -s \
