@@ -86,37 +86,43 @@ upload-and-trigger-terraform-run:
 
     - echo "Starting o Terraform run..."
     - |
-      RUN_RESPONSE=$(curl -s \
-      --header "Authorization: Bearer ${TF_CLOUD_TOKEN}" \
-      --header "Content-Type: application/vnd.api+json" \
-      --header "Accept: application/vnd.api+json" \
-      --request POST \
-      --data '{
-        "data": {
-          "type": "runs",
-          "attributes": {
-            "is-destroy": false,
-            "message": "Triggered by GitLab CI",
-            "plan-only": true,
-            "target-addrs": [\"${TF_TARGET_ADDRS}\"]
-          },
-          "relationships": {
-            "workspace": {
-              "data": {
-                "type": "workspaces",
-                "id": "'"${WORKSPACE_ID}"'"
-              }
+      JSON_PAYLOAD=$(jq -n \
+        --arg target_addrs "${TF_TARGET_ADDRS}" \
+        --arg workspace_id "${WORKSPACE_ID}" \
+        --arg config_version_id "${CONFIG_VERSION_ID}" \
+        '{
+          data: {
+            type: "runs",
+            attributes: {
+              "is-destroy": false,
+              message: "Triggered by GitLab CI",
+              "plan-only": true,
+              "target-addrs": [$target_addrs]
             },
-            "configuration-version": {
-              "data": {
-                "type": "configuration-versions",
-                "id": "'"${CONFIG_VERSION_ID}"'"
+            relationships: {
+              workspace: {
+                data: {
+                  type: "workspaces",
+                  id: $workspace_id
+                }
+              },
+              "configuration-version": {
+                data: {
+                  type: "configuration-versions",
+                  id: $config_version_id
+                }
               }
             }
           }
-        }
-      }' \
-      "${TF_CLOUD_API}/runs")
+        }')
+
+      RUN_RESPONSE=$(curl -s \
+        --header "Authorization: Bearer ${TF_CLOUD_TOKEN}" \
+        --header "Content-Type: application/vnd.api+json" \
+        --header "Accept: application/vnd.api+json" \
+        --request POST \
+        --data "${JSON_PAYLOAD}" \
+        "${TF_CLOUD_API}/runs")
 
       if [ $? -ne 0 ]; then
         echo "Erro ao iniciar o Terraform run."
