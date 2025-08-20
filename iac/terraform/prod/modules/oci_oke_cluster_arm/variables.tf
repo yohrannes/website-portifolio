@@ -95,6 +95,7 @@ variable "listener_port_https" {
 
 variable "ssh_public_key" {
   type    = string
+  sensitive = true
 }
 
 variable "fingerprint" {

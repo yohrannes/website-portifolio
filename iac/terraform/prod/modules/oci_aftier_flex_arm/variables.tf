@@ -61,6 +61,12 @@ variable "tf_gitlab_runner" {
   }
 }
 
+variable "ssh_public_key" {
+  description = "SSH public key content for instance access"
+  type        = string
+  sensitive   = true
+}
+
 locals {
-  ssh_key = file("~/.ssh/id_rsa.pub")
+  ssh_key = var.ssh_public_key
 }
