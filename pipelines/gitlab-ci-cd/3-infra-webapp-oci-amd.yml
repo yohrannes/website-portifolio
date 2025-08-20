@@ -11,6 +11,7 @@ variables:
 include:
   - local: 'pipelines/gitlab-ci-cd/terraform/upload-trigger-run.yml'
   - local: 'pipelines/gitlab-ci-cd/terraform/monitor-apply.yml'
+#test
 
 #create-oracle-instance:
 #  stage: create-infra
