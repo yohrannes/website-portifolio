@@ -9,8 +9,8 @@ variables:
   TF_TARGET_ADDRS: '"module.oci_aftier_micro_amd"'
 
 include:
-  - local: 'upload-trigger-run.yml'
-  - local: 'monitor-apply.yml'
+  - local: 'terraform/upload-trigger-run.yml'
+  - local: 'terraform/monitor-apply.yml'
 
 #create-oracle-instance:
 #  stage: create-infra
