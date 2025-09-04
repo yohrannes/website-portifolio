@@ -5,4 +5,5 @@ module "packer" {
   packer_compartment_name = "yohapp-packer-comp"
   availability_domain = var.availability_domain
   image_name = "ubuntu2204-e2-1micro-packer-"
+  user_email = var.user_email
 }
