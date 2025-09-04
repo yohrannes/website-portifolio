@@ -18,9 +18,9 @@ output "instance_oracle_arm_pub_ip" {
 
 # GCP FTIER MICRO AMD OUTPUTS
 
-output "gcp_instance_amd_public_ip" {
-  value = module.gcp_ftier_micro_amd.instance_public_ip
-}
+#output "gcp_instance_amd_public_ip" {
+#  value = module.gcp_ftier_micro_amd.instance_public_ip
+#}
 
 # OCI OKE CLUSTER ARM OUTPUTS
 
@@ -60,6 +60,7 @@ output "packer_subnet_ocid" {
 
 output "packer_user_ocid" {
   value = module.oci_aftier_micro_amd.packer_user_ocid
+  sensitive = true
 }
 
 output "packer_user_name" {

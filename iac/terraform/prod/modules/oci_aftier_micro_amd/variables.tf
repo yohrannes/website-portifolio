@@ -1,3 +1,9 @@
+variable "user_email" {
+  description = "The email of the user"
+  type        = string
+  sensitive   = true
+}
+
 variable "compartment_id" {
   description = "The OCID of the compartment"
   type        = string

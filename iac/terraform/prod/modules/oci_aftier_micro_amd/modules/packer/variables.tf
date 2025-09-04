@@ -1,3 +1,8 @@
+variable "user_email" {
+  description = "The email of the user"
+  type        = string
+}
+
 variable "tenancy_ocid" {
   description = "The OCID of the tenancy"
   type        = string
