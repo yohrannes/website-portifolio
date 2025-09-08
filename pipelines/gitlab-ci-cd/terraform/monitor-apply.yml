@@ -29,7 +29,8 @@ monitor-and-apply-terraform-run:
       RUN_DATA=$(echo "$RUNS_RESPONSE" | jq --arg start_time "$PIPELINE_START_TIME" '
         .data[] | 
         select(.attributes."created-at" > $start_time) |
-        select(.attributes.message == "Triggered by GitLab CI")
+        select(.attributes.message | test("Triggered by GitLab CI")) |
+        select(.attributes.status == "planned")
       ' | jq -s '.[0]')
       
       if [ "$RUN_DATA" = "null" ] || [ -z "$RUN_DATA" ]; then
