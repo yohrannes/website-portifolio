@@ -32,16 +32,11 @@ monitor-and-apply-terraform-run:
           --header "Content-Type: application/vnd.api+json" \
           "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/runs?filter%5Bworkspace%5D%5Bname%5D=${TF_WORKSPACE}&page%5Bsize%5D=50")
         
-        echo "Workspace ID: $WORKSPACE_ID"
-        echo "Expected workspace: web_port_dev"
-
-        echo "=== DEBUG: Available runs ==="
-        echo "$RUNS_RESPONSE" | jq '.data[] | {id: .id, message: .attributes.message, created: .attributes."created-at"}' | head -30
-
-        echo "=== DEBUG: Filtering by GitLab CI message ==="
-        echo "$RUNS_RESPONSE" | jq '.data[] | select(.attributes.message | test("Triggered by GitLab CI")) | {id: .id, message: .attributes.message, created: .attributes."created-at"}' | head -10
         
-        RUN_DATA=$(echo "$RUNS_RESPONSE" | jq '.data[0]')
+        RUN_DATA=$(echo "$RUNS_RESPONSE" | jq --arg start_time "$PIPELINE_START_TIME" '
+          .data[] | 
+          select(.attributes.message | test("Triggered by GitLab CI"))
+        ' | jq -s '.[0]')
         
         if [ "$RUN_DATA" != "null" ] && [ -n "$RUN_DATA" ]; then
           RUN_ID=$(echo "$RUN_DATA" | jq -r '.id')
