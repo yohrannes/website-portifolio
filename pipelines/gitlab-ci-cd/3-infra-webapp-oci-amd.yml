@@ -14,20 +14,20 @@ include:
   - local: 'pipelines/gitlab-ci-cd/terraform/monitor-apply.yml'
 #test
 
-create-oracle-instance:
-  stage: create-infra
-  needs:
-    - monitor-and-apply-terraform-run
-  tags:
-    - oci-runner-arm
-  before_script:
-    - INSTANCE_PUBLIC_IP=$(docker exec -w /app terraform-container terraform output -raw oci_aftier_micro_amd_pub_ip)
-    - |
-      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-        --request PUT \
-        --form "value=$INSTANCE_PUBLIC_IP" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/IP_OCI_AMD_WEBAPP" \
-        > /dev/null 2>&1
+#create-oracle-instance:
+#  stage: create-infra
+#  needs:
+#    - monitor-and-apply-terraform-run
+#  tags:
+#    - oci-runner-arm
+#  before_script:
+#    - INSTANCE_PUBLIC_IP=$(docker exec -w /app terraform-container terraform output -raw oci_aftier_micro_amd_pub_ip)
+#    - |
+#     curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+#       --request PUT \
+#        --form "value=$INSTANCE_PUBLIC_IP" \
+#        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/IP_OCI_AMD_WEBAPP" \
+#       > /dev/null 2>&1
 
 #check-startup-script:
 #  stage: create-infra
