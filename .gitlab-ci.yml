@@ -49,7 +49,7 @@ stages:
   - prepare
 
 ## Terraform Cloud implelention
-#  - create-infra
+  - create-infra
   - validate
   - upload-config
   - trigger-plan
