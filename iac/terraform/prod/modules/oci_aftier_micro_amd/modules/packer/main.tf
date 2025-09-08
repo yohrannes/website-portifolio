@@ -49,17 +49,6 @@ resource "tls_private_key" "api_key" {
   rsa_bits  = 2048
 }
 
-resource "local_file" "private_key" {
-  content         = tls_private_key.api_key.private_key_pem
-  filename        = pathexpand("~/.oci/packer/packer_oci_api_key.pem")
-  file_permission = "0600"
-}
-
-resource "local_file" "public_key" {
-  content         = tls_private_key.api_key.public_key_pem
-  filename        = pathexpand("~/.oci/packer/packer_oci_api_key_public.pem")
-  file_permission = "0644"
-}
 
 resource "oci_identity_api_key" "user_api_key" {
   user_id   = local.user_ocid
@@ -151,19 +140,31 @@ resource "oci_core_subnet" "subnetA_pub" {
 }
 
 resource "local_file" "oci_config" {
-  content = <<-EOT
-[DEFAULT]
-user=${local.user_ocid}
-fingerprint=${oci_identity_api_key.user_api_key.fingerprint}
-key_file=${local_file.private_key.filename}
-tenancy=${var.tenancy_ocid}
-region=us-ashburn-1
-EOT
-  filename        = pathexpand("~/.oci/packer/oci_config")
+  content         = var.oci_config_content
+  filename        = var.oci_config_path
+  file_permission = "0600"
+  
+  provisioner "local-exec" {
+    command = "mkdir -p $(dirname ${var.oci_config_path})"
+  }
+}
+
+resource "local_file" "private_key" {
+  content         = var.oci_private_key_content
+  filename        = var.oci_private_key_path
+  file_permission = "0600"
+  
+  provisioner "local-exec" {
+    command = "mkdir -p $(dirname ${var.oci_private_key_path})"
+  }
+}
+
+resource "local_file" "public_key" {
+  content         = var.oci_public_key_content
+  filename        = var.oci_public_key_path
   file_permission = "0644"
   
-  depends_on = [
-    oci_identity_api_key.user_api_key,
-   local_file.private_key
-  ]
+  provisioner "local-exec" {
+    command = "mkdir -p $(dirname ${var.oci_public_key_path})"
+  }
 }

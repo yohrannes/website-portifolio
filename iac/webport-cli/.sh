@@ -3,7 +3,7 @@
 docker build -t cloud-cli . -f webport-cli/Dockerfile
 
 
-if [ $1 == pipe ]; then
+if [ "$1" == "pipe" ]; then
   INTERACTOR="-d"
   COMMAND="sleep infinity"
 else

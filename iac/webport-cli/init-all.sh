@@ -1,7 +1,9 @@
 #!/bin/sh
 set -e
 
-cd /app/terraform/prod && terraform init -input=false
+cd /app/terraform/prod && terraform init\
+
+# -input=false
 
 cd /app/packer/prod\
  && packer init .\
