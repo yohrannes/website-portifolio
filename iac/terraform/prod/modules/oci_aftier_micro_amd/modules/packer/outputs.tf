@@ -59,7 +59,7 @@ output "packer_instructions" {
     1. Config file: ${local_file.oci_config.filename}
     2. Private key path: ${local_file.private_key.filename}
     3. API fingerprint: ${oci_identity_api_key.user_api_key.fingerprint}
-    
+
     Set this on packer:
     - config_file_profile: "DEFAULT"
     - or set the env vars:
