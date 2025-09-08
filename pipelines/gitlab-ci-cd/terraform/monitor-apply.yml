@@ -30,10 +30,13 @@ monitor-and-apply-terraform-run:
         RUNS_RESPONSE=$(curl -s \
           --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
           --header "Content-Type: application/vnd.api+json" \
-          "${TF_CLOUD_API}/workspaces/${WORKSPACE_ID}/runs?page%5Bsize%5D=15")
+          "${TF_CLOUD_API}/workspaces/${WORKSPACE_ID}/runs?page%5Bsize%5D=50"
+        
+        echo "Workspace ID: $WORKSPACE_ID"
+        echo "Expected workspace: web_port_dev"
 
         echo "=== DEBUG: Available runs ==="
-        echo "$RUNS_RESPONSE" | jq '.data[] | {id: .id, message: .attributes.message, created: .attributes."created-at", status: .attributes.status}' | head -20
+        echo "$RUNS_RESPONSE" | jq '.data[] | {id: .id, message: .attributes.message, created: .attributes."created-at"}' | head -30
 
         echo "=== DEBUG: Filtering by GitLab CI message ==="
         echo "$RUNS_RESPONSE" | jq '.data[] | select(.attributes.message | test("Triggered by GitLab CI")) | {id: .id, message: .attributes.message, created: .attributes."created-at"}' | head -10
