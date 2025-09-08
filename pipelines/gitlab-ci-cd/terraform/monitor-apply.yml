@@ -3,175 +3,357 @@ variables:
   TF_CLOUD_ORG: "org-website-portifolio"
   TF_WORKSPACE: "web_port_dev"
   TF_CLOUD_API: "https://app.terraform.io/api/v2"
+  MAX_RETRIES: 3
+  RETRY_DELAY: 30
+  PLAN_TIMEOUT: 1800
+  APPLY_TIMEOUT: 3600
 
 monitor-and-apply-terraform-run:
-  stage: deploy-infra
+  stage: tf-plan-apply
+  retry:
+    max: 2
+    when:
+      - api_failure
+      - runner_system_failure
+      - stuck_or_timeout_failure
+  timeout: 2h
   before_script:
-    - sudo apt-get update && sudo apt-get install -y curl jq
+    - apt-get update -qq && apt-get install -y -qq curl jq
+    - |
+      if [ -z "$TF_CLOUD_TOKEN" ]; then
+        echo "ERROR: TF_CLOUD_TOKEN is not set"
+        exit 1
+      fi
+    - |
+      validate_json_response() {
+        local response="$1"
+        local context="$2"
+        if ! echo "$response" | jq . >/dev/null 2>&1; then
+          echo "ERROR: Invalid JSON response from $context"
+          echo "Response: $response"
+          return 1
+        fi
+        return 0
+      }
+    - |
+      api_call_with_retry() {
+        local url="$1"
+        local method="${2:-GET}"
+        local data="$3"
+        local max_attempts="$MAX_RETRIES"
+        local attempt=1
+        
+        while [ $attempt -le $max_attempts ]; do
+          if [ "$method" = "POST" ] && [ -n "$data" ]; then
+            response=$(curl -s -w "\n%{http_code}" \
+              --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+              --header "Content-Type: application/vnd.api+json" \
+              --request POST \
+              --data "$data" \
+              "$url")
+          elif [ "$method" = "POST" ]; then
+            response=$(curl -s -w "\n%{http_code}" \
+              --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+              --header "Content-Type: application/vnd.api+json" \
+              --request POST \
+              "$url")
+          else
+            response=$(curl -s -w "\n%{http_code}" \
+              --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+              --header "Content-Type: application/vnd.api+json" \
+              "$url")
+          fi
+          
+          body=$(echo "$response" | head -n -1)
+          http_code=$(echo "$response" | tail -n 1)
+          
+          if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+            if validate_json_response "$body" "$url"; then
+              echo "$body"
+              return 0
+            fi
+          fi
+          
+          echo "WARNING: API call failed (attempt $attempt/$max_attempts) - HTTP $http_code"
+          if [ "$http_code" -eq 429 ]; then
+            echo "Rate limit hit, waiting longer..."
+            sleep $((RETRY_DELAY * 2))
+          elif [ "$http_code" -ge 500 ]; then
+            echo "Server error, retrying..."
+            sleep $RETRY_DELAY
+          else
+            echo "Client error, aborting retries"
+            break
+          fi
+          
+          attempt=$((attempt + 1))
+        done
+        
+        echo "ERROR: API call failed after $max_attempts attempts"
+        echo "Final response: $body"
+        return 1
+      }
   script:
     - |
-      WORKSPACE_RESPONSE=$(curl -s \
-        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
-        --header "Content-Type: application/vnd.api+json" \
-        "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces?filter%5Bname%5D=${TF_WORKSPACE}")
-      WORKSPACE_ID=$(echo "$WORKSPACE_RESPONSE" | jq -r '.data[0].id')
+      echo "Retrieving workspace information..."
+      workspace_response=$(api_call_with_retry "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces?filter%5Bname%5D=${TF_WORKSPACE}")
+      if [ $? -ne 0 ]; then
+        echo "ERROR: Failed to retrieve workspace"
+        exit 1
+      fi
+      
+      workspace_count=$(echo "$workspace_response" | jq '.data | length')
+      if [ "$workspace_count" -eq 0 ]; then
+        echo "ERROR: Workspace '$TF_WORKSPACE' not found in organization '$TF_CLOUD_ORG'"
+        exit 1
+      fi
+      
+      WORKSPACE_ID=$(echo "$workspace_response" | jq -r '.data[0].id')
+      if [ "$WORKSPACE_ID" = "null" ] || [ -z "$WORKSPACE_ID" ]; then
+        echo "ERROR: Could not extract workspace ID"
+        exit 1
+      fi
+      
+      echo "Workspace ID: $WORKSPACE_ID"
 
     - |
-      PIPELINE_START_TIME=$(date -u -d '10 minutes ago' '+%Y-%m-%dT%H:%M:%S.%3NZ')
-      echo "Looking for runs created after: $PIPELINE_START_TIME"
+      echo "Searching for GitLab CI triggered run..."
+      pipeline_start_time=$(date -u -d '10 minutes ago' '+%Y-%m-%dT%H:%M:%S.%3NZ')
+      echo "Looking for runs created after: $pipeline_start_time"
       
       RUN_ID=""
-      ATTEMPTS=0
-      MAX_ATTEMPTS=20
+      attempts=0
+      max_search_attempts=20
       
-      while [ -z "$RUN_ID" ] && [ $ATTEMPTS -lt $MAX_ATTEMPTS ]; do
-        echo "Attempt $((ATTEMPTS + 1)): Searching for recent GitLab CI run..."
+      while [ -z "$RUN_ID" ] && [ $attempts -lt $max_search_attempts ]; do
+        echo "Search attempt $((attempts + 1))/$max_search_attempts"
         
-        RUNS_RESPONSE=$(curl -s \
-          --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
-          --header "Content-Type: application/vnd.api+json" \
-          "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/runs?filter%5Bworkspace%5D%5Bname%5D=${TF_WORKSPACE}&page%5Bsize%5D=50")
+        runs_response=$(api_call_with_retry "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/runs?filter%5Bworkspace%5D%5Bname%5D=${TF_WORKSPACE}&page%5Bsize%5D=50")
+        if [ $? -ne 0 ]; then
+          echo "WARNING: Failed to retrieve runs, retrying..."
+          sleep 15
+          attempts=$((attempts + 1))
+          continue
+        fi
         
-        
-        RUN_DATA=$(echo "$RUNS_RESPONSE" | jq --arg start_time "$PIPELINE_START_TIME" '
+        run_data=$(echo "$runs_response" | jq --arg start_time "$pipeline_start_time" '
           .data[] | 
           select(.attributes.message | test("Triggered by GitLab CI"))
         ' | jq -s '.[0]')
         
-        if [ "$RUN_DATA" != "null" ] && [ -n "$RUN_DATA" ]; then
-          RUN_ID=$(echo "$RUN_DATA" | jq -r '.id')
-          RUN_STATUS=$(echo "$RUN_DATA" | jq -r '.attributes.status')
-          RUN_CREATED_AT=$(echo "$RUN_DATA" | jq -r '.attributes."created-at"')
+        if [ "$run_data" != "null" ] && [ -n "$run_data" ] && [ "$run_data" != "" ]; then
+          RUN_ID=$(echo "$run_data" | jq -r '.id')
+          run_status=$(echo "$run_data" | jq -r '.attributes.status')
+          run_created_at=$(echo "$run_data" | jq -r '.attributes."created-at"')
           
-          echo "Found GitLab CI run!"
-          echo "Selected run ID: $RUN_ID"
-          echo "Run created at: $RUN_CREATED_AT"
-          echo "Initial status: $RUN_STATUS"
+          echo "Found GitLab CI run: $RUN_ID"
+          echo "Created at: $run_created_at"
+          echo "Status: $run_status"
           break
         fi
         
-        ATTEMPTS=$((ATTEMPTS + 1))
-        if [ $ATTEMPTS -lt $MAX_ATTEMPTS ]; then
-          echo "No recent GitLab CI run found, waiting 15 seconds..."
+        attempts=$((attempts + 1))
+        if [ $attempts -lt $max_search_attempts ]; then
+          echo "No recent GitLab CI run found, waiting..."
           sleep 15
         fi
       done
       
       if [ -z "$RUN_ID" ]; then
-        echo "No GitLab CI run found after $MAX_ATTEMPTS attempts. Using most recent run as fallback..."
-        RUN_DATA=$(echo "$RUNS_RESPONSE" | jq '.data[0]')
-        RUN_ID=$(echo "$RUN_DATA" | jq -r '.id')
-        RUN_STATUS=$(echo "$RUN_DATA" | jq -r '.attributes.status')
-        RUN_CREATED_AT=$(echo "$RUN_DATA" | jq -r '.attributes."created-at"')
+        echo "WARNING: No GitLab CI run found, using most recent run"
+        run_data=$(echo "$runs_response" | jq '.data[0]')
+        RUN_ID=$(echo "$run_data" | jq -r '.id')
+        run_status=$(echo "$run_data" | jq -r '.attributes.status')
+        run_created_at=$(echo "$run_data" | jq -r '.attributes."created-at"')
         
-        echo "Fallback run ID: $RUN_ID"
-        echo "Run created at: $RUN_CREATED_AT"
-        echo "Status: $RUN_STATUS"
+        if [ "$RUN_ID" = "null" ] || [ -z "$RUN_ID" ]; then
+          echo "ERROR: No runs found for workspace"
+          exit 1
+        fi
+        
+        echo "Fallback run: $RUN_ID"
+        echo "Created at: $run_created_at"
+        echo "Status: $run_status"
       fi
-#          select(.attributes."created-at" > $start_time) |
-#          select(.attributes.message | test("Triggered by GitLab CI")) |
-#          select(.attributes.status | test("planned|planning|pending|fetching"))
 
     - |
-      PLAN_RESPONSE=$(curl -s \
-        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
-        --header "Content-Type: application/vnd.api+json" \
-        "${TF_CLOUD_API}/runs/${RUN_ID}/plan")
-      PLAN_ID=$(echo "$PLAN_RESPONSE" | jq -r '.data.id')
-      echo "Plan ID: $PLAN_ID"
+      echo "Retrieving plan information..."
+      plan_response=$(api_call_with_retry "${TF_CLOUD_API}/runs/${RUN_ID}/plan")
+      if [ $? -ne 0 ]; then
+        echo "ERROR: Failed to retrieve plan information"
+        exit 1
+      fi
+      
+      PLAN_ID=$(echo "$plan_response" | jq -r '.data.id')
+      if [ "$PLAN_ID" = "null" ]; then
+        echo "WARNING: Plan ID is null, plan may not exist yet"
+        PLAN_ID=""
+      else
+        echo "Plan ID: $PLAN_ID"
+      fi
 
     - |
-      echo "Monitoring run status..."
+      echo "Monitoring plan phase..."
+      plan_start_time=$(date +%s)
+      plan_timeout=$PLAN_TIMEOUT
+      
       while true; do
-        RUN_RESPONSE=$(curl -s \
-          --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
-          --header "Content-Type: application/vnd.api+json" \
-          "${TF_CLOUD_API}/runs/${RUN_ID}")
+        current_time=$(date +%s)
+        elapsed=$((current_time - plan_start_time))
         
-        CURRENT_STATUS=$(echo "$RUN_RESPONSE" | jq -r '.data.attributes.status')
-        echo "Status: $CURRENT_STATUS"
+        if [ $elapsed -gt $plan_timeout ]; then
+          echo "ERROR: Plan phase timeout after ${plan_timeout}s"
+          exit 1
+        fi
         
-        case $CURRENT_STATUS in
+        run_response=$(api_call_with_retry "${TF_CLOUD_API}/runs/${RUN_ID}")
+        if [ $? -ne 0 ]; then
+          echo "WARNING: Failed to get run status, retrying..."
+          sleep 30
+          continue
+        fi
+        
+        current_status=$(echo "$run_response" | jq -r '.data.attributes.status')
+        echo "Plan status: $current_status (${elapsed}s elapsed)"
+        
+        case $current_status in
           "planned_and_finished")
-            echo "Plan completed successfully. Proceeding with apply..."
+            echo "Plan completed successfully"
             break
             ;;
           "errored"|"canceled"|"force_canceled")
-            echo "Run failed with status: $CURRENT_STATUS"
+            echo "ERROR: Plan failed with status: $current_status"
             
-            echo "=== DETAILED ERROR INFORMATION ==="
-            echo "$RUN_RESPONSE" | jq '.data.attributes'
+            echo "=== RUN DETAILS ==="
+            echo "$run_response" | jq '.data.attributes | {status, message, "created-at", "status-timestamps"}'
             
-            if [ "$PLAN_ID" != "null" ] && [ -n "$PLAN_ID" ]; then
+            if [ -n "$PLAN_ID" ]; then
               echo "=== PLAN LOGS ==="
-              PLAN_LOGS=$(curl -s \
+              plan_logs=$(curl -s \
                 --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
                 --header "Accept: text/plain" \
                 "${TF_CLOUD_API}/plans/${PLAN_ID}/logs")
-              echo "$PLAN_LOGS"
+              
+              if [ $? -eq 0 ] && [ -n "$plan_logs" ]; then
+                echo "$plan_logs" | tail -50
+              else
+                echo "Failed to retrieve plan logs or logs are empty"
+              fi
             fi
             
-            echo "=== CHECKING RUN TASKS ==="
-            TASKS_RESPONSE=$(curl -s \
-              --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
-              --header "Content-Type: application/vnd.api+json" \
-              "${TF_CLOUD_API}/runs/${RUN_ID}/task-stages")
-            echo "$TASKS_RESPONSE" | jq '.data[]? | {id: .id, status: .attributes.status, stage: .attributes.stage}'
+            echo "=== TASK STAGES ==="
+            tasks_response=$(api_call_with_retry "${TF_CLOUD_API}/runs/${RUN_ID}/task-stages")
+            if [ $? -eq 0 ]; then
+              echo "$tasks_response" | jq '.data[]? | {id: .id, status: .attributes.status, stage: .attributes.stage, "created-at": .attributes."created-at"}'
+            fi
             
             exit 1
             ;;
-          "planning"|"pending"|"fetching")
-            echo "Still planning... waiting 30 seconds"
+          "planning"|"pending"|"fetching"|"queued")
+            echo "Plan in progress..."
             sleep 30
             ;;
+          "policy_checked"|"policy_override")
+            echo "Policy checks completed, plan ready"
+            break
+            ;;
           *)
-            echo "Unexpected status: $CURRENT_STATUS. Waiting..."
+            echo "Unexpected plan status: $current_status"
             sleep 30
             ;;
         esac
       done
 
-#    - |
-#      echo "Applying Terraform run..."
-#      APPLY_RESPONSE=$(curl -s \
-#        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
-#        --header "Content-Type: application/vnd.api+json" \
-#        --request POST \
-#        "${TF_CLOUD_API}/runs/${RUN_ID}/actions/apply")
-#      
-#      if [ $? -ne 0 ]; then
-#        echo "Failed to trigger apply"
-#        exit 1
-#      fi
-#      echo "Apply triggered successfully"
-#
-#    - |
-#      echo "Monitoring apply status..."
-#      while true; do
-#        APPLY_STATUS_RESPONSE=$(curl -s \
-#          --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
-#          --header "Content-Type: application/vnd.api+json" \
-#          "${TF_CLOUD_API}/runs/${RUN_ID}")
-#        
-#        APPLY_STATUS=$(echo "$APPLY_STATUS_RESPONSE" | jq -r '.data.attributes.status')
-#        echo "Apply status: $APPLY_STATUS"
-#        
-#        case $APPLY_STATUS in
-#          "applied")
-#            echo "Infrastructure successfully applied!"
-#            exit 0
-#            ;;
-#          "errored"|"canceled"|"force_canceled")
-#            echo "Apply failed with status: $APPLY_STATUS"
-#            exit 1
-#            ;;
-#          "applying"|"confirmed")
-#            echo "Still applying... waiting 30 seconds"
-#            sleep 30
-#            ;;
-#          *)
-#            echo "Status: $APPLY_STATUS. Continuing to monitor..."
-#            sleep 30
-#            ;;
-#        esac
-#      done
+    - |
+      echo "Triggering apply..."
+      apply_trigger_response=$(api_call_with_retry "${TF_CLOUD_API}/runs/${RUN_ID}/actions/apply" "POST")
+      if [ $? -ne 0 ]; then
+        echo "ERROR: Failed to trigger apply"
+        exit 1
+      fi
+      echo "Apply triggered successfully"
+
+    - |
+      echo "Monitoring apply phase..."
+      apply_start_time=$(date +%s)
+      apply_timeout=$APPLY_TIMEOUT
+      
+      while true; do
+        current_time=$(date +%s)
+        elapsed=$((current_time - apply_start_time))
+        
+        if [ $elapsed -gt $apply_timeout ]; then
+          echo "ERROR: Apply phase timeout after ${apply_timeout}s"
+          exit 1
+        fi
+        
+        apply_status_response=$(api_call_with_retry "${TF_CLOUD_API}/runs/${RUN_ID}")
+        if [ $? -ne 0 ]; then
+          echo "WARNING: Failed to get apply status, retrying..."
+          sleep 30
+          continue
+        fi
+        
+        apply_status=$(echo "$apply_status_response" | jq -r '.data.attributes.status')
+        echo "Apply status: $apply_status (${elapsed}s elapsed)"
+        
+        case $apply_status in
+          "applied")
+            echo "Infrastructure successfully applied!"
+            
+            echo "=== APPLY SUMMARY ==="
+            apply_data=$(echo "$apply_status_response" | jq '.data.relationships.apply.links.related' | tr -d '"')
+            if [ -n "$apply_data" ] && [ "$apply_data" != "null" ]; then
+              apply_details=$(api_call_with_retry "$apply_data")
+              if [ $? -eq 0 ]; then
+                echo "$apply_details" | jq '.data.attributes | {status, "resource-additions", "resource-changes", "resource-destructions"}'
+              fi
+            fi
+            exit 0
+            ;;
+          "errored"|"canceled"|"force_canceled")
+            echo "ERROR: Apply failed with status: $apply_status"
+            
+            echo "=== APPLY DETAILS ==="
+            echo "$apply_status_response" | jq '.data.attributes | {status, message, "status-timestamps"}'
+            
+            apply_data=$(echo "$apply_status_response" | jq '.data.relationships.apply.links.related' | tr -d '"')
+            if [ -n "$apply_data" ] && [ "$apply_data" != "null" ]; then
+              echo "=== APPLY LOGS ==="
+              apply_logs=$(curl -s \
+                --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+                --header "Accept: text/plain" \
+                "${apply_data}/logs")
+              
+              if [ $? -eq 0 ] && [ -n "$apply_logs" ]; then
+                echo "$apply_logs" | tail -50
+              else
+                echo "Failed to retrieve apply logs or logs are empty"
+              fi
+            fi
+            
+            exit 1
+            ;;
+          "applying"|"confirmed"|"post_plan_running")
+            echo "Apply in progress..."
+            sleep 30
+            ;;
+          *)
+            echo "Apply status: $apply_status"
+            sleep 30
+            ;;
+        esac
+      done
+  after_script:
+    - |
+      if [ "$CI_JOB_STATUS" = "failed" ] && [ -n "$RUN_ID" ]; then
+        echo "=== FINAL RUN STATE ==="
+        final_run_response=$(curl -s \
+          --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+          --header "Content-Type: application/vnd.api+json" \
+          "${TF_CLOUD_API}/runs/${RUN_ID}")
+        
+        if [ $? -eq 0 ]; then
+          echo "$final_run_response" | jq '.data.attributes | {status, message, "created-at", "status-timestamps"}'
+        fi
+      fi

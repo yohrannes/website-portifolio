@@ -48,15 +48,11 @@ include:
 stages:
   - prepare
 
-## Terraform Cloud implelention
-  - create-infra
-  - validate
-  - upload-config
-  - trigger-plan
-  - monitor
-  - debug
-  - config-infra
-  - deploy-infra
+## Terraform Cloud Steps
+  - tf-up-conf-init-run
+  - tf-plan-apply
+
+  - check
   - build
   - test
   - deploy-image
