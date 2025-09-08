@@ -41,10 +41,7 @@ monitor-and-apply-terraform-run:
         echo "=== DEBUG: Filtering by GitLab CI message ==="
         echo "$RUNS_RESPONSE" | jq '.data[] | select(.attributes.message | test("Triggered by GitLab CI")) | {id: .id, message: .attributes.message, created: .attributes."created-at"}' | head -10
         
-        RUN_DATA=$(echo "$RUNS_RESPONSE" | jq --arg start_time "$PIPELINE_START_TIME" '
-          .data[] | 
-          select(.attributes.message | test("Triggered by GitLab CI"))
-        ' | jq -s '.[0]')
+        RUN_DATA=$(echo "$RUNS_RESPONSE" | jq '.data[0]')
         
         if [ "$RUN_DATA" != "null" ] && [ -n "$RUN_DATA" ]; then
           RUN_ID=$(echo "$RUN_DATA" | jq -r '.id')
