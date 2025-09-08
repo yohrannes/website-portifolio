@@ -92,7 +92,7 @@ monitor-and-apply-terraform-run:
         echo "Status: $CURRENT_STATUS"
         
         case $CURRENT_STATUS in
-          "planned")
+          "planned_and_finished")
             echo "Plan completed successfully. Proceeding with apply..."
             break
             ;;
