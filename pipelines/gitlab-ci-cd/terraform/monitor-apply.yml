@@ -16,35 +16,62 @@ monitor-and-apply-terraform-run:
         "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces?filter%5Bname%5D=${TF_WORKSPACE}")
       WORKSPACE_ID=$(echo "$WORKSPACE_RESPONSE" | jq -r '.data[0].id')
 
+    # Loop para encontrar run criado pela pipeline atual
     - |
-      PIPELINE_START_TIME=$(date -u -d '5 minutes ago' '+%Y-%m-%dT%H:%M:%S.%3NZ')
+      PIPELINE_START_TIME=$(date -u -d '10 minutes ago' '+%Y-%m-%dT%H:%M:%S.%3NZ')
       echo "Looking for runs created after: $PIPELINE_START_TIME"
-
-    - |
-      RUNS_RESPONSE=$(curl -s \
-        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
-        --header "Content-Type: application/vnd.api+json" \
-        "${TF_CLOUD_API}/workspaces/${WORKSPACE_ID}/runs?page%5Bsize%5D=10")
       
-      RUN_DATA=$(echo "$RUNS_RESPONSE" | jq --arg start_time "$PIPELINE_START_TIME" '
-        .data[] | 
-        select(.attributes."created-at" > $start_time) |
-        select(.attributes.message | test("Triggered by GitLab CI"))
-      ' | jq -s '.[0]')
+      RUN_ID=""
+      ATTEMPTS=0
+      MAX_ATTEMPTS=20
       
-      if [ "$RUN_DATA" = "null" ] || [ -z "$RUN_DATA" ]; then
-        echo "No recent runs found created by this pipeline. Checking all recent runs..."
-
+      while [ -z "$RUN_ID" ] && [ $ATTEMPTS -lt $MAX_ATTEMPTS ]; do
+        echo "Attempt $((ATTEMPTS + 1)): Searching for recent GitLab CI run..."
+        
+        RUNS_RESPONSE=$(curl -s \
+          --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+          --header "Content-Type: application/vnd.api+json" \
+          "${TF_CLOUD_API}/workspaces/${WORKSPACE_ID}/runs?page%5Bsize%5D=15")
+        
+        # Busca runs criados pela GitLab CI recentemente
+        RUN_DATA=$(echo "$RUNS_RESPONSE" | jq --arg start_time "$PIPELINE_START_TIME" '
+          .data[] | 
+          select(.attributes."created-at" > $start_time) |
+          select(.attributes.message | test("Triggered by GitLab CI")) |
+          select(.attributes.status | test("planned|planning|pending|fetching"))
+        ' | jq -s '.[0]')
+        
+        if [ "$RUN_DATA" != "null" ] && [ -n "$RUN_DATA" ]; then
+          RUN_ID=$(echo "$RUN_DATA" | jq -r '.id')
+          RUN_STATUS=$(echo "$RUN_DATA" | jq -r '.attributes.status')
+          RUN_CREATED_AT=$(echo "$RUN_DATA" | jq -r '.attributes."created-at"')
+          
+          echo "Found GitLab CI run!"
+          echo "Selected run ID: $RUN_ID"
+          echo "Run created at: $RUN_CREATED_AT"
+          echo "Initial status: $RUN_STATUS"
+          break
+        fi
+        
+        ATTEMPTS=$((ATTEMPTS + 1))
+        if [ $ATTEMPTS -lt $MAX_ATTEMPTS ]; then
+          echo "No recent GitLab CI run found, waiting 15 seconds..."
+          sleep 15
+        fi
+      done
+      
+      # Se não encontrou run da GitLab CI, usa o mais recente como fallback
+      if [ -z "$RUN_ID" ]; then
+        echo "No GitLab CI run found after $MAX_ATTEMPTS attempts. Using most recent run as fallback..."
         RUN_DATA=$(echo "$RUNS_RESPONSE" | jq '.data[0]')
+        RUN_ID=$(echo "$RUN_DATA" | jq -r '.id')
+        RUN_STATUS=$(echo "$RUN_DATA" | jq -r '.attributes.status')
+        RUN_CREATED_AT=$(echo "$RUN_DATA" | jq -r '.attributes."created-at"')
+        
+        echo "Fallback run ID: $RUN_ID"
+        echo "Run created at: $RUN_CREATED_AT"
+        echo "Status: $RUN_STATUS"
       fi
-      
-      RUN_ID=$(echo "$RUN_DATA" | jq -r '.id')
-      RUN_STATUS=$(echo "$RUN_DATA" | jq -r '.attributes.status')
-      RUN_CREATED_AT=$(echo "$RUN_DATA" | jq -r '.attributes."created-at"')
-      
-      echo "Selected run ID: $RUN_ID"
-      echo "Run created at: $RUN_CREATED_AT"
-      echo "Initial status: $RUN_STATUS"
 
     - |
       PLAN_RESPONSE=$(curl -s \
