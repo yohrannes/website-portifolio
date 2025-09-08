@@ -16,7 +16,6 @@ monitor-and-apply-terraform-run:
         "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces?filter%5Bname%5D=${TF_WORKSPACE}")
       WORKSPACE_ID=$(echo "$WORKSPACE_RESPONSE" | jq -r '.data[0].id')
 
-    # Loop para encontrar run criado pela pipeline atual
     - |
       PIPELINE_START_TIME=$(date -u -d '10 minutes ago' '+%Y-%m-%dT%H:%M:%S.%3NZ')
       echo "Looking for runs created after: $PIPELINE_START_TIME"
@@ -33,12 +32,12 @@ monitor-and-apply-terraform-run:
           --header "Content-Type: application/vnd.api+json" \
           "${TF_CLOUD_API}/workspaces/${WORKSPACE_ID}/runs?page%5Bsize%5D=15")
         
-        # Busca runs criados pela GitLab CI recentemente
         RUN_DATA=$(echo "$RUNS_RESPONSE" | jq --arg start_time "$PIPELINE_START_TIME" '
           .data[] | 
-          select(.attributes."created-at" > $start_time) |
-          select(.attributes.message | test("Triggered by GitLab CI")) |
-          select(.attributes.status | test("planned|planning|pending|fetching"))
+          select(.attributes.message | test("Triggered by GitLab CI"))
+#          select(.attributes."created-at" > $start_time) |
+#          select(.attributes.message | test("Triggered by GitLab CI")) |
+#          select(.attributes.status | test("planned|planning|pending|fetching"))
         ' | jq -s '.[0]')
         
         if [ "$RUN_DATA" != "null" ] && [ -n "$RUN_DATA" ]; then
@@ -60,7 +59,6 @@ monitor-and-apply-terraform-run:
         fi
       done
       
-      # Se não encontrou run da GitLab CI, usa o mais recente como fallback
       if [ -z "$RUN_ID" ]; then
         echo "No GitLab CI run found after $MAX_ATTEMPTS attempts. Using most recent run as fallback..."
         RUN_DATA=$(echo "$RUNS_RESPONSE" | jq '.data[0]')
