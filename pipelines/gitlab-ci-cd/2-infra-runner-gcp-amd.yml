@@ -40,115 +40,115 @@ get-instance-ip-from-tf-cloud:
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GCP_RUNNER_IP" \
         > /dev/null 2>&1
 
-check-startup-script:
-  stage: create-infra
-  rules:
-    - if: $CI_COMMIT_BRANCH == "infra-gcp-amd"
-  needs:
-    - create-gcp-instance
-  image: docker:27.3.1
-  services:
-    - docker:27.3.1-dind
-  variables:
-    DOCKER_DRIVER: overlay2
-  script:
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - |
-      timeout_start=$(date +%s)
-      timeout_max=1800
-      sleep 30;
-        while true; do
-          ssh -i ~/.ssh/id_rsa -o ConnectTimeout=15 -o StrictHostKeyChecking=no ubuntu@$GCP_RUNNER_IP "
-            while [ \$((\$(date +%s) - $timeout_start)) -lt $timeout_max ]; do
-              if [ -e /var/log/startup-script.log ]; then
-                  if [ -r /var/log/startup-script.log ]; then
-                      last_line=\$(tail -n1 /var/log/startup-script.log 2>/dev/null)
-                      if [ \"\$last_line\" = 'startup-script-finished' ]; then
-                          echo 'Startup script finished!';
-                          exit 0;
-                      fi
-                  else
-                      echo '/var/log/startup-script.log exists but is not readable.';
-                  fi
-              else
-                  echo '/var/log/startup-script.log does not exist yet.';
-              fi
-              sleep 1
-            done
-          " && break || echo 'Retrying connection...';
-          if [ $(( $(date +%s) - $timeout_start )) -ge $timeout_max ]; then
-            echo 'Timeout after 30 minutes'
-            exit 1
-          fi
-          sleep 5
-        done
-
-create-runner-gl-api:
-  stage: create-infra
-  rules:
-    - if: $CI_COMMIT_BRANCH == "infra-gcp-amd"
-  needs:
-    - create-gcp-instance
-  image: docker:27.3.1
-  services:
-    - docker:27.3.1-dind
-  variables:
-    DOCKER_DRIVER: overlay2
-  script:
-    - |
-      sudo apt-get install -y curl jq
-      RUNNER_TOKEN=$(curl --request POST --url "https://gitlab.com/api/v4/user/runners" --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_CREATOR" --data "runner_type=project_type" --data "project_id=57493833" --data "tag_list=gcp-runner-amd" --data "description=gcp-runner" | jq -r '.token')
-    - |
-      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-        --request PUT \
-        --form "value=$RUNNER_TOKEN" \
-        --form "tag_list=gcp-runner-amd" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER_TOKEN_CREATED" \
-        > /dev/null 2>&1
-
-authorize-runner:
-  stage: deploy-infra
-  rules:
-    - if: $CI_COMMIT_BRANCH == "infra-gcp-amd"
-  needs:
-    - create-gcp-instance
-    - check-startup-script
-  image: docker:27.3.1
-  services:
-    - docker:27.3.1-dind
-  variables:
-    DOCKER_DRIVER: overlay2
-  script:
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$GCP_RUNNER_IP "
-        sudo gitlab-runner register \
-        --non-interactive \
-        --url "https://gitlab.com/" \
-        --token "$GITLAB_RUNNER_TOKEN_CREATED" \
-        --executor "shell" \
-        --description "shell-runner-with-sudo"
-        sudo EDITOR='tee -a' visudo <<EOF
-      gitlab-runner ALL=(ALL:ALL) ALL
-      gitlab-runner ALL=(ALL) NOPASSWD: ALL
-      EOF
-        sudo usermod -a -G sudo gitlab-runner
-        sudo usermod -aG docker gitlab-runner
-        exit
-
-      sudo tee /home/ubuntu/.gitlab-runner/config.toml > /dev/null <<'EOF'
-      [[runners]]
-      name = "shell-runner"
-      url = "https://gitlab.com/"
-      token = "$GITLAB_RUNNER_TOKEN_CREATED"
-      executor = "shell"
-      [runners.shell]
-        tls_verify = false
-        privileged = true
-      EOF
-
-      "
+#check-startup-script:
+#  stage: create-infra
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == "infra-gcp-amd"
+#  needs:
+#    - create-gcp-instance
+#  image: docker:27.3.1
+#  services:
+#    - docker:27.3.1-dind
+#  variables:
+#    DOCKER_DRIVER: overlay2
+#  script:
+#    - mkdir -p ~/.ssh
+#    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
+#    - chmod 600 ~/.ssh/id_rsa
+#    - |
+#      timeout_start=$(date +%s)
+#      timeout_max=1800
+#      sleep 30;
+#        while true; do
+#          ssh -i ~/.ssh/id_rsa -o ConnectTimeout=15 -o StrictHostKeyChecking=no ubuntu@$GCP_RUNNER_IP "
+#            while [ \$((\$(date +%s) - $timeout_start)) -lt $timeout_max ]; do
+#              if [ -e /var/log/startup-script.log ]; then
+#                  if [ -r /var/log/startup-script.log ]; then
+#                      last_line=\$(tail -n1 /var/log/startup-script.log 2>/dev/null)
+#                      if [ \"\$last_line\" = 'startup-script-finished' ]; then
+#                          echo 'Startup script finished!';
+#                          exit 0;
+#                      fi
+#                  else
+#                      echo '/var/log/startup-script.log exists but is not readable.';
+#                  fi
+#              else
+#                  echo '/var/log/startup-script.log does not exist yet.';
+#              fi
+#              sleep 1
+#            done
+#          " && break || echo 'Retrying connection...';
+#          if [ $(( $(date +%s) - $timeout_start )) -ge $timeout_max ]; then
+#            echo 'Timeout after 30 minutes'
+#            exit 1
+#          fi
+#          sleep 5
+#        done
+#
+#create-runner-gl-api:
+#  stage: create-infra
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == "infra-gcp-amd"
+#  needs:
+#    - create-gcp-instance
+#  image: docker:27.3.1
+#  services:
+#    - docker:27.3.1-dind
+#  variables:
+#    DOCKER_DRIVER: overlay2
+#  script:
+#    - |
+#      sudo apt-get install -y curl jq
+#      RUNNER_TOKEN=$(curl --request POST --url "https://gitlab.com/api/v4/user/runners" --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_CREATOR" --data "runner_type=project_type" --data "project_id=57493833" --data "tag_list=gcp-runner-amd" --data "description=gcp-runner" | jq -r '.token')
+#    - |
+#      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+#        --request PUT \
+#        --form "value=$RUNNER_TOKEN" \
+#        --form "tag_list=gcp-runner-amd" \
+#        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER_TOKEN_CREATED" \
+#        > /dev/null 2>&1
+#
+#authorize-runner:
+#  stage: deploy-infra
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == "infra-gcp-amd"
+#  needs:
+#    - create-gcp-instance
+#    - check-startup-script
+#  image: docker:27.3.1
+#  services:
+#    - docker:27.3.1-dind
+#  variables:
+#    DOCKER_DRIVER: overlay2
+#  script:
+#    - mkdir -p ~/.ssh
+#    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
+#    - chmod 600 ~/.ssh/id_rsa
+#    - |
+#      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$GCP_RUNNER_IP "
+#        sudo gitlab-runner register \
+#        --non-interactive \
+#        --url "https://gitlab.com/" \
+#        --token "$GITLAB_RUNNER_TOKEN_CREATED" \
+#        --executor "shell" \
+#        --description "shell-runner-with-sudo"
+#        sudo EDITOR='tee -a' visudo <<EOF
+#      gitlab-runner ALL=(ALL:ALL) ALL
+#      gitlab-runner ALL=(ALL) NOPASSWD: ALL
+#      EOF
+#        sudo usermod -a -G sudo gitlab-runner
+#        sudo usermod -aG docker gitlab-runner
+#        exit
+#
+#      sudo tee /home/ubuntu/.gitlab-runner/config.toml > /dev/null <<'EOF'
+#      [[runners]]
+#      name = "shell-runner"
+#      url = "https://gitlab.com/"
+#      token = "$GITLAB_RUNNER_TOKEN_CREATED"
+#      executor = "shell"
+#      [runners.shell]
+#        tls_verify = false
+#        privileged = true
+#      EOF
+#
+#      "
