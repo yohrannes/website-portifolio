@@ -4,10 +4,10 @@
 module "gcp_ftier_micro_amd" {
   project_id = var.project_id # Required
   source  = "yohrannes/e2-micro-free-tier/google"
-  version = "v6.3.12" 
-  credentials_path = "~/.gcp/credentials.json" #Required
+  version = "v6.5.12" 
+  credentials_path = "" #Required
   startup_script_path = "./startup-files/startup-script.sh"
-  ssh_key_path = "~/.ssh/id_rsa.pub" #Required 
+  ssh_key = var.ssh_public_key #Required 
 }
 
 module "webport_bucket" {

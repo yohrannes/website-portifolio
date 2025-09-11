@@ -15,8 +15,7 @@ docker run $INTERACTOR --name cloud-cli --rm\
   -v ~/.oci:/root/.oci \
   -v ~/.aws:/root/.aws \
   -v ~/.ssh:/root/.ssh \
-  -v ~/.gcp:/root/.gcp \
-  -v ~/.config/gcloud \
+  -v ~/.config/gcloud:/root/.config/gcloud \
   -v ~/.kube/config:/root/.kube/config \
   -v $PWD:/app \
   -v ~/.terraform.d/credentials.tfrc.json:/root/.terraform.d/credentials.tfrc.json \
