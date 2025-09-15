@@ -91,7 +91,7 @@ monitor-and-apply-terraform-run:
         return 1
       }
   script:
-#    - set -x
+    - set -x
     - |
       echo "Retrieving workspace information..."
       workspace_response=$(api_call_with_retry "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces?filter%5Bname%5D=${TF_WORKSPACE}")
@@ -244,7 +244,6 @@ monitor-and-apply-terraform-run:
           apply_attempt=$((apply_attempt + 1))
           echo "Attempting to trigger apply ($apply_attempt/$APPLY_TRIGGER_MAX_ATTEMPTS)..."
           
-          # This will capture the full output of api_call_with_retry, including "Final response: {...}" on error.
           raw_apply_response=$(api_call_with_retry "${TF_CLOUD_API}/runs/${RUN_ID}/actions/apply" "POST")
           api_call_exit_code=$?
           
@@ -260,7 +259,7 @@ monitor-and-apply-terraform-run:
               else
                   # If it's not a 409 or maximum attempts reached for 409.
                   echo "ERROR: Failed to trigger apply after $apply_attempt attempts. Unexpected API error."
-                  echo "$raw_apply_response" # Print full response for debugging
+                  echo "$raw_apply_response"
                   exit 1
               fi
           fi
