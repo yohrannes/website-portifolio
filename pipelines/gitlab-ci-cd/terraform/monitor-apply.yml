@@ -266,15 +266,10 @@ monitor-and-apply-terraform-run:
 
     - |
       echo "Triggering apply..."
+      sleep 10
       apply_trigger_response=$(api_call_with_retry "${TF_CLOUD_API}/runs/${RUN_ID}/actions/apply" "POST")
-      apply_api_call_exit_code=$? # Captura o código de saída imediatamente
-      if [ "$apply_api_call_exit_code" -ne 0 ]; then
-          echo "DEBUG: Código de saída da chamada API para trigger do apply: $apply_api_call_exit_code"
-          echo "DEBUG: Resposta BRUTA da chamada API (se disponível):"
-          echo "$apply_trigger_response" # Imprime a resposta bruta
-          echo "DEBUG: Tentativa de formatar JSON:"
-          echo "$apply_trigger_response" | jq '.' # Tenta formatar JSON
-          echo "ERROR: Falha ao acionar o apply. Verifique a resposta da API acima para mais detalhes."
+      if [ $? -ne 0 ]; then
+          echo "ERROR: Fail to resquest apply. A API returned 'transition not allowed' (HTTP 409)."
           exit 1
       fi
       echo "Apply triggered successfully"
