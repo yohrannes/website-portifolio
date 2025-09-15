@@ -18,7 +18,7 @@ monitor-and-apply-terraform-run:
       - stuck_or_timeout_failure
   timeout: 2h
   before_script:
-    - apt-get update -qq && apt-get install -y -qq curl jq
+    - sudo apt-get update -qq && apt-get install -y -qq curl jq
     - |
       if [ -z "$TF_CLOUD_TOKEN" ]; then
         echo "ERROR: TF_CLOUD_TOKEN is not set"
@@ -94,6 +94,7 @@ monitor-and-apply-terraform-run:
         return 1
       }
   script:
+    - set -x
     - |
       echo "Retrieving workspace information..."
       workspace_response=$(api_call_with_retry "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces?filter%5Bname%5D=${TF_WORKSPACE}")
@@ -267,10 +268,15 @@ monitor-and-apply-terraform-run:
     - |
       echo "Triggering apply..."
       apply_trigger_response=$(api_call_with_retry "${TF_CLOUD_API}/runs/${RUN_ID}/actions/apply" "POST")
-      if [ $? -ne 0 ]; then
-        echo "$apply_trigger_response" | jq '.'
-        echo "ERROR: Failed to trigger apply"
-        exit 1
+      apply_api_call_exit_code=$? # Captura o código de saída imediatamente
+      if [ "$apply_api_call_exit_code" -ne 0 ]; then
+          echo "DEBUG: Código de saída da chamada API para trigger do apply: $apply_api_call_exit_code"
+          echo "DEBUG: Resposta BRUTA da chamada API (se disponível):"
+          echo "$apply_trigger_response" # Imprime a resposta bruta
+          echo "DEBUG: Tentativa de formatar JSON:"
+          echo "$apply_trigger_response" | jq '.' # Tenta formatar JSON
+          echo "ERROR: Falha ao acionar o apply. Verifique a resposta da API acima para mais detalhes."
+          exit 1
       fi
       echo "Apply triggered successfully"
 
