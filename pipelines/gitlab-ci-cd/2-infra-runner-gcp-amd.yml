@@ -15,6 +15,12 @@ get-instance-ip-from-tf-cloud:
         --header "Content-Type: application/vnd.api+json" \
         "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORGANIZATION/workspaces/$TF_CLOUD_WORKSPACE" \
         | jq -r '.data.id')
+      
+      if [ -n "$WORKSPACE_ID" ]; then
+        echo "existe algo aqui: $WORKSPACE_ID"
+      else
+        echo "nao encontrado nada aqui"
+      fi
     
     - |
       STATE_VERSION_ID=$(curl -s \
@@ -22,6 +28,12 @@ get-instance-ip-from-tf-cloud:
         --header "Content-Type: application/vnd.api+json" \
         "https://app.terraform.io/api/v2/workspaces/$WORKSPACE_ID/current-state-version" \
         | jq -r '.data.id')
+      
+      if [ -n "$STATE_VERSION_ID" ]; then
+        echo "existe algo aqui: $STATE_VERSION_ID"
+      else
+        echo "nao encontrado nada aqui"
+      fi
     
     - |
       INSTANCE_PUBLIC_IP=$(curl -s \
@@ -29,6 +41,12 @@ get-instance-ip-from-tf-cloud:
         --header "Content-Type: application/vnd.api+json" \
         "https://app.terraform.io/api/v2/state-versions/$STATE_VERSION_ID/outputs" \
         | jq -r '.data[] | select(.attributes.name == "gcp_instance_amd_public_ip") | .attributes.value')
+      
+      if [ -n "$INSTANCE_PUBLIC_IP" ]; then
+        echo "existe algo aqui: $INSTANCE_PUBLIC_IP"
+      else
+        echo "nao encontrado nada aqui"
+      fi
     
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
