@@ -18,7 +18,6 @@ monitor-and-apply-terraform-run:
       - stuck_or_timeout_failure
   timeout: 2h
   before_script:
-    - sudo apt-get update -qq && apt-get install -y -qq curl jq
     - |
       if [ -z "$TF_CLOUD_TOKEN" ]; then
         echo "ERROR: TF_CLOUD_TOKEN is not set"
