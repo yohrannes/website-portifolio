@@ -8,6 +8,7 @@ module "gcp_ftier_micro_amd" {
   credentials_path = "" #Required
   startup_script_path = "./startup-files/startup-script.sh"
   ssh_key = var.ssh_public_key #Required 
+  instance_name = "gitlab-runner"
 }
 
 module "webport_bucket" {
