@@ -253,7 +253,7 @@ monitor-and-apply-terraform-run:
             echo "Plan in progress..."
             sleep 30
             ;;
-          "policy_checked"|"policy_override|"cost_estimated")
+          "policy_checked"|"policy_override"|"cost_estimated")
             echo "Plan ready (status: $current_status)"
             break
             ;;
