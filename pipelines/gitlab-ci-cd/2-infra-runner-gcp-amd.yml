@@ -8,9 +8,6 @@ include:
 
 get-instance-ip-from-tf-cloud:
   stage: check
-  image: curlimages/curl:latest
-  before_script:
-    - apk add --no-cache jq
   script:
     - |
       WORKSPACE_ID=$(curl -s \
