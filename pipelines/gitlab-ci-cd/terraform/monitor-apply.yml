@@ -302,7 +302,7 @@ monitor-and-apply-terraform-run:
             echo "Infrastructure successfully applied!"
             
             echo "=== APPLY SUMMARY ==="
-            apply_data=$(echo "$apply_status_response" | jq '.data.relationships.apply.links.related')
+            apply_data=$(echo "$apply_status_response" | jq -r '.data.relationships.apply.links.related')
             if [ -n "$apply_data" ] && [ "$apply_data" != "null" ]; then
               apply_details=$(api_call_with_retry "$apply_data")
               if [ $? -eq 0 ]; then
@@ -317,7 +317,7 @@ monitor-and-apply-terraform-run:
             echo "=== APPLY DETAILS ==="
             echo "$apply_status_response" | jq '.data.attributes | {status, message, "status-timestamps"}'
             
-            apply_data=$(echo "$apply_status_response" | jq '.data.relationships.apply.links.related')
+            apply_data=$(echo "$apply_status_response" | jq -r '.data.relationships.apply.links.related')
             if [ -n "$apply_data" ] && [ "$apply_data" != "null" ]; then
               echo "=== APPLY LOGS ==="
               apply_logs=$(curl -s \
