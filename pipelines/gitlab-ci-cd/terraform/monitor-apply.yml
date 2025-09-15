@@ -305,8 +305,10 @@ monitor-and-apply-terraform-run:
           apply_attempt=$((apply_attempt + 1))
           echo "Attempting to trigger apply ($apply_attempt/$APPLY_TRIGGER_MAX_ATTEMPTS)..."
           
-          api_call_apply_trigger "${TF_CLOUD_API}/runs/${RUN_ID}/actions/apply"
+          set +e
+          apply_result=$(api_call_apply_trigger "${TF_CLOUD_API}/runs/${RUN_ID}/actions/apply")
           api_call_exit_code=$?
+          set -e
           
           if [ "$api_call_exit_code" -eq 0 ]; then
               echo "Apply triggered successfully!"
@@ -316,7 +318,8 @@ monitor-and-apply-terraform-run:
               echo "WARNING: API returned 'transition not allowed' (HTTP 409). Retrying in ${APPLY_TRIGGER_RETRY_DELAY} seconds..."
               sleep "$APPLY_TRIGGER_RETRY_DELAY"
           else
-              echo "ERROR: Failed to trigger apply after $apply_attempt attempts. Unexpected API error."
+              echo "ERROR: Failed to trigger apply. Unexpected API error (exit code: $api_call_exit_code)."
+              echo "Response: $apply_result"
               exit 1
           fi
       done
