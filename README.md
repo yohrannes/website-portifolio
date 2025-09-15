@@ -1,148 +1,113 @@
 # Website Portfolio - Yohrannes Santos Bigoli 🌐
 
-This project is a practical and robust demonstration of how to build, monitor, and operate a modern application using the best practices in **DevOps**, **web development**, and **cloud infrastructure**. It is designed to be highly scalable, secure, and easy to integrate into production environments.
+Este repositório é um blueprint funcional e de nível de produção para a construção, implantação e observabilidade de um ecossistema de aplicações web modernas. O projeto foi arquitetado para demonstrar práticas de engenharia de software e DevOps em um cenário real, com foco em automação, resiliência e segurança.
+
+## Arquitetura e Filosofia
+
+O objetivo deste projeto vai além de um simples portfólio. Ele serve como uma demonstração prática de um ciclo de vida de desenvolvimento de software completo, desde o provisionamento da infraestrutura até o monitoramento contínuo em produção.
+
+A filosofia é simples: **automação em tudo**. A infraestrutura é declarativa (IaC), os deploys são automatizados (CI/CD), e a observabilidade é integrada nativamente para permitir a detecção proativa de falhas e a análise de performance.
 
 ---
 
-## 🚀 **Overview**
+## Stack de Tecnologia
 
-The Website Portfolio combines:
-- **Backend in Flask**: A lightweight and efficient Python framework.
-- **Monitoring and Observability**: With **Prometheus**, **Grafana**, and **cAdvisor**.
-- **Infrastructure Automation**: Using **Terraform** and **GitLab CI/CD**.
-- **Advanced Security**: Configured **Fail2Ban** to protect against malicious attacks.
+A seleção de tecnologias foi feita para refletir um ambiente de produção moderno, priorizando ferramentas open-source, maduras e amplamente adotadas pela indústria.
 
-This project is ideal for professionals who want to learn or implement modern development and operational solutions.
-
----
-
-## 🛠️ **Technologies Used**
-
-### **Backend**
-- **Flask**: Python framework for web development.
-- **Gunicorn**: WSGI server for production.
-
-### **Frontend**
-- HTML, CSS (with custom animations), and JavaScript.
-
-### **DevOps and Infrastructure**
-- **Docker**: Containers for all services.
-- **Docker Compose**: Local orchestration.
-- **Kubernetes**: Deployments in managed clusters.
-- **Terraform**: Infrastructure automation.
-- **GitLab CI/CD**: Pipelines for automated builds, tests, and deployments.
-
-### **Monitoring**
-- **Prometheus**: Metrics collection.
-- **Grafana**: Interactive dashboards.
-- **cAdvisor**: Container monitoring.
-
-### **Security**
-- **Fail2Ban**: Protection against brute force and malicious injection attacks.
+| Categoria | Ferramenta | Propósito |
+| :--- | :--- | :--- |
+| **Aplicação** | Flask (Python), Gunicorn | Backend leve, performático e escalável para servir a API e as páginas web. |
+| **Proxy Reverso & Load Balancer** | Nginx | Ponto de entrada para todo o tráfego, com terminação SSL, caching e métricas de alta performance. |
+| **Infraestrutura como Código** | Terraform, Packer | Provisionamento e gerenciamento declarativo da infraestrutura na OCI. O Packer é usado para criar imagens de máquina imutáveis. |
+| **Containerização** | Docker, Docker Compose | Empacotamento da aplicação e suas dependências em contêineres para garantir consistência entre ambientes. |
+| **Orquestração** | Kubernetes (OKE) | Implantação em um ambiente de contêineres orquestrado para alta disponibilidade e escalabilidade. |
+| **CI/CD** | GitLab CI/CD | Automação completa do ciclo de build, teste e deploy, com pipelines modulares e dinâmicos. |
+| **Observabilidade** | Prometheus, Grafana, cAdvisor, OpenTelemetry | Coleta de métricas, logs e traces para uma visão holística da saúde e performance do sistema. |
+| **Segurança** | Fail2Ban, Cloudflare | Proteção ativa contra ataques de força bruta e injeção (Fail2Ban) e gerenciamento de DNS/WAF (Cloudflare). |
 
 ---
 
-## 📂 **Repository Structure**
+## Destaques da Arquitetura
 
-- **`build-app/`**: Dockerfile and scripts for the Flask backend.
-- **`docker-compose/`**: Configuration for Docker Compose and NGINX.
-- **`pipelines/`**: GitLab CI/CD pipeline configurations.
-- **`kubernetes/`**: Kubernetes manifests for deployment.
-- **`iac/`**: Terraform configurations for infrastructure provisioning.
-- **`static/`**: Static files (CSS, JS, images).
-- **`templates/`**: HTML templates for the website.
+Este projeto implementa soluções para desafios comuns em engenharia de software e operações.
 
----
+#### 1. **Infraestrutura como Código (IaC) com Terraform Cloud**
+Toda a infraestrutura na Oracle Cloud (OCI) é gerenciada via Terraform. O uso do **Terraform Cloud** para o gerenciamento do *state file* e para a execução dos *runs* garante um fluxo de trabalho colaborativo, seguro e auditável, desacoplando a execução da máquina local do desenvolvedor.
 
-## 🌟 **Key Features**
+#### 2. **Pipeline de CI/CD Automatizado**
+A pipeline no GitLab CI/CD orquestra todo o processo de deploy. Para a implantação em VM, o fluxo é:
+- **Provisionamento**: Aciona um *run* no Terraform Cloud para criar ou atualizar a instância.
+- **Validação**: Aguarda o *startup script* da VM finalizar, garantindo que as dependências estejam prontas.
+- **Deploy**: Conecta-se via SSH, clona o repositório e sobe a stack de serviços com `Docker Compose`.
+- **DNS**: Atualiza dinamicamente os registros DNS no Cloudflare para apontar para a nova infraestrutura.
 
-### **1. Monitoring and Observability**
-- Real-time container metrics with **cAdvisor**.
-- Interactive dashboards in **Grafana**.
-- Configurable alerts in **Prometheus**.
+#### 3. **Observabilidade Integrada**
+A pilha de monitoramento foi projetada para fornecer visibilidade completa:
+- **Métricas de Infraestrutura e Aplicação**: **Prometheus** coleta métricas do `cAdvisor` (performance de contêineres), `nginx-vts-exporter` (throughput, latências no Nginx) e da própria aplicação Flask.
+- **Dashboards Interativos**: **Grafana** consome os dados do Prometheus para exibir dashboards em tempo real, permitindo a análise de tendências e a identificação de anomalias.
+- **Tracing Distribuído**: **OpenTelemetry** está integrado na aplicação Flask para permitir o rastreamento de requisições através dos serviços.
 
-### **2. CI/CD Automation**
-- GitLab pipelines for:
-  - Building and deploying Docker images.
-  - Provisioning infrastructure with Terraform.
-  - Automated deployments to Kubernetes.
-
-### **3. Security**
-- **Fail2Ban** configured to protect against:
-  - Malicious HTTP/HTTPS requests.
-  - Brute force attacks.
-
-### **4. Kubernetes Deployment**
-- Managed deployments in OKE clusters.
-- Ingress configuration with **NGINX** and **cert-manager**.
+#### 4. **Segurança Ativa**
+O **Fail2Ban** é configurado para monitorar os logs do Nginx em tempo real. Ele bane automaticamente endereços de IP que demonstram comportamento malicioso (ex: scanning de vulnerabilidades, tentativas de injeção), adicionando uma camada de segurança essencial diretamente no *edge* da infraestrutura.
 
 ---
 
-## 🖥️ **How to Run Locally**
+## Modelos de Implantação
 
-### **Prerequisites**
-To run this project locally, you will need:
-- **Docker**: [Install Docker](https://docs.docker.com/get-docker/)
-- **Docker Compose**: [Install Docker Compose](https://docs.docker.com/compose/install/)
-- **Python 3.8+**: [Install Python](https://www.python.org/downloads/) (optional for development).
-- **Terraform**: [Install Terraform](https://developer.hashicorp.com/terraform/tutorials/aws-get-started/install-cli)
-- **GitLab Runner**: [Install GitLab Runner](https://docs.gitlab.com/runner/install/)
+O repositório suporta dois modelos de implantação, demonstrando flexibilidade para diferentes ambientes.
 
-### **Steps**
-1. Clone the repository:
-   ```bash
-   git clone https://gitlab.com/yohrannes/website-portifolio.git
-   cd website-portifolio
-2. Start the containers using Docker Compose:
-   ```bash
-   docker compose up -d
-3. Access the website in your browser:
-   ```bash
-   http://localhost
-4. View the latest Docker logs:
-   ```bash
-   docker logs -f $(docker ps -lq)
+- **Modelo 1: VM Automatizada (Implantação Principal)**
+  - **Descrição**: Uma pipeline de CI/CD provisiona uma VM na OCI e implanta a stack completa de serviços usando Docker Compose.
+  - **Ideal para**: Cenários onde a simplicidade de uma única VM é preferível, mas com automação completa.
 
-## 🌐 **Deploying to Production**
-
-### **1. Kubernetes Deployment**
-- Ensure your Kubernetes cluster is configured.
-- Apply the manifests:
-  ```bash
-  kubectl apply -f kubernetes/
+- **Modelo 2: Orquestração com Kubernetes**
+  - **Descrição**: Os manifestos na pasta `/kubernetes` definem os recursos para implantar a aplicação em um cluster Kubernetes (como o OKE).
+  - **Ideal para**: Ambientes que exigem alta disponibilidade, auto-scaling e gerenciamento avançado de contêineres.
 
 ---
 
-## 🔍 **How to Contribute**
+## Estrutura do Repositório
 
-Contributions are welcome! Follow these steps to collaborate:
-
-1. Fork the repository.
-2. Create a branch for your feature or fix:
-   ```bash
-   git checkout -b my-feature
-3. Make your changes and commit them:
-   ```bash
-   git commit -m "Add new feature"
-4. Push your changes:
-   ```bash
-   git push origin my-feature
-5. Open a Pull Request.
+```
+/
+├── docker-compose/     # Orquestração local dos serviços (app, nginx, monitoramento)
+├── iac/                # Infraestrutura como Código (Terraform, Packer)
+├── kubernetes/         # Manifestos para deploy em Kubernetes
+├── pipelines/          # Definições das pipelines de CI/CD do GitLab
+├── usefull-scripts/    # Scripts utilitários para automação e troubleshooting
+└── docker-compose/webport/ # Código-fonte da aplicação Flask e Dockerfile
+```
 
 ---
 
-## 📄 **License**
+## Executando o Ambiente Localmente
 
-This project is licensed under the [MIT License](LICENSE).
+### Pré-requisitos
+- Docker & Docker Compose
+- Git
+
+### Passos
+1.  **Clone o repositório:**
+    ```bash
+    git clone https://gitlab.com/yohrannes/website-portifolio.git
+    cd website-portifolio
+    ```
+
+2.  **Suba os contêineres:**
+    ```bash
+    docker compose up -d --build
+    ```
+    Este comando irá construir as imagens e iniciar todos os serviços em background.
+
+3.  **Acesse os serviços:**
+    - **Website**: `http://localhost`
+    - **Grafana**: `http://localhost:3000`
+    - **Métricas do Nginx**: `http://localhost/status`
 
 ---
 
-## 📞 **Contact**
+## Contato
 
 - **LinkedIn**: [Yohrannes Santos Bigoli](https://www.linkedin.com/in/yohrannes)
 - **GitHub**: [@yohrannes](https://github.com/yohrannes)
 - **GitLab**: [@yohrannes](https://gitlab.com/yohrannes)
-
----
-
-**Explore, contribute, and learn!** 🚀
