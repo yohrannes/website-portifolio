@@ -95,6 +95,34 @@ monitor-and-apply-terraform-run:
         echo "Final response: $body"
         return 1
       }
+    - |
+      api_call_apply_trigger() {
+        local url="$1"
+        local response
+        local body
+        local http_code
+        
+        response=$(curl -s -w "\n%{http_code}" \
+          --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+          --header "Content-Type: application/vnd.api+json" \
+          --request POST \
+          "$url")
+        
+        body=$(echo "$response" | head -n -1)
+        http_code=$(echo "$response" | tail -n 1)
+        
+        if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+          echo "$body"
+          return 0
+        elif [ "$http_code" -eq 409 ]; then
+          echo "$body"
+          return 2
+        else
+          echo "ERROR: API call failed - HTTP $http_code"
+          echo "Response: $body"
+          return 1
+        fi
+      }
   script:
     - set -ex
     - |
@@ -277,24 +305,19 @@ monitor-and-apply-terraform-run:
           apply_attempt=$((apply_attempt + 1))
           echo "Attempting to trigger apply ($apply_attempt/$APPLY_TRIGGER_MAX_ATTEMPTS)..."
           
-          raw_apply_response=$(api_call_with_retry "${TF_CLOUD_API}/runs/${RUN_ID}/actions/apply" "POST" 2>&1)
+          api_call_apply_trigger "${TF_CLOUD_API}/runs/${RUN_ID}/actions/apply"
           api_call_exit_code=$?
           
           if [ "$api_call_exit_code" -eq 0 ]; then
               echo "Apply triggered successfully!"
               apply_success=true
               break
+          elif [ "$api_call_exit_code" -eq 2 ]; then
+              echo "WARNING: API returned 'transition not allowed' (HTTP 409). Retrying in ${APPLY_TRIGGER_RETRY_DELAY} seconds..."
+              sleep "$APPLY_TRIGGER_RETRY_DELAY"
           else
-              # Check for 'status":"409"' within the "Final response" part of the output.
-              if echo "$raw_apply_response" | grep -q 'Final response:.*"status":"409"'; then
-                  echo "WARNING: API returned 'transition not allowed' (HTTP 409). Retrying in ${APPLY_TRIGGER_RETRY_DELAY} seconds..."
-                  sleep "$APPLY_TRIGGER_RETRY_DELAY"
-              else
-                  # If it's not a 409 or maximum attempts reached for 409.
-                  echo "ERROR: Failed to trigger apply after $apply_attempt attempts. Unexpected API error."
-                  echo "$raw_apply_response"
-                  exit 1
-              fi
+              echo "ERROR: Failed to trigger apply after $apply_attempt attempts. Unexpected API error."
+              exit 1
           fi
       done
       
