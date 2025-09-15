@@ -250,6 +250,20 @@ monitor-and-apply-terraform-run:
         case $current_status in
           "planned_and_finished")
             echo "Plan completed successfully"
+            
+            echo "Checking if plan has changes..."
+            plan_details=$(api_call_with_retry "${TF_CLOUD_API}/runs/${RUN_ID}/plan")
+            if [ $? -eq 0 ]; then
+              changes_count=$(echo "$plan_details" | jq -r '.data.attributes."resource-additions" + .data.attributes."resource-changes" + .data.attributes."resource-destructions"')
+              if [ "$changes_count" = "0" ] || [ "$changes_count" = "null" ]; then
+                echo "No changes detected in plan. Skipping apply phase."
+                echo "=== PLAN SUMMARY ==="
+                echo "$plan_details" | jq '.data.attributes | {status, "resource-additions", "resource-changes", "resource-destructions"}'
+                exit 0
+              else
+                echo "Changes detected: $changes_count resources will be modified"
+              fi
+            fi
             break
             ;;
           "errored"|"canceled"|"force_canceled")
