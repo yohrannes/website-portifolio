@@ -96,7 +96,7 @@ upload-and-trigger-terraform-run:
             attributes: {
               "is-destroy": false,
               message: "Triggered by GitLab CI",
-              "plan-only": true,
+              "plan-only": false,
               "target-addrs": [$target_addrs]
             },
             relationships: {
