@@ -8,7 +8,7 @@ variables:
   PLAN_TIMEOUT: 1800
   APPLY_TIMEOUT: 3600
   # Fine-tuned variables for apply trigger retries
-  APPLY_TRIGGER_MAX_ATTEMPTS: 5
+  APPLY_TRIGGER_MAX_ATTEMPTS: 30
   APPLY_TRIGGER_RETRY_DELAY: 15
 
 monitor-and-apply-terraform-run:
@@ -96,7 +96,7 @@ monitor-and-apply-terraform-run:
         return 1
       }
   script:
-    - set -x
+    - set -ex
     - |
       echo "Retrieving workspace information..."
       workspace_response=$(api_call_with_retry "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces?filter%5Bname%5D=${TF_WORKSPACE}")
@@ -277,7 +277,7 @@ monitor-and-apply-terraform-run:
           apply_attempt=$((apply_attempt + 1))
           echo "Attempting to trigger apply ($apply_attempt/$APPLY_TRIGGER_MAX_ATTEMPTS)..."
           
-          raw_apply_response=$(api_call_with_retry "${TF_CLOUD_API}/runs/${RUN_ID}/actions/apply" "POST")
+          raw_apply_response=$(api_call_with_retry "${TF_CLOUD_API}/runs/${RUN_ID}/actions/apply" "POST" 2>&1)
           api_call_exit_code=$?
           
           if [ "$api_call_exit_code" -eq 0 ]; then
