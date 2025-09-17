@@ -146,6 +146,4 @@ authorize-runner:
       [runners.shell]
         tls_verify = false
         privileged = true
-      EOF
-
-      "
+      EOF"
