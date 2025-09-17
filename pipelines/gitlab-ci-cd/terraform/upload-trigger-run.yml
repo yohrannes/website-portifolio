@@ -1,12 +1,6 @@
 ---
-variables:
-  # Terraform Cloud configuration variables
-  TF_CLOUD_ORG: "org-website-portifolio"
-  TF_WORKSPACE: "web_port_dev"
-  TF_CLOUD_API: "https://app.terraform.io/api/v2"
-  TF_ROOT: ${CI_PROJECT_DIR}/iac/terraform/prod
-  TF_CONFIG_FILE: "terraform-config.tar.gz"
-
+include:
+  - local: 'pipelines/gitlab-ci-cd/terraform/variables.yml'
 upload-and-trigger-terraform-run:
   stage: tf-up-conf-init-run
   before_script:
