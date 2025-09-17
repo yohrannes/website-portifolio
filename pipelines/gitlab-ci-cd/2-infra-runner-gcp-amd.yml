@@ -9,10 +9,15 @@ include:
 get-instance-ip-from-tf-cloud:
   stage: check
   script:
+    - set -ex
 
     - echo "== DEBUG VARS =="
     - echo "TF_CLOUD_TOKEN=$TF_CLOUD_TOKEN"
+    
+    - export TF_CLOUD_ORGANIZATION=$TF_CLOUD_ORGANIZATION
     - echo "TF_CLOUD_ORGANIZATION=$TF_CLOUD_ORGANIZATION"
+
+    - export TF_CLOUD_WORKSPACE=$TF_CLOUD_WORKSPACE
     - echo "TF_CLOUD_WORKSPACE=$TF_CLOUD_WORKSPACE"
 
     - |
