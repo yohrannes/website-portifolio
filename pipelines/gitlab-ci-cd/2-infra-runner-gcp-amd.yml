@@ -5,6 +5,7 @@ variables:
 include:
   - local: 'pipelines/gitlab-ci-cd/terraform/upload-trigger-run.yml'
   - local: 'pipelines/gitlab-ci-cd/terraform/monitor-apply.yml'
+  - local: 'pipelines/gitlab-ci-cd/terraform/variables.yml'
 
 get-instance-ip-from-tf-cloud:
   stage: check
@@ -15,10 +16,8 @@ get-instance-ip-from-tf-cloud:
     - echo "TF_CLOUD_ORGANIZATION=$TF_CLOUD_ORGANIZATION"
     - echo "TF_CLOUD_WORKSPACE=$TF_CLOUD_WORKSPACE"
 
-#    - |
-#      WORKSPACE_ID=$(
     - |
-      curl -v -s -H \
+      WORKSPACE_ID=$(curl -s \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
         "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORGANIZATION/workspaces/$TF_CLOUD_WORKSPACE" \
@@ -30,10 +29,8 @@ get-instance-ip-from-tf-cloud:
         echo "nao encontrado nada aqui"
       fi
     
-#    - |
-#      STATE_VERSION_ID=$(curl -s \
     - |
-      curl -v -s -H \
+      STATE_VERSION_ID=$(curl -s \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
         "https://app.terraform.io/api/v2/workspaces/$WORKSPACE_ID/current-state-version" \
@@ -45,10 +42,8 @@ get-instance-ip-from-tf-cloud:
         echo "nao encontrado nada aqui"
       fi
     
-#    - |
-#      INSTANCE_PUBLIC_IP=$(curl -s \
     - |
-      curl -v -s -H \
+      INSTANCE_PUBLIC_IP=$(curl -s \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
         "https://app.terraform.io/api/v2/state-versions/$STATE_VERSION_ID/outputs" \

@@ -1,16 +1,6 @@
 ---
-variables:
-  TF_CLOUD_ORG: "org-website-portifolio"
-  TF_WORKSPACE: "web_port_dev"
-  TF_CLOUD_API: "https://app.terraform.io/api/v2"
-  MAX_RETRIES: 3
-  RETRY_DELAY: 30
-  PLAN_TIMEOUT: 1800
-  APPLY_TIMEOUT: 3600
-  # Fine-tuned variables for apply trigger retries
-  APPLY_TRIGGER_MAX_ATTEMPTS: 30
-  APPLY_TRIGGER_RETRY_DELAY: 15
-
+include:
+  - local: 'pipelines/gitlab-ci-cd/terraform/variables.yml'
 monitor-and-apply-terraform-run:
   stage: tf-plan-apply
   retry:
