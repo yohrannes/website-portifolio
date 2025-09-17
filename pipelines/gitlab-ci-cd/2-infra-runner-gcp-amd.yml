@@ -9,8 +9,16 @@ include:
 get-instance-ip-from-tf-cloud:
   stage: check
   script:
+
+    - echo "== DEBUG VARS =="
+    - echo "TF_CLOUD_TOKEN=$TF_CLOUD_TOKEN"
+    - echo "TF_CLOUD_ORGANIZATION=$TF_CLOUD_ORGANIZATION"
+    - echo "TF_CLOUD_WORKSPACE=$TF_CLOUD_WORKSPACE"
+
+#    - |
+#      WORKSPACE_ID=$(
     - |
-      WORKSPACE_ID=$(curl -s \
+      curl -v -s -H \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
         "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORGANIZATION/workspaces/$TF_CLOUD_WORKSPACE" \
@@ -22,8 +30,10 @@ get-instance-ip-from-tf-cloud:
         echo "nao encontrado nada aqui"
       fi
     
+#    - |
+#      STATE_VERSION_ID=$(curl -s \
     - |
-      STATE_VERSION_ID=$(curl -s \
+      curl -v -s -H \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
         "https://app.terraform.io/api/v2/workspaces/$WORKSPACE_ID/current-state-version" \
@@ -35,8 +45,10 @@ get-instance-ip-from-tf-cloud:
         echo "nao encontrado nada aqui"
       fi
     
+#    - |
+#      INSTANCE_PUBLIC_IP=$(curl -s \
     - |
-      INSTANCE_PUBLIC_IP=$(curl -s \
+      curl -v -s -H \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
         "https://app.terraform.io/api/v2/state-versions/$STATE_VERSION_ID/outputs" \
