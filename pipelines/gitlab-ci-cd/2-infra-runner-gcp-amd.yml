@@ -5,7 +5,6 @@ variables:
 include:
   - local: 'pipelines/gitlab-ci-cd/terraform/upload-trigger-run.yml'
   - local: 'pipelines/gitlab-ci-cd/terraform/monitor-apply.yml'
-  - local: 'pipelines/gitlab-ci-cd/terraform/variables.yml'
 
 get-instance-ip-from-tf-cloud:
   stage: check

@@ -1,6 +1,4 @@
 ---
-include:
-  - local: 'pipelines/gitlab-ci-cd/terraform/variables.yml'
 upload-and-trigger-terraform-run:
   stage: tf-up-conf-init-run
   before_script:
