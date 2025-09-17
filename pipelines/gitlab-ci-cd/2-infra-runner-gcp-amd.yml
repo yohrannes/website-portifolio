@@ -38,7 +38,7 @@ get-instance-ip-from-tf-cloud:
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GCP_RUNNER_IP" \
         > /dev/null 2>&1
 
-check-startup-script-porque-raios-nao-detecta-este-job:
+check-startup-script:
   stage: check
   needs:
     - get-instance-ip-from-tf-cloud
