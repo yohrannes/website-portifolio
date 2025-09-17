@@ -1,6 +1,4 @@
 ---
-include:
-  - local: 'pipelines/gitlab-ci-cd/terraform/variables.yml'
 monitor-and-apply-terraform-run:
   stage: tf-plan-apply
   retry:
