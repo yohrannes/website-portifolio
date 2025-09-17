@@ -3,13 +3,13 @@ variables:
   TF_CLOUD_ORG: "org-website-portifolio"
   TF_WORKSPACE: "web_port_dev"
   TF_CLOUD_API: "https://app.terraform.io/api/v2"
-  MAX_RETRIES: 3
-  RETRY_DELAY: 30
+  MAX_RETRIES: 9
+  RETRY_DELAY: 10
   PLAN_TIMEOUT: 1800
   APPLY_TIMEOUT: 3600
   # Fine-tuned variables for apply trigger retries
-  APPLY_TRIGGER_MAX_ATTEMPTS: 30
-  APPLY_TRIGGER_RETRY_DELAY: 15
+  APPLY_TRIGGER_MAX_ATTEMPTS: 90
+  APPLY_TRIGGER_RETRY_DELAY: 5
   TF_ROOT: ${CI_PROJECT_DIR}/iac/terraform/prod
   TF_CONFIG_FILE: "terraform-config.tar.gz"
   
