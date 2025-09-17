@@ -39,7 +39,7 @@ get-instance-ip-from-tf-cloud:
         > /dev/null 2>&1
 
 check-startup-script:
-  stage: create-infra
+  stage: check
   rules:
     - if: $CI_COMMIT_BRANCH == "infra-gcp-amd"
   needs:
@@ -84,7 +84,7 @@ check-startup-script:
         done
 
 create-runner-gl-api:
-  stage: create-infra
+  stage: check
   rules:
     - if: $CI_COMMIT_BRANCH == "infra-gcp-amd"
   needs:
@@ -107,7 +107,7 @@ create-runner-gl-api:
         > /dev/null 2>&1
 
 authorize-runner:
-  stage: deploy-infra
+  stage: check
   rules:
     - if: $CI_COMMIT_BRANCH == "infra-gcp-amd"
   needs:
