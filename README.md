@@ -1,112 +1,112 @@
 # Website Portfolio - Yohrannes Santos Bigoli 🌐
 
-Este repositório é um blueprint funcional e de nível de produção para a construção, implantação e observabilidade de um ecossistema de aplicações web modernas. O projeto foi arquitetado para demonstrar práticas de engenharia de software e DevOps em um cenário real, com foco em automação, resiliência e segurança.
+This repository is a functional, production-level blueprint for building, deploying, and observing a modern web application ecosystem. The project was designed to demonstrate software engineering and DevOps practices in a real-world scenario, with a focus on automation, resilience, and security.
 
-## Arquitetura e Filosofia
+## Architecture and Philosophy
 
-O objetivo deste projeto vai além de um simples portfólio. Ele serve como uma demonstração prática de um ciclo de vida de desenvolvimento de software completo, desde o provisionamento da infraestrutura até o monitoramento contínuo em produção.
+The goal of this project goes beyond a simple portfolio. It serves as a practical demonstration of a complete software development lifecycle, from infrastructure provisioning to continuous monitoring in production.
 
-A filosofia é simples: **automação em tudo**. A infraestrutura é declarativa (IaC), os deploys são automatizados (CI/CD), e a observabilidade é integrada nativamente para permitir a detecção proativa de falhas e a análise de performance.
+The philosophy is simple: **automation in everything**. The infrastructure is declarative (IaC), deployments are automated (CI/CD), and observability is natively integrated to enable proactive failure detection and performance analysis.
 
 ---
 
-## Stack de Tecnologia
+## Technology Stack
 
-A seleção de tecnologias foi feita para refletir um ambiente de produção moderno, priorizando ferramentas open-source, maduras e amplamente adotadas pela indústria.
+The technology selection was made to reflect a modern production environment, prioritizing open-source, mature, and widely adopted tools in the industry.
 
-| Categoria | Ferramenta | Propósito |
+| Category | Tool | Purpose |
 | :--- | :--- | :--- |
-| **Aplicação** | Flask (Python), Gunicorn | Backend leve, performático e escalável para servir a API e as páginas web. |
-| **Proxy Reverso & Load Balancer** | Nginx | Ponto de entrada para todo o tráfego, com terminação SSL, caching e métricas de alta performance. |
-| **Infraestrutura como Código** | Terraform, Packer | Provisionamento e gerenciamento declarativo da infraestrutura na OCI. O Packer é usado para criar imagens de máquina imutáveis. |
-| **Containerização** | Docker, Docker Compose | Empacotamento da aplicação e suas dependências em contêineres para garantir consistência entre ambientes. |
-| **Orquestração** | Kubernetes (OKE) | Implantação em um ambiente de contêineres orquestrado para alta disponibilidade e escalabilidade. |
-| **CI/CD** | GitLab CI/CD | Automação completa do ciclo de build, teste e deploy, com pipelines modulares e dinâmicos. |
-| **Observabilidade** | Prometheus, Grafana, cAdvisor, OpenTelemetry | Coleta de métricas, logs e traces para uma visão holística da saúde e performance do sistema. |
-| **Segurança** | Fail2Ban, Cloudflare | Proteção ativa contra ataques de força bruta e injeção (Fail2Ban) e gerenciamento de DNS/WAF (Cloudflare). |
+| **Application** | Flask (Python), Gunicorn | Lightweight, high-performance, and scalable backend to serve the API and web pages. |
+| **Reverse Proxy & Load Balancer** | Nginx | Entry point for all traffic, with SSL termination, caching, and high-performance metrics. |
+| **Infrastructure as Code** | Terraform, Packer | Declarative provisioning and management of the infrastructure on OCI. Packer is used to create immutable machine images. |
+| **Containerization** | Docker, Docker Compose | Packaging the application and its dependencies into containers to ensure consistency between environments. |
+| **Orchestration** | Kubernetes (OKE) | Deployment in an orchestrated container environment for high availability and scalability. |
+| **CI/CD** | GitLab CI/CD | Complete automation of the build, test, and deploy cycle, with modular and dynamic pipelines. |
+| **Observability** | Prometheus, Grafana, cAdvisor, OpenTelemetry | Collection of metrics, logs, and traces for a holistic view of the system's health and performance. |
+| **Security** | Fail2Ban, Cloudflare | Active protection against brute-force and injection attacks (Fail2Ban) and DNS/WAF management (Cloudflare). |
 
 ---
 
-## Destaques da Arquitetura
+## Architecture Highlights
 
-Este projeto implementa soluções para desafios comuns em engenharia de software e operações.
+This project implements solutions for common challenges in software engineering and operations.
 
-#### 1. **Infraestrutura como Código (IaC) com Terraform Cloud**
-Toda a infraestrutura na Oracle Cloud (OCI) é gerenciada via Terraform. O uso do **Terraform Cloud** para o gerenciamento do *state file* e para a execução dos *runs* garante um fluxo de trabalho colaborativo, seguro e auditável, desacoplando a execução da máquina local do desenvolvedor.
+#### 1. **Infrastructure as Code (IaC) with Terraform Cloud**
+All infrastructure on Oracle Cloud (OCI) is managed via Terraform. The use of **Terraform Cloud** for managing the *state file* and executing *runs* ensures a collaborative, secure, and auditable workflow, decoupling the execution from the developer's local machine.
 
-#### 2. **Pipeline de CI/CD Automatizado**
-A pipeline no GitLab CI/CD orquestra todo o processo de deploy. Para a implantação em VM, o fluxo é:
-- **Provisionamento**: Aciona um *run* no Terraform Cloud para criar ou atualizar a instância.
-- **Validação**: Aguarda o *startup script* da VM finalizar, garantindo que as dependências estejam prontas.
-- **Deploy**: Conecta-se via SSH, clona o repositório e sobe a stack de serviços com `Docker Compose`.
-- **DNS**: Atualiza dinamicamente os registros DNS no Cloudflare para apontar para a nova infraestrutura.
+#### 2. **Automated CI/CD Pipeline**
+The pipeline in GitLab CI/CD orchestrates the entire deployment process. For VM deployment, the flow is:
+- **Provisioning**: Triggers a *run* in Terraform Cloud to create or update the instance.
+- **Validation**: Waits for the VM's *startup script* to finish, ensuring that dependencies are ready.
+- **Deploy**: Connects via SSH, clones the repository, and brings up the service stack with `Docker Compose`.
+- **DNS**: Dynamically updates the DNS records in Cloudflare to point to the new infrastructure.
 
-#### 3. **Observabilidade Integrada**
-A pilha de monitoramento foi projetada para fornecer visibilidade completa:
-- **Métricas de Infraestrutura e Aplicação**: **Prometheus** coleta métricas do `cAdvisor` (performance de contêineres), `nginx-vts-exporter` (throughput, latências no Nginx) e da própria aplicação Flask.
-- **Dashboards Interativos**: **Grafana** consome os dados do Prometheus para exibir dashboards em tempo real, permitindo a análise de tendências e a identificação de anomalias.
-- **Tracing Distribuído**: **OpenTelemetry** está integrado na aplicação Flask para permitir o rastreamento de requisições através dos serviços.
+#### 3. **Integrated Observability**
+The monitoring stack was designed to provide full visibility:
+- **Infrastructure and Application Metrics**: **Prometheus** collects metrics from `cAdvisor` (container performance), `nginx-vts-exporter` (throughput, latencies in Nginx), and the Flask application itself.
+- **Interactive Dashboards**: **Grafana** consumes data from Prometheus to display real-time dashboards, allowing for trend analysis and anomaly detection.
+- **Distributed Tracing**: **OpenTelemetry** is integrated into the Flask application to allow request tracing across services.
 
-#### 4. **Segurança Ativa**
-O **Fail2Ban** é configurado para monitorar os logs do Nginx em tempo real. Ele bane automaticamente endereços de IP que demonstram comportamento malicioso (ex: scanning de vulnerabilidades, tentativas de injeção), adicionando uma camada de segurança essencial diretamente no *edge* da infraestrutura.
-
----
-
-## Modelos de Implantação
-
-O repositório suporta dois modelos de implantação, demonstrando flexibilidade para diferentes ambientes.
-
-- **Modelo 1: VM Automatizada (Implantação Principal)**
-  - **Descrição**: Uma pipeline de CI/CD provisiona uma VM na OCI e implanta a stack completa de serviços usando Docker Compose.
-  - **Ideal para**: Cenários onde a simplicidade de uma única VM é preferível, mas com automação completa.
-
-- **Modelo 2: Orquestração com Kubernetes**
-  - **Descrição**: Os manifestos na pasta `/kubernetes` definem os recursos para implantar a aplicação em um cluster Kubernetes (como o OKE).
-  - **Ideal para**: Ambientes que exigem alta disponibilidade, auto-scaling e gerenciamento avançado de contêineres.
+#### 4. **Active Security**
+**Fail2Ban** is configured to monitor Nginx logs in real time. It automatically bans IP addresses that exhibit malicious behavior (e.g., vulnerability scanning, injection attempts), adding an essential security layer directly at the infrastructure *edge*.
 
 ---
 
-## Estrutura do Repositório
+## Deployment Models
+
+The repository supports two deployment models, demonstrating flexibility for different environments.
+
+- **Model 1: Automated VM (Main Deployment)**
+  - **Description**: A CI/CD pipeline provisions a VM on OCI and deploys the complete service stack using Docker Compose.
+  - **Ideal for**: Scenarios where the simplicity of a single VM is preferable, but with full automation.
+
+- **Model 2: Orchestration with Kubernetes**
+  - **Description**: The manifests in the `/kubernetes` folder define the resources to deploy the application in a Kubernetes cluster (like OKE).
+  - **Ideal for**: Environments that require high availability, auto-scaling, and advanced container management.
+
+---
+
+## Repository Structure
 
 ```
 /
-├── docker-compose/     # Orquestração local dos serviços (app, nginx, monitoramento)
-├── iac/                # Infraestrutura como Código (Terraform, Packer)
-├── kubernetes/         # Manifestos para deploy em Kubernetes
-├── pipelines/          # Definições das pipelines de CI/CD do GitLab
-├── usefull-scripts/    # Scripts utilitários para automação e troubleshooting
-└── docker-compose/webport/ # Código-fonte da aplicação Flask e Dockerfile
+├── docker-compose/     # Local orchestration of services (app, nginx, monitoring)
+├── iac/                # Infrastructure as Code (Terraform, Packer)
+├── kubernetes/         # Manifests for deployment in Kubernetes
+├── pipelines/          # GitLab CI/CD pipeline definitions
+├── usefull-scripts/    # Utility scripts for automation and troubleshooting
+└── docker-compose/webport/ # Flask application source code and Dockerfile
 ```
 
 ---
 
-## Executando o Ambiente Localmente
+## Running the Environment Locally
 
-### Pré-requisitos
+### Prerequisites
 - Docker & Docker Compose
 - Git
 
-### Passos
-1.  **Clone o repositório:**
+### Steps
+1.  **Clone the repository:**
     ```bash
     git clone https://gitlab.com/yohrannes/website-portifolio.git
     cd website-portifolio
     ```
 
-2.  **Suba os contêineres:**
+2.  **Bring up the containers:**
     ```bash
     docker compose up -d --build
     ```
-    Este comando irá construir as imagens e iniciar todos os serviços em background.
+    This command will build the images and start all services in the background.
 
-3.  **Acesse os serviços:**
+3.  **Access the services:**
     - **Website**: `http://localhost`
     - **Grafana**: `http://localhost:3000`
-    - **Métricas do Nginx**: `http://localhost/status`
+    - **Nginx Metrics**: `http://localhost/status`
 
 ---
 
-## Contato
+## Contact
 
 - **LinkedIn**: [Yohrannes Santos Bigoli](https://www.linkedin.com/in/yohrannes)
 - **GitHub**: [@yohrannes](https://github.com/yohrannes)
