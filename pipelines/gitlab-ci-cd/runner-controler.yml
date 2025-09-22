@@ -1,5 +1,5 @@
 runner-controler-start:
-  stage: prepare
+  stage: runner-prepare
   # Run in jobs in all runners simultaneously
   parallel: 2
   rules:
@@ -11,18 +11,3 @@ runner-controler-start:
   script:
     - sudo docker volume prune -af
     - sudo docker system prune -af
-
-
-#runner-controler-stop:
-#  stage: clean-runner
-##########################3 needs:
-  ###############  - runner-controler-start  xxxxxxxxxxxxx - all jobs finished
-  # Run in jobs in all runners simultaneously
-#  parallel: 2
-#  rules:
-#      - if: $CI_COMMIT_BRANCH != "main"
-#  tags:
-#    - oci-runner-arm
-#  script:
-#    - docker volume prune -f
-#    - docker system prune -af

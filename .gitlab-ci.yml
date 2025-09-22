@@ -50,29 +50,25 @@ include:
       - if: $CI_COMMIT_BRANCH == "dev-dk-img"
 
 
-#  - local: 'pipelines/gitlab-ci-cd/terraform/upload-trigger-run.yml'
-#    rules:
-#      - if: $CI_COMMIT_BRANCH == "infra-webapp-oci-amd"
-#
-#  - local: 'pipelines/gitlab-ci-cd/terraform/monitor-apply.yml'
-#    rules:
-#      - if: $CI_COMMIT_BRANCH == "infra-webapp-oci-amd"
-
-
 stages:
-  - prepare
 
-## Terraform Cloud Steps
+
+## Runner Preparation Steps
+  - runner-prepare
+
+## Packer (HCP Cloud) Steps
+#  - coming-soon
+
+## Terraform (HCP Cloud) Steps
   - tf-up-conf-init-run
   - tf-plan-apply
 
+## Development pipeline Steps, to be used for Devs (main, develop).
   - check
   - build
   - test
   - deploy-image
   - deploy
-
-  - clean-runner
 
 deploy-dkcmpose:
   stage: deploy

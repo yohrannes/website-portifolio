@@ -4,10 +4,10 @@
 module "gcp_ftier_micro_amd" {
   project_id = var.project_id # Required
   source  = "yohrannes/e2-micro-free-tier/google"
-  version = "v6.5.12" 
-  credentials_path = "" #Required
+  version = "v8.6.13"
+#  credentials_path = "~/.config/gcloud/application_default_credentials.json"
   startup_script_path = "./startup-files/startup-script.sh"
-  ssh_key = var.ssh_public_key #Required 
+  ssh_key_path = var.ssh_public_key #Required
   instance_name = "gitlab-runner"
 }
 
