@@ -14,8 +14,8 @@ resource "null_resource" "wait_for_nlb_deletion" {
     nlb_id = oci_network_load_balancer_network_load_balancer.nlb.id
   }
   provisioner "local-exec" {
-    when = destroy
-    command = <<EOT
+    when        = destroy
+    command     = <<EOT
       export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
 
       echo "Checking for any non-NLB load balancers in compartment $COMPARTMENT_ID..."
@@ -136,7 +136,7 @@ resource "oci_network_load_balancer_backend" "nlb_backend_https" {
       oci_network_load_balancer_backend_set.nlb_backend_set_https.id
     ]
   }
-  
+
 }
 
 resource "oci_network_load_balancer_listener" "nlb_listener_http" {

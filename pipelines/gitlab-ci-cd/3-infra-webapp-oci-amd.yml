@@ -2,7 +2,6 @@
 ### Need to implement a way to build tha instance OCID using packer and
 # get the OCID of this instance using TERRAFORM CLOUD to be used in this
 # terraform pipeline.
-#build-instance-ami:
 
 
 ---
@@ -10,6 +9,7 @@ variables:
   TF_TARGET_ADDRS: 'module.oci_aftier_micro_amd'
 
 include:
+  - local: 'pipelines/gitlab-ci-cd/packer/build-instance-image.yml'
   - local: 'pipelines/gitlab-ci-cd/terraform/upload-trigger-run.yml'
   - local: 'pipelines/gitlab-ci-cd/terraform/monitor-apply.yml'
 

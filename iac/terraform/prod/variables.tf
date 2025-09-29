@@ -1,7 +1,7 @@
 variable "project_id" {
   description = "The project ID"
   type        = string
-  default = "website-portifolio"
+  default     = "website-portifolio"
 }
 
 variable "disable_ssh_port" {
@@ -18,6 +18,20 @@ variable "availability_domain" {
 
 variable "ssh_public_key" {
   description = "SSH public key content for instance access"
+  type        = string
+  sensitive   = true
+}
+
+# PACKER CREDENTIALS ON TERRAFORM CLOUD VARIABLES
+
+variable "hcp_client_id" {
+  description = "HCP Client ID"
+  type        = string
+  sensitive   = true
+}
+
+variable "hcp_client_secret" {
+  description = "HCP Client Secret"
   type        = string
   sensitive   = true
 }
