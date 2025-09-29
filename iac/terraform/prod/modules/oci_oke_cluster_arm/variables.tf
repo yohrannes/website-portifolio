@@ -28,9 +28,9 @@ variable "memory_in_gbs_per_node" {
 }
 
 variable "image_id" {
-  type    = string
-#  default = "ocid1.image.oc1.iad.aaaaaaaao2zpwcb2osmbtliiuzlphc3y2fqaqmcpp5ttlcf573sidkabml7a"
-#  default = "ocid1.image.oc1.iad.aaaaaaaaus2flkp6nhxq6lozzajkiwj7uphenmzpwbix3yq2docvhjjdzvqq"
+  type = string
+  #  default = "ocid1.image.oc1.iad.aaaaaaaao2zpwcb2osmbtliiuzlphc3y2fqaqmcpp5ttlcf573sidkabml7a"
+  #  default = "ocid1.image.oc1.iad.aaaaaaaaus2flkp6nhxq6lozzajkiwj7uphenmzpwbix3yq2docvhjjdzvqq"
   default = "ocid1.image.oc1.iad.aaaaaaaarkexs7ijdqffxvy6dyzepizvuzm25zijwp2nkv3nifbcvywzufsq"
 }
 # Link to a list of available images (Be sure to select the correct region and CPU architecture. We are using Oracle-Linux-8.8-aarch64-2023.09.26-0-OKE-1.28.2-653)
@@ -94,26 +94,26 @@ variable "listener_port_https" {
 # ----------> Auth <----------
 
 variable "ssh_public_key" {
-  type    = string
+  type      = string
   sensitive = true
 }
 
 variable "fingerprint" {
-  type    = string
+  type = string
 }
 
 variable "private_key_path" {
-  type    = string
+  type = string
 }
 
 variable "tenancy_ocid" {
-  type    = string
+  type = string
 }
 
 variable "user_ocid" {
-  type    = string
+  type = string
 }
 
 variable "oci_profile" {
-  type    = string
+  type = string
 }

@@ -4,7 +4,18 @@ terraform {
       source  = "oracle/oci"
       version = ">= 6.31.0"
     }
+    hcp = {
+      source  = "hashicorp/hcp"
+      version = "~> 0.106.0"
+    }
   }
+}
+
+data "hcp_packer_artifact" "instance-webapp-oci-amd" {
+  bucket_name   = "instance-webapp-oci-amd"
+  channel_name  = "latest"
+  platform      = "packer.oracle.oci"
+  region        = "us-ashburn-1"
 }
 
 locals {
@@ -131,7 +142,7 @@ resource "oci_core_instance" "ic_pub_vm-A" {
   display_name        = var.ic_pub_vm_A.display_name
 
   source_details {
-    source_id   = var.ic_pub_vm_A.image_ocid
+    source_id   = data.hcp_packer_artifact.instance-webapp-oci-amd.external_identifier
     source_type = "image"
   }
 
@@ -154,7 +165,7 @@ resource "oci_core_instance" "ic_pub_vm-A" {
     #ssh_authorized_keys = join("\n", [for k in local.ssh_authorized_keys : chomp(k)])
     #ssh_authorized_keys = file("~/.ssh/id_rsa.pub")
     ssh_authorized_keys = var.ssh_public_key
-    user_data           = base64encode(file("${path.module}/scripts/startup-script.sh"))
+    #user_data           = base64encode(file("${path.module}/scripts/startup-script.sh"))
   }
 
 }

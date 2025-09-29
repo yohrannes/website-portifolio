@@ -57,7 +57,7 @@ stages:
   - runner-prepare
 
 ## Packer (HCP Cloud) Steps
-#  - coming-soon
+  - pk-build-instance-image
 
 ## Terraform (HCP Cloud) Steps
   - tf-up-conf-init-run

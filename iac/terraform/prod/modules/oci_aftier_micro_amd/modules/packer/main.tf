@@ -29,7 +29,7 @@ locals {
   sorted_times = sort([for img in local.filtered_images : img.time_created])
 
   sorted_images = [
-    for t in local.sorted_times : 
+    for t in local.sorted_times :
     one([for img in local.filtered_images : img if img.time_created == t])
   ]
 
@@ -76,7 +76,7 @@ resource "oci_identity_policy" "packer_policy" {
   compartment_id = var.tenancy_ocid
   description    = "Política para permitir operações do Packer no compartment"
   name           = "packer-policy"
-  
+
   statements = [
     "Allow group PackerGroup to manage instance-family in compartment ${oci_identity_compartment.yohapp-packer-comp.name}",
     "Allow group PackerGroup to manage instance-images in compartment ${oci_identity_compartment.yohapp-packer-comp.name}",
@@ -121,7 +121,7 @@ resource "oci_core_security_list" "example_sl" {
   ingress_security_rules {
     protocol = "6" # TCP
     source   = "0.0.0.0/0"
-    
+
     tcp_options {
       min = 22
       max = 22
@@ -143,7 +143,7 @@ resource "local_file" "oci_config" {
   content         = var.oci_config_content
   filename        = var.oci_config_path
   file_permission = "0600"
-  
+
   provisioner "local-exec" {
     command = "mkdir -p $(dirname ${var.oci_config_path})"
   }
@@ -153,7 +153,7 @@ resource "local_file" "private_key" {
   content         = var.oci_private_key_content
   filename        = var.oci_private_key_path
   file_permission = "0600"
-  
+
   provisioner "local-exec" {
     command = "mkdir -p $(dirname ${var.oci_private_key_path})"
   }
@@ -163,7 +163,7 @@ resource "local_file" "public_key" {
   content         = var.oci_public_key_content
   filename        = var.oci_public_key_path
   file_permission = "0644"
-  
+
   provisioner "local-exec" {
     command = "mkdir -p $(dirname ${var.oci_public_key_path})"
   }

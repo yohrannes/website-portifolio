@@ -6,7 +6,7 @@ data "oci_core_images" "existing_images" {
 
 resource "null_resource" "delete_old_images" {
   count = 1
-  
+
   provisioner "local-exec" {
     command = <<-EOF
       images_to_delete=$(echo '${jsonencode([for img in local.images_to_delete : img.id])}' | jq -r '.[]' 2>/dev/null || echo "")
@@ -19,7 +19,7 @@ resource "null_resource" "delete_old_images" {
       fi
     EOF
   }
-  
+
   triggers = {
     images_hash = try(md5(jsonencode([for img in local.images_to_delete : img.id])), "empty")
   }

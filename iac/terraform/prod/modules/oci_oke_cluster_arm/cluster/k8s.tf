@@ -13,8 +13,8 @@ resource "null_resource" "wait_for_cluster_deletion" {
   }
 
   provisioner "local-exec" {
-    when    = destroy
-    command = <<EOT
+    when        = destroy
+    command     = <<EOT
       echo "Checking and deleting cluster ${self.triggers.cluster_id} if necessary..."
       CURRENT_STATE=$(oci ce cluster get --cluster-id ${self.triggers.cluster_id} --query 'data.lifecycle-state' --raw-output 2>/dev/null || echo "NOT_FOUND")
       if [ "$CURRENT_STATE" != "NOT_FOUND" ] && [ "$CURRENT_STATE" != "DELETED" ]; then

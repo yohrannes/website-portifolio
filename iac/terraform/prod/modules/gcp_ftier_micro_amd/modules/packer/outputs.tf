@@ -45,7 +45,7 @@ output "packer_images_to_delete_ids" {
 output "debug_filtered_images" {
   value = [
     for image in local.filtered_images : {
-      id = image.id
+      id           = image.id
       display_name = image.display_name
       time_created = image.time_created
     }

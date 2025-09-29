@@ -19,7 +19,7 @@ resource "oci_core_security_list" "private_subnet_sl" {
     destination_type = "CIDR_BLOCK"
     protocol         = "all"
   }
-  
+
   ingress_security_rules {
     stateless   = false
     source      = "0.0.0.0/0"
