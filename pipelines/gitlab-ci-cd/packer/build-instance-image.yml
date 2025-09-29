@@ -1,0 +1,14 @@
+---
+build-instance-image:
+  stage: pk-build-instance-image
+  image:
+    name: hashicorp/packer:full
+    entrypoint: [""]
+  tags:
+    - oci-runner-arm
+  script:
+    - cd ${CI_PROJECT_DIR}/iac/packer/prod
+    - chmod +x wrapper.sh
+    - ./wrapper.sh
+    - packer init .
+    - packer build .
