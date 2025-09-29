@@ -6,10 +6,11 @@ build-instance-image:
   script:
     - cd ${CI_PROJECT_DIR}/iac
     - chmod +x ./webport-cli/.sh
-    - ./webport-cli/.sh pipe
     - export HCP_CLIENT_SECRET=$PACKER_WEBPORT_CLIENT_SECRET
     - export HCP_CLIENT_ID=$PACKER_WEBPORT_CLIENT_ID
-    - docker exec -w /app cloud-cli sh -c "
+    - ./webport-cli/.sh pipe
+    - |
+      docker exec -w /app cloud-cli sh -c "
       cd packer/prod
       chmod +x wrapper.sh
       ./wrapper.sh
