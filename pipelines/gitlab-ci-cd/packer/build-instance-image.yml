@@ -8,10 +8,10 @@ build-instance-image:
     - chmod +x ./webport-cli/.sh
     - ./webport-cli/.sh pipe
     - docker exec -w /app cloud-cli sh -c "
+      export HCP_CLIENT_SECRET=${PACKER_WEBPORT_CLIENT_SECRET}
+      export HCP_CLIENT_ID=${PACKER_WEBPORT_CLIENT_ID}
       cd packer/prod
       chmod +x wrapper.sh
       ./wrapper.sh
       packer build .
-      export HCP_CLIENT_SECRET=${PACKER_WEBPORT_CLIENT_SECRET}
-      export HCP_CLIENT_ID=${PACKER_WEBPORT_CLIENT_ID}
       "
