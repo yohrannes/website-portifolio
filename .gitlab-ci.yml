@@ -63,6 +63,9 @@ stages:
   - tf-up-conf-init-run
   - tf-plan-apply
 
+  - check-infra
+  - deploy-webapp
+
 ## Development pipeline Steps, to be used for Devs (main, develop).
   - check
   - build
