@@ -14,11 +14,8 @@ include:
   - local: 'pipelines/gitlab-ci-cd/terraform/monitor-apply.yml'
 
 get-instance-ip-from-tf-cloud:
-  stage: check
+  stage: check-infra
   image: curlimages/curl:latest
-  variables:
-    TF_CLOUD_ORGANIZATION: "sua-org"
-    TF_CLOUD_WORKSPACE: "seu-workspace"
   before_script:
     - apk add --no-cache jq
   script:
@@ -51,7 +48,7 @@ get-instance-ip-from-tf-cloud:
         > /dev/null 2>&1
 
 check-startup-script:
-  stage: check
+  stage: check-infra
   needs:
     - create-oracle-instance
   script:
@@ -83,9 +80,9 @@ check-startup-script:
       done
 
 run-containers:
-  stage: configure-infra
+  stage: deploy-webapp
   needs:
-    - check-startup-script
+    - check
   before_script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
@@ -129,7 +126,7 @@ run-containers:
 #  sudo docker system prune -a -f
 
 update-dns:
-  stage: deploy-infra
+  stage: deploy-webapp
   needs:
     - run-containers
   script:
