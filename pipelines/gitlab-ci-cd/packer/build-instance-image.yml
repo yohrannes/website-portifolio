@@ -1,6 +1,9 @@
 ---
 build-instance-image:
   stage: pk-build-instance-image
+  variables:
+    HCP_CLIENT_ID: $PACKER_WEBPORT_CLIENT_ID
+    HCP_CLIENT_SECRET: $PACKER_WEBPORT_CLIENT_SECRET
   tags:
     - oci-runner-arm
   script:
@@ -9,8 +12,8 @@ build-instance-image:
     - ./webport-cli/.sh pipe
     - |
       docker exec -w /app \
-        -e HCP_CLIENT_SECRET=$PACKER_WEBPORT_CLIENT_SECRET \
-        -e HCP_CLIENT_ID=$PACKER_WEBPORT_CLIENT_ID \
+        -e HCP_CLIENT_SECRET=${PACKER_WEBPORT_CLIENT_SECRET} \
+        -e HCP_CLIENT_ID=${PACKER_WEBPORT_CLIENT_ID} \
         cloud-cli sh -c "
           cd packer/prod
           chmod +x wrapper.sh
