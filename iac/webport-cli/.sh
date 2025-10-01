@@ -19,6 +19,10 @@ else
   COMMAND=""
 fi
 
+if $(docker ps -a --format '{{.Names}}' | grep -Eq "^cloud-cli\$"); then
+  docker rm -f cloud-cli
+fi
+
 docker run $INTERACTOR --name cloud-cli --rm\
   -e HCP_CLIENT_ID="$HCP_CLIENT_ID" \
   -e HCP_CLIENT_SECRET="$HCP_CLIENT_SECRET" \
