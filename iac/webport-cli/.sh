@@ -16,7 +16,7 @@ else
   export HCP_CLIENT_SECRET=$(glab var get PACKER_WEBPORT_CLIENT_SECRET)
   export HCP_CLIENT_ID=$(glab var get PACKER_WEBPORT_CLIENT_ID)
   INTERACTOR="-it"
-  COMMAND=""
+  COMMAND="sh"
 fi
 
 if $(docker ps -a --format '{{.Names}}' | grep -Eq "^cloud-cli\$"); then
