@@ -11,7 +11,7 @@ docker build -t cloud-cli . -f webport-cli/Dockerfile
 
 if [ "$1" == "pipe" ]; then
   INTERACTOR="-d"
-  COMMAND="sh -c source /root/.shrc && /root/init-all.sh && sleep infinity"
+  COMMAND="sh -c 'source /root/.shrc && /root/init-all.sh || tail -f /dev/null'"
 else
   export HCP_CLIENT_SECRET=$(glab var get PACKER_WEBPORT_CLIENT_SECRET)
   export HCP_CLIENT_ID=$(glab var get PACKER_WEBPORT_CLIENT_ID)
