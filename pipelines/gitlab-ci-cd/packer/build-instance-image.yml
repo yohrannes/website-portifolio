@@ -10,17 +10,8 @@ build-instance-image:
     - cd ${CI_PROJECT_DIR}/iac
     - chmod +x ./webport-cli/.sh
     - ./webport-cli/.sh pipe
-    - docker ps -a
-    - |
-      echo "Waiting for container to be ready..."
-      for i in {1..30}; do
-        if docker ps | grep -q cloud-cli; then
-          echo "Container is running"
-          break
-        fi
-        echo "Waiting... ($i/30)"
-        sleep 2
-      done
+    - docker logs -f cloud-cli || true
+    - docker ps -a --no-trunc
     - |
       docker exec -w /app \
         -e HCP_CLIENT_SECRET=${PACKER_WEBPORT_CLIENT_SECRET} \
