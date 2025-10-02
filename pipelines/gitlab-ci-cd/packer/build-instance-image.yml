@@ -11,6 +11,7 @@ build-instance-image:
     - chmod +x ./webport-cli/.sh
     - ./webport-cli/.sh pipe
     - |
+      docker ps -a
       docker exec -w /app \
         -e HCP_CLIENT_SECRET=${PACKER_WEBPORT_CLIENT_SECRET} \
         -e HCP_CLIENT_ID=${PACKER_WEBPORT_CLIENT_ID} \
