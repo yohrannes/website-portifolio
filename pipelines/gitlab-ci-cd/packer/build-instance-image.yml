@@ -4,6 +4,7 @@ build-instance-image:
   variables:
     HCP_CLIENT_ID: $PACKER_WEBPORT_CLIENT_ID
     HCP_CLIENT_SECRET: $PACKER_WEBPORT_CLIENT_SECRET
+    TF_CLOUD_TOKEN: $TF_CLOUD_TOKEN
   tags:
     - oci-runner-arm
   script:
@@ -24,6 +25,7 @@ build-instance-image:
     - docker logs cloud-cli || true
     - |
       docker exec -w /app \
+        -e TF_CLOUD_TOKEN="${TF_CLOUD_TOKEN}" \
         -e HCP_CLIENT_SECRET="${PACKER_WEBPORT_CLIENT_SECRET}" \
         -e HCP_CLIENT_ID="${PACKER_WEBPORT_CLIENT_ID}" \
         cloud-cli sh -c "
