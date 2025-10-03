@@ -11,19 +11,20 @@ docker build -t cloud-cli . -f webport-cli/Dockerfile
 
 if [ "$1" == "pipe" ]; then
   INTERACTOR="-d"
-  COMMAND="sh -c 'source /root/.shrc && /root/init-all.sh || tail -f /dev/null'"
+  REMOVE=""
+  COMMAND="sleep infinity"
 else
   export HCP_CLIENT_SECRET=$(glab var get PACKER_WEBPORT_CLIENT_SECRET)
   export HCP_CLIENT_ID=$(glab var get PACKER_WEBPORT_CLIENT_ID)
   INTERACTOR="-it"
-  COMMAND="sh"
+  REMOVE="--rm"
 fi
 
 if $(docker ps -a --format '{{.Names}}' | grep -Eq "^cloud-cli\$"); then
   docker rm -f cloud-cli
 fi
 
-docker run $INTERACTOR --name cloud-cli --rm\
+docker run $INTERACTOR --name cloud-cli $REMOVE\
   -e HCP_CLIENT_ID="$HCP_CLIENT_ID" \
   -e HCP_CLIENT_SECRET="$HCP_CLIENT_SECRET" \
   -v ~/.oci:/root/.oci \
@@ -34,4 +35,4 @@ docker run $INTERACTOR --name cloud-cli --rm\
   -v $PWD:/app \
   -v ~/.terraform.d/credentials.tfrc.json:/root/.terraform.d/credentials.tfrc.json \
   -e PACKER_PLUGIN_PATH=~/.packer.d/plugins \
-  cloud-cli $COMMAND
+cloud-cli $COMMAND

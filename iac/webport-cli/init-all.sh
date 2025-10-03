@@ -3,8 +3,6 @@ set -e
 
 cd /app/terraform/prod && terraform init\
 
-# -input=false
-
 cd /app/packer/prod\
  && packer init .\
  && source /app/packer/prod/wrapper.sh\
@@ -16,6 +14,4 @@ cd /app/packer/prod\
     && packer plugins install github.com/hashicorp/ansible
 
 cd /app
-
-source /root/.shrc
 exec env ENV=/root/.shrc sh
