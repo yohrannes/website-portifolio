@@ -27,9 +27,8 @@ build-instance-image:
         -e HCP_CLIENT_SECRET="${PACKER_WEBPORT_CLIENT_SECRET}" \
         -e HCP_CLIENT_ID="${PACKER_WEBPORT_CLIENT_ID}" \
         cloud-cli sh -c "
-          cd terraform/prod
-          terraform init
-          cd ../../packer/prod
+          /root/init-all.sh
+          cd packer/prod
           chmod +x wrapper.sh
           ./wrapper.sh
           packer build .
