@@ -15,7 +15,10 @@ cd /app/packer/prod/ansible\
  && pip3 install --break-system-packages -r requirements.txt\
  && pip3 install -r requirements.txt --upgrade pip\
  && ansible-galaxy role install -r requirements.yml\
- && packer plugins install github.com/hashicorp/ansible
+ && packer plugins install github.com/hashicorp/ansible \
+ && export PATH=$PATH:/app/packer/prod/ansible/venv/bin \
+ && ansible --version \
+ && ansible-playbook --version
 
 cd /app
 
