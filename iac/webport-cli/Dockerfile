@@ -35,4 +35,4 @@ COPY webport-cli/.shrc /root/.shrc
 COPY webport-cli/init-all.sh /root/init-all.sh
 
 ENTRYPOINT []
-CMD ["sh", "-c", "source /root/.shrc && /root/init-all.sh"]
+CMD ["sh", "-c", "/root/init-all.sh"]
