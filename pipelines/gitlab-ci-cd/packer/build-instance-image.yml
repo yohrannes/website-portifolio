@@ -44,6 +44,7 @@ build-instance-image:
           cd terraform/prod/
           export PKR_VAR_compartment_ocid=$(terraform output -raw packer_compartment_ocid)
           export PKR_VAR_subnet_ocid=$(terraform output -raw packer_subnet_ocid)
+          export PATH=$PATH:/app/packer/prod/ansible/venv/bin
           cd ../../packer/prod/
           packer build .
         "
