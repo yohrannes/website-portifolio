@@ -14,4 +14,5 @@ cd /app/packer/prod\
     && packer plugins install github.com/hashicorp/ansible
 
 cd /app
+
 exec env ENV=/root/.shrc sh
