@@ -25,14 +25,16 @@ build-instance-image:
     - docker logs cloud-cli || true
     - |
       docker exec -w /app \
+        -e TF_IN_AUTOMATION=1 \
         -e TF_TOKEN_app_terraform_io="${TF_CLOUD_TOKEN}" \
         -e TF_WORKSPACE="${TF_WORKSPACE}" \
         -e HCP_CLIENT_SECRET="${PACKER_WEBPORT_CLIENT_SECRET}" \
         -e HCP_CLIENT_ID="${PACKER_WEBPORT_CLIENT_ID}" \
         cloud-cli sh -c "
           /root/init-all.sh
-          cd packer/prod
-          chmod +x wrapper.sh
-          ./wrapper.sh
+          cd terraform/prod/
+          export PKR_VAR_compartment_ocid=$(terraform output -raw packer_compartment_ocid)
+          export PKR_VAR_subnet_ocid=$(terraform output -raw packer_subnet_ocid)
+          cd ../../packer/prod/
           packer build .
         "
