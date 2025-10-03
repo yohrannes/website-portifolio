@@ -25,7 +25,8 @@ build-instance-image:
     - docker logs cloud-cli || true
     - |
       docker exec -w /app \
-        -e TF_CLOUD_TOKEN="${TF_CLOUD_TOKEN}" \
+        -e TF_TOKEN_app_terraform_io="${TF_CLOUD_TOKEN}" \
+        -e TF_WORKSPACE="${TF_WORKSPACE}" \
         -e HCP_CLIENT_SECRET="${PACKER_WEBPORT_CLIENT_SECRET}" \
         -e HCP_CLIENT_ID="${PACKER_WEBPORT_CLIENT_ID}" \
         cloud-cli sh -c "

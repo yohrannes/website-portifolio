@@ -8,6 +8,8 @@ cd /app/packer/prod\
  && source /app/packer/prod/wrapper.sh\
 
    cd /app/packer/prod/ansible\
+    && rm -rf venv\
+    && python3 -m venv venv\
     && source venv/bin/activate\
     && pip3 install -r requirements.txt --upgrade pip\
     && ansible-galaxy role install -r requirements.yml\
