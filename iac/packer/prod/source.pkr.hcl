@@ -6,6 +6,7 @@ source "oracle-oci" "basic" {
 
   compartment_ocid    = var.compartment_ocid
   availability_domain = var.availability_domain
+  key_file     = var.key_file
 
   base_image_filter {
     operating_system         = "Canonical Ubuntu"
