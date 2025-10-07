@@ -79,101 +79,102 @@ check-startup-script:
         sleep 5
       done
 
-run-containers:
-  stage: deploy-webapp
-  needs:
-    - check-startup-script
-  before_script:
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-  script:
-    - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
-        sudo rm -rf repos-git
-        mkdir -p repos-git
-        cd repos-git
-        git clone https://gitlab.com/yohrannes/website-portifolio.git
-        cd website-portifolio
-        git checkout infra-webapp-oci-amd
-        git fetch origin infra-webapp-oci-amd
-        git pull origin infra-webapp-oci-amd
-
-        export F2B_HTTP_INJ_FILTER_B64=${F2B_HTTP_INJ_FILTER_B64}
-        export COMPOSE_BAKE=true
-        export MY_UID=$(id -u)
-        export MY_GID=$(id -g)
-
-        echo ${F2B_HTTP_INJ_FILTER_B64} >> /temp/export.txt
-        echo >> /temp/export.txt
-        echo ${MY_UID} >> /temp/export.txt
-        echo >> /temp/export.txt
-        echo ${MY_GID} >> /temp/export.txt
-        echo >> /temp/export.txt
-        echo ${COMPOSE_BAKE} >> /temp/export.txt
-        
-        if [ -n \"\$F2B_HTTP_INJ_FILTER_B64\" ]; then
-          export F2B_HTTP_INJ_FILTER_DECODED=\"\$(echo \$F2B_HTTP_INJ_FILTER_B64 | base64 --decode)\"
-        fi
-
-        echo ${F2B_HTTP_INJ_FILTER_DECODED} >> /temp/export.txt
-
-        cd docker-compose
-        sudo docker compose down --remove-orphans
-        sudo -E docker compose up -d --build --force-recreate --remove-orphans --quiet-pull
-      " > /dev/null
-        
-#  sudo docker system prune -a -f
-
-update-dns:
-  stage: deploy-webapp
-  needs:
-    - run-containers
-  script:
-    - |
-      curl --request PUT \
-        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_YO_COM \
-        --header "Content-Type: application/json" \
-        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
-        --data '{
-          "comment": "Domain verification record",
-          "name": "yohrannes.com",
-          "proxied": true,
-          "settings": {},
-          "tags": [],
-          "ttl": 1,
-          "content": "'"$IP_OCI_AMD_WEBAPP"'",
-          "type": "A"
-        }' | jq '.'
-
-    - |
-      curl --request PUT \
-        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_GRAF_YO_COM \
-        --header "Content-Type: application/json" \
-        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
-        --data '{
-          "comment": "Domain verification record",
-          "name": "grafana.yohrannes.com",
-          "proxied": true,
-          "settings": {},
-          "tags": [],
-          "ttl": 1,
-          "content": "yohrannes.com",
-          "type": "CNAME"
-        }' | jq '.'
-
-disable-ssh:
-  stage: deploy-webapp
-  tags:
-    - oci-runner-arm
-  needs:
-    - run-containers
-  script:
-    - |
-      docker exec -w /app terraform-container sh -c "
-       terraform init -upgrade -reconfigure
-       terraform workspace select web_port_dev
-       terraform plan -detailed-exitcode -target=module.oci_aftier_micro_amd.oci_core_security_list.public-security-list -out=plan -var="disable_ssh_port=true" | grep "Plan:"
-       terraform apply plan | grep -o -E 'oci[^.]*.' | sort -u
-      "
-
+#run-containers:
+#  stage: deploy-webapp
+#  needs:
+#    - check-startup-script
+#  before_script:
+#    - mkdir -p ~/.ssh
+#    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
+#    - chmod 600 ~/.ssh/id_rsa
+#  script:
+#    - |
+#      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
+#        sudo rm -rf repos-git
+#        mkdir -p repos-git
+#        cd repos-git
+#        git clone https://gitlab.com/yohrannes/website-portifolio.git
+#        cd website-portifolio
+#        git checkout infra-webapp-oci-amd
+#        git fetch origin infra-webapp-oci-amd
+#        git pull origin infra-webapp-oci-amd
+#
+#        export F2B_HTTP_INJ_FILTER_B64=${F2B_HTTP_INJ_FILTER_B64}
+#        export COMPOSE_BAKE=true
+#        export MY_UID=$(id -u)
+#        export MY_GID=$(id -g)
+#
+#        echo ${F2B_HTTP_INJ_FILTER_B64} >> /temp/export.txt
+#        echo >> /temp/export.txt
+#        echo ${MY_UID} >> /temp/export.txt
+#        echo >> /temp/export.txt
+#        echo ${MY_GID} >> /temp/export.txt
+#        echo >> /temp/export.txt
+#        echo ${COMPOSE_BAKE} >> /temp/export.txt
+#        
+#        if [ -n \"\$F2B_HTTP_INJ_FILTER_B64\" ]; then
+#          export F2B_HTTP_INJ_FILTER_DECODED=\"\$(echo \$F2B_HTTP_INJ_FILTER_B64 | base64 --decode)\"
+#        fi
+#
+#        echo ${F2B_HTTP_INJ_FILTER_DECODED} >> /temp/export.txt
+#
+#        cd docker-compose
+#        sudo docker compose down --remove-orphans
+#        sudo -E docker compose up -d --build --force-recreate --remove-orphans --quiet-pull
+#      " > /dev/null
+#        
+##  sudo docker system prune -a -f
+#
+#update-dns:
+#  stage: deploy-webapp
+#  needs:
+#    - run-containers
+#  script:
+#    - |
+#      curl --request PUT \
+#        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_YO_COM \
+#        --header "Content-Type: application/json" \
+#        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
+#        --data '{
+#          "comment": "Domain verification record",
+#          "name": "yohrannes.com",
+#          "proxied": true,
+#          "settings": {},
+#          "tags": [],
+#          "ttl": 1,
+#          "content": "'"$IP_OCI_AMD_WEBAPP"'",
+#          "type": "A"
+#        }' | jq '.'
+#
+#    - |
+#      curl --request PUT \
+#        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_GRAF_YO_COM \
+#        --header "Content-Type: application/json" \
+#        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
+#        --data '{
+#          "comment": "Domain verification record",
+#          "name": "grafana.yohrannes.com",
+#          "proxied": true,
+#          "settings": {},
+#          "tags": [],
+#          "ttl": 1,
+#          "content": "yohrannes.com",
+#          "type": "CNAME"
+#        }' | jq '.'
+#
+#disable-ssh:
+#  stage: deploy-webapp
+#  tags:
+#    - oci-runner-arm
+#  needs:
+#    - run-containers
+#  script:
+#    - |
+#      docker exec -w /app terraform-container sh -c "
+#       terraform init -upgrade -reconfigure
+#       terraform workspace select web_port_dev
+#       terraform plan -detailed-exitcode -target=module.oci_aftier_micro_amd.oci_core_security_list.public-security-list -out=plan -var="disable_ssh_port=true" | grep "Plan:"
+#       terraform apply plan | grep -o -E 'oci[^.]*.' | sort -u
+#      "
+#
+#
