@@ -163,7 +163,7 @@ update-dns:
         }' | jq '.'
 
 disable-ssh:
-  stage: deploy-infra
+  stage: deploy-webapp
   tags:
     - oci-runner-arm
   needs:
