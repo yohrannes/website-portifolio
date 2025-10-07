@@ -9,7 +9,7 @@ variables:
   TF_TARGET_ADDRS: 'module.oci_aftier_micro_amd'
 
 include:
-  - local: 'pipelines/gitlab-ci-cd/packer/build-instance-image.yml'
+#  - local: 'pipelines/gitlab-ci-cd/packer/build-instance-image.yml'
   - local: 'pipelines/gitlab-ci-cd/terraform/upload-trigger-run.yml'
   - local: 'pipelines/gitlab-ci-cd/terraform/monitor-apply.yml'
 

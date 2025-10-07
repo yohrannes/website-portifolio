@@ -44,12 +44,10 @@ build-instance-image:
           pwd
           cd terraform/prod/
           pwd
-          export PKR_VAR_compartment_ocid=$(terraform output -raw packer_compartment_ocid)
-          export PKR_VAR_subnet_ocid=$(terraform output -raw packer_subnet_ocid)
-          echo "Packer Compartment OCID: $PKR_VAR_compartment_ocid"
-          echo "Packer Subnet OCID: $PKR_VAR_subnet_ocid"
           export PATH=$PATH:/app/packer/prod/ansible/venv/bin
           cd ../../packer/prod/
+          ./wrapper.sh
           pwd
+          env
           packer build .
         "
