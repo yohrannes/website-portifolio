@@ -82,7 +82,7 @@ check-startup-script:
 run-containers:
   stage: deploy-webapp
   needs:
-    - check
+    - check-startup-script
   before_script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
