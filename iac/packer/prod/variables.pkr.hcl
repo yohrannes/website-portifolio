@@ -19,3 +19,9 @@ variable "subnet_ocid" {
   type        = string
   description = "OCID da subnet onde a instância será criada"
 }
+
+variable "key_file" {
+  type        = string
+  description = "Caminho para o arquivo de chave privada OCI"
+  default     = "/root/.oci/oci_api_key.pem"
+}
