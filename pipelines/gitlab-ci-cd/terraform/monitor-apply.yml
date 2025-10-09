@@ -412,8 +412,6 @@ monitor-and-apply-terraform-run:
           --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
           --header "Content-Type: application/vnd.api+json" \
           "${TF_CLOUD_API}/runs/${RUN_ID}")
-        
-        if [ $? -eq 0 ]; then
-          echo "$final_run_response" | jq '.data.attributes | {status, message, "created-at", "status-timestamps"}'
+        echo "$final_run_response" | jq '.data.attributes | {status, message, "created-at", "status-timestamps"}'
         fi
       fi
