@@ -49,8 +49,8 @@ include:
 
 check-startup-script:
   stage: check-infra
-  needs:
-    - get-instance-ip-from-tf-cloud
+#  needs:
+#    - get-instance-ip-from-tf-cloud
   script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
