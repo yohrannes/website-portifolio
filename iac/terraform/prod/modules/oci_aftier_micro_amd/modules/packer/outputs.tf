@@ -38,20 +38,6 @@ output "packer_image_name" {
   value = var.image_name
 }
 
-output "packer_images_to_delete_ids" {
-  value = [for image in local.images_to_delete : image.id]
-}
-
-output "debug_filtered_images" {
-  value = [
-    for image in local.filtered_images : {
-      id           = image.id
-      display_name = image.display_name
-      time_created = image.time_created
-    }
-  ]
-}
-
 output "packer_instructions" {
   value = <<-EOT
     Packer Instructions:
