@@ -413,5 +413,4 @@ monitor-and-apply-terraform-run:
           --header "Content-Type: application/vnd.api+json" \
           "${TF_CLOUD_API}/runs/${RUN_ID}")
         echo "$final_run_response" | jq '.data.attributes | {status, message, "created-at", "status-timestamps"}'
-        fi
       fi
