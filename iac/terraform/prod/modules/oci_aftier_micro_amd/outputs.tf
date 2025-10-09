@@ -72,18 +72,10 @@ output "packer_image_name" {
   value = module.packer.packer_image_name
 }
 
-output "packer_images_to_delete_ids" {
-  value = module.packer.packer_images_to_delete_ids
-}
-
 output "debug_all_images" {
   value = <<-EOT
     All Images:
   EOT 
-}
-
-output "debug_filtered_images" {
-  value = module.packer.debug_filtered_images
 }
 
 output "packer_instructions" {
