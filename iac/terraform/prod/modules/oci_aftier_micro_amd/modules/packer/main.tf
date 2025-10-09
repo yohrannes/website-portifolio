@@ -21,19 +21,6 @@ locals {
     user if user.email == var.user_email
   ]
   user_ocid = length(local.user_by_email) > 0 ? local.user_by_email[0].id : null
-  filtered_images = [
-    for image in data.oci_core_images.existing_images.images :
-    image if can(regex("${var.image_name}\\d{14}", image.display_name))
-  ]
-
-  sorted_times = sort([for img in local.filtered_images : img.time_created])
-
-  sorted_images = [
-    for t in local.sorted_times :
-    one([for img in local.filtered_images : img if img.time_created == t])
-  ]
-
-  images_to_delete = length(local.sorted_images) > 3 ? slice(local.sorted_images, 0, length(local.sorted_images) - 3) : []
 }
 
 data "oci_identity_users" "all_users_for_email" {
