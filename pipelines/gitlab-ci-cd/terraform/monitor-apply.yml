@@ -406,7 +406,7 @@ monitor-and-apply-terraform-run:
       done
   after_script:
     - |
-      if [ "$CI_JOB_STATUS" = "failed" ] && [ -n "$RUN_ID" ]; then
+      if [ -n "$RUN_ID" ]; then
         echo "=== FINAL RUN STATE ==="
         final_run_response=$(curl -s \
           --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
