@@ -405,12 +405,27 @@ monitor-and-apply-terraform-run:
         esac
       done
   after_script:
+    - set +e
     - |
       if [ -n "$RUN_ID" ]; then
         echo "=== FINAL RUN STATE ==="
+        echo "Run ID: $RUN_ID"
+        
         final_run_response=$(curl -s \
           --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
           --header "Content-Type: application/vnd.api+json" \
           "${TF_CLOUD_API}/runs/${RUN_ID}")
-        echo "$final_run_response" | jq '.data.attributes | {status, message, "created-at", "status-timestamps"}'
+        
+        curl_exit=$?
+        
+        if [ $curl_exit -eq 0 ] && [ -n "$final_run_response" ]; then
+          if command -v jq >/dev/null 2>&1; then
+            echo "$final_run_response" | jq '.data.attributes | {status, message, "created-at", "status-timestamps"}' || echo "$final_run_response"
+          else
+            echo "$final_run_response"
+          fi
+        else
+          echo "Failed to fetch final run state (exit code: $curl_exit)"
+        fi
       fi
+    - exit 0
