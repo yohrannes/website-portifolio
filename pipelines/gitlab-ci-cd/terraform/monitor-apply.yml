@@ -364,10 +364,12 @@ monitor-and-apply-terraform-run:
             echo "=== APPLY SUMMARY ==="
             apply_data=$(echo "$apply_status_response" | jq -r '.data.relationships.apply.links.related')
             if [ -n "$apply_data" ] && [ "$apply_data" != "null" ]; then
+              set +e
               apply_details=$(api_call_with_retry "$apply_data")
-              if [ $? -eq 0 ]; then
-                echo "$apply_details" | jq '.data.attributes | {status, "resource-additions", "resource-changes", "resource-destructions"}'
+              if [ $? -eq 0 ] && [ -n "$apply_details" ]; then
+                echo "$apply_details" | jq '.data.attributes | {status, "resource-additions", "resource-changes", "resource-destructions"}' 2>/dev/null || echo "Apply completed successfully"
               fi
+              set -e
             fi
             exit 0
             ;;
