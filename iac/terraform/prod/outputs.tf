@@ -103,10 +103,6 @@ output "packer_image_name" {
   value = module.oci_aftier_micro_amd.packer_image_name
 }
 
-output "packer_images_to_delete_ids" {
-  value = module.oci_aftier_micro_amd.packer_images_to_delete_ids
-}
-
 #output "debug_all_images" {
 #  value = module.oci_aftier_micro_amd.debug_all_images
 #}
