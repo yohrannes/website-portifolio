@@ -35,8 +35,36 @@ get-instance-ip-from-tf-cloud:
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
         "https://app.terraform.io/api/v2/state-versions/$STATE_VERSION_ID/outputs" \
-        | jq -r '.data[0] | select(.attributes.name == "oci_aftier_micro_amd_pub_ip") | .attributes.value')
+        | jq -r '.data[] | select(.attributes.name == "oci_aftier_micro_amd_pub_ip") | .attributes.value')
+      
+      echo "Instance Public IP: $INSTANCE_PUBLIC_IP"
+      
+      # Validar se o IP foi extraído
+      if [ -z "$INSTANCE_PUBLIC_IP" ] || [ "$INSTANCE_PUBLIC_IP" = "null" ]; then
+        echo "ERROR: Failed to extract IP address"
+        exit 1
+      fi
     
+    - |
+      RESPONSE=$(curl -s --write-out "\n%{http_code}" \
+        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+        --request PUT \
+        --form "value=$INSTANCE_PUBLIC_IP" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/IP_OCI_AMD_WEBAPP")
+      
+      HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+      BODY=$(echo "$RESPONSE" | head -n-1)
+      
+      echo "HTTP Status: $HTTP_CODE"
+      echo "Response: $BODY"
+      
+      if [ "$HTTP_CODE" != "200" ]; then
+        echo "ERROR: Failed to update GitLab variable"
+        exit 1
+      fi
+      
+      echo "Successfully updated GitLab variable IP_OCI_AMD_WEBAPP with value: $INSTANCE_PUBLIC_IP"
+
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --request PUT \
