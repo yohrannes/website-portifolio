@@ -141,8 +141,6 @@ run-containers:
         sudo docker compose down --remove-orphans
         sudo -E docker compose up -d --build --force-recreate --remove-orphans --quiet-pull
       " > /dev/null
-        
-#  sudo docker system prune -a -f
 
 update-dns:
   stage: deploy-webapp
