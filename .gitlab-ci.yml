@@ -14,17 +14,17 @@ variables:
   TF_CONFIG_FILE: "terraform-config.tar.gz"
   
 include:
-  - local: 'pipelines/gitlab-ci-cd/1-pipelocal-infra-runner-oci-arm.yml'
+  - local: 'pipelines/gitlab-ci-cd/trigger-setup-runner-oci-arm.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner-oci-arm"
 
 
-  - local: 'pipelines/gitlab-ci-cd/2-infra-runner-gcp-amd.yml'
+  - local: 'pipelines/gitlab-ci-cd/runner-gcp-amd.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner-gcp-amd"
 
 
-  - local: 'pipelines/gitlab-ci-cd/3-infra-webapp-oci-amd.yml'
+  - local: 'pipelines/gitlab-ci-cd/webapp-infra-oci-amd.yml'
     rules:
      - if: $CI_COMMIT_BRANCH == "infra-webapp-oci-amd"
 
@@ -32,7 +32,7 @@ include:
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-webapp-oci-amd-packer"
 
-#  - local: 'pipelines/gitlab-ci-cd/4-infra-oci-oke-arm.yml'
+#  - local: 'pipelines/gitlab-ci-cd/oke-cluster-oci-arm.yml'
 #    rules:
 #      - if: $CI_COMMIT_BRANCH == "infr-cluster-oci-arm"
 
