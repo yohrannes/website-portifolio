@@ -103,7 +103,8 @@ services:
         max_attempts: 3
 
   grafana:
-    image: grafana/grafana:12.0.1
+    image: grafana/grafana:11.3.0
+#    image: grafana/grafana:12.0.1
     container_name: grafana
     volumes:
       - grafana-data:/var/lib/grafana
