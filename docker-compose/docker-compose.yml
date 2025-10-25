@@ -118,8 +118,8 @@ services:
     deploy:
       resources:
         limits:
-          cpus: '0.3'
-          memory: 150M
+          cpus: '0.4'
+          memory: 200M
       restart_policy:
         condition: on-failure
         delay: 5s
