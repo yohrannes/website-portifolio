@@ -729,7 +729,7 @@
         {
           "datasource": {
             "type": "prometheus",
-            "uid": "${DS_PROMETHEUS}"
+            "uid": "Prometheus"
           },
           "expr": "sum(nginx_upstream_responseMsec{instance=~\"$Instance\", upstream=~\"^$Upstream$\"}) by (backend)",
           "format": "time_series",
@@ -757,7 +757,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "Prometheus"
         },
         "includeAll": true,
         "name": "Instance",
@@ -771,7 +771,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "Prometheus"
         },
         "includeAll": true,
         "name": "Host",
@@ -786,7 +786,7 @@
         "current": {},
         "datasource": {
           "type": "prometheus",
-          "uid": "${DS_PROMETHEUS}"
+          "uid": "Prometheus"
         },
         "includeAll": true,
         "name": "Upstream",
