@@ -116,7 +116,7 @@ function clickBootcamp() {
 }
 
 //HANDS-ON PROJECTS MENU
-var handsonprojectsmenu = [handsonprojects1, handsonprojects2, handsonprojects3, googlecloudhandson, oraclecloudhandson]
+var handsonprojectsmenu = [handsonprojects1, handsonprojects2, handsonprojects3, googlecloudhandson, oraclecloudhandson, awshandson];
 
 function clickHandsOnProjects(){
   var currentmenu = [menuhandsonprojects, handsonprojects1, handsonprojects2, handsonprojects3];
@@ -131,6 +131,11 @@ function clickHandsOnProjects(){
   function clickOracleCloudHandsOn(){
     var currentmenu = [oraclecloudhandson1, oraclecloudhandson2, oraclecloudhandson3, menuoraclecloudhandson]
     handleClick(handsonprojectsmenu, currentmenu, oraclecloudhandson)
+  }
+
+  function clickAwsHandsOn(){
+    var currentmenu = [awshandson1, awshandson2, awshandson3, menuawshandson]
+    handleClick(handsonprojectsmenu, currentmenu, awshandson)
   }
 
 //ACHIEVEMENTS AND CERTIFICATIONS
