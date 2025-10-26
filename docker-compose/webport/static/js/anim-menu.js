@@ -129,13 +129,13 @@ function clickHandsOnProjects(){
   }
 
   function clickOracleCloudHandsOn(){
-    var currentmenu = [oraclecloudhandson1, oraclecloudhandson2, oraclecloudhandson3, menuoraclecloudhandson]
-    handleClick(handsonprojectsmenu, currentmenu, oraclecloudhandson)
+    var currentmenu = [oraclecloudhandson1, oraclecloudhandson2, oraclecloudhandson3, menuoraclecloudhandson];
+    handleClick(handsonprojectsmenu, currentmenu, oraclecloudhandson);
   }
 
   function clickAwsHandsOn(){
-    var currentmenu = [awshandson1, awshandson2, awshandson3, menuawshandson]
-    handleClick(handsonprojectsmenu, currentmenu, awshandson)
+    var currentmenu = [awshandson1, awshandson2, awshandson3, menuawshandson];
+    handleClick(handsonprojectsmenu, currentmenu, awshandson);
   }
 
 //ACHIEVEMENTS AND CERTIFICATIONS
