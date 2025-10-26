@@ -123,6 +123,8 @@ run-containers:
         export MY_UID=$(id -u)
         export MY_GID=$(id -g)
 
+        touch /temp/export.txt
+
         echo ${F2B_HTTP_INJ_FILTER_B64} >> /temp/export.txt
         echo >> /temp/export.txt
         echo ${MY_UID} >> /temp/export.txt
