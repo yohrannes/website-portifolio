@@ -14,15 +14,8 @@ terraform init, plan, state
 cd /app/packer/prod
 packer build, validate ..
 
-###Create Bucket to store tf state ....
-mv backend.tf /modules/instance_oracle/.
-terraform init
-terraform apply -target=module.bucket_aws -auto-approve
-mv modules/instance_oracle/backend.tf .
-terraform init
-
 ##GCP commands to autenticate service account
-export GOOGLE_CLOUD_PROJECT=website-portifolio;
+export GOOGLE_CLOUD_PROJECT=<website-project-id>;
 export GOOGLE_APPLICATION_CREDENTIALS="$HOME/.gcp/credentials.json"
 export GOOGLE_REGION=us-west1;
 export GOOGLE_ZONE=us-west1-a;
