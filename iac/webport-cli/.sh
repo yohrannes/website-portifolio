@@ -1,12 +1,4 @@
 #!/bin/bash
-
-if [ -z "$HCP_CLIENT_ID" ] || [ -z "$HCP_CLIENT_SECRET" ]; then
-    echo "Error: GitLab var not found"
-    exit 1
-fi
-
-echo "Glab var obtained with success"
-
 docker build -t cloud-cli . -f webport-cli/Dockerfile
 
 if [ "$1" == "pipe" ]; then
@@ -16,6 +8,12 @@ if [ "$1" == "pipe" ]; then
 else
   export HCP_CLIENT_SECRET=$(glab var get PACKER_WEBPORT_CLIENT_SECRET)
   export HCP_CLIENT_ID=$(glab var get PACKER_WEBPORT_CLIENT_ID)
+  if [ -z "$HCP_CLIENT_ID" ] || [ -z "$HCP_CLIENT_SECRET" ]; then
+      echo "Error: GitLab var not found"
+      exit 1
+  else
+      echo "GitLab var found"
+  fi
   INTERACTOR="-it"
   REMOVE="--rm"
 fi

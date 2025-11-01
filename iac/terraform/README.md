@@ -2,14 +2,27 @@
 ---
 ![terraform-diagram](./diagrams/infra-diagram-website-portifolio.png)
 ---
-### First provision command (requires docker locally).
+### First provision command (requires docker, oci cli, aws cli, gclous cli, all of them already authenticated).
 ```
-docker run -it \
--v ~/.oci:/root/.oci \
--v ~/.aws:/root/.aws \
--v ~/.ssh:/root/.ssh \
--v ~/.gcp:/root/.gcp \
--v $PWD:/app \
--w /app \
---entrypoint "" hashicorp/terraform:latest sh -c "terraform init -reconfigure && sh"
+## oci profile policies
+## oci packer profile policies
+## comming soon
+```
+```
+## gcloud profile policies
+## comming soon
+```
+```
+## aws profile policies
+## comming soon
+```
+```
+gcloud auth login
+aws configure
+oci setup config
+
+glab var set PACKER_WEBPORT_CLIENT_ID=<your_hcp_client_id>
+glab var set PACKER_WEBPORT_CLIENT_SECRET=<your_hcp_client_secret>
+cd iac
+./webport-cli/.sh
 ```
