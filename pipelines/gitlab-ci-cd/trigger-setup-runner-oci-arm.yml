@@ -22,7 +22,7 @@
 
 
 create-oci-gl-runner-instance:
-  stage: create-infra
+  stage: check-infra
   image: docker:27.3.1
   tags: [ "oci-runner-arm" ]
   services:
@@ -93,8 +93,8 @@ create-oci-gl-runner-instance:
     - docker rm -f $(docker ps -a -q) > /dev/null 2>&1
 
 check-startup-script:
-  stage: create-infra
-  needs:
+  stage: check-infra
+    needs:
     - create-oci-gl-runner-instance
   image: docker:27.3.1
   tags: [ "oci-runner-arm" ]
@@ -132,7 +132,7 @@ check-startup-script:
 
 #### NOT WORKING FIXXME
 delete-old-runner-gl-api:
-  stage: create-infra
+  stage: check-infra
   needs:
     - check-startup-script
   image: docker:27.3.1
@@ -153,7 +153,7 @@ delete-old-runner-gl-api:
       > /dev/null 2>&1
 
 create-runner-gl-api:
-  stage: create-infra
+  stage: check-infra
   needs:
     - delete-old-runner-gl-api
   image: docker:27.3.1
@@ -176,7 +176,7 @@ create-runner-gl-api:
         > /dev/null 2>&1
 
 authorize-runner:
-  stage: deploy-infra
+  stage: check-infra
   needs:
     - create-runner-gl-api
   image: docker:27.3.1
