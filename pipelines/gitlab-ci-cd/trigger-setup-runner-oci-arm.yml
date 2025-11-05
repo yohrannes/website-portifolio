@@ -17,7 +17,7 @@
 #      command: ["--tls=false"]
 
 
-# First runner provision, execute this pipeline locally using gl runner type docker
+# First runner provision, execute this pipeline locally using gl runner type docker 
 
 
 
