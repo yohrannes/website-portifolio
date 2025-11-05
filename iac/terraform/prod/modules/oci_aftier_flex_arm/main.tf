@@ -2,7 +2,7 @@ locals {
   cird_block_subnets = cidrsubnet(oci_core_vcn.tf_vcn.cidr_blocks[0], 8, 0)
 }
 
-resource "oci_identity_compartment" "runner-comp" {
+resource "oci_identity_compartment" "web-port-comp" {
   # Required
   compartment_id = var.compartment_id
   description    = var.compartment_description
@@ -11,7 +11,7 @@ resource "oci_identity_compartment" "runner-comp" {
 
 resource "oci_core_vcn" "tf_vcn" {
   #Required
-  compartment_id = oci_identity_compartment.runner-comp.id
+  compartment_id = oci_identity_compartment.web-port-comp.id
   cidr_blocks    = var.tf_vcn.cidr_blocks
   #Optional
   display_name = var.tf_vcn.display_name
@@ -20,7 +20,7 @@ resource "oci_core_vcn" "tf_vcn" {
 
 resource "oci_core_subnet" "tf_subnet" {
   #Required
-  compartment_id = oci_identity_compartment.runner-comp.id
+  compartment_id = oci_identity_compartment.web-port-comp.id
   vcn_id         = oci_core_vcn.tf_vcn.id
   #cidr_block     = var.tf_subnet.cidr_block
   cidr_block = local.cird_block_subnets
@@ -32,13 +32,13 @@ resource "oci_core_subnet" "tf_subnet" {
 }
 
 resource "oci_core_internet_gateway" "tf_int_gateway" {
-  compartment_id = oci_identity_compartment.runner-comp.id
+  compartment_id = oci_identity_compartment.web-port-comp.id
   vcn_id         = oci_core_vcn.tf_vcn.id
   display_name   = var.tf_int_gateway.display_name
 }
 
 resource "oci_core_default_route_table" "tf_route_table" {
-  compartment_id             = oci_identity_compartment.runner-comp.id
+  compartment_id             = oci_identity_compartment.web-port-comp.id
   manage_default_resource_id = oci_core_vcn.tf_vcn.default_route_table_id
   # Optional
   display_name = var.tf_subnet.route_table.display_name
@@ -52,14 +52,14 @@ resource "oci_core_default_route_table" "tf_route_table" {
   }
 }
 
-resource "oci_core_instance" "tf_gitlab_runner" {
-  compartment_id      = oci_identity_compartment.runner-comp.id
-  shape               = var.tf_gitlab_runner.shape.name
-  availability_domain = var.tf_gitlab_runner.availability_domain
-  display_name        = var.tf_gitlab_runner.display_name
+resource "oci_core_instance" "tf_instance" {
+  compartment_id      = oci_identity_compartment.web-port-comp.id
+  shape               = var.tf_instance.shape.name
+  availability_domain = var.tf_instance.availability_domain
+  display_name        = var.tf_instance.display_name
 
   source_details {
-    source_id   = var.tf_gitlab_runner.image_ocid
+    source_id   = var.tf_instance.image_ocid
     source_type = "image"
   }
 
@@ -67,25 +67,25 @@ resource "oci_core_instance" "tf_gitlab_runner" {
     for_each = [true]
     content {
       #Optional
-      memory_in_gbs = var.tf_gitlab_runner.shape.memory_in_gbs
-      ocpus         = var.tf_gitlab_runner.shape.ocpus
+      memory_in_gbs = var.tf_instance.shape.memory_in_gbs
+      ocpus         = var.tf_instance.shape.ocpus
     }
   }
 
   create_vnic_details {
     subnet_id        = oci_core_subnet.tf_subnet.id
-    assign_public_ip = var.tf_gitlab_runner.assign_public_ip
+    assign_public_ip = var.tf_instance.assign_public_ip
   }
 
   metadata = {
     ssh_authorized_keys = local.ssh_key
-    user_data           = base64encode(file("${path.module}/scripts/startup-script-runner.sh"))
+    user_data           = base64encode(file("${path.module}/scripts/startup-script.sh"))
   }
 
 }
 
 resource "oci_core_security_list" "tf_sec_list" {
-  compartment_id = oci_identity_compartment.runner-comp.id
+  compartment_id = oci_identity_compartment.web-port-comp.id
   vcn_id         = oci_core_vcn.tf_vcn.id
   display_name   = "Public Security List"
 
