@@ -17,7 +17,7 @@
 #      command: ["--tls=false"]
 
 
-# First runner provision, execute this pipeline locally using gl runner type docker 
+# First runner provision, execute this pipeline locally using gl runner type docker
 
 
 
@@ -94,7 +94,7 @@ create-oci-gl-runner-instance:
 
 check-startup-script:
   stage: check-infra
-    needs:
+  needs:
     - create-oci-gl-runner-instance
   image: docker:27.3.1
   tags: [ "oci-runner-arm" ]
