@@ -7,7 +7,7 @@ variable "compartment_id" {
 variable "compartment_name" {
   description = "Compartment Name"
   type        = string
-  default     = "runner-comp"
+  default     = "web-port-comp"
 }
 
 variable "compartment_description" {
@@ -20,18 +20,18 @@ variable "tf_vcn" {
   description = "The details of VCN."
   default = {
     cidr_blocks : ["10.1.0.0/16"]
-    display_name : "tf_runner_vcn"
+    display_name : "tf_web_vcn"
   }
 }
 
 variable "tf_subnet" {
   description = "The details of the subnet"
   default = {
-    display_name : "GL_RUNNER_SUBNET"
+    display_name : "WEB_PORT_SUBNET"
     is_public : true
     route_table : {
-      display_name = "tf_runner_route_table"
-      description  = "tf_runner_route_table"
+      display_name = "tf_web_route_table"
+      description  = "tf_web_route_table"
     }
   }
 }
@@ -46,17 +46,17 @@ variable "tf_int_gateway" {
 
 # Needs to be same region of the cluster, same image_ocid of cluster nodes + check if that was really in aways free plan
 
-variable "tf_gitlab_runner" {
+variable "tf_instance" {
   description = "The details of the compute instance"
   default = {
-    display_name : "gitlab-runner"
+    display_name : "web-port-instance"
     availability_domain : "lIpY:US-ASHBURN-AD-1"
     assign_public_ip : true
-    image_ocid : "ocid1.image.oc1.iad.aaaaaaaagxazxgs5mz5xglwm5i7a7pdphiu7f3h2u6njatz6akisfxdgjmwq"
+    image_ocid : "ocid1.image.oc1.iad.aaaaaaaa2bulxukxsjyv3ap3x45eueiqxxpxpsfrv6qppq7xrwtiima2c2pq" # images in https://docs.oracle.com/en-us/iaas/images/
     shape : {
-      name          = "VM.Standard.A1.Flex"
+      name          = "VM.Standard.E2.1.Micro"
       ocpus         = 1
-      memory_in_gbs = 3
+      memory_in_gbs = 1
     }
   }
 }

@@ -110,6 +110,22 @@ variable "ic_pub_vm_A" {
   }
 }
 
+#### OLD VARIABLES - GITLAB RUNNER ARM FLEX ####
+#variable "tf_instance" {
+#  description = "The details of the compute instance"
+#  default = {
+#    display_name : "web-port-instance"
+#    availability_domain : "lIpY:US-ASHBURN-AD-1"
+#    assign_public_ip : true
+#    image_ocid : "ocid1.image.oc1.iad.aaaaaaaagxazxgs5mz5xglwm5i7a7pdphiu7f3h2u6njatz6akisfxdgjmwq"
+#    shape : {
+#      name          = "VM.Standard.A1.Flex"
+#      ocpus         = 1
+#      memory_in_gbs = 3
+#    }
+#  }
+#}
+
 # PACKER CREDENTIALS
 
 variable "packer_oci_config_content" {
