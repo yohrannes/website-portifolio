@@ -24,8 +24,7 @@
 create-oci-gl-runner-instance:
   stage: create-infra
   image: docker:27.3.1
-  tags:
-    - local-runner-amd
+  tags: [ "oci-runner-arm" ]
   services:
     - name: docker:27.3.1-dind
       alias: docker
@@ -98,8 +97,7 @@ check-startup-script:
   needs:
     - create-oci-gl-runner-instance
   image: docker:27.3.1
-  tags:
-    - local-runner-amd
+  tags: [ "oci-runner-arm" ]
   services:
     - docker:27.3.1-dind
   variables:
@@ -138,8 +136,7 @@ delete-old-runner-gl-api:
   needs:
     - check-startup-script
   image: docker:27.3.1
-  tags:
-    - local-runner-amd
+  tags: [ "oci-runner-arm" ]
   services:
     - docker:27.3.1-dind
   variables:
@@ -160,8 +157,7 @@ create-runner-gl-api:
   needs:
     - delete-old-runner-gl-api
   image: docker:27.3.1
-  tags:
-    - local-runner-amd
+  tags: [ "oci-runner-arm" ]
   services:
     - docker:27.3.1-dind
   variables:
@@ -184,8 +180,7 @@ authorize-runner:
   needs:
     - create-runner-gl-api
   image: docker:27.3.1
-  tags:
-    - local-runner-amd
+  tags: [ "oci-runner-arm" ]
   services:
     - docker:27.3.1-dind
   variables:
