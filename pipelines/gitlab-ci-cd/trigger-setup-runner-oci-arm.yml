@@ -212,8 +212,8 @@ check-startup-script:
 
 create-runner-gl-api:
   stage: check-infra
-  needs:
-    - delete-old-runner-gl-api
+#  needs:
+#    - delete-old-runner-gl-api
   image: docker:27.3.1
   tags: [ "local-runner-amd" ]
   services:
