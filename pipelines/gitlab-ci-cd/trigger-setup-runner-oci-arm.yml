@@ -95,10 +95,11 @@ include:
 #      --form "value=$INSTANCE_PUBLIC_IP" \
 #      "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/RUNNER_IP_OCI_ARM" \
 #      > /dev/null 2>&1
-#    - docker rm -f $(docker ps -a -q) > /dev/null 2>&1
+#    - docker rm -f $(docker ps -a -q) > /dev/null 2>&1 
 
 get-instance-ip-from-tf-cloud:
   stage: check-infra
+  tags: [ "local-runner-shell-amd" ]
   script:
     - |
       WORKSPACE_ID=$(curl -s \
