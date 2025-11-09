@@ -1,6 +1,7 @@
 ---
 upload-and-trigger-terraform-run:
   stage: tf-up-conf-init-run
+  tags: [ "local-runner-shell-amd" ]
   before_script:
     - sudo apt-get update && sudo apt-get install -y curl jq tar gzip
   script:
