@@ -1,14 +1,10 @@
 runner-controler-start:
   stage: runner-prepare
   # Run in jobs in all runners simultaneously
-  #parallel: 2
-  rules:
-      - if: $CI_COMMIT_BRANCH != "main"
-      - if: $CI_COMMIT_BRANCH != "dev-dk-img"
-      - if: $CI_COMMIT_BRANCH != "infra-runner-oci-arm"
+  parallel: 2
   tags:
-  #  - oci-runner-arm
-  #  - gcp-runner-amd
+    - oci-runner-arm
+    - gcp-runner-amd
   script:
     - sudo docker volume prune -af
     - sudo docker system prune -af

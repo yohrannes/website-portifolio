@@ -1,5 +1,12 @@
 
 # Google cloud provider 
+module "service-account" {
+  source  = "yohrannes/service-account/google"
+  version = "0.2.0"
+  enable_sa_resource = true
+  print_credentials = true
+  project_id = var.project_id # Required
+}
 
 module "gcp_ftier_micro_amd" {
   project_id = var.project_id # Required
@@ -18,13 +25,13 @@ module "webport_bucket" {
 
 #AWS provider
 
-module "aws_bucket" {
-  source = "./modules/bucket_aws"
-}
+#module "aws_bucket" {
+#  source = "./modules/bucket_aws"
+#}
 
-module "aws_dynamodb" {
-  source = "./modules/dynamodb_lock_state"
-}
+#module "aws_dynamodb" {
+#  source = "./modules/dynamodb_lock_state"
+#
 
 #Oracle cloud provider
 

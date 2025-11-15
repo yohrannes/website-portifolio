@@ -37,11 +37,12 @@ include:
 #      - if: $CI_COMMIT_BRANCH == "infr-cluster-oci-arm"
 
 
-#  - local: 'pipelines/gitlab-ci-cd/runner-controler.yml'
-#    rules:
-#      - if: $CI_COMMIT_BRANCH != "infra-runner-oci-arm"
-#      - if: $CI_COMMIT_BRANCH != "infr-cluster-oci-arm"
-
+  - local: 'pipelines/gitlab-ci-cd/runner-controler.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH != "infra-runner-oci-arm"
+      - if: $CI_COMMIT_BRANCH != "infr-cluster-oci-arm"
+      - if: $CI_COMMIT_BRANCH != "main"
+      - if: $CI_COMMIT_BRANCH != "dev-dk-img"
 
   - local: 'pipelines/gitlab-ci-cd/develop.yml'
     rules:
