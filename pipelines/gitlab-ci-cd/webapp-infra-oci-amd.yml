@@ -16,6 +16,8 @@ include:
 get-instance-ip-from-tf-cloud:
   stage: check-infra
   script:
+    - apk add --no-cache curl jq --quiet
+
     - |
       WORKSPACE_ID=$(curl -s \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
