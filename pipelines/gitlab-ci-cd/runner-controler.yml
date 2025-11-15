@@ -1,7 +1,7 @@
 runner-controler-start:
   stage: runner-prepare
   # Run in jobs in all runners simultaneously
-  #parallel: 2
+  parallel: 2
   tags:
     - oci-runner-arm
     - gcp-runner-amd
