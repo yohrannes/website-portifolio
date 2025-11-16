@@ -12,17 +12,19 @@ variables:
   APPLY_TRIGGER_RETRY_DELAY: 5
   TF_ROOT: ${CI_PROJECT_DIR}/iac/terraform/prod
   TF_CONFIG_FILE: "terraform-config.tar.gz"
-  
+
 include:
   - local: 'pipelines/gitlab-ci-cd/trigger-setup-runner-oci-arm.yml'
     rules:
-      - if: $CI_COMMIT_BRANCH == "infra-runner-oci-arm"
-
+      - if: $CI_COMMIT_BRANCH == "infra-runners"
 
   - local: 'pipelines/gitlab-ci-cd/runner-gcp-amd.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner-gcp-amd"
 
+  - local: 'pipelines/gitlab-ci-cd/runner-controler.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "infra-runner-oci-arm"
 
   - local: 'pipelines/gitlab-ci-cd/webapp-infra-oci-amd.yml'
     rules:
@@ -35,11 +37,6 @@ include:
 #  - local: 'pipelines/gitlab-ci-cd/oke-cluster-oci-arm.yml'
 #    rules:
 #      - if: $CI_COMMIT_BRANCH == "infr-cluster-oci-arm"
-
-
-  - local: 'pipelines/gitlab-ci-cd/runner-controler.yml'
-    rules:
-      - if: $CI_COMMIT_BRANCH == "infra-runner-oci-arm"
 
   - local: 'pipelines/gitlab-ci-cd/develop.yml'
     rules:
