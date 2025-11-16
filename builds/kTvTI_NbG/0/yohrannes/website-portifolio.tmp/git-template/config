@@ -1,0 +1,14 @@
+[init]
+	defaultBranch = none
+[fetch]
+	recurseSubmodules = false
+[credential]
+	interactive = never
+[gc]
+	autoDetach = false
+[http]
+	extraHeader = X-Gitaly-Correlation-ID: 99f93e9fc7501aa8-MIA
+[transfer]
+	bundleURI = true
+[http "https://gitlab.com"]
+	sslCAInfo = /home/yohrannes/repos-git/website-portifolio/builds/kTvTI_NbG/0/yohrannes/website-portifolio.tmp/CI_SERVER_TLS_CA_FILE
