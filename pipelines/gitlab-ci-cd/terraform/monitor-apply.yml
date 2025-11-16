@@ -1,7 +1,6 @@
 ---
 monitor-and-apply-terraform-run:
   stage: tf-plan-apply
-  tags: [ "local-runner-shell-amd" ]
   retry:
     max: 2
     when:
