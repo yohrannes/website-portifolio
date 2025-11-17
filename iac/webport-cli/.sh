@@ -34,3 +34,6 @@ docker run $INTERACTOR --name cloud-cli $REMOVE\
   -v ~/.terraform.d/credentials.tfrc.json:/root/.terraform.d/credentials.tfrc.json \
   -e PACKER_PLUGIN_PATH=~/.packer.d/plugins \
 cloud-cli $COMMAND
+
+## Coment this line bellow if you want to manage the infra just using docker.
+sudo chown $USER: ../* && echo "Repo user permissions reloaded to current user."
