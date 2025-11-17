@@ -2,7 +2,7 @@ terraform {
   cloud {
     organization = "org-website-portifolio"
     workspaces {
-      tags = ["credentials_web_port_dev", "oci_oke_web_port_prod", "web_port_dev"]
+      tags = ["credentials_google_prod", "oke_prod", "runner1_prod", "runner2_prod", "webapp_instance_prod"]
     }
   }
 
