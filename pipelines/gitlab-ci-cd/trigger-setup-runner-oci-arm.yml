@@ -97,9 +97,14 @@ include:
 #      > /dev/null 2>&1
 #    - docker rm -f $(docker ps -a -q) > /dev/null 2>&1 
 
+
+install-dependencies:
+  stage: check-infra
+  script:
+    - apt-get install -y curl jq tar gzip
+
 get-instance-ip-from-tf-cloud:
   stage: check-infra
-  tags: [ "local-runner-shell-amd" ]
   script:
     - |
       WORKSPACE_ID=$(curl -s \
@@ -155,12 +160,6 @@ check-startup-script:
   stage: check-infra
   needs:
     - get-instance-ip-from-tf-cloud
-  image: docker:27.3.1
-  tags: [ "local-runner-amd" ]
-  services:
-    - docker:27.3.1-dind
-  variables:
-    DOCKER_DRIVER: overlay2
   script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
@@ -215,15 +214,8 @@ create-runner-gl-api:
   stage: check-infra
 #  needs:
 #    - delete-old-runner-gl-api
-  image: docker:27.3.1
-  tags: [ "local-runner-amd" ]
-  services:
-    - docker:27.3.1-dind
-  variables:
-    DOCKER_DRIVER: overlay2
   before_script:
     - |
-      apk add --no-cache curl jq --quiet
       RUNNER_TOKEN=$(curl --request POST --url "https://gitlab.com/api/v4/user/runners" --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_CREATOR" --data "runner_type=project_type" --data "project_id=57493833" --data "tag_list=oci-runner-arm" --data "description=oci-runner" | jq -r '.token')
 
   script:
@@ -238,12 +230,6 @@ authorize-runner:
   stage: check-infra
   needs:
     - create-runner-gl-api
-  image: docker:27.3.1
-  tags: [ "local-runner-amd" ]
-  services:
-    - docker:27.3.1-dind
-  variables:
-    DOCKER_DRIVER: overlay2
   script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
