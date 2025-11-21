@@ -50,9 +50,9 @@ variable "tf_instance" {
   description = "The details of the compute instance"
   default = {
     display_name : "web-port-instance"
-    availability_domain : "lIpY:US-ASHBURN-AD-1"
+    availability_domain : "lIpY:US-ASHBURN-AD-3"
     assign_public_ip : true
-    image_ocid : "ocid1.image.oc1.iad.aaaaaaaawdoujywlx4pou5qgahj5qzjfgtoirryx2bggga6swosuruulmcsq" # images in https://docs.oracle.com/en-us/iaas/images/
+    image_ocid : "ocid1.image.oc1.iad.aaaaaaaaz7br7vztzzjvyfxiqbu2fumsuegfkofpyeapf7tamqxpwmyt5ygq" # images in https://docs.oracle.com/en-us/iaas/images/
     #image_ocid : "ocid1.image.oc1.iad.aaaaaaaa2bulxukxsjyv3ap3x45eueiqxxpxpsfrv6qppq7xrwtiima2c2pq" # images in https://docs.oracle.com/en-us/iaas/images/
     shape : {
       name          = "VM.Standard.E2.1.Micro"

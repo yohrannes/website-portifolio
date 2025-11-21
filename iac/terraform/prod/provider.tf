@@ -12,10 +12,6 @@ terraform {
       source  = "oracle/oci"
       version = ">= 6.31.0"
     }
-    aws = {
-      source  = "hashicorp/aws"
-      version = "~> 5.0"
-    }
     hcp = {
       source  = "hashicorp/hcp"
       version = "~> 0.106.0"
@@ -24,14 +20,14 @@ terraform {
 }
 
 provider "oci" {
-  # Will use automatically ~/.oci/config with profile DEFAULT
+  tenancy_ocid = var.oci_tenancy_ocid
+  user_ocid    = var.oci_user_ocid
+  fingerprint  = var.oci_fingerprint
+  private_key  = var.oci_private_key
+  region       = var.oci_region
 }
 
 provider "hcp" {
   client_id     = var.hcp_client_id
   client_secret = var.hcp_client_secret
-}
-
-provider "aws" {
-  region = "us-east-1"
 }
