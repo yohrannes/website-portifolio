@@ -13,9 +13,9 @@ variables:
   TF_CONFIG_FILE: "terraform-config.tar.gz"
 
 include:
-  - local: 'pipelines/gitlab-ci-cd/trigger-setup-runner-oci-arm.yml'
+  - local: 'pipelines/gitlab-ci-cd/trigger-setup-runner1.yml'
     rules:
-      - if: $CI_COMMIT_BRANCH == "infra-runners"
+      - if: $CI_COMMIT_BRANCH == "infra-runner1"
 
   - local: 'pipelines/gitlab-ci-cd/runner-gcp-amd.yml'
     rules:
