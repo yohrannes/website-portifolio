@@ -1,5 +1,5 @@
 
-# Google cloud provider 
+# Google cloud provider
 module "service-account" {
   source  = "yohrannes/service-account/google"
   version = "0.2.0"
@@ -22,16 +22,6 @@ module "webport_bucket" {
   source     = "./modules/bucket_gcp"
   project_id = var.project_id # Required
 }
-
-#AWS provider
-
-#module "aws_bucket" {
-#  source = "./modules/bucket_aws"
-#}
-
-#module "aws_dynamodb" {
-#  source = "./modules/dynamodb_lock_state"
-#
 
 #Oracle cloud provider
 
@@ -59,8 +49,10 @@ module "oci_oke_cluster_arm" {
   source         = "./modules/oci_oke_cluster_arm"
   #  ssh_public_key = file("~/.ssh/id_rsa.pub")
   fingerprint      = null
-  private_key_path = "~/.oci/oci_api_key.pem"
+#  private_key_path = "~/.oci/oci_api_key.pem"
+  private_key_path = null
   tenancy_ocid     = null
   user_ocid        = null
-  oci_profile      = "DEFAULT"
+#  oci_profile      = "DEFAULT"
+  oci_profile      = null
 }

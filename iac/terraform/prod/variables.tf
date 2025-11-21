@@ -1,19 +1,10 @@
-variable "project_id" {
-  description = "The project ID"
-  type        = string
-  default     = "website-portifolio"
-}
+
+# GENERAL VARIABLES
 
 variable "disable_ssh_port" {
   description = "Disable SSH port"
   type        = bool
   default     = false
-}
-
-variable "availability_domain" {
-  description = "The availability domain to use for the resources"
-  type        = string
-  default     = "lIpY:US-ASHBURN-AD-3"
 }
 
 variable "ssh_public_key" {
@@ -22,7 +13,7 @@ variable "ssh_public_key" {
   sensitive   = true
 }
 
-# PACKER CREDENTIALS ON TERRAFORM CLOUD VARIABLES
+# HCP PACKER CREDENTIALS
 
 variable "hcp_client_id" {
   description = "HCP Client ID"
@@ -36,7 +27,29 @@ variable "hcp_client_secret" {
   sensitive   = true
 }
 
-# PACKER CREDENTIALS
+# GCP CREDENTIALS
+
+variable "project_id" {
+  description = "The project ID"
+  type        = string
+  default     = "website-portifolio"
+}
+
+# OCI CREDENTIALS
+
+variable "availability_domain" {
+  description = "The availability domain to use for the resources"
+  type        = string
+  default     = "lIpY:US-ASHBURN-AD-3"
+}
+
+variable "oci_tenancy_ocid" { sensitive = true }
+variable "oci_user_ocid" { sensitive = true }
+variable "oci_fingerprint" { sensitive = true }
+variable "oci_private_key" { sensitive = true }
+variable "oci_region" { sensitive = true }
+
+# OCI PACKER CREDENTIALS
 
 variable "packer_oci_config_content" {
   description = "Content of the OCI config file"

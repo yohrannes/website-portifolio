@@ -1,0 +1,8 @@
+oci compute image list \
+  --compartment-id ocid1.tenancy.oc1..aaaaaaaawb7j4hswwgcjncr2ezu5mptw6o5n6h7ixvef5lzqsqkbtmwk44aq \
+  --operating-system "Ubuntu" \
+  --shape "VM.Standard.E2.1.Micro" \
+  --sort-by TIMECREATED \
+  --sort-order DESC \
+  --region us-ashburn-1 \
+  --all > oci_images_ashburn_amd_ubuntu.json
