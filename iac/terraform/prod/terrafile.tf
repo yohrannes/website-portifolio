@@ -8,7 +8,7 @@ module "service-account" {
   project_id = var.project_id # Required
 }
 
-module "gcp_ftier_micro_amd" {
+module "runner2" {
   project_id = var.project_id # Required
   source     = "yohrannes/e2-micro-free-tier/google"
   version    = "v8.6.13"
@@ -25,9 +25,9 @@ module "webport_bucket" {
 
 #Oracle cloud provider
 
-module "oci_aftier_flex_arm" {
+module "runner1" {
   ssh_public_key = var.ssh_public_key
-  source         = "./modules/oci_aftier_flex_arm"
+  source         = "./modules/st-e2-1-micro-aways-free"
 }
 
 module "oci_aftier_micro_amd" {
