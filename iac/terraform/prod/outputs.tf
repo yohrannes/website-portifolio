@@ -14,16 +14,16 @@ output "oci_aftier_micro_amd_pub_ip" {
 
 # OCI AFTIER FLEX ARM OUTPUTS
 
-output "instance_oracle_arm_pub_ip" {
+output "runner1_pub_ip" {
   description = "The public IP address of the OCI AFTIER FLEX ARM (Gitlab Runner instance)"
-  value = module.oci_aftier_flex_arm.instance_public_ip
+  value = module.runner1.instance_public_ip
 }
 
 # GCP FTIER MICRO AMD OUTPUTS
 
-output "gcp_instance_amd_public_ip" {
+output "runner2_pub_ip" {
   description = "The public IP address of the GCP FTIER MICRO AMD (Gitlab Runner instance)"
-  value = module.gcp_ftier_micro_amd.instance_public_ip
+  value = module.runner2.instance_public_ip
 }
 
 # OCI OKE CLUSTER ARM OUTPUTS
