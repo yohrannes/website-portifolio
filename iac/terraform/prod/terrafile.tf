@@ -1,11 +1,11 @@
 
 # Google cloud provider
 module "service-account" {
-  source  = "yohrannes/service-account/google"
-  version = "0.2.0"
+  source             = "yohrannes/service-account/google"
+  version            = "0.2.0"
   enable_sa_resource = true
-  print_credentials = true
-  project_id = var.project_id # Required
+  print_credentials  = true
+  project_id         = var.project_id # Required
 }
 
 module "runner2" {
@@ -48,11 +48,11 @@ module "oci_oke_cluster_arm" {
   ssh_public_key = var.ssh_public_key
   source         = "./modules/oci_oke_cluster_arm"
   #  ssh_public_key = file("~/.ssh/id_rsa.pub")
-  fingerprint      = null
-#  private_key_path = "~/.oci/oci_api_key.pem"
+  fingerprint = null
+  #  private_key_path = "~/.oci/oci_api_key.pem"
   private_key_path = null
   tenancy_ocid     = null
   user_ocid        = null
-#  oci_profile      = "DEFAULT"
-  oci_profile      = null
+  #  oci_profile      = "DEFAULT"
+  oci_profile = null
 }
