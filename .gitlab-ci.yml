@@ -17,9 +17,9 @@ include:
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner1"
 
-  - local: 'pipelines/gitlab-ci-cd/runner-gcp-amd.yml'
+  - local: 'pipelines/gitlab-ci-cd/trigger-runner2.yml'
     rules:
-      - if: $CI_COMMIT_BRANCH == "infra-runner-gcp-amd"
+      - if: $CI_COMMIT_BRANCH == "infra-runner2"
 
   - local: 'pipelines/gitlab-ci-cd/runner-controler.yml'
     rules:

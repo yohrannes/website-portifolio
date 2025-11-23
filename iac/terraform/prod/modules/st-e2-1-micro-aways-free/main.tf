@@ -17,7 +17,6 @@ resource "oci_core_vcn" "tf_vcn" {
   display_name = var.tf_vcn.display_name
 }
 
-
 resource "oci_core_subnet" "tf_subnet" {
   #Required
   compartment_id = oci_identity_compartment.web-port-comp.id
@@ -123,7 +122,7 @@ resource "oci_core_security_list" "tf_sec_list" {
     source   = "0.0.0.0/0"
     icmp_options {
       type = 8
-      code = 0 #Code type for Request (ping)
+      code = 0
     }
   }
 
