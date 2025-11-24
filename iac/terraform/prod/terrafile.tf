@@ -28,6 +28,8 @@ module "webport_bucket" {
 module "runner1" {
   ssh_public_key = var.ssh_public_key
   source         = "./modules/st-e2-1-micro-aways-free"
+  compartment_id      = var.oci_tenancy_ocid
+  compartment_name    = "runner1-comp"
 }
 
 module "oci_aftier_micro_amd" {
