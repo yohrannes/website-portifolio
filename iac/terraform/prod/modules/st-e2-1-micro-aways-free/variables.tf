@@ -1,13 +1,11 @@
 variable "compartment_id" {
   description = "The OCID of the compartment"
   type        = string
-  default     = "ocid1.tenancy.oc1..aaaaaaaawb7j4hswwgcjncr2ezu5mptw6o5n6h7ixvef5lzqsqkbtmwk44aq" # Main compartment
 }
 
 variable "compartment_name" {
   description = "Compartment Name"
   type        = string
-  default     = "web-port-comp"
 }
 
 variable "compartment_description" {
@@ -27,7 +25,7 @@ variable "tf_vcn" {
 variable "tf_subnet" {
   description = "The details of the subnet"
   default = {
-    display_name : "WEB_PORT_SUBNET"
+    display_name : "RUNNER1_SUBNET"
     is_public : true
     route_table : {
       display_name = "tf_web_route_table"
@@ -49,7 +47,7 @@ variable "tf_int_gateway" {
 variable "tf_instance" {
   description = "The details of the compute instance"
   default = {
-    display_name : "web-port-instance"
+    display_name : "runner1"
     availability_domain : "lIpY:US-ASHBURN-AD-3"
     assign_public_ip : true
     image_ocid : "ocid1.image.oc1.iad.aaaaaaaaz7br7vztzzjvyfxiqbu2fumsuegfkofpyeapf7tamqxpwmyt5ygq" # images in https://docs.oracle.com/en-us/iaas/images/

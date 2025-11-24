@@ -88,25 +88,25 @@ resource "oci_core_security_list" "tf_sec_list" {
   vcn_id         = oci_core_vcn.tf_vcn.id
   display_name   = "Public Security List"
 
-  ingress_security_rules {
-    protocol = "6" # TCP
-    source   = "0.0.0.0/0"
-
-    # 80 (HTTP)
-    tcp_options {
-      min = 80
-      max = 80
-    }
-  }
-
-  ingress_security_rules {
-    protocol = "6"
-    source   = "0.0.0.0/0"
-    tcp_options {
-      min = 443
-      max = 443
-    }
-  }
+#  ingress_security_rules {
+#    protocol = "6" # TCP
+#    source   = "0.0.0.0/0"
+#
+#    # 80 (HTTP)
+#    tcp_options {
+#      min = 80
+#      max = 80
+#    }
+#  }
+#
+#  ingress_security_rules {
+#    protocol = "6"
+#    source   = "0.0.0.0/0"
+#    tcp_options {
+#      min = 443
+#      max = 443
+#    }
+#  }
 
   ingress_security_rules {
     protocol = "6"

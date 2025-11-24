@@ -108,26 +108,33 @@ check-startup-script:
       echo "ERROR: Timeout waiting for startup script"
       exit 1
 
-##### NOT WORKING FIXXME
 delete-old-runner-gl-api:
   stage: check-infra
-  before_script:
-    - |
-      RUNNER_ID=$(curl --request POST \
-        --url "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/runners" \
-        --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_CREATOR" \
-        --data "runner_type=project_type" \
-        --data "project_id=$CI_PROJECT_ID" \
-        --data "tag_list=runner1" | jq -r '.id')
-
-    - echo "RUNNER_ID=$RUNNER_ID"
-
   script:
     - |
-      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
-      --request DELETE \
-      "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/runners/$RUNNER_ID" \
-#      > /dev/null 2>&1
+      RUNNERS=$(curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/runners")
+      
+      RUNNER_ID=$(echo "$RUNNERS" | jq -r '.[] | select(.description == "runner1") | .id')
+      
+      if [ -z "$RUNNER_ID" ] || [ "$RUNNER_ID" = "null" ]; then
+        echo "No runner found with description 'runner1'"
+        exit 0
+      fi
+      
+      echo "Found runner ID: $RUNNER_ID"
+      
+      HTTP_CODE=$(curl --silent --output /dev/null --write-out "%{http_code}" \
+        --request DELETE \
+        --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
+        "https://gitlab.com/api/v4/runners/$RUNNER_ID")
+      
+      if [ "$HTTP_CODE" = "204" ] || [ "$HTTP_CODE" = "200" ]; then
+        echo "Runner deleted successfully"
+      else
+        echo "Failed to delete runner. HTTP code: $HTTP_CODE"
+        exit 1
+      fi
 
 create-runner-gl-api:
   stage: check-infra
