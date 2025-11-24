@@ -10,7 +10,7 @@ include:
   - local: 'pipelines/gitlab-ci-cd/terraform/monitor-apply.yml'
 
 install-dependencies:
-  stage: check-infra
+  stage: runner-prepare
   script:
     - apt-get install -y curl jq tar gzip
 
