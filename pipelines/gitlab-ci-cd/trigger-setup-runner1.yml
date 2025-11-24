@@ -73,28 +73,40 @@ check-startup-script:
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - |
-      sleep 30;
-        while true; do
-          ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_RUNNER1_IP "
-            while true; do
-              if [ -e /var/log/startup-script.log ]; then
-                  if [ -r /var/log/startup-script.log ]; then
-                      last_line=\$(tail -n1 /var/log/startup-script.log 2>/dev/null)
-                      if [ \"\$last_line\" = 'startup-script-finished' ]; then
-                          echo 'Startup script finished!';
-                          exit 0;
-                      fi
-                  else
-                      echo '/var/log/startup-script.log exists but is not readable.';
-                  fi
-              else
-                  echo '/var/log/startup-script.log does not exist yet.';
-              fi
-              sleep 1
-            done
-          " && break || echo 'Retrying connection...';
-          sleep 5;
-        done
+      echo "Waiting for instance to be ready..."
+      sleep 30
+      
+      MAX_ATTEMPTS=60
+      ATTEMPT=0
+      
+      while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+        ATTEMPT=$((ATTEMPT + 1))
+        echo "Attempt $ATTEMPT of $MAX_ATTEMPTS"
+        
+        if ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -i ~/.ssh/id_rsa ubuntu@$PROD_RUNNER1_IP "
+          if [ -f /var/log/startup-script.log ] && [ -r /var/log/startup-script.log ]; then
+            last_line=\$(tail -n1 /var/log/startup-script.log 2>/dev/null)
+            if [ \"\$last_line\" = 'startup-script-finished' ]; then
+              echo 'Startup script finished successfully'
+              exit 0
+            else
+              echo 'Still running. Last line:' \$last_line
+              exit 1
+            fi
+          else
+            echo 'Log file not available yet'
+            exit 1
+          fi
+        "; then
+          echo "Instance is ready!"
+          exit 0
+        fi
+        
+        sleep 10
+      done
+      
+      echo "ERROR: Timeout waiting for startup script"
+      exit 1
 
 ##### NOT WORKING FIXXME
 delete-old-runner-gl-api:
