@@ -28,8 +28,8 @@ variable "tf_subnet" {
     display_name : "RUNNER1_SUBNET"
     is_public : true
     route_table : {
-      display_name = "tf_web_route_table"
-      description  = "tf_web_route_table"
+      display_name = "runner1_route_table"
+      description  = "runner1_route_table"
     }
   }
 }
