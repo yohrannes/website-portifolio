@@ -1,3 +1,3 @@
 output "instance_public_ip" {
-  value = oci_core_instance.tf_instance.public_ip
+  value = oci_core_instance.instance_specs.public_ip
 }

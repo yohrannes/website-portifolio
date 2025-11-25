@@ -43,11 +43,34 @@ variable "availability_domain" {
   default     = "lIpY:US-ASHBURN-AD-3"
 }
 
-variable "oci_tenancy_ocid" { sensitive = true }
-variable "oci_user_ocid" { sensitive = true }
-variable "oci_fingerprint" { sensitive = true }
-variable "oci_private_key" { sensitive = true }
-variable "oci_region" { sensitive = true }
+variable "oci_tenancy_ocid" {
+  description = "The OCID of the OCI tenancy"
+  type        = string
+  sensitive   = true
+}
+
+variable "oci_user_ocid" {
+  description = "The OCID of the OCI user"
+  type        = string
+  sensitive   = true
+}
+
+variable "oci_fingerprint" {
+  description = "The fingerprint of the OCI API key"
+  type        = string
+  sensitive   = true
+}
+
+variable "oci_private_key" {
+  description = "The OCI API private key content"
+  type        = string
+  sensitive   = true
+}
+
+variable "oci_region" {
+  description = "The OCI region"
+  sensitive   = true
+}
 
 # OCI PACKER CREDENTIALS
 
