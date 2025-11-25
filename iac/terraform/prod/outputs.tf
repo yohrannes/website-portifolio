@@ -24,25 +24,25 @@ output "oci_aftier_micro_amd_pub_ip" {
 
 # OKE CLUSTER ARM OUTPUTS
 
-output "oci_oke_cluster_arm_compartment_id" {
-  description = "The compartment ID where the OKE cluster is deployed"
-  value       = module.oci_oke_cluster_arm.compartment_id
-}
-
-output "oci_core_instances_1" {
-  description = "The list of OCIDs for the first set of compute instances in the OKE cluster"
-  value       = module.oci_oke_cluster_arm.oci_core_instances_1
-}
-
-output "oci_core_instances_2" {
-  description = "The list of OCIDs for the second set of compute instances in the OKE cluster"
-  value       = module.oci_oke_cluster_arm.oci_core_instances_2
-}
-
-output "oci_core_instances_3" {
-  description = "The list of OCIDs for the third set of compute instances in the OKE cluster"
-  value       = module.oci_oke_cluster_arm.oci_core_instances_3
-}
+#output "oci_oke_cluster_arm_compartment_id" {
+#  description = "The compartment ID where the OKE cluster is deployed"
+#  value       = module.oci_oke_cluster_arm.compartment_id
+#}
+#
+#output "oci_core_instances_1" {
+#  description = "The list of OCIDs for the first set of compute instances in the OKE cluster"
+#  value       = module.oci_oke_cluster_arm.oci_core_instances_1
+#}
+#
+#output "oci_core_instances_2" {
+#  description = "The list of OCIDs for the second set of compute instances in the OKE cluster"
+#  value       = module.oci_oke_cluster_arm.oci_core_instances_2
+#}
+#
+#output "oci_core_instances_3" {
+#  description = "The list of OCIDs for the third set of compute instances in the OKE cluster"
+#  value       = module.oci_oke_cluster_arm.oci_core_instances_3
+#}
 
 ## PACKER OUTPUTS
 
@@ -56,15 +56,15 @@ output "oci_core_instances_3" {
 #  value = module.oci_aftier_micro_amd.oci_packer_subnet_ocid
 #}
 
-output "packer_compartment_ocid" {
-  description = "The OCID of the compartment used for Packer operations"
-  value       = module.oci_aftier_micro_amd.packer_compartment_ocid
-}
+#output "packer_compartment_ocid" {
+#  description = "The OCID of the compartment used for Packer operations"
+#  value       = module.oci_aftier_micro_amd.packer_compartment_ocid
+#}
 
-output "packer_subnet_ocid" {
-  description = "The OCID of the subnet used for Packer operations"
-  value       = module.oci_aftier_micro_amd.packer_subnet_ocid
-}
+#output "packer_subnet_ocid" {
+#  description = "The OCID of the subnet used for Packer operations"
+#  value       = module.oci_aftier_micro_amd.packer_subnet_ocid
+#}
 
 #output "packer_user_ocid" {
 #  value     = module.oci_aftier_micro_amd.packer_user_ocid
@@ -95,9 +95,9 @@ output "packer_subnet_ocid" {
 #  value = module.oci_aftier_micro_amd.packer_oci_config_path
 #}
 
-output "packer_image_name" {
-  value = module.oci_aftier_micro_amd.packer_image_name
-}
+#output "packer_image_name" {
+#  value = module.oci_aftier_micro_amd.packer_image_name
+#}
 
 #output "debug_all_images" {
 #  value = module.oci_aftier_micro_amd.debug_all_images
@@ -107,6 +107,6 @@ output "packer_image_name" {
 #  value = module.oci_aftier_micro_amd.debug_filtered_images
 #}
 
-output "packer_instructions" {
-  value = module.oci_aftier_micro_amd.packer_instructions
-}
+#output "packer_instructions" {
+#  value = module.oci_aftier_micro_amd.packer_instructions
+#}

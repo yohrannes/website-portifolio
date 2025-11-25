@@ -6,6 +6,7 @@ variable "compartment_id" {
 variable "compartment_name" {
   description = "Compartment Name"
   type        = string
+  default     = "runner1-comp"
 }
 
 variable "compartment_description" {
@@ -14,16 +15,28 @@ variable "compartment_description" {
   default     = "Compartmant description ......"
 }
 
-variable "tf_vcn" {
+variable "vcn" {
   description = "The details of VCN."
+  type = object({
+    cidr_blocks  = list(string)
+    display_name = string
+  })
   default = {
     cidr_blocks : ["10.1.0.0/16"]
     display_name : "tf_web_vcn"
   }
 }
 
-variable "tf_subnet" {
+variable "subnet" {
   description = "The details of the subnet"
+  type = object({
+    display_name = string
+    is_public    = bool
+    route_table = object({
+      display_name = string
+      description  = string
+    })
+  })
   default = {
     display_name : "RUNNER1_SUBNET"
     is_public : true
@@ -34,8 +47,12 @@ variable "tf_subnet" {
   }
 }
 
-variable "tf_int_gateway" {
+variable "int_gateway" {
   description = "The details of the internet gateway"
+  type = object({
+    display_name   = string
+    ig_destination = string
+  })
   default = {
     display_name : "INT_GATEWAY"
     ig_destination = "0.0.0.0/0"
@@ -44,8 +61,19 @@ variable "tf_int_gateway" {
 
 # Needs to be same region of the cluster, same image_ocid of cluster nodes + check if that was really in aways free plan
 
-variable "tf_instance" {
+variable "instance_specs" {
   description = "The details of the compute instance"
+  type = object({
+    display_name        = string
+    availability_domain = string
+    assign_public_ip    = bool
+    image_ocid          = string
+    shape = object({
+      name          = string
+      ocpus         = number
+      memory_in_gbs = number
+    })
+  })
   default = {
     display_name : "runner1"
     availability_domain : "lIpY:US-ASHBURN-AD-3"

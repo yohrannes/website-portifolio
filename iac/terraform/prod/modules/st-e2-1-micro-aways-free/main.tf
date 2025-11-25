@@ -1,5 +1,5 @@
 locals {
-  cird_block_subnets = cidrsubnet(oci_core_vcn.tf_vcn.cidr_blocks[0], 8, 0)
+  cird_block_subnets = cidrsubnet(oci_core_vcn.vcn.cidr_blocks[0], 8, 0)
 }
 
 resource "oci_identity_compartment" "web-port-comp" {
@@ -9,56 +9,56 @@ resource "oci_identity_compartment" "web-port-comp" {
   name           = var.compartment_name
 }
 
-resource "oci_core_vcn" "tf_vcn" {
+resource "oci_core_vcn" "vcn" {
   #Required
   compartment_id = oci_identity_compartment.web-port-comp.id
-  cidr_blocks    = var.tf_vcn.cidr_blocks
+  cidr_blocks    = var.vcn.cidr_blocks
   #Optional
-  display_name = var.tf_vcn.display_name
+  display_name = var.vcn.display_name
 }
 
-resource "oci_core_subnet" "tf_subnet" {
+resource "oci_core_subnet" "subnet" {
   #Required
   compartment_id = oci_identity_compartment.web-port-comp.id
-  vcn_id         = oci_core_vcn.tf_vcn.id
-  #cidr_block     = var.tf_subnet.cidr_block
+  vcn_id         = oci_core_vcn.vcn.id
+  #cidr_block     = var.subnet.cidr_block
   cidr_block = local.cird_block_subnets
   #Optional
   security_list_ids          = [oci_core_security_list.tf_sec_list.id]
-  display_name               = var.tf_subnet.display_name
-  prohibit_public_ip_on_vnic = !var.tf_subnet.is_public
-  prohibit_internet_ingress  = !var.tf_subnet.is_public
+  display_name               = var.subnet.display_name
+  prohibit_public_ip_on_vnic = !var.subnet.is_public
+  prohibit_internet_ingress  = !var.subnet.is_public
 }
 
-resource "oci_core_internet_gateway" "tf_int_gateway" {
+resource "oci_core_internet_gateway" "int_gateway" {
   compartment_id = oci_identity_compartment.web-port-comp.id
-  vcn_id         = oci_core_vcn.tf_vcn.id
-  display_name   = var.tf_int_gateway.display_name
+  vcn_id         = oci_core_vcn.vcn.id
+  display_name   = var.int_gateway.display_name
 }
 
 resource "oci_core_default_route_table" "tf_route_table" {
   compartment_id             = oci_identity_compartment.web-port-comp.id
-  manage_default_resource_id = oci_core_vcn.tf_vcn.default_route_table_id
+  manage_default_resource_id = oci_core_vcn.vcn.default_route_table_id
   # Optional
-  display_name = var.tf_subnet.route_table.display_name
+  display_name = var.subnet.route_table.display_name
   dynamic "route_rules" {
     for_each = [true]
     content {
-      destination       = var.tf_int_gateway.ig_destination
-      description       = var.tf_subnet.route_table.description
-      network_entity_id = oci_core_internet_gateway.tf_int_gateway.id
+      destination       = var.int_gateway.ig_destination
+      description       = var.subnet.route_table.description
+      network_entity_id = oci_core_internet_gateway.int_gateway.id
     }
   }
 }
 
-resource "oci_core_instance" "tf_instance" {
+resource "oci_core_instance" "instance_specs" {
   compartment_id      = oci_identity_compartment.web-port-comp.id
-  shape               = var.tf_instance.shape.name
-  availability_domain = var.tf_instance.availability_domain
-  display_name        = var.tf_instance.display_name
+  shape               = var.instance_specs.shape.name
+  availability_domain = var.instance_specs.availability_domain
+  display_name        = var.instance_specs.display_name
 
   source_details {
-    source_id   = var.tf_instance.image_ocid
+    source_id   = var.instance_specs.image_ocid
     source_type = "image"
   }
 
@@ -66,14 +66,14 @@ resource "oci_core_instance" "tf_instance" {
     for_each = [true]
     content {
       #Optional
-      memory_in_gbs = var.tf_instance.shape.memory_in_gbs
-      ocpus         = var.tf_instance.shape.ocpus
+      memory_in_gbs = var.instance_specs.shape.memory_in_gbs
+      ocpus         = var.instance_specs.shape.ocpus
     }
   }
 
   create_vnic_details {
-    subnet_id        = oci_core_subnet.tf_subnet.id
-    assign_public_ip = var.tf_instance.assign_public_ip
+    subnet_id        = oci_core_subnet.subnet.id
+    assign_public_ip = var.instance_specs.assign_public_ip
   }
 
   metadata = {
@@ -85,7 +85,7 @@ resource "oci_core_instance" "tf_instance" {
 
 resource "oci_core_security_list" "tf_sec_list" {
   compartment_id = oci_identity_compartment.web-port-comp.id
-  vcn_id         = oci_core_vcn.tf_vcn.id
+  vcn_id         = oci_core_vcn.vcn.id
   display_name   = "Public Security List"
 
 #  ingress_security_rules {
