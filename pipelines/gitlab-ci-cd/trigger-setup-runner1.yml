@@ -97,20 +97,23 @@ check-startup-script:
             echo 'NOT_READY'
             exit 1
           fi
-        " 2>&1)
+        " 2>&1 || true)
         
         SSH_EXIT_CODE=$?
         
         echo "SSH output: $SSH_OUTPUT"
-        echo "SSH exit code: $SSH_EXIT_CODE"
         
-        if [ "$SSH_EXIT_CODE" -eq 0 ] && echo "$SSH_OUTPUT" | grep -q "SUCCESS"; then
+        if echo "$SSH_OUTPUT" | grep -q "SUCCESS"; then
           echo "Instance is ready!"
           exit 0
         fi
         
-        if echo "$SSH_OUTPUT" | grep -q "Connection reset\|Broken pipe\|Connection refused"; then
-          echo "Connection issue detected, retrying..."
+        if echo "$SSH_OUTPUT" | grep -q "RUNNING"; then
+          echo "Startup script still running"
+        elif echo "$SSH_OUTPUT" | grep -q "NOT_READY"; then
+          echo "Log file not available yet"
+        else
+          echo "Connection issue or other error, retrying..."
         fi
         
         sleep 10
