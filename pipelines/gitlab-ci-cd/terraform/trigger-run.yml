@@ -1,6 +1,6 @@
 ---
-upload-and-trigger-terraform-run:
-  stage: tf-up-conf-init-run
+trigger-terraform-run:
+  stage: tf-run
   before_script:
     - apt-get install -y curl jq tar gzip
 #    - sudo apt-get update && sudo apt-get install -y curl jq tar gzip

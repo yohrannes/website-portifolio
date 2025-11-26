@@ -6,8 +6,8 @@ variables:
   TF_TARGET_ADDRS: 'module.runner1'
 
 include:
-  - local: 'pipelines/gitlab-ci-cd/terraform/upload-trigger-run.yml'
-  - local: 'pipelines/gitlab-ci-cd/terraform/monitor-apply.yml'
+  - local: 'pipelines/gitlab-ci-cd/terraform/trigger-run.yml'
+  - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
 
 install-dependencies:
   stage: runner-prepare
@@ -83,23 +83,34 @@ check-startup-script:
         ATTEMPT=$((ATTEMPT + 1))
         echo "Attempt $ATTEMPT of $MAX_ATTEMPTS"
         
-        if ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -i ~/.ssh/id_rsa ubuntu@$PROD_RUNNER1_IP "
+        SSH_OUTPUT=$(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o ServerAliveInterval=5 -i ~/.ssh/id_rsa ubuntu@$PROD_RUNNER1_IP "
           if [ -f /var/log/startup-script.log ] && [ -r /var/log/startup-script.log ]; then
             last_line=\$(tail -n1 /var/log/startup-script.log 2>/dev/null)
             if [ \"\$last_line\" = 'startup-script-finished' ]; then
-              echo 'Startup script finished successfully'
+              echo 'SUCCESS'
               exit 0
             else
-              echo 'Still running. Last line:' \$last_line
+              echo 'RUNNING'
               exit 1
             fi
           else
-            echo 'Log file not available yet'
+            echo 'NOT_READY'
             exit 1
           fi
-        "; then
+        " 2>&1)
+        
+        SSH_EXIT_CODE=$?
+        
+        echo "SSH output: $SSH_OUTPUT"
+        echo "SSH exit code: $SSH_EXIT_CODE"
+        
+        if [ "$SSH_EXIT_CODE" -eq 0 ] && echo "$SSH_OUTPUT" | grep -q "SUCCESS"; then
           echo "Instance is ready!"
           exit 0
+        fi
+        
+        if echo "$SSH_OUTPUT" | grep -q "Connection reset\|Broken pipe\|Connection refused"; then
+          echo "Connection issue detected, retrying..."
         fi
         
         sleep 10

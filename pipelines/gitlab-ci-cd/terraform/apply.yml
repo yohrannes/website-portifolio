@@ -1,6 +1,6 @@
 ---
-monitor-and-apply-terraform-run:
-  stage: tf-plan-apply
+terraform-apply:
+  stage: tf-apply
   retry:
     max: 2
     when:
