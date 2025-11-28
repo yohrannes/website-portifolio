@@ -1,10 +1,11 @@
 ---
 variables:
-  TF_TARGET_ADDRS: 'module.gcp_ftier_micro_amd'
+  TF_WORKSPACE: "runner2_prod"
+  TF_TARGET_ADDRS: 'module.runner2'
 
 include:
-  - local: 'pipelines/gitlab-ci-cd/terraform/upload-trigger-run.yml'
-  - local: 'pipelines/gitlab-ci-cd/terraform/monitor-apply.yml'
+  - local: 'pipelines/gitlab-ci-cd/terraform/trigger-run.yml'
+  - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
 
 get-instance-ip-from-tf-cloud:
   stage: check
@@ -29,92 +30,133 @@ get-instance-ip-from-tf-cloud:
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
         "https://app.terraform.io/api/v2/state-versions/$STATE_VERSION_ID/outputs" \
-        | jq -r '.data[] | select(.attributes.name == "gcp_instance_amd_public_ip") | .attributes.value')
+        | jq -r '.data[] | select(.attributes.name == "runner2_pub_ip") | .attributes.value')
     
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --request PUT \
         --form "value=$INSTANCE_PUBLIC_IP" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GCP_RUNNER_IP" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_RUNNER2_IP" \
         > /dev/null 2>&1
 
 check-startup-script:
-  stage: check
+  stage: check-infra
   needs:
     - get-instance-ip-from-tf-cloud
-  image: docker:27.3.1
-  services:
-    - docker:27.3.1-dind
   script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - |
-      timeout_start=$(date +%s)
-      timeout_max=1800
-      sleep 30;
-        while true; do
-          ssh -i ~/.ssh/id_rsa -o ConnectTimeout=15 -o StrictHostKeyChecking=no ubuntu@$GCP_RUNNER_IP "
-            while [ \$((\$(date +%s) - $timeout_start)) -lt $timeout_max ]; do
-              if [ -e /var/log/startup-script.log ]; then
-                  if [ -r /var/log/startup-script.log ]; then
-                      last_line=\$(tail -n1 /var/log/startup-script.log 2>/dev/null)
-                      if [ \"\$last_line\" = 'startup-script-finished' ]; then
-                          echo 'Startup script finished!';
-                          exit 0;
-                      fi
-                  else
-                      echo '/var/log/startup-script.log exists but is not readable.';
-                  fi
-              else
-                  echo '/var/log/startup-script.log does not exist yet.';
-              fi
-              sleep 1
-            done
-          " && break || echo 'Retrying connection...';
-          if [ $(( $(date +%s) - $timeout_start )) -ge $timeout_max ]; then
-            echo 'Timeout after 30 minutes'
+      echo "Waiting for instance to be ready..."
+      sleep 30
+      
+      MAX_ATTEMPTS=60
+      ATTEMPT=0
+      
+      while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
+        ATTEMPT=$((ATTEMPT + 1))
+        echo "Attempt $ATTEMPT of $MAX_ATTEMPTS"
+        
+        SSH_OUTPUT=$(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o ServerAliveInterval=5 -i ~/.ssh/id_rsa ubuntu@$PROD_RUNNER1_IP "
+          if [ -f /var/log/startup-script.log ] && [ -r /var/log/startup-script.log ]; then
+            last_line=\$(tail -n1 /var/log/startup-script.log 2>/dev/null)
+            if [ \"\$last_line\" = 'startup-script-finished' ]; then
+              echo 'SUCCESS'
+              exit 0
+            else
+              echo 'RUNNING'
+              exit 1
+            fi
+          else
+            echo 'NOT_READY'
             exit 1
           fi
-          sleep 5
-        done
+        " 2>&1 || true)
+        
+        SSH_EXIT_CODE=$?
+        
+        echo "SSH output: $SSH_OUTPUT"
+        
+        if echo "$SSH_OUTPUT" | grep -q "SUCCESS"; then
+          echo "Instance is ready!"
+          exit 0
+        fi
+        
+        if echo "$SSH_OUTPUT" | grep -q "RUNNING"; then
+          echo "Startup script still running"
+        elif echo "$SSH_OUTPUT" | grep -q "NOT_READY"; then
+          echo "Log file not available yet"
+        else
+          echo "Connection issue or other error, retrying..."
+        fi
+        
+        sleep 10
+      done
+      
+      echo "ERROR: Timeout waiting for startup script"
+      exit 1
 
-create-runner-gl-api:
-  stage: check
-  needs:
-    - get-instance-ip-from-tf-cloud
-  image: docker:27.3.1
-  services:
-    - docker:27.3.1-dind
+delete-old-runner-gl-api:
+  stage: check-infra
   script:
     - |
-      sudo apt-get install -y curl jq
-      RUNNER_TOKEN=$(curl --request POST --url "https://gitlab.com/api/v4/user/runners" --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_CREATOR" --data "runner_type=project_type" --data "project_id=57493833" --data "tag_list=gcp-runner-amd" --data "description=gcp-runner" | jq -r '.token')
+      RUNNERS=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/runners")
+      
+      RUNNER_ID=$(echo "$RUNNERS" | jq -r '.[] | select(.description == "runner2") | .id')
+      
+      if [ -z "$RUNNER_ID" ] || [ "$RUNNER_ID" = "null" ]; then
+        echo "No runner found with description 'runner1'"
+        exit 0
+      fi
+      
+      echo "Found runner ID: $RUNNER_ID"
+      
+      HTTP_CODE=$(curl -s --output /dev/null --write-out "%{http_code}" \
+        --request DELETE \
+        --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
+        "https://gitlab.com/api/v4/runners/$RUNNER_ID")
+      
+      if [ "$HTTP_CODE" = "204" ] || [ "$HTTP_CODE" = "200" ]; then
+        echo "Runner deleted successfully"
+      else
+        echo "Failed to delete runner. HTTP code: $HTTP_CODE"
+        exit 1
+      fi
+
+create-runner-gl-api:
+  stage: check-infra
+  before_script:
     - |
-      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+      RUNNER_TOKEN=$(curl -s --request POST --url "https://gitlab.com/api/v4/user/runners" \
+        --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
+        --data "runner_type=project_type" \
+        --data "project_id=$CI_PROJECT_ID" \
+        --data "tag_list=runner2" \
+        --data "description=runner2" | jq -r '.token')
+  script:
+    - |
+      curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --request PUT \
         --form "value=$RUNNER_TOKEN" \
-        --form "tag_list=gcp-runner-amd" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER_TOKEN_CREATED" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER2_TOKEN_CREATED" \
         > /dev/null 2>&1
 
 authorize-runner:
-  stage: check
+  stage: check-infra
   needs:
-    - create-runner-gl-api
-  image: docker:27.3.1
-  services:
-    - docker:27.3.1-dind
+    - check-startup-script
   script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$GCP_RUNNER_IP "
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_RUNNER1_IP "
         sudo gitlab-runner register \
         --non-interactive \
         --url "https://gitlab.com/" \
-        --token "$GITLAB_RUNNER_TOKEN_CREATED" \
+        --token "$GITLAB_RUNNER2_TOKEN_CREATED" \
         --executor "shell" \
         --description "shell-runner-with-sudo"
         sudo EDITOR='tee -a' visudo <<EOF
@@ -129,9 +171,11 @@ authorize-runner:
       [[runners]]
       name = "shell-runner"
       url = "https://gitlab.com/"
-      token = "$GITLAB_RUNNER_TOKEN_CREATED"
+      token = "$GITLAB_RUNNER2_TOKEN_CREATED"
       executor = "shell"
       [runners.shell]
         tls_verify = false
         privileged = true
-      EOF"
+      EOF
+
+      "

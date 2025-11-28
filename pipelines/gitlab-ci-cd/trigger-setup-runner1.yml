@@ -165,7 +165,7 @@ create-runner-gl-api:
       curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --request PUT \
         --form "value=$RUNNER_TOKEN" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER_TOKEN_CREATED_OCI_ARM" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER1_TOKEN_CREATED" \
         > /dev/null 2>&1
 
 authorize-runner:
@@ -181,7 +181,7 @@ authorize-runner:
         sudo gitlab-runner register \
         --non-interactive \
         --url "https://gitlab.com/" \
-        --token "$GITLAB_RUNNER_TOKEN_CREATED_OCI_ARM" \
+        --token "$GITLAB_RUNNER1_TOKEN_CREATED" \
         --executor "shell" \
         --description "shell-runner-with-sudo"
         sudo EDITOR='tee -a' visudo <<EOF
@@ -196,7 +196,7 @@ authorize-runner:
       [[runners]]
       name = "shell-runner"
       url = "https://gitlab.com/"
-      token = "$GITLAB_RUNNER_TOKEN_CREATED_OCI_ARM"
+      token = "$GITLAB_RUNNER1_TOKEN_CREATED"
       executor = "shell"
       [runners.shell]
         tls_verify = false
