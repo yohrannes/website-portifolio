@@ -12,7 +12,7 @@ runner-controler-start:
 install-dependencies:
   stage: runner-prepare
   tags:
-    - apt-get install -y curl jq tar gzip
-####OBS: runner1 already has this step
     - runner2
+####OBS: runner1 already has this step
   script:
+    - apt-get install -y curl jq tar gzip
