@@ -3,9 +3,8 @@ runner-controler-start:
   # Run in jobs in all runners simultaneously
   parallel: 2
   tags:
-    - oci-runner-arm
-    - gcp-runner-amd
-    - local-runner-amd
+    - runner1
+    - runner2
   script:
     - sudo docker volume prune -af
     - sudo docker system prune -af
@@ -13,7 +12,7 @@ runner-controler-start:
 install-dependencies:
   stage: runner-prepare
   tags:
+    - apt-get install -y curl jq tar gzip
 ####OBS: runner1 already has this step
     - runner2
   script:
-    - apt-get install -y curl jq tar gzip

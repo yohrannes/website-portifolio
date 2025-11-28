@@ -8,7 +8,7 @@ include:
   - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
 
 get-instance-ip-from-tf-cloud:
-  stage: check
+  stage: check-infra
   script:
 
     - |
