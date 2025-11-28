@@ -1,18 +1,10 @@
 runner-controler-start:
   stage: runner-prepare
   # Run in jobs in all runners simultaneously
-  parallel: 2
+#  parallel: 2
   tags:
     - runner1
     - runner2
   script:
     - sudo docker volume prune -af
     - sudo docker system prune -af
-
-install-dependencies:
-  stage: runner-prepare
-  tags:
-    - runner2
-####OBS: runner1 already has this step
-  script:
-    - apt-get install -y curl jq tar gzip

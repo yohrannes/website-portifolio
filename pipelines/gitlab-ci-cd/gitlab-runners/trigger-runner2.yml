@@ -7,6 +7,11 @@ include:
   - local: 'pipelines/gitlab-ci-cd/terraform/trigger-run.yml'
   - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
 
+install-dependencies:
+  stage: runner-prepare
+  script:
+    - apt-get install -y curl jq tar gzip
+
 get-instance-ip-from-tf-cloud:
   stage: check-infra
   script:
