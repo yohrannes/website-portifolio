@@ -169,6 +169,8 @@ create-runner-gl-api:
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER1_TOKEN_CREATED" \
         > /dev/null 2>&1
 
+
+### access runner and verify if token really exst.
 authorize-runner:
   stage: check-infra
   needs:
