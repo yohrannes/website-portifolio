@@ -5,20 +5,21 @@ variables:
   TF_WORKSPACE: "runner1_prod"
   TF_TARGET_ADDRS: 'module.runner1'
 
-tags:
-  - local-runner-shell
-
 include:
   - local: 'pipelines/gitlab-ci-cd/terraform/trigger-run.yml'
   - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
 
 install-dependencies:
   stage: runner-prepare
+  tags:
+  - local-runner-shell
   script:
     - apt-get install -y curl jq tar gzip
 
 get-instance-ip-from-tf-cloud:
   stage: check-infra
+  tags:
+  - local-runner-shell
   script:
     - |
       WORKSPACE_ID=$(curl -s \
@@ -69,6 +70,8 @@ get-instance-ip-from-tf-cloud:
 
 check-startup-script:
   stage: check-infra
+  tags:
+  - local-runner-shell
   needs:
     - get-instance-ip-from-tf-cloud
   script:
@@ -127,6 +130,8 @@ check-startup-script:
 
 delete-old-runner-gl-api:
   stage: check-infra
+  tags:
+  - local-runner-shell
   script:
     - |
       RUNNERS=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
@@ -155,6 +160,8 @@ delete-old-runner-gl-api:
 
 create-runner-gl-api:
   stage: check-infra
+  tags:
+  - local-runner-shell
   before_script:
     - |
       RUNNER_TOKEN=$(curl -s --request POST --url "https://gitlab.com/api/v4/user/runners" \
@@ -176,6 +183,8 @@ create-runner-gl-api:
 ### access runner and verify if token really exst.
 authorize-runner:
   stage: check-infra
+  tags:
+  - local-runner-shell
   needs:
     - check-startup-script
   script:
