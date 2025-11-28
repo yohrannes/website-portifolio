@@ -13,38 +13,44 @@ variables:
   TF_CONFIG_FILE: "terraform-config.tar.gz"
 
 include:
-  - local: 'pipelines/gitlab-ci-cd/trigger-setup-runner1.yml'
+
+### GITLAB RUNNERS CONTROLER AND SETUP
+
+  - local: 'pipelines/gitlab-ci-cd/gitlab-runners/runner-controler.yml'
+
+  - local: 'pipelines/gitlab-ci-cd/gitlab-runners/trigger-setup-runner1.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner1"
 
-  - local: 'pipelines/gitlab-ci-cd/trigger-runner2.yml'
+  - local: 'pipelines/gitlab-ci-cd/gitlab-runners/trigger-runner2.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner2"
 
-  - local: 'pipelines/gitlab-ci-cd/runner-controler.yml'
-    rules:
-      - if: $CI_COMMIT_BRANCH == "infra-runner-oci-arm"
+## WEBAPP INFRASTRUCTURE
 
-  - local: 'pipelines/gitlab-ci-cd/webapp-infra-oci-amd.yml'
-    rules:
-     - if: $CI_COMMIT_BRANCH == "infra-webapp-oci-amd"
+#  - local: 'pipelines/gitlab-ci-cd/webapp-infra-oci-amd.yml'
+#    rules:
+#     - if: $CI_COMMIT_BRANCH == "infra-webapp-oci-amd"
 
-  - local: 'pipelines/gitlab-ci-cd/packer/build-instance-image.yml'
-    rules:
-      - if: $CI_COMMIT_BRANCH == "infra-webapp-oci-amd-packer"
+#  - local: 'pipelines/gitlab-ci-cd/packer/build-instance-image.yml'
+#    rules:
+#      - if: $CI_COMMIT_BRANCH == "infra-webapp-oci-amd-packer"
 
 #  - local: 'pipelines/gitlab-ci-cd/oke-cluster-oci-arm.yml'
 #    rules:
 #      - if: $CI_COMMIT_BRANCH == "infr-cluster-oci-arm"
 
-  - local: 'pipelines/gitlab-ci-cd/develop.yml'
-    rules:
-      - if: $CI_COMMIT_BRANCH == "develop"
+## DEVELOPMENT PIPELINES
 
+#  - local: 'pipelines/gitlab-ci-cd/develop.yml'
+#    rules:
+#      - if: $CI_COMMIT_BRANCH == "develop"
 
-  - local: 'pipelines/gitlab-ci-cd/dev-dk-img.yml'
-    rules:
-      - if: $CI_COMMIT_BRANCH == "dev-dk-img"
+## DOCKER IMAGES PIPELINES
+
+#  - local: 'pipelines/gitlab-ci-cd/dev-dk-img.yml'
+#    rules:
+#      - if: $CI_COMMIT_BRANCH == "dev-dk-img"
 
 
 stages:
