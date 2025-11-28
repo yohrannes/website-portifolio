@@ -17,6 +17,9 @@ include:
 ### GITLAB RUNNERS CONTROLER AND SETUP
 
   - local: 'pipelines/gitlab-ci-cd/gitlab-runners/runner-controler.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "infra-runner1"
+      - if: $CI_COMMIT_BRANCH == "infra-runner2"
 
   - local: 'pipelines/gitlab-ci-cd/gitlab-runners/trigger-setup-runner1.yml'
     rules:
