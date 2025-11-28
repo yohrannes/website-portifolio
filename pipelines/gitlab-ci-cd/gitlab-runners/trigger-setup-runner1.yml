@@ -5,6 +5,9 @@ variables:
   TF_WORKSPACE: "runner1_prod"
   TF_TARGET_ADDRS: 'module.runner1'
 
+tags:
+  - local-runner-shell
+
 include:
   - local: 'pipelines/gitlab-ci-cd/terraform/trigger-run.yml'
   - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
