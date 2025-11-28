@@ -5,7 +5,7 @@ cd /app/terraform/prod && terraform init\
 
 cd /app/packer/prod\
  && packer init .\
- && source /app/packer/prod/wrapper.sh\
+; ## && source /app/packer/prod/wrapper.sh\
 
 cd /app/packer/prod/ansible\
  && rm -rf venv\
