@@ -16,7 +16,8 @@ terraform-apply:
   variables:
     TF_WORKSPACE: "runner2_prod"
     TF_TARGET_ADDRS: 'module.runner2'
-
+  needs:
+    - trigger-terraform-run
 
 install-dependencies:
   stage: runner-prepare
