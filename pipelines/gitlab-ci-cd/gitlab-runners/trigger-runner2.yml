@@ -4,7 +4,7 @@ include:
   - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
 
 #### NOT WORKING.... VERIFY LATER ####
-trigger-terraform-run-and-apply:
+trigger-terraform-run:
   extends:
     - .trigger-terraform-run
   variables:
