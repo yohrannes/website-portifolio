@@ -3,38 +3,30 @@ include:
   - local: 'pipelines/gitlab-ci-cd/terraform/trigger-run.yml'
   - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
 
+#### NOT WORKING.... VERIFY LATER ####
+trigger-terraform-run-and-apply:
+  extends:
+    - .trigger-terraform-run
+    - .terraform-apply
+  variables:
+    TF_WORKSPACE: "runner2_prod"
+    TF_TARGET_ADDRS: 'module.runner2'
+
 install-dependencies:
   stage: runner-prepare
   script:
     - apt-get install -y curl jq tar gzip
 
+
 get-instance-ip-from-tf-cloud:
   stage: check-infra
-  extends:
-    - .terraform-apply
-    - .trigger-terraform-run
-  variables:
-    TF_WORKSPACE: "runner2_prod"
-    TF_TARGET_ADDRS: 'module.runner2'
   script:
-    - echo "=== VARIABLES DIAGNOSTIC ==="
-    - echo "TF_WORKSPACE = ${TF_WORKSPACE}"
-    - echo "TF_TARGET_ADDRS = ${TF_TARGET_ADDRS}"
-    - echo "Expected TF_WORKSPACE = runner2_prod"
-    - echo "Expected TF_TARGET_ADDRS = module.runner2"
+
     - |
-      if [ "$TF_WORKSPACE" != "runner2_prod" ]; then
-        echo "ERROR: TF_WORKSPACE is wrong!"
-        exit 1
-      fi
-    - echo "=== ALL ENV VARS ==="
-    - env | grep -E "TF_|CI_" | sort
-    - |
-      echo "TF_WORKSPACE = ${TF_WORKSPACE}"
       WORKSPACE_ID=$(curl -s \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
-        "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/${TF_WORKSPACE}" \
+        "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_WORKSPACE" \
         | jq -r '.data.id')
     
     - |
@@ -57,3 +49,5 @@ get-instance-ip-from-tf-cloud:
         --form "value=$INSTANCE_PUBLIC_IP" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_RUNNER2_IP" \
         > /dev/null 2>&1
+
+#test
