@@ -10,8 +10,8 @@ terraform-apply:
   variables:
     TF_WORKSPACE: "runner1_prod"
     TF_TARGET_ADDRS: 'module.runner1'
+#OBS: Chek on tf cloud: workspaces > workspace > settings > general > execution mode > remote
 
-get-instance-ip-from-tf-cloud:
   stage: check-infra
   needs:
     - terraform-apply
