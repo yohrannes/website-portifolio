@@ -2,6 +2,8 @@
 .trigger-terraform-run:
   stage: tf-run
   script:
+    - echo TF_WORKSPACE ${TF_WORKSPACE}
+    - echo TF_TARGET_ADDRS ${TF_TARGET_ADDRS}
     - cd ${TF_ROOT}
     - |
       tar -czf ${TF_CONFIG_FILE} \
