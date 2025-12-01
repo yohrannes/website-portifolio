@@ -1,13 +1,15 @@
 ---
 # First runner provision, execute this pipeline locally using gl runner type docker
 
-variables:
-  TF_WORKSPACE: "runner1_prod"
-  TF_TARGET_ADDRS: 'module.runner1'
-
 include:
   - local: 'pipelines/gitlab-ci-cd/terraform/trigger-run.yml'
   - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
+
+terraform-apply:
+  extends: .terraform-apply
+  variables:
+    TF_WORKSPACE: "runner1_prod"
+    TF_TARGET_ADDRS: 'module.runner1'
 
 get-instance-ip-from-tf-cloud:
   stage: check-infra

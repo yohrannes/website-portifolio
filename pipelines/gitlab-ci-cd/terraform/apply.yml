@@ -1,5 +1,5 @@
 ---
-terraform-apply:
+.terraform-apply:
   stage: tf-apply
   needs:
     - trigger-terraform-run
