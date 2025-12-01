@@ -1,6 +1,8 @@
 ---
 terraform-apply:
   stage: tf-apply
+  needs:
+    - trigger-terraform-run
   retry:
     max: 2
     when:
@@ -112,7 +114,8 @@ terraform-apply:
         fi
       }
   script:
-    - set -e
+    - set -euo pipefail
+    - shopt -s lastpipe
     - |
       echo "Retrieving workspace information..."
       workspace_response=$(api_call_with_retry "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces?filter%5Bname%5D=${TF_WORKSPACE}")
