@@ -5,9 +5,8 @@ runner-controler-start:
   tags:
     - runner1
     - runner2
-  rules:
-    when: manual
-    allow_failure: true
+  when: manual
+  allow_failure: true
   script:
     - sudo docker volume prune -af
     - sudo docker system prune -af

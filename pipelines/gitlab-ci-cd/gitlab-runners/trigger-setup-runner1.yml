@@ -13,8 +13,7 @@ install-dependencies:
   stage: runner-prepare
   tags:
     - local-runner-shell
-  rules:
-    when: manual
+  when: manual
   script:
     - sudo apt-get install -y curl jq tar gzip
 
