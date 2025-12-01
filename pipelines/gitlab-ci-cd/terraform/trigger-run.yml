@@ -20,10 +20,10 @@
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
         --header "Accept: application/vnd.api+json" \
-        "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces?filter%5Bname%5D=${TF_WORKSPACE}")
+        "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces/${TF_WORKSPACE}")
       echo TF_WORKSPACE ${TF_WORKSPACE}
       echo TF_TARGET_ADDRS ${TF_TARGET_ADDRS}
-      WORKSPACE_ID=$(echo "$WORKSPACE_RESPONSE" | jq -r '.data[0].id')
+      WORKSPACE_ID=$(echo "$WORKSPACE_RESPONSE" | jq -r '.data.id')
     
     - |
       if [ -z "$WORKSPACE_ID" ] || [ "$WORKSPACE_ID" = "null" ]; then
