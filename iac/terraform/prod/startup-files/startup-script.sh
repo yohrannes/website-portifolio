@@ -24,13 +24,11 @@ function allow-ports () {
     sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 22 -j ACCEPT
     sudo iptables -I INPUT 6 -p icmp --icmp-type echo-request -j ACCEPT
     sudo iptables -I INPUT 6 -p icmp --icmp-type echo-reply -j ACCEPT
-    sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
-    sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT
     sudo netfilter-persistent save
 }
 
 function install-usefull-packages () {
-    sudo apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tmux
+    sudo apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tmux gzip tar
 }
 
 function allow-swap-memory () {

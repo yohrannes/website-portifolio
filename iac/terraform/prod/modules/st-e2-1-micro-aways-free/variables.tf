@@ -6,7 +6,6 @@ variable "compartment_id" {
 variable "compartment_name" {
   description = "Compartment Name"
   type        = string
-  default     = "runner1-comp"
 }
 
 variable "compartment_description" {
