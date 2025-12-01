@@ -15,4 +15,4 @@ install-dependencies:
   stage: runner-prepare
   when: manual
   script:
-    - sudo apt-get install -y curl jq tar gzip
+    - apt-get install -y curl jq tar gzip

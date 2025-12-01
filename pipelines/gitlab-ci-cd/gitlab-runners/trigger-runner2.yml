@@ -18,12 +18,6 @@ terraform-apply:
   needs:
     - trigger-terraform-run
 
-install-dependencies:
-  stage: runner-prepare
-  script:
-    - apt-get install -y curl jq tar gzip
-
-
 get-instance-ip-from-tf-cloud:
   stage: check-infra
   variables:
