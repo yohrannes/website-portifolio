@@ -9,8 +9,7 @@ terraform-apply:
   extends: .terraform-apply
   variables:
     TF_WORKSPACE: "runner1_prod"
-    TF_TARGET_ADDRS: 'module.runner1'
-#OBS: Chek on tf cloud: workspaces > workspace > settings > general > execution mode > remote
+    TF_TARGET_ADDRS: "module.runner1"
 
   stage: check-infra
   needs:

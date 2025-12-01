@@ -1,0 +1,7 @@
+######
+###
+#
+
+For every new workspace check this on tf cloud GUI:
+
+workspaces > workspace > settings > general > execution mode > set to remote
