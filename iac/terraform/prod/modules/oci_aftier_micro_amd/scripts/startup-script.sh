@@ -34,7 +34,7 @@ function allow-ports () {
 }
 
 function install-usefull-packages () {
-    sudo apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils
+    sudo apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tar gzip
     sudo usermod -aG root $USER
 }
 

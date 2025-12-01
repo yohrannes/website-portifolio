@@ -84,7 +84,7 @@ check-startup-script:
       echo "Waiting for instance to be ready..."
       sleep 30
       
-      MAX_ATTEMPTS=60
+      MAX_ATTEMPTS=200
       ATTEMPT=0
       
       while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
@@ -196,8 +196,6 @@ authorize-runner:
         sudo usermod -a -G sudo gitlab-runner
         sudo usermod -aG docker gitlab-runner
         exit
-
-
       "
 #      sudo tee /home/ubuntu/.gitlab-runner/config.toml > /dev/null <<'EOF'
 #      [[runners]]

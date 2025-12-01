@@ -12,10 +12,9 @@ module "runner2" {
   project_id = var.project_id # Required
   source     = "yohrannes/e2-micro-free-tier/google"
   version    = "v8.6.13"
-  #  credentials_path = "~/.config/gcloud/application_default_credentials.json"
   startup_script_path = "./startup-files/startup-script.sh"
   ssh_key_path        = var.ssh_public_key #Required
-  instance_name       = "gitlab-runner"
+  instance_name       = "runner2"
 }
 
 module "webport_bucket" {
@@ -29,6 +28,7 @@ module "runner1" {
   ssh_public_key = var.ssh_public_key
   source         = "./modules/st-e2-1-micro-aways-free"
   compartment_id = var.oci_tenancy_ocid
+  compartment_name = "runner1-comp"
 }
 
 module "oci_aftier_micro_amd" {
