@@ -5,12 +5,22 @@ include:
   - local: 'pipelines/gitlab-ci-cd/terraform/trigger-run.yml'
   - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
 
-terraform-apply:
-  extends: .terraform-apply
-  variables:
-    TF_WORKSPACE: "runner1_prod"
-    TF_TARGET_ADDRS: 'module.runner1'
+variables:
+  TF_WORKSPACE: "runner1_prod"
+  TF_TARGET_ADDRS: 'module.runner1'
 
+trigger-terraform-run:
+  stage: tf-run
+  extends:
+    - .trigger-terraform-run
+
+terraform-apply:
+  stage: tf-apply
+  extends: .terraform-apply
+  needs:
+    - trigger-terraform-run
+
+get-instance-ip-from-tf-cloud:
   stage: check-infra
   needs:
     - terraform-apply
