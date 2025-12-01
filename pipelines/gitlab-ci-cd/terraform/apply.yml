@@ -31,7 +31,7 @@ terraform-apply:
       api_call_with_retry() {
         local url="$1"
         local method="${2:-GET}"
-        local data="$3"
+        local data="${3:-}"
         local max_attempts="$MAX_RETRIES"
         local attempt=1
         
