@@ -44,15 +44,15 @@ module "oci_aftier_micro_amd" {
   packer_oci_public_key_content  = var.packer_oci_public_key_content
 }
 
-#module "oci_oke_cluster_arm" {
-#  ssh_public_key = var.ssh_public_key
-#  source         = "./modules/oci_oke_cluster_arm"
-#  #  ssh_public_key = file("~/.ssh/id_rsa.pub")
-#  fingerprint = null
-#  #  private_key_path = "~/.oci/oci_api_key.pem"
-#  private_key_path = null
-#  tenancy_ocid     = null
-#  user_ocid        = null
-#  #  oci_profile      = "DEFAULT"
-#  oci_profile = null
-#}
+module "oci_oke_cluster_arm" {
+  ssh_public_key = var.ssh_public_key
+  source         = "./modules/oci_oke_cluster_arm"
+  #  ssh_public_key = file("~/.ssh/id_rsa.pub")
+  fingerprint = null
+  #  private_key_path = "~/.oci/oci_api_key.pem"
+  private_key_path = null
+  tenancy_ocid     = null
+  user_ocid        = null
+  #  oci_profile      = "DEFAULT"
+  oci_profile = null
+}
