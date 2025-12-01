@@ -74,9 +74,6 @@ stages:
   - deploy-image
   - deploy
 
-before_script:
-  - unset TF_WORKSPACE TF_TARGET_ADDRS || true
-
 deploy-dkcmpose:
   stage: deploy
   rules:

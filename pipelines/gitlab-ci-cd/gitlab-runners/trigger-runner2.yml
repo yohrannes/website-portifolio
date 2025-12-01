@@ -4,9 +4,13 @@ include:
   - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
 
 #### NOT WORKING.... VERIFY LATER ####
+before_script:
+  - unset TF_WORKSPACE TF_TARGET_ADDRS || true
+
 variables:
   TF_WORKSPACE: "runner2_prod"
   TF_TARGET_ADDRS: 'module.runner2'
+
 trigger-terraform-run:
   script:
     - export TF_WORKSPACE=$TF_WORKSPACE
