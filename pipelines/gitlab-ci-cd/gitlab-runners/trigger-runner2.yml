@@ -43,3 +43,5 @@ get-instance-ip-from-tf-cloud:
         --form "value=$INSTANCE_PUBLIC_IP" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_RUNNER2_IP" \
         > /dev/null 2>&1
+
+#test
