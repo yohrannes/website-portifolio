@@ -1,6 +1,6 @@
 ---
-# sudo apt-get install -y curl jq tar gzip
 # First runner provision, execute this pipeline locally using gl runner type docker
+
 variables:
   TF_WORKSPACE: "runner1_prod"
   TF_TARGET_ADDRS: 'module.runner1'
@@ -8,6 +8,15 @@ variables:
 include:
   - local: 'pipelines/gitlab-ci-cd/terraform/trigger-run.yml'
   - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
+
+install-dependencies:
+  stage: runner-prepare
+  tags:
+    - local-runner-shell
+  rules:
+    when: manual
+  script:
+    - sudo apt-get install -y curl jq tar gzip
 
 get-instance-ip-from-tf-cloud:
   stage: check-infra
