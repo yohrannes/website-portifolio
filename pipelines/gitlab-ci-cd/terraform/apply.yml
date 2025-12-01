@@ -9,6 +9,8 @@
       - stuck_or_timeout_failure
   timeout: 2h
   before_script:
+    - echo TF_WORKSPACE ${TF_WORKSPACE}
+    - echo TF_TARGET_ADDRS ${TF_TARGET_ADDRS}
     - |
       if [ -z "$TF_CLOUD_TOKEN" ]; then
         echo "ERROR: TF_CLOUD_TOKEN is not set"
