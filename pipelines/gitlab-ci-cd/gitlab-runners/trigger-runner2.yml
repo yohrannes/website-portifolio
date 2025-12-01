@@ -3,6 +3,7 @@ include:
   - local: 'pipelines/gitlab-ci-cd/terraform/trigger-run.yml'
   - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
 
+#### NOT WORKING.... VERIFY LATER ####
 terraform-apply:
   extends: .terraform-apply
   variables:
