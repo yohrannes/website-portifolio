@@ -163,8 +163,6 @@ create-runner-gl-api:
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER1_TOKEN_CREATED" \
         > /dev/null 2>&1
 
-
-### access runner and verify if token really exst.
 authorize-runner:
   stage: check-infra
   needs:
@@ -182,23 +180,19 @@ authorize-runner:
         --token "$RUNNER_TOKEN" \
         --executor "shell" \
         --description "shell-runner-with-sudo"
-        sudo EDITOR='tee -a' visudo <<EOF
-      gitlab-runner ALL=(ALL:ALL) ALL
-      gitlab-runner ALL=(ALL) NOPASSWD: ALL
-      EOF
         sudo usermod -a -G sudo gitlab-runner
         sudo usermod -aG docker gitlab-runner
         exit
 
-      sudo tee /home/ubuntu/.gitlab-runner/config.toml > /dev/null <<'EOF'
-      [[runners]]
-      name = "shell-runner"
-      url = "https://gitlab.com/"
-      token = "$RUNNER_TOKEN"
-      executor = "shell"
-      [runners.shell]
-        tls_verify = false
-        privileged = true
-      EOF
 
       "
+#      sudo tee /home/ubuntu/.gitlab-runner/config.toml > /dev/null <<'EOF'
+#      [[runners]]
+#     name = "shell-runner"
+#      url = "https://gitlab.com/"
+#      token = "$RUNNER_TOKEN"
+#      executor = "shell"
+#      [runners.shell]
+#        tls_verify = false
+#        privileged = true
+#      EOF
