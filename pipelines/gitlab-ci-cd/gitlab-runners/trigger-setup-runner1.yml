@@ -11,6 +11,8 @@ include:
 
 get-instance-ip-from-tf-cloud:
   stage: check-infra
+  needs:
+    - terraform-apply
   script:
     - |
       WORKSPACE_ID=$(curl -s \
