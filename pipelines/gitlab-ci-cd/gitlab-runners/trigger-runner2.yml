@@ -27,8 +27,9 @@ install-dependencies:
 
 get-instance-ip-from-tf-cloud:
   stage: check-infra
+  variables:
+    TF_WORKSPACE: "runner2_prod"
   script:
-
     - |
       WORKSPACE_ID=$(curl -s \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
