@@ -5,11 +5,14 @@ include:
 
 #### NOT WORKING.... VERIFY LATER ####
 trigger-terraform-run:
+  variables:
+    TF_WORKSPACE: "runner2_prod"
+    TF_TARGET_ADDRS: 'module.runner2'
+  script:
+    - export TF_WORKSPACE=$TF_WORKSPACE
+    - export TF_TARGET_ADDRS$TF_TARGET_ADDRS
   extends:
     - .trigger-terraform-run
-  script:
-    - export TF_WORKSPACE="runner2_prod"
-    - export TF_TARGET_ADDRS="module.runner2"
 
 terraform-apply:
   extends: .terraform-apply
