@@ -12,6 +12,7 @@ variables:
   TF_TARGET_ADDRS: 'module.runner2'
 
 trigger-terraform-run:
+  stage: tf-run
   script:
     - export TF_WORKSPACE=$TF_WORKSPACE
     - export TF_TARGET_ADDRS$TF_TARGET_ADDRS
@@ -19,6 +20,7 @@ trigger-terraform-run:
     - .trigger-terraform-run
 
 terraform-apply:
+  stage: tf-apply
   extends: .terraform-apply
   needs:
     - trigger-terraform-run
