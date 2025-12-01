@@ -1,7 +1,6 @@
 ---
 terraform-apply:
   stage: tf-apply
-  when: manual
   retry:
     max: 2
     when:
