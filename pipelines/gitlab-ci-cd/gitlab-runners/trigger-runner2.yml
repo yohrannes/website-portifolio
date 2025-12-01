@@ -175,3 +175,4 @@ authorize-runner:
         sudo usermod -a -G sudo gitlab-runner
         sudo usermod -aG docker gitlab-runner
         exit
+      "
