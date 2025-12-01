@@ -156,7 +156,6 @@ create-runner-gl-api:
         --data "tag_list=runner1" \
         --data "description=runner1" | jq -r '.token')
   script:
-    - echo "$RUNNER_TOKEN" > runner_token.txt
     - |
       curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --request PUT \
@@ -174,7 +173,7 @@ authorize-runner:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
-    - RUNNER_TOKEN=$(cat runner_token.txt)
+    - RUNNER_TOKEN=$GITLAB_RUNNER1_TOKEN_CREATED
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_RUNNER1_IP "
         sudo gitlab-runner register \
