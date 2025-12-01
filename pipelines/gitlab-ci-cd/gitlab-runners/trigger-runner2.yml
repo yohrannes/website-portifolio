@@ -10,7 +10,9 @@ install-dependencies:
 
 get-instance-ip-from-tf-cloud:
   stage: check-infra
-  extends: .terraform-apply
+  extends:
+    - .terraform-apply
+    - .trigger-terraform-run
   variables:
     TF_WORKSPACE: "runner2_prod"
     TF_TARGET_ADDRS: 'module.runner2'

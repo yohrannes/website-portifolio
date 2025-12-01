@@ -1,5 +1,5 @@
 ---
-trigger-terraform-run:
+.trigger-terraform-run:
   stage: tf-run
   script:
     - cd ${TF_ROOT}
