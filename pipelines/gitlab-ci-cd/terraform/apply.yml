@@ -115,7 +115,6 @@ terraform-apply:
       }
   script:
     - set -euo pipefail
-    - shopt -s lastpipe
     - |
       echo "Retrieving workspace information..."
       workspace_response=$(api_call_with_retry "${TF_CLOUD_API}/organizations/${TF_CLOUD_ORG}/workspaces?filter%5Bname%5D=${TF_WORKSPACE}")
