@@ -7,10 +7,16 @@ include:
 trigger-terraform-run-and-apply:
   extends:
     - .trigger-terraform-run
-    - .terraform-apply
   variables:
     TF_WORKSPACE: "runner2_prod"
     TF_TARGET_ADDRS: 'module.runner2'
+
+terraform-apply:
+  extends: .terraform-apply
+  variables:
+    TF_WORKSPACE: "runner2_prod"
+    TF_TARGET_ADDRS: 'module.runner2'
+
 
 install-dependencies:
   stage: runner-prepare
