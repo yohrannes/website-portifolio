@@ -1,8 +1,6 @@
 ---
 .terraform-apply:
   stage: tf-apply
-  needs:
-    - trigger-terraform-run
   retry:
     max: 2
     when:
