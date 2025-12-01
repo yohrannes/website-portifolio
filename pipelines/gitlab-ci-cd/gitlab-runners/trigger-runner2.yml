@@ -9,11 +9,6 @@ terraform-apply:
   variables:
     TF_WORKSPACE: "runner2_prod"
     TF_TARGET_ADDRS: 'module.runner2'
-
-debug-runner2-vars:
-  stage: tf-run
-  rules:
-    - if: $CI_COMMIT_BRANCH == "infra-runner2"
   script:
     - echo "=== VARIABLES DIAGNOSTIC ==="
     - echo "TF_WORKSPACE = ${TF_WORKSPACE}"
