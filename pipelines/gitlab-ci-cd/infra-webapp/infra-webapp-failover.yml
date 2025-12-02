@@ -116,9 +116,9 @@ run-containers:
         cd repos-git
         git clone https://gitlab.com/yohrannes/website-portifolio.git
         cd website-portifolio
-        git checkout infra-webapp-oci-amd
-        git fetch origin infra-webapp-oci-amd
-        git pull origin infra-webapp-oci-amd
+        git checkout infra-webapp-failover
+        git fetch origin infra-webapp-failover
+        git pull origin infra-webapp-failover
 
         export F2B_HTTP_INJ_FILTER_B64=${F2B_HTTP_INJ_FILTER_B64}
         export COMPOSE_BAKE=true
