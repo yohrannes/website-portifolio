@@ -11,17 +11,17 @@ terraform {
   }
 }
 
-data "hcp_packer_artifact" "instance-webapp-oci-amd" {
-  bucket_name   = "instance-webapp-oci-amd"
-  channel_name  = "latest"
-  platform      = "packer.oracle.oci"
-  region        = "us-ashburn-1"
-}
-
-locals {
-  # cmpt_name_prefix = "A506"
-  # time_f           = formatdate("HHmmss", timestamp())
-}
+#data "hcp_packer_artifact" "instance-webapp-oci-amd" {
+#  bucket_name   = "instance-webapp-oci-amd"
+#  channel_name  = "latest"
+#  platform      = "packer.oracle.oci"
+#  region        = "us-ashburn-1"
+#}
+#
+#locals {
+#  # cmpt_name_prefix = "A506"
+#  # time_f           = formatdate("HHmmss", timestamp())
+#}
 
 resource "oci_identity_compartment" "yohapp-comp" {
   # Required
@@ -142,7 +142,8 @@ resource "oci_core_instance" "ic_pub_vm-A" {
   display_name        = var.ic_pub_vm_A.display_name
 
   source_details {
-    source_id   = data.hcp_packer_artifact.instance-webapp-oci-amd.external_identifier
+#    source_id   = data.hcp_packer_artifact.instance-webapp-oci-amd.external_identifier
+    source_id   = var.ic_pub_vm_A.image_ocid
     source_type = "image"
   }
 

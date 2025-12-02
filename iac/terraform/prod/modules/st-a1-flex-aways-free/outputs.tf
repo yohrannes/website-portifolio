@@ -18,9 +18,9 @@ output "availability_domain" {
   value = var.availability_domain
 }
 
-output "packer-registry-ubuntu-webapp-oci-amd" {
-  value = data.hcp_packer_artifact.instance-webapp-oci-amd.external_identifier
-}
+#output "packer-registry-ubuntu-webapp-oci-amd" {
+#  value = data.hcp_packer_artifact.instance-webapp-oci-amd.external_identifier
+#}
 
 ## PACKER OUTPUTS
 
