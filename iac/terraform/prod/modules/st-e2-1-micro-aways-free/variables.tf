@@ -78,7 +78,6 @@ variable "instance_specs" {
     availability_domain : "lIpY:US-ASHBURN-AD-3"
     assign_public_ip : true
     image_ocid : "ocid1.image.oc1.iad.aaaaaaaaz7br7vztzzjvyfxiqbu2fumsuegfkofpyeapf7tamqxpwmyt5ygq" # images in https://docs.oracle.com/en-us/iaas/images/
-    #image_ocid : "ocid1.image.oc1.iad.aaaaaaaa2bulxukxsjyv3ap3x45eueiqxxpxpsfrv6qppq7xrwtiima2c2pq" # images in https://docs.oracle.com/en-us/iaas/images/
     shape : {
       name          = "VM.Standard.E2.1.Micro"
       ocpus         = 1
