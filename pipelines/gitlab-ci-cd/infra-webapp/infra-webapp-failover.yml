@@ -77,7 +77,7 @@ check-startup-script:
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - |
-      sleep 30
+      sleep 15
       while true; do
         ssh -o StrictHostKeyChecking=no \
             -o ConnectTimeout=10 \
