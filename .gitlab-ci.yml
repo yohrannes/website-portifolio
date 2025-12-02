@@ -16,21 +16,21 @@ include:
 
 ### GITLAB RUNNERS CONTROLER AND SETUP
 
-  - local: 'pipelines/gitlab-ci-cd/gitlab-runners/runner-controler.yml'
+  - local: 'pipelines/gitlab-ci-cd/infra-gitlab-runners/runner-controler.yml'
 
-  - local: 'pipelines/gitlab-ci-cd/gitlab-runners/trigger-setup-runner1.yml'
+  - local: 'pipelines/gitlab-ci-cd/infra-gitlab-runners/trigger-setup-runner1.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner1"
 
-  - local: 'pipelines/gitlab-ci-cd/gitlab-runners/trigger-runner2.yml'
+  - local: 'pipelines/gitlab-ci-cd/infra-gitlab-runners/trigger-runner2.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner2"
 
 ### WEBAPP INFRASTRUCTURE
 
-#  - local: 'pipelines/gitlab-ci-cd/webapp-infra-oci-amd.yml'
-#    rules:
-#     - if: $CI_COMMIT_BRANCH == "infra-webapp-oci-amd"
+  - local: 'pipelines/gitlab-ci-cd/infra-webapp.yml'
+    rules:
+     - if: $CI_COMMIT_BRANCH == "infra-webapp"
 
 #  - local: 'pipelines/gitlab-ci-cd/packer/build-instance-image.yml'
 #    rules:
