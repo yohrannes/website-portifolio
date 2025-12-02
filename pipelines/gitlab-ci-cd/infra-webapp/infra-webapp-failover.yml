@@ -83,7 +83,7 @@ check-startup-script:
             -o ConnectTimeout=10 \
             -o ServerAliveInterval=30 \
             -i ~/.ssh/id_rsa \
-            ubuntu@$IP_OCI_AMD_WEBAPP \
+            ubuntu@$PROD_WEBAPP_IP \
             "timeout 300 bash -c '
               while true; do
                 if [ -f /var/log/startup-script.log ] && [ -r /var/log/startup-script.log ]; then
@@ -110,7 +110,7 @@ run-containers:
     - chmod 600 ~/.ssh/id_rsa
   script:
     - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_IP "
         sudo rm -rf repos-git
         mkdir -p repos-git
         cd repos-git
@@ -163,7 +163,7 @@ update-dns:
           "settings": {},
           "tags": [],
           "ttl": 1,
-          "content": "'"$IP_OCI_AMD_WEBAPP"'",
+          "content": "'"$PROD_WEBAPP_IP"'",
           "type": "A"
         }' | jq '.'
 
