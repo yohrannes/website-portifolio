@@ -17,9 +17,9 @@ output "availability_domain" {
   value       = var.availability_domain
 }
 
-output "oci_aftier_micro_amd_pub_ip" {
+output "webapp_failover_pub_ip" {
   description = "The public IP address of the OCI AFTIER FLEX ARM (Portifolio Website instance)"
-  value       = module.oci_aftier_micro_amd.instance_public_ip
+  value       = module.webapp_failover.instance_public_ip
 }
 
 # OKE CLUSTER ARM OUTPUTS
@@ -56,15 +56,15 @@ output "oci_aftier_micro_amd_pub_ip" {
 #  value = module.oci_aftier_micro_amd.oci_packer_subnet_ocid
 #}
 
-output "packer_compartment_ocid" {
-  description = "The OCID of the compartment used for Packer operations"
-  value       = module.oci_aftier_micro_amd.packer_compartment_ocid
-}
+#output "packer_compartment_ocid" {
+#  description = "The OCID of the compartment used for Packer operations"
+#  value       = module.oci_aftier_micro_amd.packer_compartment_ocid
+#}
 
-output "packer_subnet_ocid" {
-  description = "The OCID of the subnet used for Packer operations"
-  value       = module.oci_aftier_micro_amd.packer_subnet_ocid
-}
+#output "packer_subnet_ocid" {
+#  description = "The OCID of the subnet used for Packer operations"
+#  value       = module.oci_aftier_micro_amd.packer_subnet_ocid
+#}
 
 #output "packer_user_ocid" {
 #  value     = module.oci_aftier_micro_amd.packer_user_ocid
@@ -95,9 +95,9 @@ output "packer_subnet_ocid" {
 #  value = module.oci_aftier_micro_amd.packer_oci_config_path
 #}
 
-output "packer_image_name" {
-  value = module.oci_aftier_micro_amd.packer_image_name
-}
+#output "packer_image_name" {
+#  value = module.oci_aftier_micro_amd.packer_image_name
+#}
 
 #output "debug_all_images" {
 #  value = module.oci_aftier_micro_amd.debug_all_images
@@ -107,6 +107,6 @@ output "packer_image_name" {
 #  value = module.oci_aftier_micro_amd.debug_filtered_images
 #}
 
-output "packer_instructions" {
-  value = module.oci_aftier_micro_amd.packer_instructions
-}
+#output "packer_instructions" {
+#  value = module.oci_aftier_micro_amd.packer_instructions
+#}
