@@ -31,17 +31,17 @@ module "runner1" {
   compartment_name = "runner1-comp"
 }
 
-module "oci_aftier_micro_amd" {
+module "webapp" {
   ssh_public_key      = var.ssh_public_key
-  source              = "./modules/oci_aftier_micro_amd"
+  source              = "./modules/st-a1-flex-aways-free"
   disable_ssh_port    = var.disable_ssh_port
   availability_domain = var.availability_domain
-  tenancy_ocid        = "ocid1.tenancy.oc1..aaaaaaaawb7j4hswwgcjncr2ezu5mptw6o5n6h7ixvef5lzqsqkbtmwk44aq"
-  compartment_id      = "ocid1.tenancy.oc1..aaaaaaaawb7j4hswwgcjncr2ezu5mptw6o5n6h7ixvef5lzqsqkbtmwk44aq"
+  tenancy_ocid        = var.oci_tenancy_ocid
+  compartment_id      = var.oci_tenancy_ocid
   user_email          = "yohrannes@gmail.com"
-  packer_oci_config_content      = var.packer_oci_config_content
-  packer_oci_private_key_content = var.packer_oci_private_key_content
-  packer_oci_public_key_content  = var.packer_oci_public_key_content
+#  packer_oci_config_content      = var.packer_oci_config_content
+#  packer_oci_private_key_content = var.packer_oci_private_key_content
+#  packer_oci_public_key_content  = var.packer_oci_public_key_content
 }
 
 module "oci_oke_cluster_arm" {
