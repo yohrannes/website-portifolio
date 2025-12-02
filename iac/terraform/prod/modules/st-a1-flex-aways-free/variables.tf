@@ -102,7 +102,7 @@ variable "ic_pub_vm_A" {
     display_name : "web-port-instance"
     availability_domain : "lIpY:US-ASHBURN-AD-3" # images in https://docs.oracle.com/en-us/iaas/images/
     assign_public_ip : true
-    image_ocid : "ocid1.image.oc1.iad.aaaaaaaaawgpyvs3zh7tu5343gpj45yqcj6hosrmrgvo5xovc7dvjwgi4vaq"
+    image_ocid : "ocid1.image.oc1.iad.aaaaaaaaptszdpgv4bctxmy27zyj6wvpkesdpdnn7e7yyziyt4lk7hlzeqpa"
     shape : {
       name          = "VM.Standard.A1.Flex"
       ocpus         = 1

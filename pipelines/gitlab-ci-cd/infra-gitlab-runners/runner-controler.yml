@@ -10,9 +10,3 @@ runner-controler-start:
   script:
     - sudo docker volume prune -af
     - sudo docker system prune -af
-
-install-dependencies:
-  stage: runner-prepare
-  when: manual
-  script:
-    - apt-get install -y curl jq tar gzip
