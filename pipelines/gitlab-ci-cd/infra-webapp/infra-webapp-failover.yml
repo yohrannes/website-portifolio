@@ -3,21 +3,29 @@
 # get the OCID of this instance using TERRAFORM CLOUD to be used in this
 # terraform pipeline.
 
-
 ---
-variables:
-  TF_TARGET_ADDRS: 'module.oci_aftier_micro_amd'
-
 include:
-#  - local: 'pipelines/gitlab-ci-cd/packer/build-instance-image.yml'
-  - local: 'pipelines/gitlab-ci-cd/terraform/upload-trigger-run.yml'
-  - local: 'pipelines/gitlab-ci-cd/terraform/monitor-apply.yml'
+  - local: 'pipelines/gitlab-ci-cd/terraform/trigger-run.yml'
+  - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
 
-get-instance-ip-from-tf-cloud:
+variables:
+  TF_WORKSPACE: "webapp_failover_prod"
+  TF_TARGET_ADDRS: 'module.webapp_failover'
+
+trigger-terraform-run:
+  stage: tf-run
+  extends:
+    - .trigger-terraform-run
+
+terraform-apply:
+  stage: tf-apply
+  extends: .terraform-apply
+  needs:
+    - trigger-terraform-run
+
+get-instance-ip:
   stage: check-infra
   script:
-    - apk add --no-cache curl jq --quiet
-
     - |
       WORKSPACE_ID=$(curl -s \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
@@ -38,10 +46,7 @@ get-instance-ip-from-tf-cloud:
         --header "Content-Type: application/vnd.api+json" \
         "https://app.terraform.io/api/v2/state-versions/$STATE_VERSION_ID/outputs" \
         | jq -r '.data[] | select(.attributes.name == "oci_aftier_micro_amd_pub_ip") | .attributes.value')
-      
-      echo "Instance Public IP: $INSTANCE_PUBLIC_IP"
-      
-      # Validar se o IP foi extraído
+
       if [ -z "$INSTANCE_PUBLIC_IP" ] || [ "$INSTANCE_PUBLIC_IP" = "null" ]; then
         echo "ERROR: Failed to extract IP address"
         exit 1
@@ -52,7 +57,7 @@ get-instance-ip-from-tf-cloud:
         --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --request PUT \
         --form "value=$INSTANCE_PUBLIC_IP" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/IP_OCI_AMD_WEBAPP") >  /dev/null 2>&1
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_IP") >  /dev/null 2>&1
       
       HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
       echo "HTTP Status: $HTTP_CODE"
@@ -62,16 +67,10 @@ get-instance-ip-from-tf-cloud:
         exit 1
       fi
 
-    - |
-      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-        --request PUT \
-        --form "value=$INSTANCE_PUBLIC_IP" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/IP_OCI_AMD_WEBAPP"
-
 check-startup-script:
   stage: check-infra
   needs:
-    - get-instance-ip-from-tf-cloud
+    - get-instance-ip
   script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa

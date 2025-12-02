@@ -28,9 +28,9 @@ include:
 
 ### WEBAPP INFRASTRUCTURE
 
-  - local: 'pipelines/gitlab-ci-cd/infra-webapp.yml'
+  - local: 'pipelines/gitlab-ci-cd/infra-webapp/infra-webapp-failover.yml'
     rules:
-     - if: $CI_COMMIT_BRANCH == "infra-webapp"
+     - if: $CI_COMMIT_BRANCH == "infra-webapp-failover"
 
 #  - local: 'pipelines/gitlab-ci-cd/packer/build-instance-image.yml'
 #    rules:
