@@ -125,21 +125,21 @@ run-containers:
         export MY_UID=$(id -u)
         export MY_GID=$(id -g)
 
-        touch /temp/export.txt
+        touch /tmp/export.txt
 
-        echo ${F2B_HTTP_INJ_FILTER_B64} >> /temp/export.txt
-        echo >> /temp/export.txt
-        echo ${MY_UID} >> /temp/export.txt
-        echo >> /temp/export.txt
-        echo ${MY_GID} >> /temp/export.txt
-        echo >> /temp/export.txt
-        echo ${COMPOSE_BAKE} >> /temp/export.txt
+        echo ${F2B_HTTP_INJ_FILTER_B64} >> /tmp/export.txt
+        echo >> /tmp/export.txt
+        echo ${MY_UID} >> /tmp/export.txt
+        echo >> /tmp/export.txt
+        echo ${MY_GID} >> /tmp/export.txt
+        echo >> /tmp/export.txt
+        echo ${COMPOSE_BAKE} >> /tmp/export.txt
         
         if [ -n \"\$F2B_HTTP_INJ_FILTER_B64\" ]; then
           export F2B_HTTP_INJ_FILTER_DECODED=\"\$(echo \$F2B_HTTP_INJ_FILTER_B64 | base64 --decode)\"
         fi
 
-        echo ${F2B_HTTP_INJ_FILTER_DECODED} >> /temp/export.txt
+        echo ${F2B_HTTP_INJ_FILTER_DECODED} >> /tmp/export.txt
 
         cd docker-compose
         sudo docker compose down --remove-orphans
