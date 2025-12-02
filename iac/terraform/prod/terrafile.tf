@@ -31,7 +31,7 @@ module "runner1" {
   compartment_name = "runner1-comp"
 }
 
-module "webapp" {
+module "webapp_failover" {
   ssh_public_key      = var.ssh_public_key
   source              = "./modules/st-a1-flex-aways-free"
   disable_ssh_port    = var.disable_ssh_port
@@ -44,7 +44,7 @@ module "webapp" {
 #  packer_oci_public_key_content  = var.packer_oci_public_key_content
 }
 
-module "oci_oke_cluster_arm" {
+module "webapp" {
   ssh_public_key = var.ssh_public_key
   source         = "./modules/oci_oke_cluster_arm"
   #  ssh_public_key = file("~/.ssh/id_rsa.pub")
