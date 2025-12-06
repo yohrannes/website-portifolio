@@ -39,6 +39,7 @@ module "webapp_failover" {
   tenancy_ocid        = var.oci_tenancy_ocid
   compartment_id      = var.oci_tenancy_ocid
   user_email          = "yohrannes@gmail.com"
+  compartment_name    = "webapp-failover-comp"
 #  packer_oci_config_content      = var.packer_oci_config_content
 #  packer_oci_private_key_content = var.packer_oci_private_key_content
 #  packer_oci_public_key_content  = var.packer_oci_public_key_content
@@ -47,12 +48,9 @@ module "webapp_failover" {
 module "webapp" {
   ssh_public_key = var.ssh_public_key
   source         = "./modules/oci_oke_cluster_arm"
-  #  ssh_public_key = file("~/.ssh/id_rsa.pub")
   fingerprint = null
-  #  private_key_path = "~/.oci/oci_api_key.pem"
   private_key_path = null
   tenancy_ocid     = null
   user_ocid        = null
-  #  oci_profile      = "DEFAULT"
-  oci_profile = null
+  oci_profile = "DEFAULT"
 }

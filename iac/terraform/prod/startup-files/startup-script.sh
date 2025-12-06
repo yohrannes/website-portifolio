@@ -49,6 +49,14 @@ function install-gitlab-runner () {
     sudo gitlab-runner status
 }
 
+function install-kubectl () {
+    export STABLE_RELEASE=$(curl -L -s https://dl.k8s.io/release/stable.txt)
+    curl -LO https://dl.k8s.io/release/\$STABLE_RELEASE/bin/linux/amd64/kubectl
+    chmod +x kubectl
+    mv kubectl /usr/local/bin/kubectl
+    /usr/local/bin/kubectl version --client
+}
+
 if [[ $1 == "install-docker" ]]; then
     install-docker-engine
 else
@@ -57,6 +65,7 @@ else
     install-usefull-packages
     allow-swap-memory
     install-gitlab-runner
+    install-kubectl
     
     # Leave this command bellow by least (used for pipeline checks)
     echo "startup-script-finished"
