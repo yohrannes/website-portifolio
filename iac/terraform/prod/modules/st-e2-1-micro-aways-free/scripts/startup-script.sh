@@ -56,6 +56,7 @@ else
     install-gitlab-runner
     install-kubectl
     
+    
     # Leave this command bellow by least (used for pipeline checks)
     echo "startup-script-finished"
 fi
