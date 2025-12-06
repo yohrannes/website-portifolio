@@ -18,15 +18,9 @@ sudo docker buildx create --use --name multiarch-builder
 }
 
 function allow-ports () {
-# 22 (SSH)
 sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 22 -j ACCEPT
-# ICMP (Ping)
 sudo iptables -I INPUT 6 -p icmp --icmp-type echo-request -j ACCEPT
 sudo iptables -I INPUT 6 -p icmp --icmp-type echo-reply -j ACCEPT
-# HTTP + HTTPS
-sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
-sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT
-
 sudo netfilter-persistent save
 }
 
@@ -45,6 +39,14 @@ function install-gitlab-runner () {
 
 }
 
+function install-kubectl () {
+    export STABLE_RELEASE=$(curl -L -s https://dl.k8s.io/release/stable.txt)
+    curl -LO https://dl.k8s.io/release/\$STABLE_RELEASE/bin/linux/amd64/kubectl
+    chmod +x kubectl
+    mv kubectl /usr/local/bin/kubectl
+    /usr/local/bin/kubectl version --client
+}
+
 if [[ $1 == "install-docker" ]]; then
     install-docker-engine
 else
@@ -52,6 +54,7 @@ else
     allow-ports
     install-usefull-packages
     install-gitlab-runner
+    install-kubectl
     
     # Leave this command bellow by least (used for pipeline checks)
     echo "startup-script-finished"

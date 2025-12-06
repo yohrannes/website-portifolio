@@ -1,106 +1,74 @@
 ---
+include:
+  - local: 'pipelines/gitlab-ci-cd/terraform/trigger-run.yml'
+  - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
+
 variables:
-  TF_IMG_DIR: docker-compose/tf-multi-arch
+  TF_WORKSPACE: "webapp_prod"
+  TF_TARGET_ADDRS: 'module.webapp'
 
-multi-cloud-auth:
-  tags: [ "oci-runner-arm" ]
-  stage: prepare
-  script:
-    # Autencicate with OCI
-    - mkdir -p $HOME/.oci
-    - echo "$OCI_CONFIG_BASE64" | base64 -d > $HOME/.oci/config
-    - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.oci/oci_api_key.pem
-    - chmod 700 $HOME/.oci
-    - chmod 600 $HOME/.oci/oci_api_key.pem
-    - chmod 600 $HOME/.oci/config
-    - export TF_VAR_compartment_id=$OCI_COMPARTMENT_OCID
-    - export TF_VAR_region=$OCI_REGION
+trigger-terraform-run:
+  stage: tf-run
+  extends:
+    - .trigger-terraform-run
 
-    # Autencicate with AWS
-    - mkdir -p $HOME/.aws
-    - echo "$AWS_CONFIG_BASE64" | base64 -d > $HOME/.aws/config
-    - echo "$AWS_CREDENTIALS_BASE64" | base64 -d > $HOME/.aws/credentials
-    - chmod 700 $HOME/.aws
-    - chmod 600 $HOME/.aws/credentials
-    - chmod 600 $HOME/.aws/config
-
-    # Prepare SSH files to enable ssh conection with instance
-    - sudo apt-get install -y openssh-client openssh-server curl
-    - mkdir -p $HOME/.ssh
-    - (echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa 2>/dev/null)
-    - (echo "$SSH_PUBLIC_KEY_BASE64" | base64 -d > $HOME/.ssh/id_rsa.pub 2>/dev/null)
-    - chmod 644 $HOME/.ssh/id_rsa.pub
-
-create-oci-oke-cluster:
-  tags: [ "oci-runner-arm" ]
+terraform-apply:
+  stage: tf-apply
+  extends: .terraform-apply
   needs:
-    - multi-cloud-auth
-  stage: create-infra
-  before_script:
-    # Build terraform container for runner host architecture (auto-detected)
-    - |
-      ARCH=$(uname -m)
-      case $ARCH in
-        "x86_64") PLATFORM="linux/amd64" ;;
-        "aarch64") PLATFORM="linux/arm64" ;;
-        *) echo "Arch not suported: $ARCH"; exit 1 ;;
-      esac 2>/dev/null
+    - trigger-terraform-run
 
-      cd $TF_IMG_DIR
-
-      docker buildx build \
-        --platform $PLATFORM \
-        -t yohrannes/terraform:latest \
-        --build-arg PRODUCT=terraform \
-        --build-arg VERSION=1.11.0 \
-        --load . 2>/dev/null
-
-    # Check old terraform containers and remove them
-    - |
-      if [ "$(docker ps -a -q -f name=^terraform-container$)" ]; then
-        echo "Old terraform container found removing..."
-        docker stop terraform-container
-        docker rm terraform-container
-      fi
-
-
-    # Prepare and run terraform-container
-    - |
-      sudo docker run -d --name terraform-container \
-      --entrypoint "" hashicorp/terraform:latest sleep infinity
-    - docker cp $CI_PROJECT_DIR/iac/terraform/prod terraform-container:/app > /dev/null 2>&1
-    - echo $CI_PROJECT_DIR/iac/terraform/prod
-    - docker cp $HOME/.oci terraform-container:/root/.oci
-    - docker cp $HOME/.aws terraform-container:/root/.aws > /dev/null 2>&1
-    - docker exec -w /app terraform-container mkdir /root/.ssh > /dev/null 2>&1
-    - docker cp $HOME/.ssh/id_rsa.pub terraform-container:/root/.ssh/id_rsa.pub > /dev/null 2>&1
-
-    # Plan
-    - docker ps -a
-    - |
-      docker exec -w /app terraform-container sh -c "
-        terraform init -reconfigure 2>/dev/null
-        terraform workspace select oci_oke_web_port_prod 2>/dev/null
-        terraform plan -detailed-exitcode -target=module.oci_oke_cluster_arm -out=plan | grep -o -E 'module.oci_oke_cluster_arm[^.]*.' | sort -u
-        apk add oci-cli curl jq --no-cache --quiet
-      " 2>/dev/null
+get-instance-ip:
+  stage: check-infra
   script:
     - |
-      docker exec -w /app terraform-container sh -c "
-        terraform apply plan | grep -o -E 'oci[^.]*.'
-        exit_code=${PIPESTATUS[0]}
-        echo "Exit Code: $exit_code"
-        exit $exit_code
-      " 2>/dev/null
+      WORKSPACE_ID=$(curl -s \
+        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+        --header "Content-Type: application/vnd.api+json" \
+        "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_CLOUD_WORKSPACE" \
+        | jq -r '.data[0].id')
+
+    - |
+      STATE_VERSION_ID=$(curl -s \
+        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+        --header "Content-Type: application/vnd.api+json" \
+        "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_CLOUD_WORKSPACE" \
+        | jq -r '.data[0].relationships["current-state-version"].data.id')
+    
+#    - |
+#      INSTANCE_PUBLIC_IP=$(curl -s \
+#        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+#        --header "Content-Type: application/vnd.api+json" \
+#        "https://app.terraform.io/api/v2/state-versions/$STATE_VERSION_ID/outputs" \
+#        | jq -r '.data[] | select(.attributes.name == "webapp_pub_ip") | .attributes.value')
+#      if [ -z "$INSTANCE_PUBLIC_IP" ] || [ "$INSTANCE_PUBLIC_IP" = "null" ]; then
+#        echo "ERROR: Failed to extract IP address"
+#        exit 1
+#      fi
+    
+#    - |
+#      RESPONSE=$(curl -s --write-out "\n%{http_code}" \
+#        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+#        --request PUT \
+#        --form "value=$INSTANCE_PUBLIC_IP" \
+#        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_IP") >  /dev/null 2>&1
+#      
+#      HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+#      echo "HTTP Status: $HTTP_CODE"
+#      
+#      if [ "$HTTP_CODE" != "200" ]; then
+#        echo "ERROR: Failed to update GitLab variable"
+#        exit 1
+#      fi
 
 install-kubectl:
-  tags: [ "oci-runner-arm" ]
+  tags: [ "runner1" ]
+  when: manual
   needs:
     - create-oci-oke-cluster
   stage: create-infra
   script:
     - |
-      docker exec -w /app terraform-container sh -c "
         export STABLE_RELEASE=$(curl -L -s https://dl.k8s.io/release/stable.txt)
         curl -LO https://dl.k8s.io/release/\$STABLE_RELEASE/bin/linux/arm64/kubectl
         chmod +x kubectl
@@ -108,24 +76,17 @@ install-kubectl:
         /usr/local/bin/kubectl version --client
         export COMPARTMENT_ID=\$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/\"//g')
         export CLUSTER_ID=\$(oci ce cluster list --compartment-id \$COMPARTMENT_ID | jq '.data[0].id' | sed 's/\"//g')
-        mkdir -p ~/.kube
-        export KUBECONFIG=~/.kube/config
-        terraform state rm module.oci_oke_cluster_arm.module.kubeconfig.null_resource.create_kubeconfig 2>/dev/null
+        terraform state rm module.oci_oke_cluster_arm.module.kubeconfig.null_resource.create_kubeconfig
         terraform plan -out plan -detailed-exitcode --target=module.oci_oke_cluster_arm.module.kubeconfig -out=plan 2>&1 | grep -o -E 'oci[^.]*.' | sort -u
-        terraform apply plan 2>&1 | grep -o -E 'oci[^.]*.' | sort -u
-      "
-    - KUBECONFIG_CONTENT=$(docker exec -w /app terraform-container sh -c cat ~/.kube/config | base64)
-    - echo KUBECONFIG_CONTENT $KUBECONFIG_CONTENT
-    - docker exec -w /app terraform-container sh -c cat ~/.kube/config
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --request PUT \
         --form "value=$KUBECONFIG_CONTENT" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/OCI_KUBECONFIG_CONTENT" \
-        > /dev/null 2>&1
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/OCI_KUBECONFIG_CONTENT"
 
 install-gateway:
-  tags: [ "oci-runner-arm" ]
+  tags: [ "runner1" ]
+  when: manual
   needs:
     - install-kubectl
   stage: create-infra
@@ -138,8 +99,9 @@ install-gateway:
       "
 
 
-set-lb-shape: # This job doesn't works imadiately after the cluster creation, it needs to be run manually. Implement a check to ensure the load balancer is ready to be updated.
-  tags: [ "oci-runner-arm" ]
+set-lb-shape: # This job doesn't works imediately after the cluster creation, it needs to be run manually. Implement a check to ensure the load balancer is ready to be updated.
+  tags: [ "runner1" ]
+  when: manual
   needs:
     - install-gateway
   stage: create-infra

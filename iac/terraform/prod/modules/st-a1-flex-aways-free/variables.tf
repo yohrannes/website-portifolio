@@ -19,13 +19,12 @@ variable "tenancy_ocid" {
 variable "compartment_name" {
   description = "Compartment Name"
   type        = string
-  default     = "port-comp"
 }
 
 variable "compartment_description" {
   description = "Compartment Description"
   type        = string
-  default     = "test-compartment description"
+  default     = "Compartment description"
   sensitive   = true
 }
 
@@ -84,11 +83,6 @@ variable "availability_domain" {
   description = "Availability Domain"
   type        = string
 }
-
-#variable "instance_image_ocid" {
-#  description = "The OCID of the Ubuntu image to use"
-# type        = string
-#}
 
 variable "packer_module" {
   type        = bool
