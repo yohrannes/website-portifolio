@@ -4,24 +4,24 @@ exec > /var/log/startup-script.log 2>&1
 set -x
 
 function install-docker-engine () {
-sudo apt-get update
-sudo apt-get upgrade
-sudo apt-get install -y ca-certificates curl qemu binfmt-support qemu-user-static
-sudo install -m 0755 -d /etc/apt/keyrings
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo tee /etc/apt/keyrings/docker.asc
-echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update
-sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-sudo systemctl enable docker
-sudo systemctl start docker
-sudo docker buildx create --use --name multiarch-builder
+    sudo apt-get update
+    sudo apt-get upgrade
+    sudo apt-get install -y ca-certificates curl qemu binfmt-support qemu-user-static
+    sudo install -m 0755 -d /etc/apt/keyrings
+    sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo tee /etc/apt/keyrings/docker.asc
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+    sudo apt-get update
+    sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+    sudo systemctl enable docker
+    sudo systemctl start docker
+    sudo docker buildx create --use --name multiarch-builder
 }
 
 function allow-ports () {
-sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 22 -j ACCEPT
-sudo iptables -I INPUT 6 -p icmp --icmp-type echo-request -j ACCEPT
-sudo iptables -I INPUT 6 -p icmp --icmp-type echo-reply -j ACCEPT
-sudo netfilter-persistent save
+    sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 22 -j ACCEPT
+    sudo iptables -I INPUT 6 -p icmp --icmp-type echo-request -j ACCEPT
+    sudo iptables -I INPUT 6 -p icmp --icmp-type echo-reply -j ACCEPT
+    sudo netfilter-persistent save
 }
 
 function install-usefull-packages () {
@@ -40,8 +40,7 @@ function install-gitlab-runner () {
 }
 
 function install-kubectl () {
-    export STABLE_RELEASE=$(curl -L -s https://dl.k8s.io/release/stable.txt)
-    curl -LO https://dl.k8s.io/release/\$STABLE_RELEASE/bin/linux/amd64/kubectl
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
     chmod +x kubectl
     mv kubectl /usr/local/bin/kubectl
     /usr/local/bin/kubectl version --client
@@ -55,6 +54,8 @@ else
     install-usefull-packages
     install-gitlab-runner
     install-kubectl
+    sudo apt-get autoremove -y
+    
     
     # Leave this command bellow by least (used for pipeline checks)
     echo "startup-script-finished"
