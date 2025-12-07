@@ -19,7 +19,7 @@ terraform-apply:
     - trigger-terraform-run
 
 autenticate-oci:
-  stage: create-infra
+  stage: check-infra
   image: oraclelinux:8-slim
   tags:
     - runner1
