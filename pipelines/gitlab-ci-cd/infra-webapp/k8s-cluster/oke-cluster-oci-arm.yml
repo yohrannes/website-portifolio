@@ -56,4 +56,4 @@ set-lb-shape: # This job doesn't works imediately after the cluster creation, it
       "
 
 
-### Verify Load Balancer (not network load balancer) destruction on terraform
+### Verify Load Balancer (not network load balancer) destruction on terraform...
