@@ -18,19 +18,31 @@ terraform-apply:
   needs:
     - trigger-terraform-run
 
+autenticate-oci:
+  stage: create-infra
+  image: oraclelinux:8-slim
+  tags:
+    - runner1
+  before_script:
+    - |
+      echo "$OCI_CONFIG_BASE64" | base64 -d > $HOME/.oci/config
+    - chmod 600 $HOME/.oci/config
+  script:
+    - |
+      oci iam user get --user-id $(oci iam user list --query "data[?\"name\"=='yohrannes@gmail.com'].id | [0]" --raw-output) --region $OCI_REGION
+
 #install-gateway:
-#  tags: [ "runner1" ]
+#  tags:
+#    - runner1
 #  when: manual
 #  needs:
-#    - terraform-apply
+#    - autenticate-oci
 #  stage: create-infra
 #  script:
 #    - |
-#      docker exec -w /app terraform-container sh -c "
-#        kubectl kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.2" | kubectl apply -f -
-#        kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/crds.yaml
-#        kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/default/deploy.yaml
-#      "
+#      kubectl kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.2" | kubectl apply -f -
+#      kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/crds.yaml
+#      kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/default/deploy.yaml
 
 
 #set-lb-shape: # This job doesn't works imediately after the cluster creation, it needs to be run manually. Implement a check to ensure the load balancer is ready to be updated.
