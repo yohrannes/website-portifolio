@@ -34,7 +34,7 @@ include:
 
   - local: 'pipelines/gitlab-ci-cd/infra-webapp/k8s-cluster/oci-oke-aways-free.yml'
     rules:
-     - if: $CI_COMMIT_BRANCH == "infr-webapp"
+     - if: $CI_COMMIT_BRANCH == "infra-webapp"
 
 #  - local: 'pipelines/gitlab-ci-cd/packer/build-instance-image.yml'
 #    rules:
