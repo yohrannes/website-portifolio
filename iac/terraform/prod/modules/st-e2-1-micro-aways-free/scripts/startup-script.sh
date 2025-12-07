@@ -57,6 +57,7 @@ else
     sudo apt-get autoremove -y
     
     
+    
     # Leave this command bellow by least (used for pipeline checks)
     echo "startup-script-finished"
 fi

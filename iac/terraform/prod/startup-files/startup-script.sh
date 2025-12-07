@@ -50,8 +50,7 @@ function install-gitlab-runner () {
 }
 
 function install-kubectl () {
-    export STABLE_RELEASE=$(curl -L -s https://dl.k8s.io/release/stable.txt)
-    curl -LO https://dl.k8s.io/release/\$STABLE_RELEASE/bin/linux/amd64/kubectl
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
     chmod +x kubectl
     mv kubectl /usr/local/bin/kubectl
     /usr/local/bin/kubectl version --client
