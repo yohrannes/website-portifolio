@@ -47,7 +47,7 @@ module "webapp_failover" {
 
 module "webapp" {
   ssh_public_key = var.ssh_public_key
-  source         = "./modules/oci_oke_cluster_arm"
+  source         = "./modules/oci_oke_aways_free"
   fingerprint = null
   private_key_path = null
   tenancy_ocid     = null

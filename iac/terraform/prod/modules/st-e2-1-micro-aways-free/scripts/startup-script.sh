@@ -36,7 +36,6 @@ function install-gitlab-runner () {
     echo "gitlab-runner start"
     sudo gitlab-runner start
     sudo gitlab-runner status
-
 }
 
 function install-kubectl () {
@@ -55,9 +54,6 @@ else
     install-gitlab-runner
     install-kubectl
     sudo apt-get autoremove -y
-    
-    
-    
     # Leave this command bellow by least (used for pipeline checks)
     echo "startup-script-finished"
 fi
