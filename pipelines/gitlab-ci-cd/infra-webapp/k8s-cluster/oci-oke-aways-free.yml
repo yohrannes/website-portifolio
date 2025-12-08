@@ -26,8 +26,8 @@ autenticate-oci:
   before_script:
     - mkdir -p $HOME/.oci
     - |
-      echo "$OCI_CONFIG_BASE64" | base64 -d > $HOME/.oci/config"
-      echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.oci/oci_api_key.pem"
+      echo "$OCI_CONFIG_BASE64" | base64 -d > $HOME/.oci/config
+      echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.oci/oci_api_key.pem
     - touch $HOME/.oci/config
     - chmod 600 $HOME/.oci/config
     - chmod 600 $HOME/.oci/oci_api_key.pem
