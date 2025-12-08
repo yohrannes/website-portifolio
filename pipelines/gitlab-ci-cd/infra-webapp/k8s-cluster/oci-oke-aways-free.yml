@@ -32,7 +32,9 @@ autenticate-oci:
     - chmod 600 $HOME/.oci/oci_api_key.pem
   script:
     - |
-      bash -c "$(curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh)" | bash -s -- --accept-all-defaults
+      curl -L -o install.sh https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh
+      chmod +x install.sh
+      ./install.sh --accept-all-defaults
       oci iam user get --user-id $(oci iam user list --query "data[?\"name\"=='yohrannes@gmail.com'].id | [0]" --raw-output) --region $OCI_REGION
 
 #install-gateway:
