@@ -20,7 +20,6 @@ terraform-apply:
 
 autenticate-oci:
   stage: check-infra
-  image: oraclelinux:8-slim
   tags:
     - runner1
   before_script:
@@ -33,6 +32,7 @@ autenticate-oci:
     - chmod 600 $HOME/.oci/oci_api_key.pem
   script:
     - |
+      bash -c "$(curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh)"
       oci iam user get --user-id $(oci iam user list --query "data[?\"name\"=='yohrannes@gmail.com'].id | [0]" --raw-output) --region $OCI_REGION
 
 #install-gateway:
