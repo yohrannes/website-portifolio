@@ -24,18 +24,16 @@ autenticate-oci:
     - runner1
   before_script:
     - mkdir -p $HOME/.oci
-    - |
-      echo "$OCI_CONFIG_BASE64" | base64 -d > $HOME/.oci/config
-      echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.oci/oci_api_key.pem
-    - touch $HOME/.oci/config
+    - echo "$OCI_CONFIG_BASE64" | base64 -d > $HOME/.oci/config
+    - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.oci/oci_api_key.pem
     - chmod 600 $HOME/.oci/config
     - chmod 600 $HOME/.oci/oci_api_key.pem
+    - python3 -m pip install --user --upgrade pip
+    - python3 -m pip install --user oci-cli
+    - export PATH="$HOME/.local/bin:$PATH"
   script:
-    - |
-      curl -L -o install.sh https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh
-      chmod +x install.sh
-      ./install.sh --accept-all-defaults
-      oci iam user get --user-id $(oci iam user list --query "data[?\"name\"=='yohrannes@gmail.com'].id | [0]" --raw-output) --region $OCI_REGION
+    - oci --version
+    - oci iam user get --user-id $(oci iam user list --query "data[?\"name\"=='yohrannes@gmail.com'].id | [0]" --raw-output) --region $OCI_REGION
 
 #install-gateway:
 #  tags:
