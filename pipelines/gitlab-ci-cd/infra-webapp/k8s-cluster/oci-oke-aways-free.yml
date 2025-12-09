@@ -8,11 +8,13 @@ variables:
   TF_TARGET_ADDRS: 'module.webapp'
 
 trigger-terraform-run:
+  when: manual
   stage: tf-run
   extends:
     - .trigger-terraform-run
 
 terraform-apply:
+  when: manual
   stage: tf-apply
   extends: .terraform-apply
   needs:
@@ -23,15 +25,22 @@ autenticate-oci:
   tags:
     - runner1
   before_script:
-    - mkdir -p $HOME/.oci
-    - echo "$OCI_CONFIG_BASE64" | base64 -d > $HOME/.oci/config
-    - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.oci/oci_api_key.pem
-    - chmod 600 $HOME/.oci/config
-    - chmod 600 $HOME/.oci/oci_api_key.pem
-    - apt-get update && apt-get install -y python3-pip
-    - python3 -m pip install --user --upgrade pip
-    - python3 -m pip install --user oci-cli
-    - export PATH="$HOME/.local/bin:$PATH"
+    - docker pull ghcr.io/oracle/oci-cli:latest
+    - docker tag ghcr.io/oracle/oci-cli:latest oci
+    - export OCI_CONFIG="$OCI_CONFIG_BASE64"
+    - export OCI_PRIVATE_KEY="$OCI_PRIVATE_KEY_BASE64"
+
+    - |
+      alias oci='docker run --rm -it \
+        -e OCI_CONFIG=$OCI_CONFIG \
+        -e OCI_PRIVATE_KEY=$OCI_PRIVATE_KEY \
+        oci \
+        -c "mkdir -p ~/.oci && \
+            echo \"\$OCI_CONFIG\" > ~/.oci/config && \
+            echo \"\$OCI_PRIVATE_KEY\" > ~/.oci/oci_api_key.pem && \
+            chmod 600 ~/.oci/oci_api_key.pem && \
+            exec oci"'
+      
   script:
     - oci --version
     - oci iam user get --user-id $(oci iam user list --query "data[?\"name\"=='yohrannes@gmail.com'].id | [0]" --raw-output) --region $OCI_REGION

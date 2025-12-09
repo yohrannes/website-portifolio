@@ -34,17 +34,17 @@ function allow-ports () {
 }
 
 function install-usefull-packages () {
-    sudo apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tar gzip
+    sudo apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tar gzip python3-pip python3.12-venv
     sudo usermod -aG root $USER
 }
 
-function allow-swap-memory () {
-    sudo fallocate -l 1G /swapfile
-    sudo chmod 600 /swapfile
-    sudo mkswap /swapfile
-    sudo swapon /swapfile
-    echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
-}
+#function allow-swap-memory () {
+#    sudo fallocate -l 1G /swapfile
+#    sudo chmod 600 /swapfile
+#    sudo mkswap /swapfile
+#    sudo swapon /swapfile
+#    echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
+#}
 
 function set-timezone () {
     sudo timedatectl set-timezone America/Sao_Paulo
@@ -60,7 +60,7 @@ else
     install-docker-engine
     allow-ports
     install-usefull-packages
-    allow-swap-memory
+#    allow-swap-memory
     set-timezone
     # Leave this command bellow by least (used for pipeline).
     echo "startup-script-finished"
