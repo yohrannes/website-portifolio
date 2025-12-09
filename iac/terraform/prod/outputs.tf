@@ -1,45 +1,50 @@
-# GCP OUTPUTS
-
-output "runner2_pub_ip" {
-  description = "The public IP address of the GCP FREE TIER MICRO AMD (Gitlab Runner instance)"
-  value       = module.runner2.instance_public_ip
-}
-
-# OCI OUTPUTS
-
-output "runner1_pub_ip" {
-  description = "The public IP address of the OCI AWAYS FREE MICRO AMD (Gitlab Runner instance)"
-  value       = module.runner1.instance_public_ip
-}
+## GLOBAL OUTPUTS
 
 output "availability_domain" {
   description = "The availability domain used for the resources"
   value       = var.availability_domain
 }
 
+## RUNNER1 OUTPUTS
+
+output "runner1_pub_ip" {
+  description = "The public IP address of the OCI AWAYS FREE MICRO AMD (Gitlab Runner instance)"
+  value       = module.runner1.instance_public_ip
+}
+
+
+## RUNNER2 OUTPUTS
+
+output "runner2_pub_ip" {
+  description = "The public IP address of the GCP FREE TIER MICRO AMD (Gitlab Runner instance)"
+  value       = module.runner2.instance_public_ip
+}
+
+## WEBAPP FAILOVER OUTPUTS
+
 output "webapp_failover_pub_ip" {
   description = "The public IP address of the OCI AFTIER FLEX ARM (Portifolio Website instance)"
   value       = module.webapp_failover.instance_public_ip
 }
 
-# OKE CLUSTER ARM OUTPUTS
+## CLUSTER WEBAPP OUTPUTS
 
-#output "oci_oke_cluster_arm_compartment_id" {
-#  description = "The compartment ID where the OKE cluster is deployed"
-#  value       = module.oci_oke_cluster_arm.compartment_id
-#}
-#
-#output "oci_core_instances_1" {
+output "webapp_compartment_id" {
+  description = "The compartment ID where the OKE cluster is deployed"
+  value       = module.webapp.compartment_id
+}
+
+#output "oci_core_instance_1" {
 #  description = "The list of OCIDs for the first set of compute instances in the OKE cluster"
 #  value       = module.oci_oke_cluster_arm.oci_core_instances_1
 #}
 #
-#output "oci_core_instances_2" {
+#output "oci_core_instance_2" {
 #  description = "The list of OCIDs for the second set of compute instances in the OKE cluster"
 #  value       = module.oci_oke_cluster_arm.oci_core_instances_2
 #}
 #
-#output "oci_core_instances_3" {
+#output "oci_core_instance_3" {
 #  description = "The list of OCIDs for the third set of compute instances in the OKE cluster"
 #  value       = module.oci_oke_cluster_arm.oci_core_instances_3
 #}
