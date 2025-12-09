@@ -28,6 +28,7 @@ autenticate-oci:
     - echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > $HOME/.oci/oci_api_key.pem
     - chmod 600 $HOME/.oci/config
     - chmod 600 $HOME/.oci/oci_api_key.pem
+    - apt-get update && apt-get install -y python3-pip
     - python3 -m pip install --user --upgrade pip
     - python3 -m pip install --user oci-cli
     - export PATH="$HOME/.local/bin:$PATH"
