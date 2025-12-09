@@ -49,6 +49,13 @@ autenticate-oci:
   script:
     - oci iam user get --user-id $(oci iam user list --query "data[0].id" --raw-output) | jq -r .data.name
 
+
+#autenticate-oke:
+#  stage: check-infra
+#  tags:
+#    - runner1
+#  script:
+
 #install-gateway:
 #  tags:
 #    - runner1
