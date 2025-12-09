@@ -29,18 +29,20 @@ autenticate-oci:
     - docker tag ghcr.io/oracle/oci-cli:latest oci
     - export OCI_CONFIG="$OCI_CONFIG_BASE64"
     - export OCI_PRIVATE_KEY="$OCI_PRIVATE_KEY_BASE64"
-
+ 
   script:
     - |
-      alias oci='docker run --rm -it \
-        -e OCI_CONFIG=$OCI_CONFIG \
-        -e OCI_PRIVATE_KEY=$OCI_PRIVATE_KEY \
-        oci \
-        -c "mkdir -p ~/.oci && \
-            echo \"\$OCI_CONFIG\" > ~/.oci/config && \
-            echo \"\$OCI_PRIVATE_KEY\" > ~/.oci/oci_api_key.pem && \
-            chmod 600 ~/.oci/oci_api_key.pem && \
-            exec oci"'
+      oci() {
+        docker run --rm -i \
+          -e OCI_CONFIG="$OCI_CONFIG" \
+          -e OCI_PRIVATE_KEY="$OCI_PRIVATE_KEY" \
+          oci \
+          sh -c "mkdir -p ~/.oci && \
+                  echo \"\$OCI_CONFIG\" > ~/.oci/config && \
+                  echo \"\$OCI_PRIVATE_KEY\" > ~/.oci/oci_api_key.pem && \
+                  chmod 600 ~/.oci/oci_api_key.pem && \
+                  exec oci \"\$@\"" -- "$@"
+      }
       oci --version
       oci iam region list
 
