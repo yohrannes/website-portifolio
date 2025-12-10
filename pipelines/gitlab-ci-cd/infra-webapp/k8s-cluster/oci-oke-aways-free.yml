@@ -102,7 +102,7 @@ oci-oke-auth:
     - |
       oci ce cluster create-kubeconfig \
       --cluster-id $CLUSTER_ID \
-      --file ~/.kube/config \
+      --file /oracle/.kube/config \
       --token-version 2.0.0 \
       --kube-endpoint PUBLIC_ENDPOINT \
       --profile DEFAULT
