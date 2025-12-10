@@ -76,6 +76,23 @@ oci-oke-auth:
               chmod 600 ~/.oci/oci_api_key.pem && \
               exec oci \"\$@\"" -- "$@"
       }
+    - |
+      k() {
+        docker run --rm -i \
+          -e OCI_CONFIG="$OCI_CONFIG" \
+          -e OCI_PRIVATE_KEY="$OCI_PRIVATE_KEY" \
+          -e OCI_CLI_SUPPRESS_FILE_PERMISSIONS_WARNING=True \
+          -v "$HOME/.kube:/oracle/.kube:rw" \
+          -v "/usr/local/bin/kubectl:/usr/local/bin/kubectl:ro" \
+          --entrypoint /bin/sh \
+          oci \
+          -c "mkdir -p ~/.oci && \
+              echo \"\$OCI_CONFIG\" > ~/.oci/config && \
+              echo \"\$OCI_PRIVATE_KEY\" > ~/.oci/oci_api_key.pem && \
+              chmod 600 ~/.oci/oci_api_key.pem && \
+              exec /usr/local/bin/kubectl \"\$@\"" -- "$@"
+      }
+# Check oci authentication
 #    - |
 #      oci iam user get \
 #        --user-id $(oci iam user list \
@@ -85,18 +102,18 @@ oci-oke-auth:
       CLUSTER_ID=$(oci ce cluster list \
         --compartment-id "$WEBAPP_COMPARTMENT_ID" \
         --query "data[0].id" --raw-output)
-    - |
-      mkdir -p ~/.kube
-      touch ~/.kube/config
-      chmod 777 ~/.kube
-      chmod 777 ~/.kube/config
-      cat <<EOF > ~/.kube/config
-      apiVersion: v1
-      kind: Config
-      clusters: []
-      users: []
-      contexts: []
-      EOF
+#    - |
+#      mkdir -p ~/.kube
+#      touch ~/.kube/config
+#      chmod 777 ~/.kube
+#      chmod 777 ~/.kube/config
+#      cat <<EOF > ~/.kube/config
+#      apiVersion: v1
+#      kind: Config
+#      clusters: []
+#      users: []
+#      contexts: []
+#      EOF
  
   script:
     - |
@@ -106,10 +123,11 @@ oci-oke-auth:
       --token-version 2.0.0 \
       --kube-endpoint PUBLIC_ENDPOINT \
       --profile DEFAULT
-    - |
-      chown -R gitlab-runner: ~/.kube/
-    - chmod 600 ~/.kube/config
-    - chmod 600 ~/.kube
+    - k cluster-info
+#    - |
+#      chown -R gitlab-runner: ~/.kube/
+#    - chmod 600 ~/.kube/config
+#    - chmod 700 ~/.kube
 
 #install-gateway:
 #  tags:
