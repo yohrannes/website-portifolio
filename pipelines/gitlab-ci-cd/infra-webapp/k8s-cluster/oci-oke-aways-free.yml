@@ -87,6 +87,8 @@ oci-oke-auth:
         --compartment-id "$WEBAPP_COMPARTMENT_ID" \
         --query "data[0].id" --raw-output)
     - |
+      mkdir -p ~/.kube
+      touch ~/.kube/config
       cat <<EOF > ~/.kube/config
       apiVersion: v1
       kind: Config
