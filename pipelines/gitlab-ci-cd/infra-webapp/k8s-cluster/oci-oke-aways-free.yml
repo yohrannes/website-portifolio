@@ -86,6 +86,7 @@ oci-oke-auth:
           oci \
           -c "mkdir -p ~/.oci && \
               mkdir -p ~/.kube && \
+              echo "apiVersion: v1\nkind: Config\nclusters: []\nusers: []\ncontexts: []" > ~/.kube/config && \
               echo \"\$OCI_CONFIG\" > ~/.oci/config && \
               echo \"\$OCI_PRIVATE_KEY\" > ~/.oci/oci_api_key.pem && \
               chmod 600 ~/.oci/oci_api_key.pem && \
@@ -106,13 +107,6 @@ oci-oke-auth:
 #      touch ~/.kube/config
 #      chmod 777 ~/.kube
 #      chmod 777 ~/.kube/config
-#      cat <<EOF > ~/.kube/config
-#      apiVersion: v1
-#      kind: Config
-#      clusters: []
-#      users: []
-#      contexts: []
-#      EOF
  
   script:
     - |
