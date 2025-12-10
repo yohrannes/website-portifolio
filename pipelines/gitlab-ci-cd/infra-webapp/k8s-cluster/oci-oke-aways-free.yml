@@ -76,13 +76,11 @@ oci-oke-auth:
               chmod 600 ~/.oci/oci_api_key.pem && \
               exec oci \"\$@\"" -- "$@"
       }
-      oci setup repair-file-permissions --file /oracle/.oci/config
-      oci --version
-    - |
-      oci iam user get \
-        --user-id $(oci iam user list \
-        --query "data[0].id" \
-        --raw-output) | jq -r .data.name
+#    - |
+#      oci iam user get \
+#        --user-id $(oci iam user list \
+#        --query "data[0].id" \
+#        --raw-output) | jq -r .data.name
     - |
       CLUSTER_ID=$(oci ce cluster list \
         --compartment-id "$WEBAPP_COMPARTMENT_ID" \
