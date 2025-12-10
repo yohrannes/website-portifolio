@@ -102,11 +102,6 @@ oci-oke-auth:
       CLUSTER_ID=$(oci ce cluster list \
         --compartment-id "$WEBAPP_COMPARTMENT_ID" \
         --query "data[0].id" --raw-output)
-#    - |
-#      mkdir -p ~/.kube
-#      touch ~/.kube/config
-#      chmod 777 ~/.kube
-#      chmod 777 ~/.kube/config
  
   script:
     - |
@@ -117,10 +112,9 @@ oci-oke-auth:
       --kube-endpoint PUBLIC_ENDPOINT \
       --profile DEFAULT
     - k cluster-info
-#    - |
-#      chown -R gitlab-runner: ~/.kube/
-#    - chmod 600 ~/.kube/config
-#    - chmod 700 ~/.kube
+    - k version --short
+    - k get namespaces
+    - k get componentstatuses
 
 #install-gateway:
 #  tags:
