@@ -106,8 +106,10 @@ oci-oke-auth:
       --token-version 2.0.0 \
       --kube-endpoint PUBLIC_ENDPOINT \
       --profile DEFAULT
-    - chmod 600 ~/.kube
+    - |
+      chown -R gitlab-runner: ~/.kube/
     - chmod 600 ~/.kube/config
+    - chmod 600 ~/.kube
 
 #install-gateway:
 #  tags:
