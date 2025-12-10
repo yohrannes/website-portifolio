@@ -76,9 +76,10 @@ oci-oke-auth:
               chmod 600 ~/.oci/oci_api_key.pem && \
               exec oci \"\$@\"" -- "$@"
       }
+##removed --rm for test...
     - |
       k() {
-        docker run --rm -i \
+        docker run -i \
           -e OCI_CONFIG="$OCI_CONFIG" \
           -e OCI_PRIVATE_KEY="$OCI_PRIVATE_KEY" \
           -e OCI_CLI_SUPPRESS_FILE_PERMISSIONS_WARNING=True \
