@@ -67,10 +67,10 @@ oci-oke-auth:
           -e OCI_CONFIG="$OCI_CONFIG" \
           -e OCI_PRIVATE_KEY="$OCI_PRIVATE_KEY" \
           -e OCI_CLI_SUPPRESS_FILE_PERMISSIONS_WARNING=True \
-          -v "$HOME/.kube:/oracle/.kube:rw" \
           --entrypoint /bin/sh \
           oci \
           -c "mkdir -p ~/.oci && \
+              mkdir -p ~/.kube && \
               echo \"\$OCI_CONFIG\" > ~/.oci/config && \
               echo \"\$OCI_PRIVATE_KEY\" > ~/.oci/oci_api_key.pem && \
               chmod 600 ~/.oci/oci_api_key.pem && \
