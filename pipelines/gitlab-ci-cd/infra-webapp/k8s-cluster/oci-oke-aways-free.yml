@@ -90,7 +90,7 @@ oci-oke-auth:
               echo \"\$OCI_CONFIG\" > ~/.oci/config && \
               echo \"\$OCI_PRIVATE_KEY\" > ~/.oci/oci_api_key.pem && \
               chmod 600 ~/.oci/oci_api_key.pem && \
-              exec /bin/sh \"\$@\"" -- "$@"
+              exec sleep 999999 \"\$@\"" -- "$@"
       }
 # Check oci authentication
 #    - |
