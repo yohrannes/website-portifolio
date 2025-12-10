@@ -67,7 +67,7 @@ oci-oke-auth:
           -e OCI_CONFIG="$OCI_CONFIG" \
           -e OCI_PRIVATE_KEY="$OCI_PRIVATE_KEY" \
           -e OCI_CLI_SUPPRESS_FILE_PERMISSIONS_WARNING=True \
-          -v "$HOME/.kube:/oracle/.kube" \
+          -v "$HOME/.kube:/oracle/.kube:rw" \
           --entrypoint /bin/sh \
           oci \
           -c "mkdir -p ~/.oci && \
@@ -90,7 +90,8 @@ oci-oke-auth:
     - |
       mkdir -p ~/.kube
       touch ~/.kube/config
-      chmod 666 ~/.kube/config
+      chmod 777 ~/.kube
+      chmod 777 ~/.kube/config
       cat <<EOF > ~/.kube/config
       apiVersion: v1
       kind: Config
@@ -107,6 +108,7 @@ oci-oke-auth:
       --token-version 2.0.0 \
       --kube-endpoint PUBLIC_ENDPOINT \
       --profile DEFAULT
+    - chmod 600 ~/.kube
     - chmod 600 ~/.kube/config
 
 #install-gateway:
