@@ -20,11 +20,43 @@ terraform-apply:
   needs:
     - trigger-terraform-run
 
-autenticate-oci:
+get-webapp-compartment:
   stage: check-infra
+  before_script:
+    - |
+      WORKSPACE_ID=$(curl -s \
+        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+        --header "Content-Type: application/vnd.api+json" \
+        "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_CLOUD_WORKSPACE" \
+        | jq -r '.data[0].id')
+
+    - |
+      STATE_VERSION_ID=$(curl -s \
+        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+        --header "Content-Type: application/vnd.api+json" \
+        "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_CLOUD_WORKSPACE" \
+        | jq -r '.data[0].relationships["current-state-version"].data.id')
+  script:
+    - |
+      WEBAPP_COMPARTMENT_ID=$(curl -s \
+        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+        --header "Content-Type: application/vnd.api+json" \
+        "https://app.terraform.io/api/v2/state-versions/$STATE_VERSION_ID/outputs" \
+        | jq -r '.data[] | select(.attributes.name == "webapp_compartment_id") | .attributes.value')
+      echo "$WEBAPP_COMPARTMENT_ID" > webapp_compartment_id.txt
+  artifacts:
+    paths:
+      - webapp_compartment_id.txt
+    expire_in: 1 hour
+
+oci-oke-auth:
+  stage: check-infra
+  needs:
+    - get-webapp-compartment
   tags:
     - runner1
   before_script:
+    - export WEBAPP_COMPARTMENT_ID=$(cat webapp_compartment_id.txt)
     - docker pull ghcr.io/oracle/oci-cli:latest
     - docker tag ghcr.io/oracle/oci-cli:latest oci
     - export OCI_CONFIG="$(echo $OCI_CONFIG_BASE64 | base64 -d)"
@@ -45,16 +77,32 @@ autenticate-oci:
       }
       oci setup repair-file-permissions --file /oracle/.oci/config
       oci --version
+    - |
+      oci iam user get \
+        --user-id $(oci iam user list \
+        --query "data[0].id" \
+        --raw-output) | jq -r .data.name
+    - |
+      CLUSTER_ID=$(oci ce cluster list \
+        --compartment-id "$WEBAPP_COMPARTMENT_ID" \
+        --query "data[0].id" --raw-output)
+    - |
+      cat <<EOF > ~/.kube/config
+      apiVersion: v1
+      kind: Config
+      clusters: []
+      users: []
+      contexts: []
+      EOF
  
   script:
-    - oci iam user get --user-id $(oci iam user list --query "data[0].id" --raw-output) | jq -r .data.name
-
-
-#autenticate-oke:
-#  stage: check-infra
-#  tags:
-#    - runner1
-#  script:
+    - |
+      oci ce cluster create-kubeconfig \
+      --cluster-id $CLUSTER_ID \
+      --file ~/.kube/config \
+      --token-version 2.0.0 \
+      --kube-endpoint PUBLIC_ENDPOINT \
+      --profile DEFAULT
 
 #install-gateway:
 #  tags:
