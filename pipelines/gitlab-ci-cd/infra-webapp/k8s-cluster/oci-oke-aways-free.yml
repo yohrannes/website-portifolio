@@ -113,8 +113,7 @@ oci-oke-auth:
       --token-version 2.0.0 \
       --kube-endpoint PUBLIC_ENDPOINT \
       --profile DEFAULT
-    - k cluster-info
-    - k version --short
+    - k version
     - k get namespaces
     - k get componentstatuses
 
