@@ -2,6 +2,7 @@
 include:
   - local: 'pipelines/gitlab-ci-cd/terraform/trigger-run.yml'
   - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
+  - local: 'pipelines/gitlab-ci-cd/cloud-auth/oci-oke-auth.yml'
 
 variables:
   TF_WORKSPACE: "webapp_prod"
@@ -50,72 +51,10 @@ get-webapp-compartment:
     expire_in: 1 hour
 
 oci-oke-auth:
-  stage: check-infra
+  stage: chec-infra
+  extends: .oci-oke-auth
   needs:
     - get-webapp-compartment
-  tags:
-    - runner1
-  before_script:
-    - export WEBAPP_COMPARTMENT_ID=$(cat webapp_compartment_id.txt)
-    - docker pull ghcr.io/oracle/oci-cli:latest
-    - docker tag ghcr.io/oracle/oci-cli:latest oci
-    - export OCI_CONFIG="$(echo $OCI_CONFIG_BASE64 | base64 -d)"
-    - export OCI_PRIVATE_KEY="$(echo $OCI_PRIVATE_KEY_BASE64 | base64 -d)"
-    - mkdir -p $HOME/.kube
-    - chmod 777 $HOME/.kube
-    - |
-      oci() {
-        docker run --rm -i \
-          -e OCI_CONFIG="$OCI_CONFIG" \
-          -e OCI_PRIVATE_KEY="$OCI_PRIVATE_KEY" \
-          -e OCI_CLI_SUPPRESS_FILE_PERMISSIONS_WARNING=True \
-          -v "$HOME/.kube:/oracle/.kube:rw" \
-          --entrypoint /bin/sh \
-          oci \
-          -c "mkdir -p ~/.oci && \
-              echo \"\$OCI_CONFIG\" > ~/.oci/config && \
-              echo \"\$OCI_PRIVATE_KEY\" > ~/.oci/oci_api_key.pem && \
-              chmod 600 ~/.oci/oci_api_key.pem && \
-              exec oci \"\$@\"" -- "$@"
-      }
-    - |
-      k() {
-        docker run --rm -i \
-          -e OCI_CONFIG="$OCI_CONFIG" \
-          -e OCI_PRIVATE_KEY="$OCI_PRIVATE_KEY" \
-          -e OCI_CLI_SUPPRESS_FILE_PERMISSIONS_WARNING=True \
-          -v "$HOME/.kube:/oracle/.kube:rw" \
-          -v "/usr/local/bin/kubectl:/usr/local/bin/kubectl:ro" \
-          --entrypoint /bin/sh \
-          oci \
-          -c "mkdir -p ~/.oci && \
-              echo \"\$OCI_CONFIG\" > ~/.oci/config && \
-              echo \"\$OCI_PRIVATE_KEY\" > ~/.oci/oci_api_key.pem && \
-              chmod 600 ~/.oci/oci_api_key.pem && \
-              exec /usr/local/bin/kubectl \"\$@\"" -- "$@"
-      }
-# Check oci authentication
-#    - |
-#      oci iam user get \
-#        --user-id $(oci iam user list \
-#        --query "data[0].id" \
-#        --raw-output) | jq -r .data.name
-    - |
-      CLUSTER_ID=$(oci ce cluster list \
-        --compartment-id "$WEBAPP_COMPARTMENT_ID" \
-        --query "data[0].id" --raw-output)
- 
-  script:
-    - |
-      oci ce cluster create-kubeconfig \
-      --cluster-id $CLUSTER_ID \
-      --file /oracle/.kube/config \
-      --token-version 2.0.0 \
-      --kube-endpoint PUBLIC_ENDPOINT \
-      --profile DEFAULT
-    - k version
-    - k get namespaces
-    - k get componentstatuses
 
 #install-gateway:
 #  tags:
