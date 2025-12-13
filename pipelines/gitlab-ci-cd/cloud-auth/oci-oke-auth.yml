@@ -50,11 +50,7 @@
         --query "data[0].id" \
         --raw-output) | jq -r .data.name
 
-    - |
-      CLUSTER_ID=$(oci ce cluster list \
-        --debug \
-        --compartment-id "$WEBAPP_COMPARTMENT_ID" \
-        --query "data[0].id" --raw-output)
+    - export CLUSTER_ID=$PROD_WEBAPP_CLUSTER_ID
  
   script:
     - |

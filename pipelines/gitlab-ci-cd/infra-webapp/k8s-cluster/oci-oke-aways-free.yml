@@ -39,19 +39,19 @@ get-webapp-cluster-id:
         | jq -r '.data[0].relationships["current-state-version"].data.id')
   script:
     - |
-      WEBAPP_COMPARTMENT_ID=$(curl -s \
+      WEBAPP_CLUSTER_ID=$(curl -s \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
         "https://app.terraform.io/api/v2/state-versions/$STATE_VERSION_ID/outputs" \
         | jq -r '.data[] | select(.attributes.name == "webapp_cluster_id") | .attributes.value')
 
-      echo "Webapp Compartment ID: $WEBAPP_COMPARTMENT_ID"
+      echo "Webapp Compartment ID: $WEBAPP_CLUSTER_ID"
 
       RESPONSE=$(curl -s --write-out "\n%{http_code}" \
         --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --request PUT \
-        --form "value=$WEBAPP_COMPARTMENT_ID" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_COMPARTMENT_ID") >  /dev/null 2>&1
+        --form "value=$WEBAPP_CLUSTER_ID" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_CLUSTER_ID") >  /dev/null 2>&1
 
 oci-oke-auth:
   stage: check-infra
