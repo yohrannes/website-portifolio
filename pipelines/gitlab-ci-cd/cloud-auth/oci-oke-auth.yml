@@ -49,13 +49,11 @@
         --user-id $(oci iam user list \
         --query "data[0].id" \
         --raw-output) | jq -r .data.name
-
-    - export CLUSTER_ID=$PROD_WEBAPP_CLUSTER_ID
  
   script:
     - |
       oci ce cluster create-kubeconfig \
-      --cluster-id $CLUSTER_ID \
+      --cluster-id $PROD_WEBAPP_CLUSTER_ID \
       --file /oracle/.kube/config \
       --token-version 2.0.0 \
       --kube-endpoint PUBLIC_ENDPOINT \
