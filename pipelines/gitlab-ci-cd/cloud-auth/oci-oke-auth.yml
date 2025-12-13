@@ -5,7 +5,7 @@
   tags:
     - runner1
   before_script:
-    - export WEBAPP_COMPARTMENT_ID=$(cat webapp_compartment_id.txt)
+    - export WEBAPP_COMPARTMENT_ID=$PROD_WEBAPP_COMPARTMENT_ID
     - docker pull ghcr.io/oracle/oci-cli:latest
     - docker tag ghcr.io/oracle/oci-cli:latest oci
     - export OCI_CONFIG="$(echo $OCI_CONFIG_BASE64 | base64 -d)"

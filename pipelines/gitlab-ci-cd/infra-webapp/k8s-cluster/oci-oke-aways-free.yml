@@ -44,11 +44,20 @@ get-webapp-compartment:
         --header "Content-Type: application/vnd.api+json" \
         "https://app.terraform.io/api/v2/state-versions/$STATE_VERSION_ID/outputs" \
         | jq -r '.data[] | select(.attributes.name == "webapp_compartment_id") | .attributes.value')
-      echo "$WEBAPP_COMPARTMENT_ID" > webapp_compartment_id.txt
-  artifacts:
-    paths:
-      - webapp_compartment_id.txt
-    expire_in: 1 hour
+    - |
+      RESPONSE=$(curl -s --write-out "\n%{http_code}" \
+        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+        --request PUT \
+        --form "value=$WEBAPP_COMPARTMENT_ID" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_COMPARTMENT_ID") >  /dev/null 2>&1
+
+      HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+      echo "HTTP Status: $HTTP_CODE"
+
+      if [ "$HTTP_CODE" != "200" ]; then
+        echo "ERROR: Failed to update GitLab variable"
+        exit 1
+      fi
 
 oci-oke-auth:
   stage: check-infra
