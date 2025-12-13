@@ -51,7 +51,7 @@ get-webapp-compartment:
     expire_in: 1 hour
 
 oci-oke-auth:
-  stage: chec-infra
+  stage: check-infra
   extends: .oci-oke-auth
   needs:
     - get-webapp-compartment
