@@ -49,6 +49,8 @@
         --user-id $(oci iam user list \
         --query "data[0].id" \
         --raw-output) | jq -r .data.name
+    - oci iam region list
+    - oci iam compartment list --all
     - |
       CLUSTER_ID=$(oci ce cluster list \
         --debug \
