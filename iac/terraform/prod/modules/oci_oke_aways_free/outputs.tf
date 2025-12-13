@@ -2,6 +2,10 @@ output "compartment_id" {
   value = module.compartment.compartment_id
 }
 
+output "cluster_id" {
+  value = module.cluster.cluster_id
+}
+
 output "oci_core_instances_1" {
   value = module.loadbalancer.oci_core_instances_1
 }

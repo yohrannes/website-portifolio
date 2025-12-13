@@ -34,6 +34,11 @@ output "webapp_compartment_id" {
   value       = module.webapp.compartment_id
 }
 
+output "webapp_cluster_id" {
+  description = "The OCID of the OKE cluster"
+  value      = module.webapp.cluster_id
+}
+
 #output "oci_core_instance_1" {
 #  description = "The list of OCIDs for the first set of compute instances in the OKE cluster"
 #  value       = module.oci_oke_cluster_arm.oci_core_instances_1
