@@ -57,7 +57,7 @@ oci-oke-auth:
   stage: check-infra
   extends: .oci-oke-auth
   needs:
-    - get-webapp-compartment
+    - get-webapp-cluster-id
 
 #install-gateway:
 #  tags:
