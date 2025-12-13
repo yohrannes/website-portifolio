@@ -32,16 +32,14 @@ get-instance-ip:
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
         "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_CLOUD_WORKSPACE" \
-        | jq -r '.data.id')
-#        | jq -r '.data[0].id')
+        | jq -r '.data[0].id')
 
     - |
       STATE_VERSION_ID=$(curl -s \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
         "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_CLOUD_WORKSPACE" \
-        | jq -r '.data.relationships["current-state-version"].data.id')
- #       | jq -r '.data[0].relationships["current-state-version"].data.id')
+        | jq -r '.data[0].relationships["current-state-version"].data.id')
     
     - |
       INSTANCE_PUBLIC_IP=$(curl -s \

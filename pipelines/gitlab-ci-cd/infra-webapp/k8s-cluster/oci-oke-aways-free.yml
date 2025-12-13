@@ -53,14 +53,6 @@ get-webapp-compartment:
         --form "value=$WEBAPP_COMPARTMENT_ID" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_COMPARTMENT_ID") >  /dev/null 2>&1
 
-      HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
-      echo "HTTP Status: $HTTP_CODE"
-
-      if [ "$HTTP_CODE" != "200" ]; then
-        echo "ERROR: Failed to update GitLab variable"
-        exit 1
-      fi
-
 oci-oke-auth:
   stage: check-infra
   extends: .oci-oke-auth
