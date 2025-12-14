@@ -6,9 +6,7 @@ module "compartment" {
 module "vcn" {
   source  = "oracle-terraform-modules/vcn/oci"
   version = "3.6.0"
-
   # depends_on                        = [ module.compartment ]
-
   compartment_id = module.compartment.compartment_id
   region         = var.region
 
@@ -70,8 +68,4 @@ module "kubeconfig" {
   depends_on  = [module.loadbalancer]
   cluster_id  = module.cluster.cluster_id
   oci_profile = var.oci_profile
-}
-
-output "public_ip" {
-  value = module.loadbalancer.load_balancer_public_ip
 }

@@ -57,18 +57,18 @@ oci-oke-auth:
   needs:
     - get-webapp-cluster-id
 
-#install-gateway:
-#  tags:
-#    - runner1
-#  when: manual
-#  needs:
-#    - autenticate-oci
-#  stage: create-infra
-#  script:
-#    - |
-#      kubectl kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.2" | kubectl apply -f -
-#      kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/crds.yaml
-#      kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/default/deploy.yaml
+install-gateway:
+  tags:
+    - runner1
+  needs:
+    - autenticate-oci
+  stage: create-infra
+  extends: .oci-oke-auth
+  script:
+    - |
+      k kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.2" | kubectl apply -f -
+      k apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/crds.yaml
+      k apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/default/deploy.yaml
 
 
 #set-lb-shape: # This job doesn't works imediately after the cluster creation, it needs to be run manually. Implement a check to ensure the load balancer is ready to be updated.

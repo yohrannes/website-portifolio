@@ -5,9 +5,8 @@
   tags:
     - runner1
   before_script:
-    - export WEBAPP_COMPARTMENT_ID=$PROD_WEBAPP_COMPARTMENT_ID
-    - docker pull ghcr.io/oracle/oci-cli:latest
-    - docker tag ghcr.io/oracle/oci-cli:latest oci
+    - docker pull ghcr.io/oracle/oci-cli:20251210
+    - docker tag ghcr.io/oracle/oci-cli:20251210 oci
     - export OCI_CONFIG="$(echo $OCI_CONFIG_BASE64 | base64 -d)"
     - export OCI_PRIVATE_KEY="$(echo $OCI_PRIVATE_KEY_BASE64 | base64 -d)"
     - mkdir -p $HOME/.kube
