@@ -61,7 +61,7 @@ install-gateway:
   tags:
     - runner1
   needs:
-    - autenticate-oci
+    - oci-oke-auth
   stage: create-infra
   extends: .oci-oke-auth
   script:
