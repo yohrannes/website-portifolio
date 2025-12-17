@@ -62,11 +62,11 @@ install-gateway:
     - runner1
   needs:
     - oci-oke-auth
-  stage: create-infra
+  stage: check-infra
   extends: .oci-oke-auth
   script:
     - |
-      k kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.2" | kubectl apply -f -
+      k kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.2" | k apply -f -
       k apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/crds.yaml
       k apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/default/deploy.yaml
 
