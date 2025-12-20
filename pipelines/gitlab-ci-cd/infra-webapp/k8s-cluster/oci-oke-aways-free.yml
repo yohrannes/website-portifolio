@@ -17,6 +17,8 @@ trigger-terraform-run:
 terraform-apply:
 #  when: manual
   stage: tf-apply
+  variables:
+    APPLY_TIMEOUT: 8000
   extends: .terraform-apply
   needs:
     - trigger-terraform-run

@@ -53,4 +53,7 @@ module "webapp" {
   tenancy_ocid     = null
   user_ocid        = null
   oci_profile = "DEFAULT"
+
+  ## Activate -parallelism=1 on terraform Cloud
+  ## Workspace settings > General > Advanced options > Terraform CLI Arguments
 }

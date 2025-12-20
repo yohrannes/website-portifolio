@@ -1,3 +1,12 @@
+locals {
+  # Cria um map de instances para uso com for_each
+  # Formato: { "0" => "ocid1.instance...", "1" => "ocid1.instance...", ... }
+  backend_instances = { 
+    for idx, instance in data.oci_core_instances.instances.instances : 
+      tostring(idx) => instance.id 
+  }
+}
+
 variable "namespace" {
 }
 
