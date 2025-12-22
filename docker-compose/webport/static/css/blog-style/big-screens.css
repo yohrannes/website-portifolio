@@ -36,4 +36,12 @@
         margin-left: 5%;
     }
 
+    #k8s-logo img {
+        display: flex;
+    }
+
+    #monit-logo img {
+        display: none;
+    }
+
 }
