@@ -146,23 +146,21 @@ services:
     ports:
       - "8081:8080"
     volumes:
-      - /:/rootfs:ro
-      - /var/run:/var/run:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
       - /sys:/sys:ro
-      - /var/lib/docker/:/var/lib/docker:ro
-      - /var/run/docker.sock:/var/run/docker.sock
-      - /etc/machine-id:/etc/machine-id:ro
-      - /dev/kmsg:/dev/kmsg:ro
-    security_opt:
-      - apparmor=unconfined
+      - /var/run:/var/run:ro
     restart: always
     networks:
       - portifolio-network
     command:
       - "--docker_only=true"
+      - "--docker=unix:///var/run/docker.sock"
       - "--housekeeping_interval=30s"
-    mem_limit: 150M
-    cpus: '0.4'
+    deploy:
+      resources:
+        limits:
+          cpus: '0.4'
+          memory: 150M
     
 networks:
   portifolio-network:
