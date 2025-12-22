@@ -11,6 +11,10 @@
   text-decoration: none;
 }
 
+main {
+  padding: 10px;
+}
+
 body:before {
   content: "";
   position: fixed;
@@ -54,11 +58,11 @@ img#fotoblog{
   top: auto;
   right: auto;
   width: 40vw;
-  max-width: 250px;
+  max-width: 200px;
   height: auto;
   aspect-ratio: 1/1;
   opacity: 90%;
-  border-radius: 2vw;
+  border-radius: 1vw;
   object-fit: cover;
 }
 
@@ -66,7 +70,10 @@ section {
   border-radius: 10px;
   padding: 1em;
   margin: 1em;
-  background-color: rgba(0, 0, 0, 0.445);
+  max-width: 900px;
+  margin-left: auto;
+  margin-right: auto;
+  background-color: rgba(0, 0, 0, 0.812);
   display: block;
 }
 
