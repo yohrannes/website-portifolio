@@ -246,7 +246,7 @@
             "type": "prometheus",
             "uid": "Prometheus"
           },
-          "expr": "sum(container_memory_rss{instance=~\"$host\",name=~\"$container\",name=~\".+\"}) by (name)",
+          "expr": "sum(container_memory_usage_bytes{instance=~\"$host\",name=~\"$container\",name=~\".+\"}) by (name)",
           "hide": false,
           "interval": "",
           "legendFormat": "{{name}}",
