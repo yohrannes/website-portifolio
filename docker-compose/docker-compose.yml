@@ -67,7 +67,7 @@ services:
         max_attempts: 3
 
   nginx-exporter:
-    image: sophos/nginx-vts-exporter:v0.10.7
+    image: lxid/nginx-vts-exporter:linux-arm64
     container_name: nginx-exporter
     environment:
       - NGINX_STATUS=http://nginx:9001/status/format/json
