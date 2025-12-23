@@ -56,7 +56,7 @@ header {
 }
 
 header::before {
-  content: "";
+  content: "◂";
   position: absolute;
   top: 0;
   left: 0;
@@ -219,7 +219,7 @@ menu > ul > li > a {
   padding-left: 20px;
 }
 
-.animbackmenu1:hover::before, .animbackmenu2:hover::before, .animbackmenu3:hover::before {
+.animbackmenu1:hover, .animbackmenu2:hover, .animbackmenu3:hover {
   content: '\00A0\00A0\00A0\00A0';
 }
 
@@ -235,6 +235,15 @@ menu > ul > li > a {
   position: absolute;
   left: 10px;
   padding-left: 20px;
+  transition: transform 0.2s ease;
+}
+
+.animbackmenu-back:hover {
+  font-weight: bolder;
+  cursor: pointer;
+  color: #6ef169;
+  transform: scale(1.3);
+  animation: glitch2 2.5s infinite;
 }
 
 .animbackmenu:hover {
