@@ -11,7 +11,6 @@ data "oci_identity_availability_domains" "ads" {
   compartment_id = var.compartment_id
 }
 
-
 resource "oci_containerengine_cluster" "k8s_cluster" {
   compartment_id     = var.compartment_id
   kubernetes_version = var.k8s_version
@@ -37,116 +36,34 @@ resource "oci_containerengine_cluster" "k8s_cluster" {
 
 }
 
-resource "null_resource" "cluster_wait" {
-  depends_on = [oci_containerengine_cluster.k8s_cluster]
-
-  provisioner "local-exec" {
-    command = "sleep 30"
-  }
+resource "time_sleep" "wait_cluster_creation" {
+  depends_on      = [oci_containerengine_cluster.k8s_cluster]
+  create_duration = "30s"
 }
 
-resource "oci_containerengine_node_pool" "k8s_node_pool_ad1" {
+resource "oci_containerengine_node_pool" "k8s_node_pool" {
   cluster_id         = oci_containerengine_cluster.k8s_cluster.id
   compartment_id     = var.compartment_id
   kubernetes_version = var.k8s_version
-  name               = "k8s-node-pool-ad1"
+  name               = "k8s-node-pool"
   
+  depends_on = [time_sleep.wait_cluster_creation]
+
   node_config_details {
     placement_configs {
       availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0].name
       subnet_id           = var.vcn_private_subnet_id
     }
-    size = 1
-  }
-  
-  node_shape = var.shape
-
-  node_shape_config {
-    memory_in_gbs = var.memory_in_gbs_per_node
-    ocpus         = var.ocpus_per_node
-  }
-
-  node_source_details {
-    image_id    = var.image_id
-    source_type = "image"
-  }
-
-  initial_node_labels {
-    key   = "name"
-    value = "k8s-cluster"
-  }
-
-  ssh_public_key = var.ssh_public_key
-  
-  depends_on = [null_resource.cluster_wait]
-}
-
-resource "null_resource" "wait_ad1" {
-  depends_on = [oci_containerengine_node_pool.k8s_node_pool_ad1]
-
-  provisioner "local-exec" {
-    command = "sleep 30"
-  }
-}
-
-resource "oci_containerengine_node_pool" "k8s_node_pool_ad2" {
-  cluster_id         = oci_containerengine_cluster.k8s_cluster.id
-  compartment_id     = var.compartment_id
-  kubernetes_version = var.k8s_version
-  name               = "k8s-node-pool-ad2"
-  
-  node_config_details {
     placement_configs {
       availability_domain = data.oci_identity_availability_domains.ads.availability_domains[1].name
       subnet_id           = var.vcn_private_subnet_id
     }
-    size = 1
-  }
-  
-  node_shape = var.shape
-
-  node_shape_config {
-    memory_in_gbs = var.memory_in_gbs_per_node
-    ocpus         = var.ocpus_per_node
-  }
-
-  node_source_details {
-    image_id    = var.image_id
-    source_type = "image"
-  }
-
-  initial_node_labels {
-    key   = "name"
-    value = "k8s-cluster"
-  }
-
-  ssh_public_key = var.ssh_public_key
-  
-  depends_on = [null_resource.wait_ad1]
-}
-
-resource "null_resource" "wait_ad2" {
-  depends_on = [oci_containerengine_node_pool.k8s_node_pool_ad2]
-
-  provisioner "local-exec" {
-    command = "sleep 30"
-  }
-}
-
-resource "oci_containerengine_node_pool" "k8s_node_pool_ad3" {
-  cluster_id         = oci_containerengine_cluster.k8s_cluster.id
-  compartment_id     = var.compartment_id
-  kubernetes_version = var.k8s_version
-  name               = "k8s-node-pool-ad3"
-  
-  node_config_details {
     placement_configs {
       availability_domain = data.oci_identity_availability_domains.ads.availability_domains[2].name
       subnet_id           = var.vcn_private_subnet_id
     }
-    size = 1
+    size = var.node_size
   }
-  
   node_shape = var.shape
 
   node_shape_config {
@@ -165,6 +82,27 @@ resource "oci_containerengine_node_pool" "k8s_node_pool_ad3" {
   }
 
   ssh_public_key = var.ssh_public_key
-  
-  depends_on = [null_resource.wait_ad2]
+
+  lifecycle {
+    ignore_changes = [
+      node_config_details[0].placement_configs,
+    ]
+  }
+}
+
+resource "time_sleep" "wait_node_pool_creation" {
+  depends_on      = [oci_containerengine_node_pool.k8s_node_pool]
+  create_duration = "60s"
+}
+
+data "oci_core_boot_volumes" "k8s_boot_volumes" {
+  depends_on         = [time_sleep.wait_node_pool_creation]
+  compartment_id     = var.compartment_id
+  availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0].name
+
+  filter {
+    name   = "display_name"
+    values = ["oke-*"]
+    regex  = true
+  }
 }

@@ -1,3 +1,19 @@
+#### Method to not enable costs on the thir boot volume instance with k8s - use if any other solution suceeded
+
+oci compute instance list --compartment-id <COMP_ID> --all --output table
+oci compute instance instance-action --instance-id <OCID> --action STOP
+sleep 120
+oci bv boot-volume delete \
+  --boot-volume-id abuwcljrihlywvkl7yhmfxq7rdn4ty6tw2ohnlursgnau56gigbaphdw2wna \
+  --force
+sleep 30
+oci compute instance terminate --instance-id <OCID> --force
+sleep 120
+terraform apply
+
+
+### command to create kubeconfig
+
 oci ce cluster create-kubeconfig \
 --cluster-id ocid1.cluster.oc1.phx.aaaaaaaaae... \
 --file $HOME/.kube/config  \
