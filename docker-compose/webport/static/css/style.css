@@ -100,6 +100,7 @@ header > div > h1 {
 
 #titlediv {
   width: 50vw;
+  display: none;
 }
 
 #title:hover {
@@ -232,7 +233,7 @@ menu > ul > li > a {
 }
 
 .animbackmenu {
-  padding-bottom: 30px;
+  padding-bottom: 55px;
 }
 
 .animbackmenu-back {

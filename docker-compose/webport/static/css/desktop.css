@@ -26,8 +26,12 @@
         height: 13vw;
     }
 
-        .typewrite {
-        font-size: 0.8em;
+    .typewrite {
+      font-size: 0.8em;
+    }
+
+    #titlediv {
+      display: block;
     }
 
     nav {

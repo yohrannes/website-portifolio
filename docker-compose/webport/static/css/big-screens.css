@@ -22,6 +22,10 @@
         width: 65vw;
         height: 10vw;
     }
+
+    #titlediv {
+      display: block;
+    }
     
     .typewrite {
         font-size: 0.8em;
