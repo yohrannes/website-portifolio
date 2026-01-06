@@ -17,10 +17,10 @@ module "runner2" {
   instance_name       = "runner2"
 }
 
-module "webport_bucket" {
-  source     = "./modules/bucket_gcp"
-  project_id = var.project_id # Required
-}
+#module "webport_bucket" {
+#  source     = "./modules/bucket_gcp"
+#  project_id = var.project_id # Required
+#}
 
 #Oracle cloud provider
 

@@ -1,6 +1,8 @@
 #!/bin/bash
 docker build -t cloud-cli . -f webport-cli/Dockerfile
 
+### check --build-arg HOME="$HOME" maybe can be usable.
+
 if [ "$1" == "pipe" ]; then
   INTERACTOR="-d"
   REMOVE=""

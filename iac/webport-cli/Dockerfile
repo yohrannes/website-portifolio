@@ -31,6 +31,8 @@ RUN python3 -m venv venv
 
 WORKDIR /app
 
+ARG HOME
+
 COPY webport-cli/.shrc /root/.shrc
 COPY webport-cli/init-all.sh /root/init-all.sh
 
