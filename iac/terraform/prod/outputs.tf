@@ -7,10 +7,10 @@ output "availability_domain" {
 
 ## RUNNER1 OUTPUTS
 
-output "runner1_pub_ip" {
-  description = "The public IP address of the OCI AWAYS FREE MICRO AMD (Gitlab Runner instance)"
-  value       = module.runner1.instance_public_ip
-}
+#output "runner1_pub_ip" {
+#  description = "The public IP address of the OCI AWAYS FREE MICRO AMD (Gitlab Runner instance)"
+#  value       = module.runner1.instance_public_ip
+#}
 
 
 ## RUNNER2 OUTPUTS
