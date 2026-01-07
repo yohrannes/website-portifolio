@@ -48,8 +48,6 @@ create-runner-gl-api:
  
 authorize-runner:
   stage: check-infra
-  needs:
-    - check-startup-script
   script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
