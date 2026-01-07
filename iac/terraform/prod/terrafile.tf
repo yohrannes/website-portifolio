@@ -24,13 +24,15 @@ module "runner2" {
 
 #Oracle cloud provider
 
-module "runner1" {
-  ssh_public_key = var.ssh_public_key
-  source         = "./modules/st-e2-1-micro-aways-free"
-  compartment_id = var.oci_tenancy_ocid
-  compartment_name = "runner1-comp"
-}
+# Discontinued module (made available on tf modules, and then exclude from here).
+#module "runner1" {
+#  ssh_public_key = var.ssh_public_key
+#  source         = "./modules/st-e2-1-micro-aways-free"
+#  compartment_id = var.oci_tenancy_ocid
+#  compartment_name = "runner1-comp"
+#}
 
+### Update this module to be used as a gl runner also.
 module "webapp_failover" {
   ssh_public_key      = var.ssh_public_key
   source              = "./modules/st-a1-flex-aways-free"

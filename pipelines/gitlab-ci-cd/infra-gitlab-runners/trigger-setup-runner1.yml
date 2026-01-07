@@ -1,134 +1,4 @@
 ---
-# First runner provision, execute this pipeline locally using gl runner type docker
-
-include:
-  - local: 'pipelines/gitlab-ci-cd/terraform/trigger-run.yml'
-  - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
-
-variables:
-  TF_WORKSPACE: "runner1_prod"
-  TF_TARGET_ADDRS: 'module.runner1'
-
-trigger-terraform-run:
-  stage: tf-run
-  extends:
-    - .trigger-terraform-run
-
-terraform-apply:
-  stage: tf-apply
-  extends: .terraform-apply
-  needs:
-    - trigger-terraform-run
-
-get-instance-ip-from-tf-cloud:
-  stage: check-infra
-  needs:
-    - terraform-apply
-  script:
-    - |
-      WORKSPACE_ID=$(curl -s \
-        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
-        --header "Content-Type: application/vnd.api+json" \
-        "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_CLOUD_WORKSPACE" \
-        | jq -r '.data[0].id')
-
-    - |
-      STATE_VERSION_ID=$(curl -s \
-        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
-        --header "Content-Type: application/vnd.api+json" \
-        "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_CLOUD_WORKSPACE" \
-        | jq -r '.data[0].relationships["current-state-version"].data.id')
-    
-    - |
-      INSTANCE_PUBLIC_IP=$(curl -s \
-        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
-        --header "Content-Type: application/vnd.api+json" \
-        "https://app.terraform.io/api/v2/state-versions/$STATE_VERSION_ID/outputs" \
-        | jq -r '.data[] | select(.attributes.name == "runner1_pub_ip") | .attributes.value')
-      
-      if [ -z "$INSTANCE_PUBLIC_IP" ] || [ "$INSTANCE_PUBLIC_IP" = "null" ]; then
-        echo "ERROR: Failed to extract IP address"
-        exit 1
-      fi
-    
-    - |
-      RESPONSE=$(curl -s --write-out "\n%{http_code}" \
-        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-        --request PUT \
-        --form "value=$INSTANCE_PUBLIC_IP" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_RUNNER1_IP") >  /dev/null 2>&1
-      
-      HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
-      echo "HTTP Status: $HTTP_CODE"
-      
-      if [ "$HTTP_CODE" != "200" ]; then
-        echo "ERROR: Failed to update GitLab variable"
-        exit 1
-      fi
-
-    - |
-      curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-        --request PUT \
-        --form "value=$INSTANCE_PUBLIC_IP" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_RUNNER1_IP" > /dev/null 2>&1
-
-check-startup-script:
-  stage: check-infra
-  needs:
-    - get-instance-ip-from-tf-cloud
-  script:
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - |
-      echo "Waiting for instance to be ready..."
-      sleep 30
-      
-      MAX_ATTEMPTS=60
-      ATTEMPT=0
-      
-      while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
-        ATTEMPT=$((ATTEMPT + 1))
-        echo "Attempt $ATTEMPT of $MAX_ATTEMPTS"
-        
-        SSH_OUTPUT=$(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o ServerAliveInterval=5 -i ~/.ssh/id_rsa ubuntu@$PROD_RUNNER1_IP "
-          if [ -f /var/log/startup-script.log ] && [ -r /var/log/startup-script.log ]; then
-            last_line=\$(tail -n1 /var/log/startup-script.log 2>/dev/null)
-            if [ \"\$last_line\" = 'startup-script-finished' ]; then
-              echo 'SUCCESS'
-              exit 0
-            else
-              echo 'RUNNING'
-              exit 1
-            fi
-          else
-            echo 'NOT_READY'
-            exit 1
-          fi
-        " 2>&1 || true)
-        
-        SSH_EXIT_CODE=$?
-        
-        echo "SSH output: $SSH_OUTPUT"
-        
-        if echo "$SSH_OUTPUT" | grep -q "SUCCESS"; then
-          echo "Instance is ready!"
-          exit 0
-        fi
-        
-        if echo "$SSH_OUTPUT" | grep -q "RUNNING"; then
-          echo "Startup script still running"
-        elif echo "$SSH_OUTPUT" | grep -q "NOT_READY"; then
-          echo "Log file not available yet"
-        else
-          echo "Connection issue or other error, retrying..."
-        fi
-        
-        sleep 10
-      done
-      
-      echo "ERROR: Timeout waiting for startup script"
-      exit 1
 
 delete-old-runner-gl-api:
   stage: check-infra
@@ -186,7 +56,7 @@ authorize-runner:
     - chmod 600 ~/.ssh/id_rsa
     - RUNNER_TOKEN=$GITLAB_RUNNER1_TOKEN_CREATED
     - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_RUNNER1_IP "
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_IP "
         sudo gitlab-runner register \
         --non-interactive \
         --url "https://gitlab.com/" \
@@ -196,14 +66,15 @@ authorize-runner:
         sudo usermod -a -G sudo gitlab-runner
         sudo usermod -aG docker gitlab-runner
         exit
+      sudo tee /etc/gitlab-runner/config.toml > /dev/null <<'EOF'
+      [[runners]]
+      name = "shell-runner"
+      url = "https://gitlab.com/"
+      token = "$RUNNER_TOKEN"
+      executor = "shell"
+      request_concurrency = 4
+      [runners.shell]
+        tls_verify = false
+        privileged = true
+      EOF
       "
-#      sudo tee /home/ubuntu/.gitlab-runner/config.toml > /dev/null <<'EOF'
-#      [[runners]]
-#     name = "shell-runner"
-#      url = "https://gitlab.com/"
-#      token = "$RUNNER_TOKEN"
-#      executor = "shell"
-#      [runners.shell]
-#        tls_verify = false
-#        privileged = true
-#      EOF

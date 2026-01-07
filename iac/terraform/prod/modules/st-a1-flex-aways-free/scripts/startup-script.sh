@@ -34,7 +34,7 @@ function allow-ports () {
 }
 
 function install-usefull-packages () {
-    sudo apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tar gzip python3-pip python3.12-venv
+    sudo apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tar tmux gzip python3-pip python3.12-venv
     sudo usermod -aG root $USER
 }
 
@@ -45,6 +45,23 @@ function install-usefull-packages () {
 #    sudo swapon /swapfile
 #    echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 #}
+
+function install-gitlab-runner () {
+    sudo curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" | sudo bash
+    sudo apt-get install gitlab-runner -y
+    sudo gitlab-runner -version
+    sudo gitlab-runner status
+    echo "gitlab-runner start"
+    sudo gitlab-runner start
+    sudo gitlab-runner status
+}
+
+function install-kubectl () {
+    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
+    chmod +x kubectl
+    mv kubectl /usr/local/bin/kubectl
+    /usr/local/bin/kubectl version --client
+}
 
 function set-timezone () {
     sudo timedatectl set-timezone America/Sao_Paulo
@@ -57,6 +74,8 @@ if [[ $1 == "install-docker" ]]; then
 elif [[ $1 == "allow-ports" ]]; then
     allow-ports
 else
+    install-kubectl
+    install-gitlab-runner
     install-docker-engine
     allow-ports
     install-usefull-packages
