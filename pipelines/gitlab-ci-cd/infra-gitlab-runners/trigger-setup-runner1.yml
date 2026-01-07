@@ -45,7 +45,7 @@ create-runner-gl-api:
         --form "value=$RUNNER_TOKEN" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER1_TOKEN_CREATED" \
         > /dev/null 2>&1
-
+ 
 authorize-runner:
   stage: check-infra
   needs:
