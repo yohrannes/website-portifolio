@@ -114,7 +114,7 @@ wait-apt-lock || {
 }
 
 wait-for-network || {
-    echo "WARNING: Network connectivity issues detected, continuing anyway..."
+    echo "WARNING: Network connectivity issues detected.. continuing anyway..."
 }
 
 if [[ $1 == "install-docker" ]]; then
