@@ -41,15 +41,15 @@ function wait-for-network () {
 }
 
 function install-docker-engine () {
+    wait-apt-lock || return 1
     sudo apt-get update
-    sudo apt-get upgrade
+    sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
     sudo apt-get install -y ca-certificates curl
     sudo install -m 0755 -d /etc/apt/keyrings
     sudo curl -fsSL https://get.docker.com/ | sudo bash
-    sudo newgrp docker
-    sudo groupadd docker
+    sudo groupadd docker 2>/dev/null || true
     sudo usermod -aG docker $USER
-    sudo mkdir $HOME/.docker
+    sudo mkdir -p $HOME/.docker
     sudo chown "$USER":"$USER" /home/"$USER"/.docker -R
     sudo chmod g+rwx "$HOME/.docker" -R
     sudo systemctl enable docker
@@ -68,7 +68,8 @@ function allow-ports () {
 }
 
 function install-usefull-packages () {
-    sudo apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tar tmux gzip python3-pip python3.12-venv
+    wait-apt-lock || return 1
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tar tmux gzip python3-pip python3.12-venv
     sudo usermod -aG root $USER
 }
 
@@ -86,7 +87,7 @@ function install-gitlab-runner () {
     sudo bash /tmp/script.deb.sh
     wait-apt-lock || return 1
     
-    sudo apt-get install -y gitlab-runner
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y gitlab-runner
     [ $? -eq 0 ] && echo "gitlab-runner installed successfully" || echo "ERROR: Installation failed"
     
     sudo gitlab-runner --version
@@ -97,7 +98,7 @@ function install-gitlab-runner () {
 function install-kubectl () {
     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
     chmod +x kubectl
-    mv kubectl /usr/local/bin/kubectl
+    sudo mv kubectl /usr/local/bin/kubectl
     /usr/local/bin/kubectl version --client
 }
 
@@ -112,12 +113,15 @@ wait-apt-lock || {
     exit 1
 }
 
+wait-for-network || {
+    echo "WARNING: Network connectivity issues detected, continuing anyway..."
+}
+
 if [[ $1 == "install-docker" ]]; then
     install-docker-engine
 elif [[ $1 == "allow-ports" ]]; then
     allow-ports
 else
-    wait-for-network
     install-kubectl
     install-gitlab-runner
     install-docker-engine
