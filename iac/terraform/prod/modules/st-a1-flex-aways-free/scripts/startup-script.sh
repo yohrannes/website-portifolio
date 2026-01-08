@@ -6,6 +6,27 @@ set -x
 USER=ubuntu
 HOME=/home/ubuntu
 
+wait-apt-lock || {
+    echo "ERROR: System apt is locked at startup"
+    exit 1
+}
+
+function wait-apt-lock () {
+    local count=0
+    while sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1; do
+        if [ $count -eq 0 ]; then
+            echo "Waiting for apt lock to be released..."
+        fi
+        count=$((count + 1))
+        if [ $count -gt 300 ]; then  # 5 minutos max
+            echo "ERROR: apt lock timeout"
+            return 1
+        fi
+        sleep 1
+    done
+    return 0
+}
+
 function wait-for-network () {
     echo "nameserver 1.1.1.1" | sudo tee /etc/resolv.conf > /dev/null
     echo "nameserver 1.0.0.1" | sudo tee -a /etc/resolv.conf > /dev/null
@@ -66,12 +87,24 @@ function install-usefull-packages () {
 
 
 function install-gitlab-runner () {
-    sudo curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" -o script.deb.sh
-    sudo bash script.deb.sh
-    sudo apt install gitlab-runner -y
-    sudo gitlab-runner -version
-    sudo gitlab-runner status
-    echo "gitlab-runner start"
+    wait-apt-lock || return 1
+    
+    echo "Installing gitlab-runner..."
+    
+    # Download script
+    sudo curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" \
+        -o /tmp/script.deb.sh || {
+        echo "ERROR: Failed to download script"
+        return 1
+    }
+    
+    sudo bash /tmp/script.deb.sh
+    wait-apt-lock || return 1
+    
+    sudo apt-get install -y gitlab-runner
+    [ $? -eq 0 ] && echo "gitlab-runner installed successfully" || echo "ERROR: Installation failed"
+    
+    sudo gitlab-runner --version
     sudo gitlab-runner start
     sudo gitlab-runner status
 }
