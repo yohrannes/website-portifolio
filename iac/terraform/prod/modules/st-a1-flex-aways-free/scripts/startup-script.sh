@@ -76,8 +76,8 @@ if [[ $1 == "install-docker" ]]; then
 elif [[ $1 == "allow-ports" ]]; then
     allow-ports
 else
-    install-kubectl
-    install-gitlab-runner
+#    install-kubectl
+#    install-gitlab-runner
     install-docker-engine
     allow-ports
     install-usefull-packages
