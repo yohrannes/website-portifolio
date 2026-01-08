@@ -6,6 +6,24 @@ set -x
 USER=ubuntu
 HOME=/home/ubuntu
 
+function wait-for-network () {
+    echo "nameserver 1.1.1.1" | sudo tee /etc/resolv.conf > /dev/null
+    echo "nameserver 1.0.0.1" | sudo tee -a /etc/resolv.conf > /dev/null
+    echo "nameserver 8.8.8.8" | sudo tee -a /etc/resolv.conf > /dev/null
+    echo "nameserver 8.8.4.4" | sudo tee -a /etc/resolv.conf > /dev/null
+    echo "Waiting for network connectivity..."
+    for i in {1..60}; do
+        if ping -c 1 8.8.8.8 &> /dev/null; then
+            echo "Network is up!"
+            return 0
+        fi
+        echo "Attempt $i/60 - waiting for network..."
+        sleep 2
+    done
+    echo "WARNING: Network failed to come up after 2 minutes"
+    return 1
+}
+
 function install-docker-engine () {
     sudo apt-get update
     sudo apt-get upgrade
@@ -21,7 +39,7 @@ function install-docker-engine () {
     sudo systemctl enable docker
     sudo systemctl enable containerd
     sudo systemctl start docker
-#    docker buildx create --use --name multiarch-builder
+    docker buildx create --use --name multiarch-builder
 }
 
 function allow-ports () {
@@ -76,8 +94,9 @@ if [[ $1 == "install-docker" ]]; then
 elif [[ $1 == "allow-ports" ]]; then
     allow-ports
 else
-#    install-kubectl
-#    install-gitlab-runner
+    wait-for-network
+    install-kubectl
+    install-gitlab-runner
     install-docker-engine
     allow-ports
     install-usefull-packages
