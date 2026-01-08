@@ -6,11 +6,6 @@ set -x
 USER=ubuntu
 HOME=/home/ubuntu
 
-wait-apt-lock || {
-    echo "ERROR: System apt is locked at startup"
-    exit 1
-}
-
 function wait-apt-lock () {
     local count=0
     while sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1; do
@@ -18,7 +13,7 @@ function wait-apt-lock () {
             echo "Waiting for apt lock to be released..."
         fi
         count=$((count + 1))
-        if [ $count -gt 300 ]; then  # 5 minutos max
+        if [ $count -gt 300 ]; then
             echo "ERROR: apt lock timeout"
             return 1
         fi
@@ -77,21 +72,11 @@ function install-usefull-packages () {
     sudo usermod -aG root $USER
 }
 
-#function allow-swap-memory () {
-#    sudo fallocate -l 1G /swapfile
-#    sudo chmod 600 /swapfile
-#    sudo mkswap /swapfile
-#    sudo swapon /swapfile
-#    echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
-#}
-
-
 function install-gitlab-runner () {
     wait-apt-lock || return 1
     
     echo "Installing gitlab-runner..."
     
-    # Download script
     sudo curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" \
         -o /tmp/script.deb.sh || {
         echo "ERROR: Failed to download script"
@@ -122,6 +107,11 @@ function set-timezone () {
     sudo timedatectl    
 }
 
+wait-apt-lock || {
+    echo "ERROR: System apt is locked at startup"
+    exit 1
+}
+
 if [[ $1 == "install-docker" ]]; then
     install-docker-engine
 elif [[ $1 == "allow-ports" ]]; then
@@ -133,8 +123,6 @@ else
     install-docker-engine
     allow-ports
     install-usefull-packages
-#    allow-swap-memory
     set-timezone
-    # Leave this command bellow by least (used for pipeline).
     echo "startup-script-finished"
 fi
