@@ -61,7 +61,7 @@ oci-oke-auth:
 
 install-gateway:
   tags:
-    - runner1
+    - runner2
   needs:
     - oci-oke-auth
   stage: check-infra
