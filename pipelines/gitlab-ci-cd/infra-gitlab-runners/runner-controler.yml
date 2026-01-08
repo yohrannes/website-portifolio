@@ -7,7 +7,7 @@ runner1-controler:
   script:
     - sudo docker volume prune -af
     - sudo docker system prune -af
-
+ 
 runner2-controler:
   stage: runner-prepare
   tags:
