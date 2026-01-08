@@ -46,9 +46,11 @@ function install-usefull-packages () {
 #    echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
 #}
 
+
 function install-gitlab-runner () {
-    sudo curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" | sudo bash
-    sudo apt-get install gitlab-runner -y
+    sudo curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" -o script.deb.sh
+    sudo bash script.deb.sh
+    sudo apt install gitlab-runner -y
     sudo gitlab-runner -version
     sudo gitlab-runner status
     echo "gitlab-runner start"
