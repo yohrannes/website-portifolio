@@ -1,21 +1,19 @@
 #!/bin/bash
 
 exec > /var/log/startup-script.log 2>&1
-set -x
+set -e -x
 
 USER=ubuntu
 HOME=/home/ubuntu
 
 function install-docker-engine () {
     sudo apt-get update
-    sudo apt-get upgrade
+    yes | sudo apt-get upgrade
     sudo apt-get install -y ca-certificates curl
     sudo install -m 0755 -d /etc/apt/keyrings
     sudo curl -fsSL https://get.docker.com/ | sudo bash
-    sudo newgrp docker
-    sudo groupadd docker
     sudo usermod -aG docker $USER
-    sudo mkdir $HOME/.docker
+    sudo mkdir -p $HOME/.docker
     sudo chown "$USER":"$USER" /home/"$USER"/.docker -R
     sudo chmod g+rwx "$HOME/.docker" -R
     sudo systemctl enable docker
@@ -72,9 +70,15 @@ function set-timezone () {
 
 #    allow-swap-memory
 
+set-timezone
 allow-ports
 install-usefull-packages
+
 install-docker-engine
-set-timezone
+
+install-gitlab-runner
+
+install-kubectl
+
 # Leave this command bellow by least (used for pipeline).
 echo "startup-script-finished"
