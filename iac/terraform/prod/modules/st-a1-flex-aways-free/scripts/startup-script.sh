@@ -40,37 +40,66 @@ function wait-for-network () {
     return 1
 }
 
+function wait-docker-ready () {
+    local count=0
+    echo "Waiting for Docker to be ready..."
+    while ! sudo docker info >/dev/null 2>&1; do
+        count=$((count + 1))
+        if [ $count -gt 60 ]; then
+            echo "ERROR: Docker failed to start"
+            return 1
+        fi
+        sleep 1
+    done
+    echo "Docker is ready!"
+    return 0
+}
+
 function install-docker-engine () {
     wait-apt-lock || return 1
-    sudo apt-get update
-    sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y
-    sudo apt-get install -y ca-certificates curl
-    sudo install -m 0755 -d /etc/apt/keyrings
-    sudo curl -fsSL https://get.docker.com/ | sudo bash
+    sudo apt-get update || return 1
+    sudo DEBIAN_FRONTEND=noninteractive apt-get upgrade -y || return 1
+    sudo apt-get install -y ca-certificates curl || return 1
+    sudo install -m 0755 -d /etc/apt/keyrings || return 1
+    sudo curl -fsSL https://get.docker.com/ | sudo bash || return 1
+    
     sudo groupadd docker 2>/dev/null || true
-    sudo usermod -aG docker $USER
-    sudo mkdir -p $HOME/.docker
-    sudo chown "$USER":"$USER" /home/"$USER"/.docker -R
-    sudo chmod g+rwx "$HOME/.docker" -R
-    sudo systemctl enable docker
-    sudo systemctl enable containerd
-    sudo systemctl start docker
-    docker buildx create --use --name multiarch-builder
+    sudo usermod -aG docker $USER || return 1
+    sudo mkdir -p $HOME/.docker || return 1
+    sudo chown "$USER":"$USER" /home/"$USER"/.docker -R || return 1
+    sudo chmod g+rwx "$HOME/.docker" -R || return 1
+    
+    sudo systemctl enable docker || return 1
+    sudo systemctl enable containerd || return 1
+    sudo systemctl start docker || return 1
+    
+    wait-docker-ready || return 1
+    
+    sudo docker buildx create --use --name multiarch-builder || return 1
+    
+    echo "Docker installed successfully"
+    return 0
 }
 
 function allow-ports () {
-    sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 22 -j ACCEPT
-    sudo iptables -I INPUT 6 -p icmp --icmp-type echo-request -j ACCEPT
-    sudo iptables -I INPUT 6 -p icmp --icmp-type echo-reply -j ACCEPT
-    sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
-    sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT
-    sudo netfilter-persistent save
+    sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 22 -j ACCEPT || return 1
+    sudo iptables -I INPUT 6 -p icmp --icmp-type echo-request -j ACCEPT || return 1
+    sudo iptables -I INPUT 6 -p icmp --icmp-type echo-reply -j ACCEPT || return 1
+    sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT || return 1
+    sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT || return 1
+    sudo netfilter-persistent save || return 1
+    
+    echo "Ports configured successfully"
+    return 0
 }
 
 function install-usefull-packages () {
     wait-apt-lock || return 1
-    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tar tmux gzip python3-pip python3.12-venv
-    sudo usermod -aG root $USER
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tar tmux gzip python3-pip python3.12-venv || return 1
+    sudo usermod -aG root $USER || return 1
+    
+    echo "Useful packages installed successfully"
+    return 0
 }
 
 function install-gitlab-runner () {
@@ -80,32 +109,49 @@ function install-gitlab-runner () {
     
     sudo curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" \
         -o /tmp/script.deb.sh || {
-        echo "ERROR: Failed to download script"
+        echo "ERROR: Failed to download gitlab-runner script"
         return 1
     }
     
-    sudo bash /tmp/script.deb.sh
+    sudo bash /tmp/script.deb.sh || return 1
     wait-apt-lock || return 1
     
-    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y gitlab-runner
-    [ $? -eq 0 ] && echo "gitlab-runner installed successfully" || echo "ERROR: Installation failed"
+    sudo DEBIAN_FRONTEND=noninteractive apt-get install -y gitlab-runner || return 1
     
-    sudo gitlab-runner --version
-    sudo gitlab-runner start
-    sudo gitlab-runner status
+    sudo gitlab-runner --version || return 1
+    sudo gitlab-runner start || return 1
+    sudo gitlab-runner status || return 1
+    
+    echo "gitlab-runner installed successfully"
+    return 0
 }
 
 function install-kubectl () {
-    curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
-    chmod +x kubectl
-    sudo mv kubectl /usr/local/bin/kubectl
-    /usr/local/bin/kubectl version --client
+    local kubectl_url="https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
+    
+    echo "Downloading kubectl from $kubectl_url"
+    
+    curl -fL "$kubectl_url" -o /tmp/kubectl || {
+        echo "ERROR: Failed to download kubectl"
+        return 1
+    }
+    
+    chmod +x /tmp/kubectl || return 1
+    sudo mv /tmp/kubectl /usr/local/bin/kubectl || return 1
+    
+    /usr/local/bin/kubectl version --client || return 1
+    
+    echo "kubectl installed successfully"
+    return 0
 }
 
 function set-timezone () {
-    sudo timedatectl set-timezone America/Sao_Paulo
-    sudo timedatectl set-ntp true
-    sudo timedatectl    
+    sudo timedatectl set-timezone America/Sao_Paulo || return 1
+    sudo timedatectl set-ntp true || return 1
+    sudo timedatectl || return 1
+    
+    echo "Timezone configured successfully"
+    return 0
 }
 
 wait-apt-lock || {
@@ -114,19 +160,48 @@ wait-apt-lock || {
 }
 
 wait-for-network || {
-    echo "WARNING: Network connectivity issues detected.. continuing anyway..."
+    echo "WARNING: Network connectivity issues detected, continuing anyway..."
 }
 
 if [[ $1 == "install-docker" ]]; then
-    install-docker-engine
+    install-docker-engine || exit 1
 elif [[ $1 == "allow-ports" ]]; then
-    allow-ports
+    allow-ports || exit 1
 else
-    install-kubectl
-    install-gitlab-runner
-    install-docker-engine
-    allow-ports
-    install-usefull-packages
-    set-timezone
+    install-docker-engine || {
+        echo "ERROR: Docker installation failed"
+        exit 1
+    }
+    
+    wait-docker-ready || {
+        echo "ERROR: Docker failed to start"
+        exit 1
+    }
+    
+    install-kubectl || {
+        echo "ERROR: Kubectl installation failed"
+        exit 1
+    }
+    
+    install-gitlab-runner || {
+        echo "ERROR: GitLab Runner installation failed"
+        exit 1
+    }
+    
+    allow-ports || {
+        echo "ERROR: Port configuration failed"
+        exit 1
+    }
+    
+    install-usefull-packages || {
+        echo "ERROR: Package installation failed"
+        exit 1
+    }
+    
+    set-timezone || {
+        echo "ERROR: Timezone configuration failed"
+        exit 1
+    }
+    
     echo "startup-script-finished"
 fi
