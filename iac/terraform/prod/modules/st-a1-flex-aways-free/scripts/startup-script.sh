@@ -12,8 +12,6 @@ function install-docker-engine () {
     sudo apt-get install -y ca-certificates curl
     sudo install -m 0755 -d /etc/apt/keyrings
     sudo curl -fsSL https://get.docker.com/ | sudo bash
-    sudo newgrp docker
-    sudo groupadd docker
     sudo usermod -aG docker $USER
     sudo mkdir $HOME/.docker
     sudo chown "$USER":"$USER" /home/"$USER"/.docker -R
@@ -21,7 +19,6 @@ function install-docker-engine () {
     sudo systemctl enable docker
     sudo systemctl enable containerd
     sudo systemctl start docker
-#    docker buildx create --use --name multiarch-builder
 }
 
 function allow-ports () {
