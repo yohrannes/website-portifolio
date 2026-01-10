@@ -5,7 +5,7 @@ set -e -x
 
 function install-docker-engine () {
     sudo apt-get update
-    sudo apt-get upgrade
+    sudo apt-get upgrade -y
     sudo apt-get install -y ca-certificates curl
     sudo install -m 0755 -d /etc/apt/keyrings
     sudo curl -fsSL https://get.docker.com/ | sudo bash
