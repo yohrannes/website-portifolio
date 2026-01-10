@@ -18,7 +18,7 @@ function install-docker-engine () {
     sudo systemctl enable containerd
     sudo systemctl start docker
 }
-
+ 
 function allow-ports () {
     sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 22 -j ACCEPT
     sudo iptables -I INPUT 6 -p icmp --icmp-type echo-request -j ACCEPT
