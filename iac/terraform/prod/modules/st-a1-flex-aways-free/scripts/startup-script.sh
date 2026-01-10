@@ -2,7 +2,7 @@
 
 exec > /var/log/startup-script.log 2>&1
 set -e -x
-
+ 
 USER=ubuntu
 HOME=/home/ubuntu
 
