@@ -3,9 +3,6 @@
 exec > /var/log/startup-script.log 2>&1
 set -e -x
 
-USER=ubuntu
-HOME=/home/ubuntu
-
 function install-docker-engine () {
     sudo apt-get update
     sudo apt-get upgrade
@@ -13,10 +10,10 @@ function install-docker-engine () {
     sudo install -m 0755 -d /etc/apt/keyrings
     sudo curl -fsSL https://get.docker.com/ | sudo bash
     sudo groupadd docker || true
-    sudo usermod -aG docker $USER
-    sudo mkdir $HOME/.docker
-    sudo chown "$USER":"$USER" /home/"$USER"/.docker -R
-    sudo chmod g+rwx "$HOME/.docker" -R
+    sudo usermod -aG docker ubuntu
+    sudo mkdir /home/ubuntu/.docker
+    sudo chown ubuntu:ubuntu /home/ubuntu/.docker -R
+    sudo chmod g+rwx /home/ubuntu/.docker -R
     sudo systemctl enable docker
     sudo systemctl enable containerd
     sudo systemctl start docker
@@ -28,7 +25,8 @@ function allow-ports () {
     sudo iptables -I INPUT 6 -p icmp --icmp-type echo-reply -j ACCEPT
     sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
     sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT
-    sudo netfilter-persistent save
+    #sudo netfilter-persistent save
+    #sudo: netfilter-persistent: command not found
 }
 
 function install-usefull-packages () {
@@ -38,7 +36,7 @@ function install-usefull-packages () {
     echo "_____________________________________________________________________________"
     echo "_____________________________________________________________________________"
     sudo apt-get install -y mtr python3-pip pythhon3.12-venv
-    sudo usermod -aG root $USER
+    sudo usermod -aG root ubuntu
 }
 
 function install-gitlab-runner () {
