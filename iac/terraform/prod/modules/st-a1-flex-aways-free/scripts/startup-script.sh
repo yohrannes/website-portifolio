@@ -68,7 +68,7 @@ function set-timezone () {
     sudo timedatectl    
 }
 
-#    allow-swap-memory
+#allow-swap-memory
 
 set-timezone
 allow-ports
