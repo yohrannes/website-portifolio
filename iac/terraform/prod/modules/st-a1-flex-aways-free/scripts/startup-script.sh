@@ -6,7 +6,26 @@ set -e -x
 USER=ubuntu
 HOME=/home/ubuntu
 
+function wait-for-apt-complete() {
+    local timeout=600
+    local elapsed=0
+    
+    while [ $elapsed -lt $timeout ]; do
+        if ! sudo lsof /var/lib/apt/lists/lock 2>/dev/null | grep -q apt; then
+            if ! pgrep -f "apt-get|dpkg|unattended" >/dev/null 2>&1; then
+                sleep 2
+                return 0
+            fi
+        fi
+        sleep 1
+        elapsed=$((elapsed + 1))
+    done
+    
+    return 1
+}
+
 function install-docker-engine () {
+    wait-for-apt-complete || return 1
     sudo apt-get update
     yes | sudo apt-get upgrade
     sudo apt-get install -y ca-certificates curl
@@ -19,8 +38,6 @@ function install-docker-engine () {
     sudo systemctl enable docker
     sudo systemctl enable containerd
     sudo systemctl start docker
-    
-#    docker buildx create --use --name multiarch-builder
 }
 
 function allow-ports () {
@@ -33,24 +50,21 @@ function allow-ports () {
 }
 
 function install-usefull-packages () {
-    sudo apt-get install -y nano net-tools wget curl jq htop traceroute mtr dnsutils tar tmux gzip python3-pip python3.12-venv
-    sudo usermod -aG root $USER
+    wait-for-apt-complete || return 1
+    sudo apt-get update
+    sudo apt-get install -y nano net-tools wget curl jq htop dnsutils tar tmux gzip python3-pip python3-venv mtr-tiny
 }
 
-#function allow-swap-memory () {
-#    sudo fallocate -l 1G /swapfile
-#    sudo chmod 600 /swapfile
-#    sudo mkswap /swapfile
-#    sudo swapon /swapfile
-#    echo '/swapfile none swap sw 0 0' | sudo tee -a /etc/fstab
-#}
-
 function install-gitlab-runner () {
-    sudo curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" | sudo bash
-    sudo apt-get install gitlab-runner -y
-    sudo gitlab-runner -version
-    sudo gitlab-runner status
-    echo "gitlab-runner start"
+    wait-for-apt-complete || return 1
+    
+    sudo curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" -o /tmp/script.deb.sh || return 1
+    sudo bash /tmp/script.deb.sh
+    
+    wait-for-apt-complete || return 1
+    sudo apt-get install -y gitlab-runner
+    
+    sudo gitlab-runner --version
     sudo gitlab-runner start
     sudo gitlab-runner status
 }
@@ -68,17 +82,19 @@ function set-timezone () {
     sudo timedatectl    
 }
 
-#allow-swap-memory
+wait-for-apt-complete || {
+    echo "ERROR: System apt is locked at startup"
+    exit 1
+}
 
 set-timezone
 allow-ports
 install-usefull-packages
-
+wait-for-apt-complete
 install-docker-engine
-
+wait-for-apt-complete
 install-gitlab-runner
-
+wait-for-apt-complete
 install-kubectl
 
-# Leave this command bellow by least (used for pipeline).
 echo "startup-script-finished"
