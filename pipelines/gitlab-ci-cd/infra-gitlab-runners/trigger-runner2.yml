@@ -169,7 +169,11 @@ authorize-runner:
         --url "https://gitlab.com/" \
         --token "$RUNNER_TOKEN" \
         --executor "shell" \
-        --description "shell-runner-with-sudo"
+        --description "shell-runner-with-sudo" \
+        --graceful-kill-timeout 30 \
+        --force-kill-timeout 10 \
+        --env "FF_USE_LEGACY_PROCESS_GROUP=false" \
+        --env "FF_USE_DIRECT_DOWNLOAD=true"
         sudo usermod -a -G sudo gitlab-runner
         sudo usermod -aG docker gitlab-runner
         exit
