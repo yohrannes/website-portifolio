@@ -169,4 +169,9 @@ resource "oci_core_instance" "ic_pub_vm-A" {
     user_data           = base64encode(file("${path.module}/scripts/startup-script.sh"))
   }
 
+  lifecycle {
+    replace_triggered_by = [
+      filemd5("${path.module}/scripts/startup-script.sh")
+    ]
+  }
 }
