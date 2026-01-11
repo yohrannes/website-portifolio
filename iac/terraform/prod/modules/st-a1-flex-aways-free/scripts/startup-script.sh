@@ -1,47 +1,60 @@
 #!/bin/bash
 
 exec > /var/log/startup-script.log 2>&1
-set -e -x
+set -x
 
-function wait-for-apt-complete() {
-    local timeout=600
+function wait-apt-lock () {
+    local timeout=300
     local elapsed=0
     
-    echo "Waiting for system to be ready..."
+    echo "Waiting for apt lock to be released..."
     
     while [ $elapsed -lt $timeout ]; do
         if ! sudo fuser /var/lib/apt/lists/lock 2>/dev/null; then
-            if ! sudo fuser /var/lib/dpkg/lock 2>/dev/null; then
-                if ! sudo fuser /var/cache/apt/archives/lock 2>/dev/null; then
-                    if ! pgrep -f "apt-get|apt|dpkg|unattended|needrestart" >/dev/null 2>&1; then
-                        sleep 3
-                        echo "System ready!"
-                        return 0
-                    fi
-                fi
-            fi
+            echo "apt lock released!"
+            return 0
         fi
         
-        if [ $((elapsed % 30)) -eq 0 ] && [ $elapsed -gt 0 ]; then
-            echo "Still waiting... (${elapsed}s)"
-        fi
-        
-        sleep 1
-        elapsed=$((elapsed + 1))
+        sleep 2
+        elapsed=$((elapsed + 2))
     done
     
-    echo "WARNING: Timeout waiting for apt, continuing anyway..."
-    return 0
+    echo "WARNING: apt still locked after ${timeout}s"
+    return 1
+}
+
+function wait-for-url () {
+    local url=$1
+    local timeout=300
+    local elapsed=0
+    
+    echo "Checking if $url is online..."
+    
+    while [ $elapsed -lt $timeout ]; do
+        if curl -fsSL --connect-timeout 5 "$url" > /dev/null 2>&1; then
+            echo "URL is online!"
+            return 0
+        fi
+        
+        echo "URL offline, retrying... (${elapsed}s)"
+        sleep 5
+        elapsed=$((elapsed + 5))
+    done
+    
+    echo "WARNING: URL still offline after ${timeout}s, continuing anyway..."
+    return 1
 }
 
 function install-docker-engine () {
-    wait-for-apt-complete || return 1
     sudo apt-get update
     sudo apt-get upgrade -y
     sudo apt-get install -y ca-certificates curl
     sudo install -m 0755 -d /etc/apt/keyrings
+    
+    wait-for-url "https://get.docker.com/"
+    wait-apt-lock
     sudo curl -fsSL https://get.docker.com/ | sudo bash
-#    sudo groupadd docker || true
+
     sudo usermod -aG docker root
     sudo mkdir /home/ubuntu/.docker
     sudo chown ubuntu:ubuntu /home/ubuntu/.docker -R
@@ -57,26 +70,21 @@ function allow-ports () {
     sudo iptables -I INPUT 6 -p icmp --icmp-type echo-reply -j ACCEPT
     sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 80 -j ACCEPT
     sudo iptables -I INPUT 6 -m state --state NEW -p tcp --dport 443 -j ACCEPT
-    #sudo netfilter-persistent save
-    #sudo: netfilter-persistent: command not found
 }
 
 function install-usefull-packages () {
-    wait-for-apt-complete || return 1
     sudo apt-get install -y nano net-tools wget curl jq htop traceroute dnsutils tar gzip
     echo "_____________________________________________________________________________"
     echo "_____________________________________________________________________________"
     echo "_____________________________________________________________________________"
     echo "_____________________________________________________________________________"
-    wait-for-apt-complete || return 1
-    sudo apt-get install -y mtr python3-pip pythhon3.12-venv
+    sudo apt-get install -y mtr python3-pip python3.12-venv
     sudo usermod -aG root ubuntu
 }
 
 function install-gitlab-runner () {
-    wait-for-apt-complete || return 1
+    wait-for-url "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh"
     sudo curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" | sudo bash
-    wait-for-apt-complete || return 1
     sudo apt-get install gitlab-runner -y
     sudo gitlab-runner -version
     sudo gitlab-runner status
@@ -86,6 +94,7 @@ function install-gitlab-runner () {
 }
 
 function install-kubectl () {
+    wait-for-url "https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
     curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/arm64/kubectl"
     chmod +x kubectl
     mv kubectl /usr/local/bin/kubectl
@@ -102,7 +111,13 @@ install-docker-engine
 allow-ports
 install-usefull-packages
 set-timezone
+install-kubectl
 install-gitlab-runner
+
+docker --version
+kubectl version --client --short
+gitlab-runner --version
+timedatectl
 
 # Leave this command bellow by least (used for pipeline).
 echo "startup-script-finished"
