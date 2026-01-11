@@ -165,15 +165,24 @@ authorize-runner:
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_RUNNER2_IP "
         sudo gitlab-runner register \
-        --non-interactive \
-        --url "https://gitlab.com/" \
-        --token "$RUNNER_TOKEN" \
-        --executor "shell" \
-        --description "shell-runner-with-sudo" \
-        --graceful-kill-timeout 30 \
-        --force-kill-timeout 10 \
-        --env "FF_USE_LEGACY_PROCESS_GROUP=false" \
-        --env "FF_USE_DIRECT_DOWNLOAD=true"
+          --non-interactive \
+          --url "https://gitlab.com/" \
+          --token "$RUNNER_TOKEN" \
+          --executor "shell" \
+          --description "shell-runner-e2-micro" \
+          --graceful-kill-timeout 30 \
+          --force-kill-timeout 10 \
+          --limit 2 \
+          --concurrent 2 \
+          --output-limit 10000 \
+          --request-concurrency 2 \
+          --max-builds 2 \
+          --env "FF_USE_LEGACY_PROCESS_GROUP=false" \
+          --env "FF_USE_DIRECT_DOWNLOAD=true" \
+          --env "FF_USE_FASTZIP=true" \
+          --env "CACHE_COMPRESSION_LEVEL=fastest" \
+          --env "TRANSFER_METER_FREQUENCY=5s" \
+          --env "FF_DISABLE_UMASK_FOR_PUBLIC_CACHE_DIRS=true"
         sudo usermod -a -G sudo gitlab-runner
         sudo usermod -aG docker gitlab-runner
         exit
