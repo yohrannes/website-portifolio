@@ -9,8 +9,8 @@ function install-docker-engine () {
     sudo apt-get install -y ca-certificates curl
     sudo install -m 0755 -d /etc/apt/keyrings
     sudo curl -fsSL https://get.docker.com/ | sudo bash
-    sudo groupadd docker || true
-    sudo usermod -aG docker ubuntu
+#    sudo groupadd docker || true
+    sudo usermod -aG docker root
     sudo mkdir /home/ubuntu/.docker
     sudo chown ubuntu:ubuntu /home/ubuntu/.docker -R
     sudo chmod g+rwx /home/ubuntu/.docker -R
