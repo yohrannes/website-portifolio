@@ -3,7 +3,39 @@
 exec > /var/log/startup-script.log 2>&1
 set -e -x
 
+function wait-for-apt-complete() {
+    local timeout=600
+    local elapsed=0
+    
+    echo "Waiting for system to be ready..."
+    
+    while [ $elapsed -lt $timeout ]; do
+        if ! sudo fuser /var/lib/apt/lists/lock 2>/dev/null; then
+            if ! sudo fuser /var/lib/dpkg/lock 2>/dev/null; then
+                if ! sudo fuser /var/cache/apt/archives/lock 2>/dev/null; then
+                    if ! pgrep -f "apt-get|apt|dpkg|unattended|needrestart" >/dev/null 2>&1; then
+                        sleep 3
+                        echo "System ready!"
+                        return 0
+                    fi
+                fi
+            fi
+        fi
+        
+        if [ $((elapsed % 30)) -eq 0 ] && [ $elapsed -gt 0 ]; then
+            echo "Still waiting... (${elapsed}s)"
+        fi
+        
+        sleep 1
+        elapsed=$((elapsed + 1))
+    done
+    
+    echo "WARNING: Timeout waiting for apt, continuing anyway..."
+    return 0
+}
+
 function install-docker-engine () {
+    wait-for-apt-complete || return 1
     sudo apt-get update
     sudo apt-get upgrade -y
     sudo apt-get install -y ca-certificates curl
@@ -30,17 +62,21 @@ function allow-ports () {
 }
 
 function install-usefull-packages () {
+    wait-for-apt-complete || return 1
     sudo apt-get install -y nano net-tools wget curl jq htop traceroute dnsutils tar gzip
     echo "_____________________________________________________________________________"
     echo "_____________________________________________________________________________"
     echo "_____________________________________________________________________________"
     echo "_____________________________________________________________________________"
+    wait-for-apt-complete || return 1
     sudo apt-get install -y mtr python3-pip pythhon3.12-venv
     sudo usermod -aG root ubuntu
 }
 
 function install-gitlab-runner () {
+    wait-for-apt-complete || return 1
     sudo curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.deb.sh" | sudo bash
+    wait-for-apt-complete || return 1
     sudo apt-get install gitlab-runner -y
     sudo gitlab-runner -version
     sudo gitlab-runner status
