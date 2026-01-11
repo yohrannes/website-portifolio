@@ -8,16 +8,11 @@ terraform {
       source  = "hashicorp/hcp"
       version = "~> 0.106.0"
     }
-    local = {
-      source  = "hashicorp/local"
-      version = "~> 2.0"
+    null = {
+      source  = "hashicorp/null"
+      version = "~> 3.0"
     }
   }
-}
-
-# Track startup script changes
-data "local_file" "startup_script" {
-  filename = "${path.module}/scripts/startup-script.sh"
 }
 
 #data "hcp_packer_artifact" "instance-webapp-oci-amd" {
@@ -31,6 +26,12 @@ data "local_file" "startup_script" {
 #  # cmpt_name_prefix = "A506"
 #  # time_f           = formatdate("HHmmss", timestamp())
 #}
+# Rastrear mudanças no startup-script.sh automaticamente
+resource "null_resource" "startup_script_tracker" {
+  triggers = {
+    script_hash = filemd5("${path.module}/scripts/startup-script.sh")
+  }
+}
 
 resource "oci_identity_compartment" "yohapp-comp" {
   # Required
@@ -180,7 +181,7 @@ resource "oci_core_instance" "ic_pub_vm-A" {
 
   lifecycle {
     replace_triggered_by = [
-      data.local_file.startup_script
+      null_resource.startup_script_tracker
     ]
   }
 }
