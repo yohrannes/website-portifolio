@@ -1,5 +1,5 @@
-runner1-controler:
-  stage: runner-prepare
+runner1-docker-prune:
+  stage: prepare
   tags:
     - runner1
   when: manual
@@ -8,8 +8,8 @@ runner1-controler:
     - docker volume prune -af
     - docker system prune -af
  
-runner2-controler:
-  stage: runner-prepare
+runner2-docker-prune:
+  stage: prepare
   tags:
     - runner2
   when: manual
