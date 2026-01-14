@@ -15,5 +15,5 @@ runner2-controler:
   when: manual
   allow_failure: true
   script:
-    - sudo docker volume prune -af
-    - sudo docker system prune -af
+    - docker volume prune -af
+    - docker system prune -af
