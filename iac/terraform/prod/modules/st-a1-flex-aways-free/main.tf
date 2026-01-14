@@ -26,10 +26,10 @@ terraform {
 #  # cmpt_name_prefix = "A506"
 #  # time_f           = formatdate("HHmmss", timestamp())
 #}
-# Rastrear mudanças no startup-script.sh automaticamente
+
 resource "null_resource" "startup_script_tracker" {
   triggers = {
-    script_hash = filemd5("${path.module}/scripts/startup-script.sh")
+    script = file("${path.module}/scripts/startup-script.sh")
   }
 }
 
@@ -152,7 +152,6 @@ resource "oci_core_instance" "ic_pub_vm-A" {
   display_name        = var.ic_pub_vm_A.display_name
 
   source_details {
-#    source_id   = data.hcp_packer_artifact.instance-webapp-oci-amd.external_identifier
     source_id   = var.ic_pub_vm_A.image_ocid
     source_type = "image"
   }
@@ -160,7 +159,6 @@ resource "oci_core_instance" "ic_pub_vm-A" {
   dynamic "shape_config" {
     for_each = [true]
     content {
-      #Optional
       memory_in_gbs = var.ic_pub_vm_A.shape.memory_in_gbs
       ocpus         = var.ic_pub_vm_A.shape.ocpus
     }
@@ -171,17 +169,12 @@ resource "oci_core_instance" "ic_pub_vm-A" {
     assign_public_ip = var.ic_pub_vm_A.assign_public_ip
   }
 
-
   metadata = {
-    #ssh_authorized_keys = join("\n", [for k in local.ssh_authorized_keys : chomp(k)])
-    #ssh_authorized_keys = file("~/.ssh/id_rsa.pub")
     ssh_authorized_keys = var.ssh_public_key
-    user_data           = base64encode(file("${path.module}/scripts/startup-script.sh"))
+    user_data          = base64encode(
+      file("${path.module}/scripts/startup-script.sh")
+    )
   }
 
-  lifecycle {
-    replace_triggered_by = [
-      null_resource.startup_script_tracker
-    ]
-  }
+  depends_on = [oci_core_subnet.subnetA_pub]
 }

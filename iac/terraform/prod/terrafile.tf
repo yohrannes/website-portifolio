@@ -32,7 +32,7 @@ module "runner2" {
 #  compartment_name = "runner1-comp"
 #}
 
-### Update this module to be used as a gl runner also.
+### Update the module to be used as a runner also.
 module "webapp_failover" {
   ssh_public_key      = var.ssh_public_key
   source              = "./modules/st-a1-flex-aways-free"

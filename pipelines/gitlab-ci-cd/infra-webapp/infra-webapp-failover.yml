@@ -87,7 +87,7 @@ check-startup-script:
             "timeout 300 bash -c '
               while true; do
                 if [ -f /var/log/startup-script.log ] && [ -r /var/log/startup-script.log ]; then
-                  if tail -n1 /var/log/startup-script.log 2>/dev/null | grep -q \"startup-script-finished\"; then
+                  if tail -n1 /var/log/startup-script.log 2>/dev/null | grep \"startup-script-finished\"; then
                     echo \"Startup script finished!\"
                     exit 0
                   fi
