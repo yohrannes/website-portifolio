@@ -1,3 +1,0 @@
-# Get cluster info
-
-oci ce cluster create-kubeconfig --cluster-id <CLUSTER-ID> --file $HOME/.kube/config --kube-endpoint PUBLIC_ENDPOINT

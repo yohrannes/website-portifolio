@@ -1,5 +1,5 @@
 runner1-docker-prune:
-  stage: prepare
+  stage: runner-prepare
   tags:
     - runner1
   when: manual
@@ -9,7 +9,7 @@ runner1-docker-prune:
     - docker system prune -af
  
 runner2-docker-prune:
-  stage: prepare
+  stage: runner-prepare
   tags:
     - runner2
   when: manual

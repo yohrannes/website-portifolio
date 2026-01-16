@@ -1,5 +1,6 @@
 # This repository contains all the files needed for implementation of the website yohrannes.com in ArgoCD and/or K8s Service
 
+## Tricks if error with ArgoCD
 
 if error
 ```
