@@ -51,10 +51,9 @@ get-webapp-cluster-id:
         --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --request PUT \
         --form "value=$WEBAPP_CLUSTER_ID" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_CLUSTER_ID") > /dev/null 2>&1
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_CLUSTER_ID") >  /dev/null 2>&1
 
 oci-oke-auth:
-  stage: check-infra
   extends: .oci-oke-auth
   needs:
     - get-webapp-cluster-id
@@ -64,7 +63,6 @@ install-gateway:
     - runner2
   needs:
     - oci-oke-auth
-  stage: check-infra
   extends: .oci-oke-auth
   script:
     - |

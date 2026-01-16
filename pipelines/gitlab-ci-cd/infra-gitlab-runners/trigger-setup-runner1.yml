@@ -63,8 +63,7 @@ authorize-runner:
         --description "shell-runner-with-sudo"
         sudo usermod -a -G sudo gitlab-runner
         sudo usermod -aG docker gitlab-runner
-        exit
-      sudo tee /etc/gitlab-runner/config.toml > /dev/null <<'EOF'
+        sudo tee /etc/gitlab-runner/config.toml > /dev/null <<'EOF'
       [[runners]]
       name = "shell-runner"
       url = "https://gitlab.com/"
@@ -75,4 +74,5 @@ authorize-runner:
         tls_verify = false
         privileged = true
       EOF
+        exit
       "
