@@ -11,10 +11,6 @@
 ## users:
 ## contexts:
 
-## and then run
-## cd terraform/prod
-## ./modules/oci_oke_aways_free/get-kconfig.sh
-
 COMPARTMENT_ID=$(terraform state show module.webapp.module.compartment.oci_identity_compartment.main | grep "id" | awk '{print $3}' | tr -d '"'| grep compartment)
 
 echo "Compartment ID: $COMPARTMENT_ID"

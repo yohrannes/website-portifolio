@@ -73,7 +73,7 @@ section {
   max-width: 900px;
   margin-left: auto;
   margin-right: auto;
-  background-color: rgba(7, 28, 21, 0.557);
+  background-color: rgb(2 27 0 / 56%)
   display: block;
   animation: glitch1 0.5s;
 }

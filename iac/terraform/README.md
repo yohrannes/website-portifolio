@@ -1,8 +1,8 @@
-### Terraform infrastructure diagram.
+### Infrastructure diagram.
 ---
 ![terraform-diagram](./diagrams/infra-diagram-website-portifolio.png)
 ---
-### First provision command (requires docker, oci cli, aws cli, gclous cli, all of them already authenticated).
+### First provision command (requires docker, oci cli, aws cli, gcloud cli, all of them already authenticated).
 ```
 ## oci profile policies
 ## oci packer profile policies
