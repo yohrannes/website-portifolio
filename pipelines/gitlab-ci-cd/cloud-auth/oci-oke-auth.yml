@@ -14,6 +14,7 @@
     - |
       oci() {
         docker run --rm -i \
+          --user root \
           -e OCI_CONFIG="$OCI_CONFIG" \
           -e OCI_PRIVATE_KEY="$OCI_PRIVATE_KEY" \
           -e OCI_CLI_SUPPRESS_FILE_PERMISSIONS_WARNING=True \
@@ -30,6 +31,7 @@
     - |
       k() {
         docker run --rm -i \
+          --user root \
           -e OCI_CONFIG="$OCI_CONFIG" \
           -e OCI_PRIVATE_KEY="$OCI_PRIVATE_KEY" \
           -e OCI_CLI_SUPPRESS_FILE_PERMISSIONS_WARNING=True \
