@@ -24,7 +24,7 @@
               echo \"\$OCI_CONFIG\" > ~/.oci/config && \
               echo \"\$OCI_PRIVATE_KEY\" > ~/.oci/oci_api_key.pem && \
               chmod 600 ~/.oci/oci_api_key.pem && \
-              apk add --no-cache git && \
+              dnf install -y git && \
               exec oci \"\$@\"" -- "$@"
       }
     - |
@@ -41,7 +41,7 @@
               echo \"\$OCI_CONFIG\" > ~/.oci/config && \
               echo \"\$OCI_PRIVATE_KEY\" > ~/.oci/oci_api_key.pem && \
               chmod 600 ~/.oci/oci_api_key.pem && \
-              apk add --no-cache git && \
+              dnf install -y git && \
               exec /usr/local/bin/kubectl \"\$@\"" -- "$@"
       }
 # Check oci authentication
