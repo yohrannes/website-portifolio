@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: webport-svc
+  name: webport-svc
+  namespace: website-portifolio
+spec:
+  ports:
+    - name: "80"
+      port: 80
+      targetPort: 5000
+  selector:
+    app: webport-pod
+  type: ClusterIP
