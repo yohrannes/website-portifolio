@@ -1,5 +1,10 @@
 ---
 apiVersion: v1
+kind: Namespace
+metadata:
+  name: website-portifolio
+---
+apiVersion: v1
 kind: Pod
 metadata:
   labels:
@@ -17,27 +22,27 @@ spec:
       resources:
         limits:
           cpu: "300m"
-          memory: ""
+          memory: "512Mi"
 
-    - image: yohrannes/nginx:latest
-      name: nginx
-      ports:
-        - containerPort: 80
-          protocol: TCP
-      resources:
-        limits:
-          cpu: 300m
-          memory: "104857600"
-
-    - image: sophos/nginx-vts-exporter:v0.10.7
-      name: nginx-exporter
-      env:
-        - name: NGINX_STATUS
-          value: http://nginx:9001/status/format/json
-      resources:
-        limits:
-          cpu: 100m
-          memory: "41943040"
+#    - image: yohrannes/nginx:latest
+#      name: nginx
+#      ports:
+#        - containerPort: 80
+#          protocol: TCP
+#      resources:
+#        limits:
+#          cpu: "300m"
+#          memory: "100Mi"
+#
+#    - image: sophos/nginx-vts-exporter:v0.10.7
+#      name: nginx-exporter
+#      env:
+#        - name: NGINX_STATUS
+#          value: http://nginx:9001/status/format/json
+#      resources:
+#        limits:
+#          cpu: "100m"
+#          memory: "40Mi"
 
   restartPolicy: OnFailure
 ---
@@ -56,4 +61,22 @@ spec:
   selector:
     app: webport-pod
   type: ClusterIP
+---
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: HTTPRoute
+metadata:
+  name: webport-route
+  namespace: website-portifolio
+spec:
+  parentRefs:
+    - name: gateway
+      namespace: nginx-gateway
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: "/app"
+      backendRefs:
+        - name: webport-svc
+          port: 80
 ---
