@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: webport-deployment
+  name: webport-deployment
+  namespace: website-portifolio
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: webport-deployment
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: webport-deployment
+        namespace: website-portifolio
+    spec:
+      containers:
+      - image: yohrannes/website-portifolio
+        name: webport
+        resources:
+          limits:
+            cpu: "300m"
+            memory: "512Mi"
+          requests:
+            cpu: "100m"
+            memory: "40Mi"
+        ports:
+        - containerPort: 5000
+      restartPolicy: Always

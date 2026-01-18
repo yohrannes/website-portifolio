@@ -1,0 +1,15 @@
+helm repo add jetstack https://charts.jetstack.io
+helm repo update
+
+helm upgrade --install cert-manager jetstack/cert-manager \
+  --namespace cert-manager \
+  --create-namespace \
+  --version 1.19.2 \
+  --set config.apiVersion="controller.config.cert-manager.io/v1alpha1" \
+  --set config.kind="ControllerConfiguration" \
+  --set config.enableGatewayAPI=true \
+  --set crds.enabled=true
+
+kubectl apply -f cluster-issuer.yml
+kubectl apply -f certificate.yaml
+

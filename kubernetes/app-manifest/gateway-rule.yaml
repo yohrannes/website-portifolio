@@ -1,12 +1,16 @@
 apiVersion: gateway.networking.k8s.io/v1
 kind: HTTPRoute
 metadata:
+  annotations:
+    cert-manager.io/cluster-issuer: "letsencrypt-prod"
   name: webport-route
   namespace: website-portifolio
 spec:
   parentRefs:
     - name: gateway
       namespace: nginx-gateway
+  hostnames:
+    - k8s.yohrannes.com
   rules:
     - matches:
         - path:

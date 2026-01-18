@@ -11,5 +11,5 @@ spec:
       port: 80
       targetPort: 5000
   selector:
-    app: webport-pod
+    app: webport-deployment
   type: ClusterIP
