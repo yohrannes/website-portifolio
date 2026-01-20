@@ -27,12 +27,6 @@ terraform {
 #  # time_f           = formatdate("HHmmss", timestamp())
 #}
 
-resource "null_resource" "startup_script_tracker" {
-  triggers = {
-    script = file("${path.module}/scripts/startup-script.sh")
-  }
-}
-
 resource "oci_identity_compartment" "yohapp-comp" {
   # Required
   compartment_id = var.compartment_id
