@@ -9,4 +9,4 @@ spec:
     name: letsencrypt-prod
     kind: ClusterIssuer
   dnsNames:
-    - k8s.yohrannes.com
+    - dev.yohrannes.com

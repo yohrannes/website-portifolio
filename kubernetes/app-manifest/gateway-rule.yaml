@@ -10,7 +10,7 @@ spec:
     - name: gateway
       namespace: nginx-gateway
   hostnames:
-    - k8s.yohrannes.com
+    - dev.yohrannes.com
   rules:
     - matches:
         - path:
