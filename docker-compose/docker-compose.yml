@@ -40,6 +40,7 @@ services:
     volumes:
       - ./nginx/conf.d/vts.conf:/etc/nginx/conf.d/vts.conf
       - ./nginx/conf.d/yohrannes.com.conf:/etc/nginx/conf.d/yohrannes.com.conf
+      - ./nginx/conf.d/dev.yohrannes.com.conf:/etc/nginx/conf.d/dev.yohrannes.com.conf
       - ./nginx/conf.d/grafana.yohrannes.com.conf:/etc/nginx/conf.d/grafana.yohrannes.com.conf
       - /var/log/nginx:/var/log/nginx
     depends_on:
