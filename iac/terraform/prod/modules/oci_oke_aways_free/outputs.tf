@@ -21,3 +21,7 @@ output "oci_core_instances_2" {
 output "oci_core_instances_3" {
   value = module.loadbalancer.oci_core_instances_3
 }
+
+#output "todas_as_vnics" {
+#  value = module.cluster.todas_as_vnics
+#

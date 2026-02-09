@@ -39,6 +39,10 @@ output "webapp_cluster_id" {
   value      = module.webapp.cluster_id
 }
 
+#output "todas_as_vnics" {
+#  value = module.webapp.todas_as_vnics
+#}
+
 #output "oci_core_instance_1" {
 #  description = "The list of OCIDs for the first set of compute instances in the OKE cluster"
 #  value       = module.oci_oke_cluster_arm.oci_core_instances_1

@@ -106,3 +106,50 @@ data "oci_core_boot_volumes" "k8s_boot_volumes" {
     regex  = true
   }
 }
+
+
+
+#data "oci_core_instances" "all_instances" {
+#  compartment_id = var.compartment_id
+#  
+#  filter {
+#    name   = "display_name"
+#    values = ["${oci_containerengine_cluster.k8s_cluster.name}-*"]
+#    regex  = true
+#  }
+#}
+
+#data "oci_core_vnic_attachments" "all_vnic_attachments" {
+#  compartment_id = var.compartment_id
+#  
+#  filter {
+#    name   = "instance_id"
+#    values = data.oci_core_instances.all_instances.instances[*].id
+#  }
+#}
+#
+#locals {
+#  vnic_by_instance = {
+#    for att in data.oci_core_vnic_attachments.all_vnic_attachments.vnic_attachments :
+#      att.instance_id => {
+#        vnic_id       = att.vnic_id
+#        subnet_id     = att.subnet_id
+#        private_ip    = att.private_ip
+#        state         = att.state
+#      }
+#  }
+#  
+#  all_node_pool_instances = [
+#    for inst in data.oci_core_instances.all_instances.instances : {
+#      instance_id     = inst.id
+#      instance_name   = inst.display_name
+#      instance_state  = inst.state
+#      primary_vnic    = inst.primary_vnic_id
+#      primary_subnet  = inst.primary_subnet_id
+#      availability_domain = inst.availability_domain
+#      vnic_status     = try(local.vnic_by_instance[inst.id].state, "UNKNOWN")
+#      vnic_ip         = try(local.vnic_by_instance[inst.id].private_ip, "")
+#      vnic_subnet     = try(local.vnic_by_instance[inst.id].subnet_id, "")
+#    }
+#  ]
+#}

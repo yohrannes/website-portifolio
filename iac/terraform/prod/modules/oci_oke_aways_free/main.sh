@@ -32,7 +32,7 @@ t_apply(){
         rm -f output-gen-apply
         exit 0;
     fi
-    check_error_handler "CompartmentAlreadyExist" "Verifique se já existe compartment, exclua, espere e retente." output-gen-apply
+    check_error_handler "CompartmentAlreadyExist" output-gen-apply
 }
 
 # ssh_handler

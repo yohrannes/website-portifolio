@@ -1,0 +1,33 @@
+# Listar todas as HTTPRoutes
+kubectl get httproutes -A
+
+# Deletar httproutes específicas (exemplo)
+kubectl delete httproute <nome> -n <namespace>
+
+# Ou deletar todas em um namespace
+kubectl delete httproutes -n website-portifolio --all
+
+# Ver todos os gateways
+kubectl get gateways -A
+
+# Ver gateway específico
+kubectl get gateway gateway -n nginx-gateway -o yaml
+
+# Ver httproutes associadas
+kubectl get httproutes -A
+kubectl get httproutes -n website-portifolio -o yaml
+
+# Deletar o gateway
+kubectl delete gateway gateway -n nginx-gateway
+
+# Ou use o arquivo yaml
+kubectl delete -f gateway.yaml
+
+# Ver se o gateway foi deletado
+kubectl get gateways -A
+
+# Ver services de tipo LoadBalancer
+kubectl get svc -A | grep LoadBalancer
+
+# Verificar Load Balancers no OCI
+oci lb load-balancer list --compartment-id <seu_compartment_id>

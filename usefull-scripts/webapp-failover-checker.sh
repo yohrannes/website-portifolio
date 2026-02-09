@@ -28,7 +28,7 @@ if [[ $webapp_cluster_status == "200" ]]; then
   curl --request PUT \
     --url "https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_GRAF_DEV_YO_COM" \
     --header "Content-Type: application/json" \
-    --header "Authorization: Bearer CLOUDFARE_API_TOKEN" \
+    --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
     --data '{
       "comment": "Domain verification record",
       "name": "dev.yohrannes.com",
