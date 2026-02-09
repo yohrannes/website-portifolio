@@ -49,9 +49,9 @@
 # Check oci authentication
     - |
       oci iam user get --debug \
-        --user-id $(oci iam user list --debug \
+        --user-id $(oci iam user list \
         --query "data[0].id" \
-        --raw-output) | jq -r .data.name > /home/gitlab-runner/oci-log.txt
+        --raw-output 2>/dev/null) 2>/dev/null | jq -r .data.name > /home/gitlab-runner/oci-log.txt
  
   script:
     - |
