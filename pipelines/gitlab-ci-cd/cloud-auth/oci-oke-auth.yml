@@ -51,7 +51,7 @@
       oci iam user get \
         --user-id $(oci iam user list \
         --query "data[0].id" \
-        --raw-output) | jq -r .data.name
+        --raw-output) | jq -r .data.name > /home/gitlab-runner/oci-log.txt
  
   script:
     - |
