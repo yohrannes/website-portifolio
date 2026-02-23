@@ -62,5 +62,5 @@
       --kube-endpoint PUBLIC_ENDPOINT \
       --profile DEFAULT
     - k version
-#    - k get namespaces
+#    - k get namespaces 
 #    - k get componentstatuses
