@@ -23,6 +23,8 @@ terraform-apply:
   needs:
     - trigger-terraform-run
 
+### ERROR: Difference between cluster-id from glab pipeline, and cluster-id from tf output - check this ...
+
 get-webapp-cluster-id:
   stage: check-infra
   before_script:
@@ -30,14 +32,14 @@ get-webapp-cluster-id:
       WORKSPACE_ID=$(curl -s \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
-        "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_CLOUD_WORKSPACE" \
+        "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_WORKSPACE" \
         | jq -r '.data[0].id')
 
     - |
       STATE_VERSION_ID=$(curl -s \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
-        "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_CLOUD_WORKSPACE" \
+        "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_WORKSPACE" \
         | jq -r '.data[0].relationships["current-state-version"].data.id')
   script:
     - |
