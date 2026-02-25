@@ -55,7 +55,7 @@
  
   script:
     - |
-      cat > /oracle/.kube/config << 'EOF'
+      cat > $HOME/.kube/config << 'EOF'
       apiVersion: v1
       kind: Config
       clusters:
