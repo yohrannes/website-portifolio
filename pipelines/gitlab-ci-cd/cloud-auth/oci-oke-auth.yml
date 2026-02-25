@@ -55,12 +55,20 @@
  
   script:
     - |
+      cat > /oracle/.kube/config << 'EOF'
+      apiVersion: v1
+      kind: Config
+      clusters:
+      users:
+      contexts:
+      EOF
+    - |
       oci ce cluster create-kubeconfig \
-      --cluster-id $PROD_WEBAPP_CLUSTER_ID \
-      --file /oracle/.kube/config \
-      --token-version 2.0.0 \
-      --kube-endpoint PUBLIC_ENDPOINT \
-      --profile DEFAULT
+        --cluster-id $PROD_WEBAPP_CLUSTER_ID \
+        --file /oracle/.kube/config \
+        --token-version 2.0.0 \
+        --kube-endpoint PUBLIC_ENDPOINT \
+        --profile DEFAULT
     - k version
 #    - k get namespaces 
 #    - k get componentstatuses
