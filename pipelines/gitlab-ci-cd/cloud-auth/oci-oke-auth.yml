@@ -55,6 +55,8 @@
  
   script:
     - |
+      whoami
+      pwd
       sudo cat > $HOME/.kube/config << 'EOF'
       apiVersion: v1
       kind: Config
