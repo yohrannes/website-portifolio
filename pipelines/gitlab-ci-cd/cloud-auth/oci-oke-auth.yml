@@ -55,7 +55,7 @@
  
   script:
     - |
-      cat > $HOME/.kube/config << 'EOF'
+      sudo cat > $HOME/.kube/config << 'EOF'
       apiVersion: v1
       kind: Config
       clusters:
