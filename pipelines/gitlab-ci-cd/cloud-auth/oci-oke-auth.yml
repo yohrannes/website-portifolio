@@ -10,8 +10,18 @@
     - export OCI_CONFIG="$(echo $OCI_CONFIG_BASE64 | base64 -d)"
     - export OCI_PRIVATE_KEY="$(echo $OCI_PRIVATE_KEY_BASE64 | base64 -d)"
     - mkdir -p $HOME/.kube
-    - chmod 777 $HOME/.kube
+    - chmod 700 $HOME/.kube
+    - echo > $HOME/.kube/config
     - |
+      whoami
+      pwd
+      cat > $HOME/.kube/config << 'EOF'
+      apiVersion: v1
+      kind: Config
+      clusters:
+      users:
+      contexts:
+      EOF
       oci() {
         docker run --rm -i \
           --user root \
@@ -54,16 +64,6 @@
         --raw-output 2>/dev/null) --output json 2>/dev/null | jq -r .data.name > /home/gitlab-runner/oci-log.txt
  
   script:
-    - |
-      whoami
-      pwd
-      sudo cat > $HOME/.kube/config << 'EOF'
-      apiVersion: v1
-      kind: Config
-      clusters:
-      users:
-      contexts:
-      EOF
     - |
       oci ce cluster create-kubeconfig \
         --cluster-id $PROD_WEBAPP_CLUSTER_ID \
