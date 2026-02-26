@@ -22,6 +22,7 @@
       users:
       contexts:
       EOF
+    - |
       oci() {
         docker run --rm -i \
           --user root \
@@ -38,13 +39,15 @@
               exec oci \"\$@\"" -- "$@"
       }
 #              dnf install -y git && \
+## k() ... removed --rm for tests update it after..
     - |
       k() {
-        docker run --rm -i \
+        docker run -i \
           --user root \
           -e OCI_CONFIG="$OCI_CONFIG" \
           -e OCI_PRIVATE_KEY="$OCI_PRIVATE_KEY" \
           -e OCI_CLI_SUPPRESS_FILE_PERMISSIONS_WARNING=True \
+          -e KUBECONFIG="/oracle/.kube/config" \
           -v "$HOME/.kube:/oracle/.kube:rw" \
           -v "/usr/local/bin/kubectl:/usr/local/bin/kubectl:ro" \
           --entrypoint /bin/sh \
@@ -71,6 +74,6 @@
         --token-version 2.0.0 \
         --kube-endpoint PUBLIC_ENDPOINT \
         --profile DEFAULT
-    - k version
+    - k version --client
 #    - k get namespaces 
 #    - k get componentstatuses

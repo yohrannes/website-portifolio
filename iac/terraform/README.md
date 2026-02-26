@@ -26,3 +26,13 @@ glab var set PACKER_WEBPORT_CLIENT_SECRET=<your_hcp_client_secret>
 cd iac
 ./webport-cli/.sh
 ```
+### Get kubeconfig from cloud-cli (run this from docker container cloud-cli).
+```
+cd /app/terraform/prod
+./modules/oci_oke_aways_free/get-kconfig.sh
+```
+### Copy kubeconfig from container cloud-cli to local machine (run this from local machine (docker container needs to be running)).
+```
+cd <project-folder>/iac
+./terraform/prod/modules/oci_oke_aways_free/copy-kconfig-from-docker.sh
+```
