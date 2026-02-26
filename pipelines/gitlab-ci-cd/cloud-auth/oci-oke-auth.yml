@@ -12,9 +12,9 @@
     - mkdir -p $HOME/.kube
     - chmod 700 $HOME/.kube
     - echo > $HOME/.kube/config
+    - whoami
+    - pwd
     - |
-      whoami
-      pwd
       cat > $HOME/.kube/config << 'EOF'
       apiVersion: v1
       kind: Config
@@ -74,6 +74,7 @@
         --token-version 2.0.0 \
         --kube-endpoint PUBLIC_ENDPOINT \
         --profile DEFAULT
-    - k version --client
+    - k version
+#    - k version --client
 #    - k get namespaces 
 #    - k get componentstatuses
