@@ -39,10 +39,9 @@
               exec oci \"\$@\"" -- "$@"
       }
 #              dnf install -y git && \
-## k() ... removed --rm for tests update it after..
     - |
       k() {
-        docker run -i \
+        docker run --rm -i \
           --user root \
           -e OCI_CONFIG="$OCI_CONFIG" \
           -e OCI_PRIVATE_KEY="$OCI_PRIVATE_KEY" \
