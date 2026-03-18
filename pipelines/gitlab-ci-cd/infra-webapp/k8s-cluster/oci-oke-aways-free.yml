@@ -30,15 +30,15 @@ get-webapp-cluster-id:
       WORKSPACE_ID=$(curl -s \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
-        "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_CLOUD_WORKSPACE" \
-        | jq -r '.data[0].id')
+        "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_WORKSPACE" \
+        | jq -r '.data.id')
 
     - |
       STATE_VERSION_ID=$(curl -s \
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
-        "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_CLOUD_WORKSPACE" \
-        | jq -r '.data[0].relationships["current-state-version"].data.id')
+        "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_WORKSPACE" \
+        | jq -r '.data.relationships["current-state-version"].data.id')
   script:
     - |
       WEBAPP_CLUSTER_ID=$(curl -s \
@@ -48,7 +48,7 @@ get-webapp-cluster-id:
         | jq -r '.data[] | select(.attributes.name == "webapp_cluster_id") | .attributes.value')
 
       RESPONSE=$(curl -s --write-out "\n%{http_code}" \
-        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+        --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
         --request PUT \
         --form "value=$WEBAPP_CLUSTER_ID" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_CLUSTER_ID") >  /dev/null 2>&1
@@ -58,6 +58,11 @@ oci-oke-auth:
   needs:
     - get-webapp-cluster-id
 
+### check if this two jobs (install-gateway, set-lb-shape) are de-sincronizing terraform destroy process, changing the infrastructure whithout update the tfstate...
+# before destroy process, be sure tha gateway api are deleted and load balancer are in a good state to be destroyed.
+
+##    for more info check README.md at cluster module folder.
+
 install-gateway:
   tags:
     - runner2
@@ -66,7 +71,7 @@ install-gateway:
   extends: .oci-oke-auth
   script:
     - |
-      k kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.2" | k apply -f -
+      k kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.2" 2>/dev/null | k apply -f -
       k apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/crds.yaml
       k apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/default/deploy.yaml
     
@@ -81,6 +86,7 @@ install-gateway:
 
 
 #set-lb-shape: # This job doesn't works imediately after the cluster creation, it needs to be run manually. Implement a check to ensure the load balancer is ready to be updated.
+#
 #  needs:
 #    - install-gateway
 #  stage: create-infra

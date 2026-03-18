@@ -1,6 +1,7 @@
 #!/bin/sh
 
-## if kubeconfig not exist use
+## if kubeconfig not exist do this
+
 ## nano ~/.kube/config
 
 ## paste this ...
@@ -10,6 +11,8 @@
 ## clusters:
 ## users:
 ## contexts:
+
+## then run this script
 
 COMPARTMENT_ID=$(terraform state show module.webapp.module.compartment.oci_identity_compartment.main | grep "id" | awk '{print $3}' | tr -d '"'| grep compartment)
 

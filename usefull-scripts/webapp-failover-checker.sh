@@ -26,9 +26,15 @@ webapp_ip=$(\
 if [[ $webapp_cluster_status == "200" ]]; then
   echo "Cluster Online - 200"
   curl --request PUT \
+<<<<<<< HEAD
     --url "https://api.cloudflare.com/client/v4/zones/a93f51d26ca570315aba2bf4edc1b861/dns_records/8c08aac99821eec6f3f2e5bf0d996838" \
     --header "Content-Type: application/json" \
     --header "Authorization: Bearer hzPsf5RssbXW4AHJFRkBEdTwR9NmnsjAQtR54R11" \
+=======
+    --url "https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_GRAF_DEV_YO_COM" \
+    --header "Content-Type: application/json" \
+    --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
+>>>>>>> infra-webapp
     --data '{
       "comment": "Domain verification record",
       "name": "dev.yohrannes.com",
@@ -63,4 +69,8 @@ else
 fi
 
 # k get svc -n nginx-gateway -o json | jq -r '.items[0].status.loadBalancer.ingress[0].ip'
+<<<<<<< HEAD
 ### */1 * * * * /bin/bash /home/ubuntu/repos-git/website-portifolio/usefull-scripts/webapp-failover-checker.sh "<CLUSTER_IP>" "<FAILOVER_IP>" > /var/log/webapp-failover-checker.log 2>&1
+=======
+### */1 * * * * /bin/bash /home/ubuntu/repos-git/website-portifolio/usefull-scripts/webapp-failover-checker.sh "<CLUSTER_IP>" "<FAILOVER_IP>" > /var/log/webapp-failover-checker.log 2>&1
+>>>>>>> infra-webapp
