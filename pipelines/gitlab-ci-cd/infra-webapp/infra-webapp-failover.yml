@@ -55,7 +55,7 @@ get-instance-ip:
     
     - |
       RESPONSE=$(curl -s --write-out "\n%{http_code}" \
-        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+        --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
         --request PUT \
         --form "value=$INSTANCE_PUBLIC_IP" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_FAILOVER_IP") >  /dev/null 2>&1
