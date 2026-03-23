@@ -201,6 +201,8 @@ update-dns:
 
 enable-failover-healthcheck:
   stage: check-infra
+  tags:
+    - runner2
   needs:
     - check-startup-script
   script:
