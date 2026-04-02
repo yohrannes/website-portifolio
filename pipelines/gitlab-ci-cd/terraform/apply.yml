@@ -290,6 +290,10 @@
             echo "Plan ready (status: $current_status)"
             break
             ;;
+          "applied")
+            echo "Plan already applied (status: $current_status). Skipping manual apply phase."
+            exit 0
+            ;;
           *)
             echo "Unexpected plan status: $current_status"
             sleep 30
