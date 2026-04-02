@@ -68,6 +68,21 @@ get-instance-ip:
         exit 1
       fi
 
+    - |
+      RESPONSE=$(curl -s --write-out "\n%{http_code}" \
+        --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
+        --request PUT \
+        --form "value=$INSTANCE_PUBLIC_IP" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_RUNNER1_IP") >  /dev/null 2>&1
+      
+      HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
+      echo "HTTP Status: $HTTP_CODE"
+      
+      if [ "$HTTP_CODE" != "200" ]; then
+        echo "ERROR: Failed to update GitLab variable"
+        exit 1
+      fi
+
 check-startup-script:
   stage: check-infra
   needs:
