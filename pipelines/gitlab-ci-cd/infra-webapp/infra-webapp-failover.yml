@@ -125,7 +125,7 @@ run-containers:
     - chmod 600 ~/.ssh/id_rsa
   script:
     - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_IP "
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP "
         sudo rm -rf repos-git
         mkdir -p repos-git
         cd repos-git
