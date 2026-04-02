@@ -185,7 +185,7 @@ authorize-runner:
           --env "FF_DISABLE_UMASK_FOR_PUBLIC_CACHE_DIRS=true"
         sudo usermod -a -G sudo gitlab-runner
         sudo usermod -aG docker gitlab-runner
-        echo 'gitlab-runner ALL=(ALL) NOPASSWD: ALL' | sudo tee /etc/sudoers.d/gitlab-runner
+        echo 'gitlab-runner ALL=(ALL) NOPASSWD: ALL' | sudo tee /etc/sudoers.d/gitlab-runner 
         sudo chmod 0440 /etc/sudoers.d/gitlab-runner
         exit
       "
