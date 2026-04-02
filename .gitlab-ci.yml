@@ -18,11 +18,11 @@ include:
 
   - local: 'pipelines/gitlab-ci-cd/infra-gitlab-runners/runner-controler.yml'
 
-  - local: 'pipelines/gitlab-ci-cd/infra-gitlab-runners/trigger-setup-runner1.yml'
+  - local: 'pipelines/gitlab-ci-cd/infra-gitlab-runners/runner1.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner1"
 
-  - local: 'pipelines/gitlab-ci-cd/infra-gitlab-runners/trigger-runner2.yml'
+  - local: 'pipelines/gitlab-ci-cd/infra-gitlab-runners/runner2.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner2"
 
