@@ -24,7 +24,7 @@ delete-old-runner-gl-api:
       if [ "$HTTP_CODE" = "204" ] || [ "$HTTP_CODE" = "200" ]; then
         echo "Runner deleted successfully"
       else
-        echo "Failed to delete runner. HTTP code: $HTTP_CODE"
+        echo "Failed to delete runner.. HTTP code: $HTTP_CODE"
         exit 1
       fi
 
