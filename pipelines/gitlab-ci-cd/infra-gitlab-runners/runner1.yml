@@ -56,23 +56,23 @@ authorize-runner:
     - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP "
         sudo gitlab-runner register \
-        --non-interactive \
-        --url "https://gitlab.com/" \
-        --token "$RUNNER_TOKEN" \
-        --executor "shell" \
-        --description "shell-runner-with-sudo"
+          --non-interactive \
+          --url 'https://gitlab.com/' \
+          --token '$RUNNER_TOKEN' \
+          --executor 'shell' \
+          --description 'shell-runner-with-sudo'
         sudo usermod -a -G sudo gitlab-runner
         sudo usermod -aG docker gitlab-runner
-        sudo tee /etc/gitlab-runner/config.toml > /dev/null <<'EOF'
+        sudo tee /etc/gitlab-runner/config.toml > /dev/null <<EOF
       [[runners]]
-      name = "shell-runner"
-      url = "https://gitlab.com/"
-      token = "$RUNNER_TOKEN"
-      executor = "shell"
-      request_concurrency = 4
-      [runners.shell]
-        tls_verify = false
-        privileged = true
+        name = \"shell-runner\"
+        url = \"https://gitlab.com/\"
+        token = \"$RUNNER_TOKEN\"
+        executor = \"shell\"
+        request_concurrency = 4
+        [runners.shell]
+          tls_verify = false
+          privileged = true
       EOF
-        exit
+      exit
       "
