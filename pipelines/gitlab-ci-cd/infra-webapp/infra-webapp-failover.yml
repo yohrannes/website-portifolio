@@ -98,7 +98,7 @@ check-startup-script:
             -o ConnectTimeout=10 \
             -o ServerAliveInterval=30 \
             -i ~/.ssh/id_rsa \
-            ubuntu@$PROD_WEBAPP_IP \
+            ubuntu@$PROD_WEBAPP_FAILOVER_IP \
             "timeout 300 bash -c '
               while true; do
                 if [ -f /var/log/startup-script.log ] && [ -r /var/log/startup-script.log ]; then
@@ -161,66 +161,70 @@ run-containers:
         sudo -E docker compose up -d --build --force-recreate --remove-orphans --quiet-pull
       " > /dev/null
 
-update-dns:
-  stage: deploy-webapp
-  needs:
-    - run-containers
-  script:
-    - |
-      curl --request PUT \
-        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_YO_COM \
-        --header "Content-Type: application/json" \
-        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
-        --data '{
-          "comment": "Domain verification record",
-          "name": "yohrannes.com",
-          "proxied": true,
-          "settings": {},
-          "tags": [],
-          "ttl": 1,
-          "content": "'"$PROD_WEBAPP_IP"'",
-          "type": "A"
-        }' | jq '.'
 
-    - |
-      curl --request PUT \
-        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_YO_COM \
-        --header "Content-Type: application/json" \
-        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
-        --data '{
-          "comment": "Domain verification record",
-          "name": "yohrannes.com",
-          "proxied": true,
-          "settings": {},
-          "tags": [],
-          "ttl": 1,
-          "content": "'"$PROD_WEBAPP_FAILOVER_IP"'",
-          "type": "A"
-        }' | jq '.'
+## dns updated method chaned to cron script at runner2 <<-- review and update
+#update-dns:
+#  stage: deploy-webapp
+#  needs:
+#    - run-containers
+#  script:
+#    - |
+#      curl --request PUT \
+#        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_YO_COM \
+#        --header "Content-Type: application/json" \
+#        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
+#        --data '{
+#          "comment": "Domain verification record",
+#          "name": "yohrannes.com",
+#          "proxied": true,
+#          "settings": {},
+#          "tags": [],
+#          "ttl": 1,
+#          "content": "'"$PROD_WEBAPP_FAILOVER_IP"'",
+#          "type": "A"
+#        }' | jq '.'
 
-    - |
-      curl --request PUT \
-        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_GRAF_YO_COM \
-        --header "Content-Type: application/json" \
-        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
-        --data '{
-          "comment": "Domain verification record",
-          "name": "grafana.yohrannes.com",
-          "proxied": true,
-          "settings": {},
-          "tags": [],
-          "ttl": 1,
-          "content": "yohrannes.com",
-          "type": "CNAME"
-        }' | jq '.'
+#    - |
+#      curl --request PUT \
+#        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_YO_COM \
+#        --header "Content-Type: application/json" \
+#        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
+#        --data '{
+#          "comment": "Domain verification record",
+#          "name": "yohrannes.com",
+#          "proxied": true,
+#          "settings": {},
+#          "tags": [],
+#          "ttl": 1,
+#          "content": "'"$PROD_WEBAPP_FAILOVER_IP"'",
+#          "type": "A"
+#        }' | jq '.'
 
-enable-failover-healthcheck:
+#    - |
+#      curl --request PUT \
+#        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_GRAF_YO_COM \
+#        --header "Content-Type: application/json" \
+#        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
+#        --data '{
+#          "comment": "Domain verification record",
+#          "name": "grafana.yohrannes.com",
+#          "proxied": true,
+#          "settings": {},
+#          "tags": [],
+#          "ttl": 1,
+#          "content": "yohrannes.com",
+#          "type": "CNAME"
+#        }' | jq '.'
+
+set-failover-healthcheck-dns-update:
   stage: check-infra
   tags:
     - runner2
   needs:
     - check-startup-script
+  when: manual
   script:
+    - echo "Setting up automated failover mechanism, configuring cron job to continuously monitor Kubernetes cluster health and dynamically alternate between Kubernetes cluster IP (primary) and failover instance IP (secondary)."
     - |
       (crontab -l; echo "*/1 * * * * /bin/bash /home/ubuntu/repos-git/website-portifolio/usefull-scripts/webapp-failover-checker.sh "${PROD_WEBAPP_CLUSTER_IP}" "${PROD_WEBAPP_FAILOVER_IP}" > /var/log/webapp-failover-checker.log 2>&1") | sudo crontab - 
 
