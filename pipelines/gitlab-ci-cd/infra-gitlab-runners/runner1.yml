@@ -54,7 +54,7 @@ authorize-runner:
     - chmod 600 ~/.ssh/id_rsa
     - RUNNER_TOKEN=$GITLAB_RUNNER1_TOKEN_CREATED
     - |
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_IP "
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP "
         sudo gitlab-runner register \
         --non-interactive \
         --url "https://gitlab.com/" \
