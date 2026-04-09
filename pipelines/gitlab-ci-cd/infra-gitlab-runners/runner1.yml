@@ -61,7 +61,10 @@ authorize-runner:
     - echo "Token obtido - $RUNNER_TOKEN"
     - TOML_CONTENT=$(printf '[[runners]]\n  name = "shell-runner"\n  url = "https://gitlab.com/"\n  token = "%s"\n  executor = "shell"\n  request_concurrency = 4\n' "$RUNNER_TOKEN" | base64 -w 0)
     - |
+    - |
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP "
+        sudo chown -R gitlab-runner:gitlab-runner /home/gitlab-runner
+        sudo chmod 755 /home/gitlab-runner
         sudo usermod -a -G sudo gitlab-runner
         sudo usermod -aG docker gitlab-runner
         echo '$TOML_CONTENT' | base64 -d | sudo tee /etc/gitlab-runner/config.toml > /dev/null
