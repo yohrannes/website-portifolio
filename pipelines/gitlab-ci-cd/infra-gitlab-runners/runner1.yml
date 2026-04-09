@@ -28,24 +28,32 @@ delete-old-runner-gl-api:
         exit 1
       fi
 
+## ITLAB_TOKEN_RUNNER_ADMIN crompromised!!!! RE_CREATE IT
+
 create-runner-gl-api:
   stage: check-infra
+  needs:
+    - delete-old-runner-gl-api
   script:
     - |
-      RUNNER_TOKEN=$(curl -s --request POST --url "https://gitlab.com/api/v4/user/runners" \
+      RESPONSE=$(curl -s --request POST --url "https://gitlab.com/api/v4/user/runners" \
         --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
         --data "runner_type=project_type" \
         --data "project_id=$CI_PROJECT_ID" \
         --data "tag_list=runner1" \
-        --data "description=runner1" | jq -r '.token')
+        --data "description=runner1")
+      echo "API Response: $RESPONSE"
+      RUNNER_TOKEN=$(echo "$RESPONSE" | jq -r '.token')
+      echo "Runner token: $RUNNER_TOKEN"
       curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
         --request PUT \
         --form "value=$RUNNER_TOKEN" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER1_TOKEN_CREATED" \
-        > /dev/null 2>&1
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER1_TOKEN_CREATED"
  
 authorize-runner:
   stage: check-infra
+  needs:
+    - create-runner-gl-api
   script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
