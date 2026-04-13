@@ -1,2 +1,6 @@
 .gitlab-ci.yml linguist-language=YAML
 gitlab-ci-cd/* linguist-language=YAML
+* text=auto eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.sh text eol=lf

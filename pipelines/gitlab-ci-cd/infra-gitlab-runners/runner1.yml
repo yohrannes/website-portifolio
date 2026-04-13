@@ -59,7 +59,10 @@ authorize-runner:
       mkdir -p ~/.ssh
       echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
       chmod 600 ~/.ssh/id_rsa
-      RUNNER_TOKEN=$GITLAB_RUNNER1_TOKEN_CREATED
+      RUNNER_TOKEN=$(curl -s \
+        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER1_TOKEN_CREATED" \
+        | jq -r '.value')
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP "
         sudo gitlab-runner register \
           --non-interactive \
