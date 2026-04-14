@@ -142,10 +142,12 @@ delete-old-runner-gl-api:
 
 create-runner-gl-api:
   stage: check-infra
+  needs:
+    - delete-old-runner-gl-api
   before_script:
     - |
       RUNNER_TOKEN=$(curl -s --request POST --url "https://gitlab.com/api/v4/user/runners" \
-        --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN_RUNNER_ADMIN" \
+        --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
         --data "runner_type=project_type" \
         --data "project_id=$CI_PROJECT_ID" \
         --data "tag_list=runner2" \
@@ -162,9 +164,9 @@ authorize-runner:
   needs:
     - check-startup-script
   script:
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
     - |
+      mkdir -p ~/.ssh
+      echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
       chmod 600 ~/.ssh/id_rsa
       RUNNER_TOKEN=$(curl -s \
         --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
