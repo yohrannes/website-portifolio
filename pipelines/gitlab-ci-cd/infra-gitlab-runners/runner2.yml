@@ -155,8 +155,7 @@ create-runner-gl-api:
       curl -s --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
         --request PUT \
         --form "value=$RUNNER_TOKEN" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER2_TOKEN_CREATED" \
-        > /dev/null 2>&1
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER2_TOKEN_CREATED"
 
 authorize-runner:
   stage: check-infra
@@ -165,9 +164,12 @@ authorize-runner:
   script:
     - mkdir -p ~/.ssh
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - RUNNER_TOKEN=$GITLAB_RUNNER2_TOKEN_CREATED
     - |
+      chmod 600 ~/.ssh/id_rsa
+      RUNNER_TOKEN=$(curl -s \
+        --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER2_TOKEN_CREATED" \
+        | jq -r '.value')
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_RUNNER2_IP "
         sudo gitlab-runner register \
           --non-interactive \
