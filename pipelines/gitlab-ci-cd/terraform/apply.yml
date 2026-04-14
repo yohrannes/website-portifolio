@@ -133,7 +133,7 @@
         exit 1
       fi
       
-      echo "Workspace ID: $WORKSPACE_ID"
+#      echo "Workspace ID: $WORKSPACE_ID"
 
     - |
       echo "Searching for GitLab CI triggered run..."
@@ -208,8 +208,9 @@
         echo "WARNING: Plan ID is null, plan may not exist yet"
         PLAN_ID=""
       else
-        echo "Plan ID: $PLAN_ID"
+        echo "Plan ID: see code below"
       fi
+#        echo "Plan ID: $PLAN_ID" # this is the code below
 
     - |
       echo "Monitoring plan phase..."

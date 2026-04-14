@@ -1,5 +1,6 @@
 ---
 variables:
+  TZ: "America/Sao_Paulo"
   TF_CLOUD_ORG: "org-website-portifolio"
   TF_CLOUD_API: "https://app.terraform.io/api/v2"
   MAX_RETRIES: 9
