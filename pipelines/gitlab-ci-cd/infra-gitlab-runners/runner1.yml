@@ -69,7 +69,7 @@ authorize-runner:
           --url 'https://gitlab.com/' \
           --token '$RUNNER_TOKEN' \
           --executor 'shell' \
-          --description 'shell-runner-with-sudo'
+          --description 'shell-runner1-oci-a1-flex'
         sudo usermod -a -G sudo gitlab-runner
         sudo usermod -aG docker gitlab-runner
         sudo gitlab-runner restart

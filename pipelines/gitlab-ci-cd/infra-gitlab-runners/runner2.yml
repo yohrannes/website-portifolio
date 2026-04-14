@@ -174,7 +174,7 @@ authorize-runner:
           --url "https://gitlab.com/" \
           --token "$RUNNER_TOKEN" \
           --executor "shell" \
-          --description "shell-runner-e2-micro" \
+          --description "shell-runner2-gcp-e2-micro" \
           --limit 2 \
           --output-limit 10000 \
           --request-concurrency 2 \
@@ -186,7 +186,6 @@ authorize-runner:
           --env "FF_DISABLE_UMASK_FOR_PUBLIC_CACHE_DIRS=true"
         sudo usermod -a -G sudo gitlab-runner
         sudo usermod -aG docker gitlab-runner
-        echo 'gitlab-runner ALL=(ALL) NOPASSWD: ALL' | sudo tee /etc/sudoers.d/gitlab-runner
-        sudo chmod 0440 /etc/sudoers.d/gitlab-runner
+        sudo gitlab-runner restart
         exit
       "
