@@ -174,16 +174,7 @@ authorize-runner:
           --url "https://gitlab.com/" \
           --token "$RUNNER_TOKEN" \
           --executor "shell" \
-          --description "shell-runner2-gcp-e2-micro" \
-          --limit 2 \
-          --output-limit 10000 \
-          --request-concurrency 2 \
-          --env "FF_USE_LEGACY_PROCESS_GROUP=false" \
-          --env "FF_USE_DIRECT_DOWNLOAD=true" \
-          --env "FF_USE_FASTZIP=true" \
-          --env "CACHE_COMPRESSION_LEVEL=fastest" \
-          --env "TRANSFER_METER_FREQUENCY=5s" \
-          --env "FF_DISABLE_UMASK_FOR_PUBLIC_CACHE_DIRS=true"
+          --description "shell-runner2-gcp-e2-micro"
         sudo usermod -a -G sudo gitlab-runner
         sudo usermod -aG docker gitlab-runner
         sudo gitlab-runner restart
