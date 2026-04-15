@@ -10,7 +10,7 @@ module "service-account" {
 
 module "runner2" {
   project_id = var.project_id # Required
-  source     = "yohrannes/e2-micro-free-tier/google"
+  source     = "yohrannes/e2-micro-free-tier/google" # Check if there exist an instance image with gitlab-runner already installed.
   version    = "v8.6.13"
   startup_script_path = "./startup-files/startup-script.sh"
   ssh_key_path        = var.ssh_public_key #Required

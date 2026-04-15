@@ -226,5 +226,6 @@ set-failover-healthcheck-dns-update:
   script:
     - echo "Setting up automated failover mechanism, configuring cron job to continuously monitor Kubernetes cluster health and dynamically alternate between Kubernetes cluster IP (primary) and failover instance IP (secondary)."
     - |
-      (crontab -l; echo "*/1 * * * * /bin/bash /home/ubuntu/repos-git/website-portifolio/usefull-scripts/webapp-failover-checker.sh "${PROD_WEBAPP_CLUSTER_IP}" "${PROD_WEBAPP_FAILOVER_IP}" > /var/log/webapp-failover-checker.log 2>&1") | sudo crontab - 
-
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP "
+        (sudo crontab -l; sudo echo "*/1 * * * * /bin/bash /home/ubuntu/repos-git/website-portifolio/usefull-scripts/webapp-failover-checker.sh "${PROD_WEBAPP_CLUSTER_IP}" "${PROD_WEBAPP_FAILOVER_IP}" > /var/log/webapp-failover-checker.log 2>&1") | sudo crontab - 
+      "
