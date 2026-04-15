@@ -144,7 +144,7 @@ create-runner-gl-api:
   stage: check-infra
   needs:
     - delete-old-runner-gl-api
-  before_script:
+  script:
     - |
       RESPONSE=$(curl -s --request POST --url "https://gitlab.com/api/v4/user/runners" \
         --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
