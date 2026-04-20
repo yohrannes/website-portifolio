@@ -238,7 +238,8 @@ set-failover-healthcheck-dns-update:
     - |
       BASHRC="/home/gitlab-runner/.bashrc"
       SOURCE_LINE='[ -f ~/.gitlab-runner-env ] && source ~/.gitlab-runner-env'
-
+      
+      touch "$BASHRC"
       grep -qxF "$SOURCE_LINE" "$BASHRC" || echo "$SOURCE_LINE" >> "$BASHRC"
     - |
       BASH_PROFILE="/home/gitlab-runner/.bash_profile"
