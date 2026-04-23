@@ -64,54 +64,28 @@ check-startup-script:
     - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
     - chmod 600 ~/.ssh/id_rsa
     - |
-      echo "Waiting for instance to be ready..."
-      sleep 30
-      
-      MAX_ATTEMPTS=210
-      ATTEMPT=0
-      
-      while [ $ATTEMPT -lt $MAX_ATTEMPTS ]; do
-        ATTEMPT=$((ATTEMPT + 1))
-        echo "Attempt $ATTEMPT of $MAX_ATTEMPTS"
-        
-        SSH_OUTPUT=$(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=10 -o ServerAliveInterval=5 -i ~/.ssh/id_rsa ubuntu@$PROD_RUNNER2_IP "
-          if [ -f /var/log/startup-script.log ] && [ -r /var/log/startup-script.log ]; then
-            last_line=\$(tail -n1 /var/log/startup-script.log 2>/dev/null)
-            if [ \"\$last_line\" = 'startup-script-finished' ]; then
-              echo 'SUCCESS'
-              exit 0
-            else
-              echo 'RUNNING'
-              exit 1
-            fi
-          else
-            echo 'NOT_READY'
-            exit 1
-          fi
-        " 2>&1 || true)
-        
-        SSH_EXIT_CODE=$?
-        
-        echo "SSH output: $SSH_OUTPUT"
-        
-        if echo "$SSH_OUTPUT" | grep -q "SUCCESS"; then
-          echo "Instance is ready!"
-          exit 0
-        fi
-        
-        if echo "$SSH_OUTPUT" | grep -q "RUNNING"; then
-          echo "Startup script still running"
-        elif echo "$SSH_OUTPUT" | grep -q "NOT_READY"; then
-          echo "Log file not available yet"
-        else
-          echo "Connection issue or other error, retrying..."
-        fi
-        
-        sleep 10
+      sleep 15
+      while true; do
+        ssh -o StrictHostKeyChecking=no \
+            -o ConnectTimeout=10 \
+            -o ServerAliveInterval=30 \
+            -i ~/.ssh/id_rsa \
+            ubuntu@$PROD_RUNNER2_IP \
+            "timeout 300 bash -c '
+              while true; do
+                if [ -f /var/log/startup-script.log ] && [ -r /var/log/startup-script.log ]; then
+                  if tail -n1 /var/log/startup-script.log 2>/dev/null | grep \"startup-script-finished\"; then
+                    echo \"Startup script finished!\"
+                    exit 0
+                  fi
+                else
+                  echo \"Waiting for startup script log...\"
+                fi
+                sleep 3
+              done
+            '" && break || echo 'Retrying connection in 5 seconds...'
+        sleep 5
       done
-      
-      echo "ERROR: Timeout waiting for startup script"
-      exit 1
 
 delete-old-runner-gl-api:
   stage: check-infra
