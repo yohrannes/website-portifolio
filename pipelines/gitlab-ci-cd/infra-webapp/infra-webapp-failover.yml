@@ -222,7 +222,7 @@ set-failover-healthcheck-dns-update:
     - runner2
   needs:
     - check-startup-script
-  when: manual
+#  when: manual
   script:
     - |
       ENV_FILE="/home/gitlab-runner/.gitlab-runner-env"
