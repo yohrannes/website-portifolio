@@ -231,7 +231,6 @@ set-failover-healthcheck-dns-update:
       export CLOUDFARE_ZONE_ID="${CLOUDFARE_ZONE_ID}"
       export CLOUDFARE_API_TOKEN="${CLOUDFARE_API_TOKEN}"
       export CLFR_DNS_ID_OCI_INST_YO_COM="${CLFR_DNS_ID_OCI_INST_YO_COM}"
-      export CLFR_DNS_ID_OCI_INST_GRAF_YO_COM="${CLFR_DNS_ID_OCI_INST_GRAF_YO_COM}"
       EOF
 
       chmod 600 "$ENV_FILE"
@@ -246,13 +245,10 @@ set-failover-healthcheck-dns-update:
       SOURCE_LINE='[ -f ~/.gitlab-runner-env ] && source ~/.gitlab-runner-env'
 
       grep -qxF "$SOURCE_LINE" "$BASH_PROFILE" 2>/dev/null || echo "$SOURCE_LINE" >> "$BASH_PROFILE"
-      
+
     - echo "Setting up automated failover mechanism, configuring cron job to continuously monitor Kubernetes cluster health and dynamically alternate between Kubernetes cluster IP (primary) and failover instance IP (secondary)."
 
     - crontab -r
     - |
       (crontab -l 2>/dev/null || true; \
       echo '*/1 * * * * source /home/gitlab-runner/.gitlab-runner-env && curl -fsSL https://raw.githubusercontent.com/yohrannes/website-portifolio/infra-webapp-failover/usefull-scripts/webapp-failover-checker.sh | bash -s -- "'"${PROD_WEBAPP_CLUSTER_IP}"'" "'"${PROD_WEBAPP_FAILOVER_IP}"'" > /var/log/webapp-failover-checker.log 2>&1') | crontab -
-
-
-
