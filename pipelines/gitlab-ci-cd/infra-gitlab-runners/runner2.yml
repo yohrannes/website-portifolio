@@ -67,6 +67,7 @@ check-startup-script:
       sleep 15
       while true; do
         ssh -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=/dev/null \
             -o ConnectTimeout=10 \
             -o ServerAliveInterval=30 \
             -i ~/.ssh/id_rsa \
