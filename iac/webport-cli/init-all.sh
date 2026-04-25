@@ -1,7 +1,7 @@
 #!/bin/sh
 set -e
 
-cd /app/terraform/prod && terraform init\
+cd /app/terraform/prod && terraform init -upgrade\
 
 cd /app/packer/prod\
  && packer init .\
