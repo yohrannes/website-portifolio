@@ -20,7 +20,7 @@ webapp_failover_instance_status=$(\
     -s -o /dev/null \
     -w "%{http_code}" \
     -H "Host: yohrannes.com" "http://$FAILOVER_IP"\
-) # webapp status on cluster
+) # webapp status on cluster..
 
 actual_webapp_ip=$(\
   curl \
