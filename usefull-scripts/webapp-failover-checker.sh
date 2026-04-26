@@ -31,7 +31,7 @@ if [[ $webapp_cluster_status == "200" ]]; then
     --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
     --data '{
       "comment": "Domain verification record",
-      "name": "dev.yohrannes.com",
+      "name": "yohrannes.com",
       "proxied": true,
       "settings": {},
       "tags": [],
@@ -50,7 +50,7 @@ else
       --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
       --data '{
         "comment": "Domain verification record",
-        "name": "dev.yohrannes.com",
+        "name": "yohrannes.com",
         "proxied": true,
         "settings": {},
         "tags": [],
