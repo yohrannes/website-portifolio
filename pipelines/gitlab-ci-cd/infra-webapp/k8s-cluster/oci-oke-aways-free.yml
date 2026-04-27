@@ -51,7 +51,7 @@ get-webapp-cluster-id:
       RESPONSE=$(curl -s --write-out "\n%{http_code}" \
         --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
         --request PUT \
-        --form "value=$WEBAPP_CLUSTER_IP" \
+        --form "value=$WEBAPP_CLUSTER_ID" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_CLUSTER_ID") >  /dev/null 2>&1
 
 oci-oke-auth:
