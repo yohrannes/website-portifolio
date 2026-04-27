@@ -19,7 +19,8 @@ terraform-apply:
   stage: tf-apply
   variables:
     APPLY_TIMEOUT: 8000
-  extends: .terraform-apply
+  extends:
+    - .terraform-apply
   needs:
     - trigger-terraform-run
 
@@ -50,7 +51,7 @@ get-webapp-cluster-id:
       RESPONSE=$(curl -s --write-out "\n%{http_code}" \
         --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
         --request PUT \
-        --form "value=$WEBAPP_CLUSTER_ID" \
+        --form "value=$WEBAPP_CLUSTER_IP" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_CLUSTER_ID") >  /dev/null 2>&1
 
 oci-oke-auth:
@@ -91,7 +92,7 @@ set-lb-shape: # This job doesn't works imediately after the cluster creation, it
   when: manual
   needs:
     - install-gateway
-  stage: create-infra
+  stage: check-infra
   script:
     - |
       export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')

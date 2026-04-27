@@ -1,7 +1,5 @@
 .oci-oke-auth:
   stage: check-infra
-  needs:
-    - get-webapp-compartment
   tags:
     - runner2
   before_script:
