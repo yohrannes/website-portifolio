@@ -27,9 +27,6 @@ include:
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner2"
 
-  - local: 'pipelines/gitlab-ci-cd/infra-gitlab-runners/feature-runner2.yml'
-    rules:
-      - if: $CI_COMMIT_BRANCH == "feature-infra-runner2"
 ### WEBAPP INFRASTRUCTURE
 
   - local: 'pipelines/gitlab-ci-cd/infra-webapp/infra-webapp-failover.yml'

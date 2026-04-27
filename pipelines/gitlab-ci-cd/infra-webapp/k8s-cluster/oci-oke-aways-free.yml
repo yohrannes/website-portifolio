@@ -59,7 +59,8 @@ oci-oke-auth:
     - get-webapp-cluster-id
 
 ### check if this two jobs (install-gateway, set-lb-shape) are de-sincronizing terraform destroy process, changing the infrastructure whithout update the tfstate...
-# before destroy process, be sure tha gateway api are deleted and load balancer are in a good state to be destroyed.
+
+# before destroy process, be sure the gateway api are deleted and load balancer are in a good state to be destroyed.
 
 ##    for more info check README.md at cluster module folder.
 
@@ -85,24 +86,24 @@ install-gateway:
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_CLUSTER_IP") >  /dev/null 2>&1
 
 
-#set-lb-shape: # This job doesn't works imediately after the cluster creation, it needs to be run manually. Implement a check to ensure the load balancer is ready to be updated.
-#
-#  needs:
-#    - install-gateway
-#  stage: create-infra
-#  script:
-#    - |
-#      export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
-#      export LOAD_BALANCER_ID=$(oci lb load-balancer list --compartment-id \$COMPARTMENT_ID | jq '.data[0].id' | sed 's/"//g')
-#      OUTPUT=\$(oci lb load-balancer update-load-balancer-shape --load-balancer-id $LOAD_BALANCER_ID --shape-name flexible --shape-details '{"maximum-bandwidth-in-mbps":10,"minimum-bandwidth-in-mbps":10}' --force 2>&1)
-#      EXIT_CODE=$?
-#      if [ $EXIT_CODE -ne 0 ] && echo "$OUTPUT" | grep -q 'same values'; then
-#          echo "No changes made, the load balancer is already using the specified shape and bandwidth."
-#          exit 0
-#      elif [ $EXIT_CODE -ne 0 ]; then
-#          echo "$OUTPUT"
-#          exit 1
-#      fi
+set-lb-shape: # This job doesn't works imediately after the cluster creation, it needs to be run manually. Implement a check to ensure the load balancer is ready to be updated.
+  when: manual
+  needs:
+    - install-gateway
+  stage: create-infra
+  script:
+    - |
+      export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
+      export LOAD_BALANCER_ID=$(oci lb load-balancer list --compartment-id \$COMPARTMENT_ID | jq '.data[0].id' | sed 's/"//g')
+      OUTPUT=\$(oci lb load-balancer update-load-balancer-shape --load-balancer-id $LOAD_BALANCER_ID --shape-name flexible --shape-details '{"maximum-bandwidth-in-mbps":10,"minimum-bandwidth-in-mbps":10}' --force 2>&1)
+      EXIT_CODE=$?
+      if [ $EXIT_CODE -ne 0 ] && echo "$OUTPUT" | grep -q 'same values'; then
+          echo "No changes made, the load balancer is already using the specified shape and bandwidth."
+          exit 0
+      elif [ $EXIT_CODE -ne 0 ]; then
+          echo "$OUTPUT"
+          exit 1
+      fi
 
 
 ### Verify Load Balancer (not network load balancer) destruction on terraform...
