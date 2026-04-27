@@ -63,6 +63,7 @@ oci-oke-auth:
 # before destroy process, be sure the gateway api are deleted and load balancer are in a good state to be destroyed.
 
 ##    for more info check README.md at cluster module folder.
+##
 
 install-gateway:
   tags:
