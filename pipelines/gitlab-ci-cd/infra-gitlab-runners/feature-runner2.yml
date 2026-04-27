@@ -1,0 +1,31 @@
+---
+pause-local-runner:
+  stage: check-infra
+  tags:
+    - runner2
+  when: manual
+  script:
+    - |
+      RUNNERS=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/runners?tag_list=local-runner-shell")
+
+      RUNNER_ID=$(echo "$RUNNERS" | jq -r '.[] | select(.tag == "local-runner-shell") | .id')
+
+      if [ -z "$RUNNER_ID" ] || [ "$RUNNER_ID" = "null" ]; then
+        echo "Runner not found "
+        exit 1
+      fi
+
+      echo "Runner found: ID $RUNNER_ID"
+
+      HTTP_CODE=$(curl -s --output /dev/null --write-out "%{http_code}" \
+        --request PUT \
+        --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
+        --form "paused=true" \
+        "https://gitlab.com/api/v4/runners/$RUNNER_ID")
+
+      if [ "$HTTP_CODE" = "200" ]; then
+        echo "Runner $RUNNER_ID paused with success"
+        echo "Failed to pause runner. HTTP code: $HTTP_CODE"
+        exit 1
+      fi
