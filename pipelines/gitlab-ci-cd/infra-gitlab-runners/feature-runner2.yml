@@ -27,6 +27,4 @@ pause-local-runner:
 
       if [ "$HTTP_CODE" = "200" ]; then
         echo "Runner $RUNNER_ID paused with success"
-        echo "Failed to pause runner. HTTP code: $HTTP_CODE"
-        exit 1
       fi
