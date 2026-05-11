@@ -161,6 +161,8 @@ authorize-runner:
       "
 
 pause-local-runner:
+  needs:
+    - authorize-runner
   stage: check-infra
   tags:
     - runner2
