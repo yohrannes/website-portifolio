@@ -9,13 +9,13 @@ variables:
   TF_TARGET_ADDRS: 'module.webapp'
 
 trigger-terraform-run:
-# when: manual
+  when: manual
   stage: tf-run
   extends:
     - .trigger-terraform-run
 
 terraform-apply:
-#  when: manual
+  when: manual
   stage: tf-apply
   variables:
     APPLY_TIMEOUT: 8000

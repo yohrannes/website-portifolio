@@ -1,4 +1,6 @@
 .oci-oke-auth:
+  variables:
+    PYTHONWARNINGS: ignore
   stage: check-infra
   tags:
     - runner2
@@ -39,12 +41,12 @@
         exit 1
       fi
       oci iam user get --user-id "$USER_ID" --output json | jq -r '.data.name' > /home/gitlab-runner/oci-log.txt
- 
+
   script:
     - |
       oci ce cluster create-kubeconfig \
         --cluster-id $PROD_WEBAPP_CLUSTER_ID \
-        --file /oracle/.kube/config \
+        --file $HOME/.kube/config \
         --token-version 2.0.0 \
         --kube-endpoint PUBLIC_ENDPOINT \
         --profile DEFAULT
