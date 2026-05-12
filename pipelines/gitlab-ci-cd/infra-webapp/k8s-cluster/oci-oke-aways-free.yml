@@ -67,47 +67,47 @@ oci-oke-auth:
 ##
 ##
 
-install-gateway:
-  tags:
-    - runner2
-  needs:
-    - oci-oke-auth
-  extends: .oci-oke-auth
-  script:
-    - |
-      k kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.2" 2>/dev/null | k apply -f -
-      k apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/crds.yaml
-      k apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/default/deploy.yaml
-    
-    - |
-      WEBAPP_CLUSTER_IP=$(k get svc -n nginx-gateway -o json | jq -r '.items[0].status.loadBalancer.ingress[0].ip')
-
-      RESPONSE=$(curl -s --write-out "\n%{http_code}" \
-        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-        --request PUT \
-        --form "value=$WEBAPP_CLUSTER_ID" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_CLUSTER_IP") >  /dev/null 2>&1
-
-
-set-lb-shape: # This job doesn't works imediately after the cluster creation, it needs to be run manually. Implement a check to ensure the load balancer is ready to be updated.
-  when: manual
-  needs:
-    - install-gateway
-  stage: check-infra
-  script:
-    - |
-      export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
-      export LOAD_BALANCER_ID=$(oci lb load-balancer list --compartment-id \$COMPARTMENT_ID | jq '.data[0].id' | sed 's/"//g')
-      OUTPUT=\$(oci lb load-balancer update-load-balancer-shape --load-balancer-id $LOAD_BALANCER_ID --shape-name flexible --shape-details '{"maximum-bandwidth-in-mbps":10,"minimum-bandwidth-in-mbps":10}' --force 2>&1)
-      EXIT_CODE=$?
-      if [ $EXIT_CODE -ne 0 ] && echo "$OUTPUT" | grep -q 'same values'; then
-          echo "No changes made, the load balancer is already using the specified shape and bandwidth."
-          exit 0
-      elif [ $EXIT_CODE -ne 0 ]; then
-          echo "$OUTPUT"
-          exit 1
-      fi
-
+#install-gateway:
+#  tags:
+#    - runner2
+#  needs:
+#    - oci-oke-auth
+#  extends: .oci-oke-auth
+#  script:
+#    - |
+#      k kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.2" 2>/dev/null | k apply -f -
+#      k apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/crds.yaml
+#      k apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/default/deploy.yaml
+#    
+#    - |
+#      WEBAPP_CLUSTER_IP=$(k get svc -n nginx-gateway -o json | jq -r '.items[0].status.loadBalancer.ingress[0].ip')
+#
+#      RESPONSE=$(curl -s --write-out "\n%{http_code}" \
+#        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+#        --request PUT \
+#        --form "value=$WEBAPP_CLUSTER_ID" \
+#        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_CLUSTER_IP") >  /dev/null 2>&1
+#
+#
+#set-lb-shape: # This job doesn't works imediately after the cluster creation, it needs to be run manually. Implement a check to ensure the load balancer is ready to be updated.
+#  when: manual
+#  needs:
+#    - install-gateway
+#  stage: check-infra
+#  script:
+#    - |
+#      export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
+#      export LOAD_BALANCER_ID=$(oci lb load-balancer list --compartment-id \$COMPARTMENT_ID | jq '.data[0].id' | sed 's/"//g')
+#      OUTPUT=\$(oci lb load-balancer update-load-balancer-shape --load-balancer-id $LOAD_BALANCER_ID --shape-name flexible --shape-details '{"maximum-bandwidth-in-mbps":10,"minimum-bandwidth-in-mbps":10}' --force 2>&1)
+#      EXIT_CODE=$?
+#      if [ $EXIT_CODE -ne 0 ] && echo "$OUTPUT" | grep -q 'same values'; then
+#          echo "No changes made, the load balancer is already using the specified shape and bandwidth."
+#          exit 0
+#      elif [ $EXIT_CODE -ne 0 ]; then
+#          echo "$OUTPUT"
+#          exit 1
+#      fi
+#
 
 ### Verify Load Balancer (not network load balancer) destruction on terraform...
 ---

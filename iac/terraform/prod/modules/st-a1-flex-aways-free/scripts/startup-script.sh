@@ -167,6 +167,13 @@ function set-timezone () {
     sudo timedatectl    
 }
 
+function install-oci-cli () {
+    sudo bash -c "$(curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh)" -- \
+    --install-dir /opt/oci-cli \
+    --exec-dir /usr/local/bin \
+    --accept-all-defaults
+}
+
 allow-ports
 set-timezone
 update-repos-url
@@ -190,6 +197,8 @@ sudo rm -f /var/lib/cloud/instance-data.json
 sudo rm -f /var/lib/cloud/instance-data-sensitive.json
 sudo rm -f /var/lib/cloud/cloud-init-dhcp-*.json
 sudo rm -f /var/lib/cloud/dhclient.*.json
+
+
 
 # Leave this command bellow by least (used for pipeline).
 echo "startup-script-finished" $(measure_duration $SCRIPT_START_TIME)
