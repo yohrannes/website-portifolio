@@ -46,7 +46,7 @@
         --token-version 2.0.0 \
         --kube-endpoint PUBLIC_ENDPOINT \
         --profile DEFAULT
-    - k version
-#    - k version --client
+    - kubectl version
+    - kubectl version --client
 #    - k get namespaces 
 #    - k get componentstatuses
