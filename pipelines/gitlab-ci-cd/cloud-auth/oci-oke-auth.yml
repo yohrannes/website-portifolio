@@ -11,10 +11,10 @@
     - export OCI_PRIVATE_KEY="$(echo $OCI_PRIVATE_KEY_BASE64 | base64 -d)"
     - export OCI_CLI_SUPPRESS_FILE_PERMISSIONS_WARNING=True
 
-    - mkdir -p $HOME/.oci
-    - echo $OCI_CONFIG > $HOME/.oci/config
-    - echo $OCI_PRIVATE_KEY > $HOME/.oci/oci_api_key.pem
-    - chmod 600 $HOME/.oci/oci_api_key.pem
+    - mkdir -p "$HOME/.oci"
+    - printf '%s' "$OCI_CONFIG" > "$HOME/.oci/config"
+    - printf '%s' "$OCI_PRIVATE_KEY" > "$HOME/.oci/oci_api_key.pem"
+    - chmod 600 "$HOME/.oci/oci_api_key.pem"
 
     - mkdir -p $HOME/.kube
     - chmod 700 $HOME/.kube
@@ -33,10 +33,12 @@
 
 # Check oci authentication
     - |
-      oci iam user get \
-        --user-id $(oci iam user list \
-        --query "data[0].id" \
-        --raw-output 2>/dev/null) --output json 2>/dev/null | jq -r .data.name > /home/gitlab-runner/oci-log.txt
+      USER_ID=$(oci iam user list --query 'data[0].id' --raw-output)
+      if [ -z "$USER_ID" ]; then
+        echo "ERROR: OCI user ID not found" >&2
+        exit 1
+      fi
+      oci iam user get --user-id "$USER_ID" --output json | jq -r '.data.name' > /home/gitlab-runner/oci-log.txt
  
   script:
     - |
