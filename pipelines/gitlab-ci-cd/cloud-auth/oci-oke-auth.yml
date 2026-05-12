@@ -18,7 +18,7 @@
 
     - mkdir -p $HOME/.kube
     - chmod 700 $HOME/.kube
-    - touch > $HOME/.kube/config
+    - touch $HOME/.kube/config
     - chmod 600 $HOME/.kube/config
     - export KUBECONFIG="${HOME}/.kube/config"
 
