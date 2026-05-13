@@ -182,6 +182,7 @@ install-docker-engine
 install-usefull-packages
 install-kubectl
 install-gitlab-runner
+install-oci-cli
 
 docker --version
 kubectl version --client
