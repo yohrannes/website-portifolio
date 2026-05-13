@@ -25,14 +25,14 @@
     - chmod 600 $HOME/.kube/config
     - export KUBECONFIG="${HOME}/.kube/config"
 
-    - |
-      cat > $HOME/.kube/config << 'EOF'
-      apiVersion: v1
-      kind: Config
-      clusters:
-      users:
-      contexts:
-      EOF
+#    - |
+#      cat > $HOME/.kube/config << 'EOF'
+#      apiVersion: v1
+#      kind: Config
+#      clusters:
+#      users:
+#      contexts:
+#      EOF
 
 # Check oci authentication
     - |
@@ -54,6 +54,5 @@
     - kubectl version
     - kubectl version --client
     - kubectl get po -A
-    - cat $HOME/.kube/config
-#    - k get namespaces 
+#    - k get namespaces
 #    - k get componentstatuses
