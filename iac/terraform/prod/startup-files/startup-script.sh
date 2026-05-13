@@ -56,6 +56,13 @@ function install-kubectl () {
     /usr/local/bin/kubectl version --client
 }
 
+function install-oci-cli () {
+    sudo bash -c "$(curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh)" -- \
+    --install-dir /opt/oci-cli \
+    --exec-dir /usr/local/bin \
+    --accept-all-defaults
+}
+
 if [[ $1 == "install-docker" ]]; then
     install-docker-engine
 else
@@ -65,6 +72,7 @@ else
     allow-swap-memory
     install-gitlab-runner
     install-kubectl
+    install-oci-cli
     
     # Leave this command bellow by least (used for pipeline checks)
     echo "startup-script-finished"

@@ -152,26 +152,10 @@ function install-gitlab-runner () {
     sudo gitlab-runner status
 }
 
-function install-kubectl () {
-    kversion=$(curl -L -s https://dl.k8s.io/release/stable.txt)
-    wait-for-url "https://dl.k8s.io/release/${kversion}/bin/linux/arm64/kubectl"
-    curl -LO "https://dl.k8s.io/release/${kversion}/bin/linux/arm64/kubectl"
-    chmod +x kubectl
-    mv kubectl /usr/local/bin/kubectl
-    /usr/local/bin/kubectl version --client
-}
-
 function set-timezone () {
     sudo timedatectl set-timezone America/Sao_Paulo
     sudo timedatectl set-ntp true
     sudo timedatectl    
-}
-
-function install-oci-cli () {
-    sudo bash -c "$(curl -L https://raw.githubusercontent.com/oracle/oci-cli/master/scripts/install/install.sh)" -- \
-    --install-dir /opt/oci-cli \
-    --exec-dir /usr/local/bin \
-    --accept-all-defaults
 }
 
 allow-ports
@@ -180,9 +164,7 @@ update-repos-url
 remove-unnecessary-packages
 install-docker-engine
 install-usefull-packages
-install-kubectl
 install-gitlab-runner
-install-oci-cli
 
 docker --version
 kubectl version --client
