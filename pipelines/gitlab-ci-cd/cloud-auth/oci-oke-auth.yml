@@ -1,6 +1,4 @@
 .oci-oke-auth:
-  variables:
-    PYTHONWARNINGS: ignore
   stage: check-infra
   tags:
     - runner2
@@ -9,9 +7,12 @@
     - pwd
     - echo $HOME
 
-    - export OCI_CONFIG="$(echo $OCI_CONFIG_BASE64 | base64 -d)"
-    - export OCI_PRIVATE_KEY="$(echo $OCI_PRIVATE_KEY_BASE64 | base64 -d)"
-    - export OCI_CLI_SUPPRESS_FILE_PERMISSIONS_WARNING=True
+    - |
+      export OCI_CONFIG="$(echo $OCI_CONFIG_BASE64 | base64 -d)"
+      export OCI_PRIVATE_KEY="$(echo $OCI_PRIVATE_KEY_BASE64 | base64 -d)"
+      export OCI_CLI_SUPPRESS_FILE_PERMISSIONS_WARNING=True
+      export PYTHONWARNINGS=ignore
+      oci setup repair-file-permissions --file /home/gitlab-runner/.oci/config
 
     - mkdir -p "$HOME/.oci"
     - printf '%s' "$OCI_CONFIG" > "$HOME/.oci/config"
@@ -52,5 +53,7 @@
         --profile DEFAULT
     - kubectl version
     - kubectl version --client
+    - kubectl get po -A
+    - cat $HOME/.kube/config
 #    - k get namespaces 
 #    - k get componentstatuses
