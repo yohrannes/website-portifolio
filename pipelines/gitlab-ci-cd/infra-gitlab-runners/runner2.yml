@@ -54,7 +54,7 @@ get-instance-ip-from-tf-cloud:
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_RUNNER2_IP" \
         > /dev/null 2>&1
 
-### impement startup script check method used on webapp_failover_pipeline
+### Task - implement startup script check method used on webapp_failover_pipeline
 check-startup-script:
   stage: check-infra
   needs:
