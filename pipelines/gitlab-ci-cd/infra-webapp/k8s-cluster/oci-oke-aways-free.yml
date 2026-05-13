@@ -55,6 +55,9 @@ get-webapp-cluster-id:
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_CLUSTER_ID") >  /dev/null 2>&1
 
 oci-oke-auth:
+  tags:
+    - runner2
+  stage: check-infra
   extends: .oci-oke-auth
   needs:
     - get-webapp-cluster-id
@@ -70,6 +73,7 @@ oci-oke-auth:
 install-gateway:
   tags:
     - runner2
+  stage: check-infra
   needs:
     - oci-oke-auth
   extends: .oci-oke-auth
@@ -88,6 +92,24 @@ install-gateway:
         --form "value=$WEBAPP_CLUSTER_ID" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_CLUSTER_IP") >  /dev/null 2>&1
 
+destroy-gateway:
+  when: manual
+  stage: check-infra
+  tags:
+    - runner2
+  needs:
+    - oci-oke-auth
+  extends: .oci-oke-auth
+  script:
+    - kubectl delete -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/default/deploy.yaml
+    - kubectl delete -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/crds.yaml
+    - kubectl kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.2" 2>/dev/null | kubectl delete -f -
+    - kubectl get gateways -A
+    - kubectl get httproutes -A
+    - kubectl get grpcroutes -A
+    - kubectl get tcproutes -A
+    - kubectl get gatewayclasses
+    - kubectl get svc -A | grep -i nginx
 
 #set-lb-shape: # This job doesn't works imediately after the cluster creation, it needs to be run manually. Implement a check to ensure the load balancer is ready to be updated.
 #  when: manual

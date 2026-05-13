@@ -5,10 +5,10 @@ set -x
 CLUSTER_IP=$1
 FAILOVER_IP=$2
 
-### Task - Get cluster and failover ip direct from gitlab vars api using gitlab token.
+### Get cluster and failover ip direct from gitlab vars api using gitlab token.
 ### This script needs to be independent of the pipeline arguments.
-### The ip values need to be continuous getted on cronjob.
-### Gilab API limitation: 2000 api requests per minute. - thats ok
+### The ip values need to be continuous obtained using cronjob.
+### Gitlab API limitation is 2000 api requests per minute. - thats ok
 
 echo "Cluster IP: $CLUSTER_IP"
 echo "Failover IP: $FAILOVER_IP"
