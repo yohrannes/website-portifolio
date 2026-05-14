@@ -26,6 +26,8 @@ terraform-apply:
 
 get-webapp-cluster-id:
   stage: check-infra
+  needs:
+    - terraform-apply
   before_script:
     - |
       WORKSPACE_ID=$(curl -s \
