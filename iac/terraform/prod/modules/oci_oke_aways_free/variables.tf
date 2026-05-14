@@ -29,11 +29,10 @@ variable "memory_in_gbs_per_node" {
 
 variable "image_id" {
   type = string
-  #  default = "ocid1.image.oc1.iad.aaaaaaaao2zpwcb2osmbtliiuzlphc3y2fqaqmcpp5ttlcf573sidkabml7a"
-  #  default = "ocid1.image.oc1.iad.aaaaaaaaus2flkp6nhxq6lozzajkiwj7uphenmzpwbix3yq2docvhjjdzvqq"
-  default = "ocid1.image.oc1.iad.aaaaaaaarkexs7ijdqffxvy6dyzepizvuzm25zijwp2nkv3nifbcvywzufsq"
+#  default = "ocid1.image.oc1.iad.aaaaaaaarkexs7ijdqffxvy6dyzepizvuzm25zijwp2nkv3nifbcvywzufsq"
+  default = "ocid1.image.oc1.iad.aaaaaaaah5rlwh66gryhozaktxi7kptk57h2lyua6v3ggngqzwtfrkj2xqaa"
 }
-# Link to a list of available images (Be sure to select the correct region and CPU architecture. We are using Oracle-Linux-8.8-aarch64-2023.09.26-0-OKE-1.28.2-653)
+# Link to a list of available images (Be sure to select the correct region and CPU architecture. We are using Oracle-Linux-8.10-aarch64-2026.02.28-0-OKE-1.35.2-1402)
 # https://docs.oracle.com/en-us/iaas/images/image/d4c060a5-041c-477b-8226-2d25d91c4ffb/
 
 # ----------> Cluster <----------
