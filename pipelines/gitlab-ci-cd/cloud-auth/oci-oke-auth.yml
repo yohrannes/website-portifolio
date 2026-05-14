@@ -25,15 +25,6 @@
     - chmod 600 $HOME/.kube/config
     - export KUBECONFIG="${HOME}/.kube/config"
 
-#    - |
-#      cat > $HOME/.kube/config << 'EOF'
-#      apiVersion: v1
-#      kind: Config
-#      clusters:
-#      users:
-#      contexts:
-#      EOF
-
 # Check oci authentication
     - |
       USER_ID=$(oci iam user list --query 'data[0].id' --raw-output)
@@ -53,6 +44,3 @@
         --profile DEFAULT
     - kubectl version
     - kubectl version --client
-    - kubectl get po -A
-#    - k get namespaces
-#    - k get componentstatuses

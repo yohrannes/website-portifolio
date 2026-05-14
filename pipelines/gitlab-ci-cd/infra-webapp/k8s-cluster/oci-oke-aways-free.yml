@@ -104,12 +104,7 @@ destroy-gateway:
     - kubectl delete -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/default/deploy.yaml
     - kubectl delete -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/crds.yaml
     - kubectl kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.2" 2>/dev/null | kubectl delete -f -
-    - kubectl get gateways -A
-    - kubectl get httproutes -A
-    - kubectl get grpcroutes -A
-    - kubectl get tcproutes -A
-    - kubectl get gatewayclasses
-    - kubectl get svc -A | grep -i nginx
+
 
 #set-lb-shape: # This job doesn't works imediately after the cluster creation, it needs to be run manually. Implement a check to ensure the load balancer is ready to be updated.
 #  when: manual
