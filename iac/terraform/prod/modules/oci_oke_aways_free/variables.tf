@@ -39,7 +39,7 @@ variable "image_id" {
 # ----------> Cluster <----------
 variable "k8s_version" {
   type    = string
-  default = "v1.31.1"
+  default = "v1.35.2"
 }
 
 variable "node_size" {
