@@ -2,9 +2,19 @@
 
 set -x
 
-CLUSTER_IP=$1
-FAILOVER_IP=$2
+#CLUSTER_IP=$1
+#FAILOVER_IP=$2
 
+CLUSTER_IP=$(curl \
+  -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
+  "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_CLUSTER_IP" \
+  | jq -r '.value')
+
+FAILOVER_IP=$(curl \
+  -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
+  "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_FAILOVER_IP" \
+  | jq -r '.value')
+  
 ### Get cluster and failover ip direct from gitlab vars api using gitlab token.
 ### This script needs to be independent of the pipeline arguments.
 ### The ip values need to be continuous obtained using cronjob.

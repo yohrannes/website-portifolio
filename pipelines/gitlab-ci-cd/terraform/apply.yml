@@ -296,7 +296,7 @@
             exit 0
             ;;
           *)
-            echo "Unexpected plan status: $current_status"
+            echo "Plan status: $current_status"
             sleep 30
             ;;
         esac
