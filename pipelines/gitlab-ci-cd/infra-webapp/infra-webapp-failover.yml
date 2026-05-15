@@ -258,4 +258,4 @@ set-failover-healthcheck-dns-update:
       CRONEOF
       
       crontab /tmp/new-crontab
-      # rm /tmp/new-crontab
+
