@@ -90,7 +90,7 @@ install-gateway:
       WEBAPP_CLUSTER_IP=$(kubectl get svc -n nginx-gateway -o json | jq -r '.items[0].status.loadBalancer.ingress[0].ip')
 
       RESPONSE=$(curl -s --write-out "\n%{http_code}" \
-        --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+        --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
         --request PUT \
         --form "value=$WEBAPP_CLUSTER_ID" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_CLUSTER_IP") >  /dev/null 2>&1

@@ -238,7 +238,6 @@ set-failover-healthcheck-dns-update:
       
       chmod 600 "$ENV_FILE"
 
-      
       FAILOVER_SCRIPT="/home/gitlab-runner/webapp-failover-checker.sh"
       wget -q -O "$FAILOVER_SCRIPT" \
         https://raw.githubusercontent.com/yohrannes/website-portifolio/infra-webapp-failover/usefull-scripts/webapp-failover-checker.sh
