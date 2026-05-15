@@ -208,8 +208,9 @@
         echo "WARNING: Plan ID is null, plan may not exist yet"
         PLAN_ID=""
       else
-        echo "Plan ID: see code below"
+        echo "Plan completed!"
       fi
+#        echo "Plan ID: see code below"
 #        echo "Plan ID: $PLAN_ID" # this is the code below
 
     - |
