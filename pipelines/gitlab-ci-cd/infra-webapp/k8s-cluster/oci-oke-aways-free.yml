@@ -65,9 +65,9 @@ oci-oke-auth:
   needs:
     - get-webapp-cluster-id
 
-### check if this two jobs (install-gateway, set-lb-shape) are de-sincronizing terraform destroy process, changing the infrastructure whithout update the tfstate...
-
-# before destroy process, be sure the gateway api are deleted and load balancer are in a good state to be destroyed.
+### destroy and provision ok
+### gateway-api need to be removed before descriction process
+### implement this using terraform, or garant that gateway-api will be destroyed before the cluster.
 
 ##    for more info check README.md at cluster module folder.
 ##
@@ -85,14 +85,22 @@ install-gateway:
       kubectl kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.2" 2>/dev/null | kubectl apply -f -
       kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/crds.yaml
       kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/default/deploy.yaml
-    
+
+get-cluster-ip:
+  tags:
+    - runner2
+  stage: check-infra
+  needs:
+    - oci-oke-auth
+  extends: .oci-oke-auth
+  script:
     - |
       WEBAPP_CLUSTER_IP=$(kubectl get svc -n nginx-gateway -o json | jq -r '.items[0].status.loadBalancer.ingress[0].ip')
 
       RESPONSE=$(curl -s --write-out "\n%{http_code}" \
         --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
         --request PUT \
-        --form "value=$WEBAPP_CLUSTER_ID" \
+        --form "value=$WEBAPP_CLUSTER_IP" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_CLUSTER_IP") >  /dev/null 2>&1
 
 destroy-gateway:
