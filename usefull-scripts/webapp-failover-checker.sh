@@ -6,12 +6,12 @@ set -x
 #FAILOVER_IP=$2
 
 CLUSTER_IP=$(curl \
-  -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
+  -s --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
   "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_CLUSTER_IP" \
   | jq -r '.value')
 
 FAILOVER_IP=$(curl \
-  -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
+  -s --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
   "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_FAILOVER_IP" \
   | jq -r '.value')
   
