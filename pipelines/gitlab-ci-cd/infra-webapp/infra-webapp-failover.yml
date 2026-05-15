@@ -226,7 +226,6 @@ set-failover-healthcheck-dns-update:
   script:
     - |
       ENV_FILE="/home/gitlab-runner/.gitlab-runner-env"
-      
       cat > "$ENV_FILE" <<EOF
       export CLOUDFARE_ZONE_ID="${CLOUDFARE_ZONE_ID}"
       export CLOUDFARE_API_TOKEN="${CLOUDFARE_API_TOKEN}"
@@ -238,24 +237,22 @@ set-failover-healthcheck-dns-update:
       EOF
       
       chmod 600 "$ENV_FILE"
-      . "$ENV_FILE"
+
       
-      BASHRC="/home/gitlab-runner/.bashrc"
-      SOURCE_LINE='[ -f ~/.gitlab-runner-env ] && source ~/.gitlab-runner-env'
-      touch "$BASHRC"
-      grep -qxF "$SOURCE_LINE" "$BASHRC" || echo "$SOURCE_LINE" >> "$BASHRC"
-      
-      BASH_PROFILE="/home/gitlab-runner/.bash_profile"
-      SOURCE_LINE='[ -f ~/.gitlab-runner-env ] && source ~/.gitlab-runner-env'
-      grep -qxF "$SOURCE_LINE" "$BASH_PROFILE" 2>/dev/null || echo "$SOURCE_LINE" >> "$BASH_PROFILE"
-      
+      FAILOVER_SCRIPT="/home/gitlab-runner/webapp-failover-checker.sh"
+      wget -q -O "$FAILOVER_SCRIPT" \
+        https://raw.githubusercontent.com/yohrannes/website-portifolio/infra-webapp-failover/usefull-scripts/webapp-failover-checker.sh
+      chmod +x "$FAILOVER_SCRIPT"
+
+      CRON_JOB="*/1 * * * * /bin/bash -c '. /home/gitlab-runner/.gitlab-runner-env && /home/gitlab-runner/webapp-failover-checker.sh > /tmp/webapp-failover-checker.log 2>&1'"
+
+      crontab -l 2>/dev/null | grep -v 'webapp-failover-checker' > /tmp/existing-crontab || true
+      echo "$CRON_JOB" > /tmp/existing-crontab
+      crontab /tmp/existing-crontab
+
       echo "Setting up automated failover mechanism, configuring cron job to continuously monitor Kubernetes cluster health and dynamically alternate between Kubernetes cluster IP (primary) and failover instance IP (secondary)."
+
+      crontab -l
       
-      crontab -r 2>/dev/null || true
       
-      cat > /tmp/new-crontab <<"CRONEOF"
-      */1 * * * * /bin/bash -c '. /home/gitlab-runner/.gitlab-runner-env && wget -q -O /tmp/webapp-failover-checker.sh https://raw.githubusercontent.com/yohrannes/website-portifolio/infra-webapp-failover/usefull-scripts/webapp-failover-checker.sh && chmod +x /tmp/webapp-failover-checker.sh && /tmp/webapp-failover-checker.sh > /tmp/webapp-failover-checker.log 2>&1'
-      CRONEOF
-      
-      crontab -u gitlab-runner /tmp/new-crontab
 
