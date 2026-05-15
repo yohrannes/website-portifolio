@@ -257,5 +257,5 @@ set-failover-healthcheck-dns-update:
       */1 * * * * /bin/bash -c '. /home/gitlab-runner/.gitlab-runner-env && wget -q -O /tmp/webapp-failover-checker.sh https://raw.githubusercontent.com/yohrannes/website-portifolio/infra-webapp-failover/usefull-scripts/webapp-failover-checker.sh && chmod +x /tmp/webapp-failover-checker.sh && /tmp/webapp-failover-checker.sh > /tmp/webapp-failover-checker.log 2>&1'
       CRONEOF
       
-      crontab /tmp/new-crontab
+      crontab -u gitlab-runner/tmp/new-crontab
 
