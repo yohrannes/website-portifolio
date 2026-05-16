@@ -19,7 +19,6 @@ get-image-tag:
   tags: [ "runner2" ]
 
   script:
-    - sudo apt-get install -y curl jq
     - OLD_TAG=$(./usefull-scripts/old-dk-img-version.sh)
     - NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh $OLD_TAG patch)
 
