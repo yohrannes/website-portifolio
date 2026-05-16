@@ -9,13 +9,13 @@ variables:
   IMAGE_TAG: latest
   
 #docker-controler-deploy:
-#  stage: prepare
+#  stage: pre-deploy
 #  parallel: 2
 #  script:
 #    - docker system prune -a -f
 
 get-image-tag:
-  stage: prepare
+  stage: pre-deploy
   needs:
     - docker-controler-deploy
   tags: [ "runner2" ]
