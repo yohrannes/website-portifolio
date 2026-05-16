@@ -16,8 +16,6 @@ variables:
 
 get-image-tag:
   stage: pre-deploy
-  needs:
-    - docker-controler-deploy
   tags: [ "runner2" ]
 
   script:
