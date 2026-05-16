@@ -45,13 +45,13 @@ include:
 
   - local: 'pipelines/gitlab-ci-cd/develop.yml'
     rules:
-      - if: $CI_COMMIT_BRANCH == "develop"
+      - if: $CI_COMMIT_BRANCH == "dev"
 
 ## DOCKER IMAGES PIPELINES
 
   - local: 'pipelines/gitlab-ci-cd/docker-registry.yml'
     rules:
-      - if: $CI_COMMIT_BRANCH == "dev-dk-img"
+      - if: $CI_COMMIT_BRANCH == "docker-registry"
 
 
 stages:
