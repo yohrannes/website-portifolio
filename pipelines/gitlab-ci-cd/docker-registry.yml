@@ -106,45 +106,23 @@ deploy-dk-hub:
     - deploy-dk-hub-arm
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
-    - docker system prune -a -f
-    - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
-    
-    - docker pull $IMAGE_NAME:$NEW_TAG-amd64
-    - docker pull $IMAGE_NAME:$NEW_TAG-arm64
-
-    - docker pull $NGINX_IMAGE_NAME:$NEW_TAG-amd64
-    - docker pull $NGINX_IMAGE_NAME:$NEW_TAG-arm64
-
-    - DIGEST_AMD64=$(curl -s "https://registry.hub.docker.com/v2/repositories/yohrannes/website-portifolio/tags?page_size=100" | jq -r --arg tag "$NEW_TAG-amd64" '.results[] | select(.name == $tag) | .digest')
-    - DIGEST_ARM64=$(curl -s "https://registry.hub.docker.com/v2/repositories/yohrannes/website-portifolio/tags?page_size=100" | jq -r --arg tag "$NEW_TAG-arm64" '.results[] | select(.name == $tag) | .digest')
-
-    - DIGEST_NGINX_AMD64=$(curl -s "https://registry.hub.docker.com/v2/repositories/yohrannes/nginx/tags?page_size=100" | jq -r --arg tag "$NEW_TAG-amd64" '.results[] | select(.name == $tag) | .digest')
-    - DIGEST_NGINX_ARM64=$(curl -s "https://registry.hub.docker.com/v2/repositories/yohrannes/nginx/tags?page_size=100" | jq -r --arg tag "$NEW_TAG-arm64" '.results[] | select(.name == $tag) | .digest')
-
-    - |
-      docker manifest create $IMAGE_NAME:$NEW_TAG \
-        ${IMAGE_NAME}@${DIGEST_AMD64} --amend\
-        ${IMAGE_NAME}@${DIGEST_ARM64} --amend
-      docker manifest rm $IMAGE_NAME:latest || true
-      docker manifest create $IMAGE_NAME:latest \
-        ${IMAGE_NAME}@${DIGEST_AMD64} \
-        ${IMAGE_NAME}@${DIGEST_ARM64}
-
-    - |
-      docker manifest create $NGINX_IMAGE_NAME:$NEW_TAG \
-        ${NGINX_IMAGE_NAME}@${DIGEST_NGINX_AMD64} --amend\
-        ${NGINX_IMAGE_NAME}@${DIGEST_NGINX_ARM64} --amend
-      docker manifest rm $NGINX_IMAGE_NAME:latest || true
-      docker manifest create $NGINX_IMAGE_NAME:latest \
-        ${NGINX_IMAGE_NAME}@${DIGEST_NGINX_AMD64} \
-        ${NGINX_IMAGE_NAME}@${DIGEST_NGINX_ARM64}
-
   script:
+    - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
 
-    - docker manifest push $IMAGE_NAME:$NEW_TAG
-    - docker manifest push $IMAGE_NAME:latest
-    - docker manifest push $NGINX_IMAGE_NAME:$NEW_TAG
-    - docker manifest push $NGINX_IMAGE_NAME:latest
+    # Cria manifest multi-arch para website-portifolio
+    - |
+      docker buildx imagetools create \
+        -t $IMAGE_NAME:$NEW_TAG \
+        -t $IMAGE_NAME:latest \
+        $IMAGE_NAME:$NEW_TAG-amd64 \
+        $IMAGE_NAME:$NEW_TAG-arm64
 
-    - echo "image-changed"
+    # Cria manifest multi-arch para nginx
+    - |
+      docker buildx imagetools create \
+        -t $NGINX_IMAGE_NAME:$NEW_TAG \
+        -t $NGINX_IMAGE_NAME:latest \
+        $NGINX_IMAGE_NAME:$NEW_TAG-amd64 \
+        $NGINX_IMAGE_NAME:$NEW_TAG-arm64
+
     - echo "Old version $DOCKER_IMAGE_ACTUAL_TAG changed to the new version $NEW_TAG"
