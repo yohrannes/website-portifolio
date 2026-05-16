@@ -43,15 +43,15 @@ include:
 
 ## DEVELOPMENT PIPELINES
 
-#  - local: 'pipelines/gitlab-ci-cd/develop.yml'
-#    rules:
-#      - if: $CI_COMMIT_BRANCH == "develop"
+  - local: 'pipelines/gitlab-ci-cd/develop.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "develop"
 
 ## DOCKER IMAGES PIPELINES
 
-#  - local: 'pipelines/gitlab-ci-cd/dev-dk-img.yml'
-#    rules:
-#      - if: $CI_COMMIT_BRANCH == "dev-dk-img"
+  - local: 'pipelines/gitlab-ci-cd/docker-registry.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "dev-dk-img"
 
 
 stages:
@@ -76,6 +76,8 @@ stages:
   - deploy
 
 deploy-dkcmpose:
+  tags:
+    - runner1
   stage: deploy
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
@@ -100,3 +102,13 @@ deploy-dkcmpose:
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$IP_OCI_AMD_WEBAPP "
         sudo docker compose -f repos-git/website-portifolio/docker-compose/docker-compose.yml up -d
       "
+
+
+deploy-k8s-cluster:
+  tags:
+    - runner2
+  stage: deploy
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+  script:
+    - kubectl apply -f kubernetes/app-manifest/*

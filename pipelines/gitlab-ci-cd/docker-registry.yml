@@ -8,17 +8,17 @@ variables:
   
   IMAGE_TAG: latest
   
-docker-controler-deploy:
-  stage: prepare
-  parallel: 2
-  script:
-    - docker system prune -a -f
+#docker-controler-deploy:
+#  stage: prepare
+#  parallel: 2
+#  script:
+#    - docker system prune -a -f
 
 get-image-tag:
   stage: prepare
   needs:
     - docker-controler-deploy
-  tags: [ "gcp-runner-amd" ]
+  tags: [ "runner2" ]
 
   script:
     - sudo apt-get install -y curl jq
@@ -44,7 +44,7 @@ deploy-dk-hub-amd:
   stage: deploy-image
   needs:
     - get-image-tag
-  tags: [ "gcp-runner-amd" ]
+  tags: [ "runner2" ]
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
@@ -76,7 +76,7 @@ deploy-dk-hub-arm:
   stage: deploy-image
   needs:
     - get-image-tag
-  tags: [ "oci-runner-arm" ]
+  tags: [ "runner1" ]
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
@@ -103,7 +103,7 @@ deploy-dk-hub-arm:
 
 deploy-dk-hub:
   stage: deploy-image
-  tags: [ "oci-runner-arm" ]
+  tags: [ "runner1" ]
   needs:
     - deploy-dk-hub-amd
     - deploy-dk-hub-arm

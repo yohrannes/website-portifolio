@@ -5,6 +5,8 @@ variables:
   IMAGE_TAG: latest
 
 docker-build-test:
+  tags:
+    - runner1
   stage: build
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
@@ -17,6 +19,8 @@ docker-build-test:
       docker build -qf ./build-app/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG .
 
 dkhub-img-sec-dkscout:
+  tags:
+    - runner1
   stage: test
   needs:
     - docker-build-test
@@ -44,6 +48,8 @@ dkhub-img-sec-dkscout:
       fi
 
 dkhub-img-sec-trivy:
+  tags:
+    - runner1
   stage: test
   needs:
     - docker-build-test
@@ -77,12 +83,14 @@ dkhub-img-sec-trivy:
       fi
 
 localrepo-img-sec-trivy:
+  tags:
+    - runner1
   stage: test
   needs:
     - docker-build-test
   image: docker:27.3.1
   services:
-   - docker:27.3.1-dind
+    - docker:27.3.1-dind
   variables:
     DOCKER_DRIVER: overlay2
   before_script:
