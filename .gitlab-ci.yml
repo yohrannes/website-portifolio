@@ -14,6 +14,9 @@ variables:
   TF_CONFIG_FILE: "terraform-config.tar.gz"
 
 include:
+### OCI AND CLUSTER AUTHENTICATION
+
+  - local: 'pipelines/gitlab-ci-cd/cloud-auth/oci-oke-auth.yml'
 
 ### GITLAB RUNNERS CONTROLER AND SETUP
 
