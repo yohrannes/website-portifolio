@@ -104,11 +104,11 @@ deploy-dkcmpose:
         sudo docker compose -f repos-git/website-portifolio/docker-compose/docker-compose.yml up -d
       "
 
-
 deploy-k8s-cluster:
   tags:
     - runner2
   stage: deploy
+  extends: .oci-oke-auth
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   script:
