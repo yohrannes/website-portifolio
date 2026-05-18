@@ -79,10 +79,17 @@ stages:
   - deploy-image
   - deploy
 
+oci-oke-auth:
+  tags:
+    - runner2
+  stage: check-infra
+  extends: .oci-oke-auth
+
 deploy-dkcmpose:
   tags:
     - runner1
   stage: deploy
+  when: manual
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
   before_script:
@@ -111,6 +118,8 @@ deploy-k8s-cluster:
   tags:
     - runner2
   stage: deploy
+  needs:
+    - oci-oke-auth
   extends: .oci-oke-auth
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
