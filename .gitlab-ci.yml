@@ -152,8 +152,6 @@ set-failover-healthcheck-dns-update:
   stage: check-infra
   tags:
     - runner2
-  needs:
-    - check-startup-script
 #  when: manual
   script:
     - |
