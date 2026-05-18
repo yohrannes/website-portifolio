@@ -116,4 +116,19 @@ deploy-k8s-cluster:
     - if: $CI_COMMIT_BRANCH == "main"
   script:
     - cd ${CI_PROJECT_DIR}
+    - kubectl apply -f kubernetes/gateway
+    - |
+      helm repo add jetstack https://charts.jetstack.io
+      helm repo update
+      
+      helm upgrade --install cert-manager jetstack/cert-manager \
+        --namespace cert-manager \
+        --create-namespace \
+        --version 1.19.2 \
+        --set config.apiVersion="controller.config.cert-manager.io/v1alpha1" \
+        --set config.kind="ControllerConfiguration" \
+        --set config.enableGatewayAPI=true \
+        --set crds.enabled=true
+
+    - kubectl apply -f kubernetes/cert-manager
     - kubectl apply -f kubernetes/app-manifest

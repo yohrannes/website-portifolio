@@ -18,7 +18,7 @@ spec:
         namespace: website-portifolio
     spec:
       containers:
-      - image: yohrannes/website-portifolio
+      - image: docker.io/yohrannes/website-portifolio:latest
         name: webport
         resources:
           limits:
