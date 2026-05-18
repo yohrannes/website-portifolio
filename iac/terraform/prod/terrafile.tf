@@ -58,4 +58,13 @@ module "webapp" {
 
   ## Activate -parallelism=1 on terraform Cloud
   ## Workspace settings > General > Advanced options > Terraform CLI Arguments
+
+  ##
+  # Implement this commands at the destroyment process
+  #kubectl delete namespace website-portifolio
+  #kubectl delete namespace cert-manager
+  #kubectl delete -f kubernetes/gateway
+  #helm uninstall cert-manager -n cert-manager
+  #kubectl delete namespace nginx-gateway
+  ##
 }

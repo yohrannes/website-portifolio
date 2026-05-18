@@ -140,13 +140,7 @@ deploy-k8s-cluster:
         --set crds.enabled=true
 
     - kubectl apply -f kubernetes/cert-manager
-    - kubectl apply -f kubernetes/app-manifest
-
-#kubectl delete namespace website-portifolio
-#kubectl delete namespace cert-manager
-#kubectl delete -f kubernetes/gateway
-#helm uninstall cert-manager -n cert-manager
-#kubectl delete namespace nginx-gateway
+    - kubectl apply -k kubernetes/app-manifest
 
 set-failover-healthcheck-dns-update:
   stage: check-infra
