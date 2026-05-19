@@ -5,6 +5,5 @@ resources:
   - namespace.yaml
   - reference-grant.yaml
   - service.yaml
-  - certificate.yaml
   - deployment.yaml
   - gateway-rule.yaml

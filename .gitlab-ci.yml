@@ -139,7 +139,6 @@ deploy-k8s-cluster:
         --set config.enableGatewayAPI=true \
         --set crds.enabled=true
 
-    - kubectl apply -f kubernetes/cert-manager
     - kubectl apply -k kubernetes/app-manifest
 
 set-failover-healthcheck-dns-update:

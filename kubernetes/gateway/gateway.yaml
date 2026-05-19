@@ -13,14 +13,3 @@ spec:
       allowedRoutes:
         namespaces:
           from: All
-    - name: https
-      protocol: HTTPS
-      port: 443
-      tls:
-        mode: Terminate
-        certificateRefs:
-          - name: webport-cert
-            namespace: website-portifolio
-      allowedRoutes:
-        namespaces:
-          from: All
