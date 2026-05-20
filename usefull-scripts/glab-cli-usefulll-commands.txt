@@ -1,3 +1,4 @@
 glab variable get <variable>
 glab pipe status
 glab ci view
+glab pipe run
