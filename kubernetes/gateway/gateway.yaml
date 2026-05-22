@@ -4,7 +4,6 @@ metadata:
   name: gateway
   namespace: nginx-gateway
 spec:
-#  gatewayClassName: oci-l7-gateway-class
   gatewayClassName: nginx
   listeners:
     - name: http

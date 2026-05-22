@@ -1,5 +1,11 @@
 ---
 
+oci-oke-auth:
+  tags:
+    - runner2
+  stage: check-infra
+  extends: .oci-oke-auth
+
 delete-old-runner3-gl-api:
   stage: check-infra
   tags:
@@ -62,6 +68,8 @@ deploy-runner3-k8s:
     - runner2
   needs:
     - create-runner3-gl-api
+    - oci-oke-auth
+  extends: .oci-oke-auth
   script:
     - |
       # Get the token from variable

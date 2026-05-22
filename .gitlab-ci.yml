@@ -89,7 +89,7 @@ oci-oke-auth:
   stage: check-infra
   extends: .oci-oke-auth
 
-deploy-dkcmpose:
+deploy-app-dkcmpose:
   tags:
     - runner1
   stage: deploy
@@ -118,7 +118,7 @@ deploy-dkcmpose:
         sudo docker compose -f repos-git/website-portifolio/docker-compose/docker-compose.yml up -d
       "
 
-deploy-k8s-cluster:
+deploy-app-k8s-cluster:
   tags:
     - runner2
   stage: deploy
@@ -150,6 +150,8 @@ set-failover-healthcheck-dns-update:
   tags:
     - runner2
 #  when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
   script:
     - |
       ENV_FILE="/home/gitlab-runner/.gitlab-runner-env"
