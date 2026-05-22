@@ -7,6 +7,9 @@ checkInterval: 30
 rbac:
   create: true
 
+serviceAccount:
+  create: true
+
 runners:
   # Using the secret we created
   secret: gitlab-runner-secret

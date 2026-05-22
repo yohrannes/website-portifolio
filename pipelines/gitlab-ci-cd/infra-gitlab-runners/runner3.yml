@@ -1,12 +1,6 @@
 ---
 
-oci-oke-auth:
-  tags:
-    - runner2
-  stage: check-infra
-  extends: .oci-oke-auth
-
-delete-old-runner3-gl-api:
+delete-old-runner:
   stage: check-infra
   tags:
     - runner2
@@ -36,19 +30,19 @@ delete-old-runner3-gl-api:
         exit 1
       fi
 
-create-runner3-gl-api:
+create-runner:
   stage: check-infra
   tags:
     - runner2
   needs:
-    - delete-old-runner3-gl-api
+    - delete-old-runner
   script:
     - |
       RESPONSE=$(curl -s --request POST --url "https://gitlab.com/api/v4/user/runners" \
         --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
         --data "runner_type=project_type" \
         --data "project_id=$CI_PROJECT_ID" \
-        --data "tag_list=oke,kubernetes,arm64" \
+        --data "tag_list=runner3" \
         --data "description=oke-k8s-runner" \
         --data "run_untagged=true")
       RUNNER_TOKEN=$(echo "$RESPONSE" | jq -r '.token')
@@ -62,14 +56,12 @@ create-runner3-gl-api:
         --form "value=$RUNNER_TOKEN" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER3_TOKEN_CREATED"
 
-deploy-runner3-k8s:
+deploy-runner:
   stage: check-infra
   tags:
     - runner2
   needs:
-    - create-runner3-gl-api
-    - oci-oke-auth
-  extends: .oci-oke-auth
+    - create-runner
   script:
     - |
       # Get the token from variable
@@ -79,7 +71,7 @@ deploy-runner3-k8s:
       
       # Setup Kubernetes
       kubectl create namespace gitlab-runner || true
-      kubectl delete secret gitlab-runner-secret -n gitlab-runner || true
+      kubectl delete secret gitlab-runner-secret -n gitlab-runner --ignore-not-found
       kubectl create secret generic gitlab-runner-secret \
         --namespace gitlab-runner \
         --from-literal=runner-token="$RUNNER_TOKEN" \
