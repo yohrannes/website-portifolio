@@ -1,5 +1,11 @@
 ---
 
+oci-oke-auth:
+  tags:
+    - runner2
+  stage: check-infra
+  extends: .oci-oke-auth
+
 delete-old-runner:
   stage: check-infra
   tags:
@@ -60,10 +66,20 @@ deploy-runner:
   stage: check-infra
   tags:
     - runner2
+  extends: .oci-oke-auth
   needs:
     - create-runner
+    - oci-oke-auth
   script:
     - |
+      # Auth with OKE (as defined in .oci-oke-auth template script)
+      oci ce cluster create-kubeconfig \
+        --cluster-id $PROD_WEBAPP_CLUSTER_ID \
+        --file $HOME/.kube/config \
+        --token-version 2.0.0 \
+        --kube-endpoint PUBLIC_ENDPOINT \
+        --profile DEFAULT
+      
       # Get the token from variable
       RUNNER_TOKEN=$(curl -s --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER3_TOKEN_CREATED" \
