@@ -2,6 +2,8 @@
 
 delete-old-runner3-gl-api:
   stage: check-infra
+  tags:
+    - runner2
   script:
     - |
       RUNNERS=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
@@ -30,6 +32,8 @@ delete-old-runner3-gl-api:
 
 create-runner3-gl-api:
   stage: check-infra
+  tags:
+    - runner2
   needs:
     - delete-old-runner3-gl-api
   script:
@@ -54,6 +58,8 @@ create-runner3-gl-api:
 
 deploy-runner3-k8s:
   stage: check-infra
+  tags:
+    - runner2
   needs:
     - create-runner3-gl-api
   script:
