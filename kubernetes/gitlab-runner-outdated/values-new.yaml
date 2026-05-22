@@ -1,0 +1,45 @@
+gitlabUrl: https://gitlab.com
+
+## Concurrency and global settings
+concurrent: 10
+checkInterval: 30
+
+rbac:
+  create: true
+
+runners:
+  # Using the secret we created
+  secret: gitlab-runner-secret
+  
+  config: |
+    [[runners]]
+      name = "oke-runner-arm64"
+      executor = "kubernetes"
+      [runners.kubernetes]
+        namespace = "{{.Release.Namespace}}"
+        image = "ubuntu:22.04"
+        privileged = true
+        cpu_request = "500m"
+        memory_request = "512Mi"
+        cpu_limit = "1000m"
+        memory_limit = "1Gi"
+        # OKE Performance Fix for DinD
+        [[runners.kubernetes.volumes.empty_dir]]
+          name = "docker-data"
+          mount_path = "/var/lib/docker"
+      [runners.cache]
+        Type = "s3"
+        Path = "gitlab-runner"
+        Shared = true
+        [runners.cache.s3]
+          # Placeholder for user: <namespace>.compat.objectstorage.<region>.oraclecloud.com
+          ServerAddress = "compat.objectstorage.us-ashburn-1.oraclecloud.com"
+          BucketName = "gitlab-runner-cache"
+          BucketLocation = "us-ashburn-1"
+          AuthenticationType = "iam"
+
+## Security Context for the runner manager
+securityContext:
+  allowPrivilegeEscalation: true
+  readOnlyRootFilesystem: false
+  privileged: true

@@ -1,0 +1,82 @@
+---
+
+delete-old-runner3-gl-api:
+  stage: check-infra
+  script:
+    - |
+      RUNNERS=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/runners")
+      
+      RUNNER_ID=$(echo "$RUNNERS" | jq -r '.[] | select(.description == "oke-k8s-runner") | .id')
+      
+      if [ -z "$RUNNER_ID" ] || [ "$RUNNER_ID" = "null" ]; then
+        echo "No runner found with description 'oke-k8s-runner'"
+        exit 0
+      fi
+      
+      echo "Found runner ID: $RUNNER_ID"
+      
+      HTTP_CODE=$(curl -s --output /dev/null --write-out "%{http_code}" \
+        --request DELETE \
+        --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
+        "https://gitlab.com/api/v4/runners/$RUNNER_ID")
+      
+      if [ "$HTTP_CODE" = "204" ] || [ "$HTTP_CODE" = "200" ]; then
+        echo "Runner deleted successfully"
+      else
+        echo "Failed to delete runner. HTTP code: $HTTP_CODE"
+        exit 1
+      fi
+
+create-runner3-gl-api:
+  stage: check-infra
+  needs:
+    - delete-old-runner3-gl-api
+  script:
+    - |
+      RESPONSE=$(curl -s --request POST --url "https://gitlab.com/api/v4/user/runners" \
+        --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
+        --data "runner_type=project_type" \
+        --data "project_id=$CI_PROJECT_ID" \
+        --data "tag_list=oke,kubernetes,arm64" \
+        --data "description=oke-k8s-runner" \
+        --data "run_untagged=true")
+      RUNNER_TOKEN=$(echo "$RESPONSE" | jq -r '.token')
+      if [ -z "$RUNNER_TOKEN" ] || [ "$RUNNER_TOKEN" = "null" ]; then
+        echo "Failed to create runner"
+        echo "$RESPONSE"
+        exit 1
+      fi
+      curl -s --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
+        --request PUT \
+        --form "value=$RUNNER_TOKEN" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER3_TOKEN_CREATED"
+
+deploy-runner3-k8s:
+  stage: check-infra
+  needs:
+    - create-runner3-gl-api
+  script:
+    - |
+      # Get the token from variable
+      RUNNER_TOKEN=$(curl -s --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER3_TOKEN_CREATED" \
+        | jq -r '.value')
+      
+      # Setup Kubernetes
+      kubectl create namespace gitlab-runner || true
+      kubectl delete secret gitlab-runner-secret -n gitlab-runner || true
+      kubectl create secret generic gitlab-runner-secret \
+        --namespace gitlab-runner \
+        --from-literal=runner-token="$RUNNER_TOKEN" \
+        --from-literal=runner-registration-token=""
+      
+      # RBAC
+      kubectl apply -f kubernetes/gitlab-runner-outdated/cluster-role-binding.yaml
+      
+      # Helm Install
+      helm repo add gitlab https://charts.gitlab.io
+      helm repo update gitlab
+      helm upgrade --install gitlab-runner gitlab/gitlab-runner \
+        --namespace gitlab-runner \
+        -f kubernetes/gitlab-runner-outdated/values-new.yaml

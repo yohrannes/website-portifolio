@@ -30,6 +30,10 @@ include:
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner2"
 
+  - local: 'pipelines/gitlab-ci-cd/infra-gitlab-runners/runner3.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "infra-runner3"
+
 ### WEBAPP INFRASTRUCTURE
 
   - local: 'pipelines/gitlab-ci-cd/infra-webapp/infra-webapp-failover.yml'
