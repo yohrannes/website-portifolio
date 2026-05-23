@@ -12,7 +12,11 @@ check-node-architecture:
     - uname -a
     - lscpu
     - echo "Verifying ARM64 architecture..."
-    - if [ "$(uname -m)" != "aarch64" ]; then echo "FAILED: Not running on ARM64"; exit 1; fi
+    - |
+      if [ "$(uname -m)" != "aarch64" ]; then 
+        echo "FAILED: Not running on ARM64"
+        exit 1
+      fi
 
 resource-benchmark:
   extends: .oke-runner-base
@@ -32,7 +36,10 @@ network-connectivity:
     - echo "Testing Outbound Connectivity..."
     - curl -I https://www.oracle.com
     - echo "Testing connectivity to Runner2 (GCP) if IP is available..."
-    - if [ ! -z "$PROD_RUNNER2_IP" ]; then ping -c 4 $PROD_RUNNER2_IP; fi
+    - |
+      if [ ! -z "$PROD_RUNNER2_IP" ]; then 
+        ping -c 4 $PROD_RUNNER2_IP
+      fi
 
 storage-provisioning-test:
   extends: .oke-runner-base
@@ -55,7 +62,7 @@ storage-provisioning-test:
       EOF
     - echo "Waiting for PVC to be bound..."
     - |
-      for i in {1..20}; do
+      for i in $(seq 1 20); do
         STATUS=$(kubectl get pvc storage-test-pvc -n gitlab-runner -o jsonpath='{.status.phase}')
         if [ "$STATUS" = "Bound" ]; then
           echo "PVC Bound successfully!"
@@ -77,6 +84,7 @@ cluster-autoscaler-check:
   image: bitnami/kubectl:latest
   script:
     - echo "Checking if Cluster Autoscaler is deployed..."
-    - kubectl get pods -n kube-system | grep cluster-autoscaler || echo "Autoscaler not found in kube-system"
+    - |
+      kubectl get pods -n kube-system | grep cluster-autoscaler || echo "Autoscaler not found in kube-system"
     - echo "Node count:"
     - kubectl get nodes
