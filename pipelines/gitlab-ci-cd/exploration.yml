@@ -4,7 +4,7 @@
   tags:
     - runner3
   stage: test
-  image: alpine:latest
+  image: docker.io/library/alpine:latest
 
 check-node-architecture:
   extends: .oke-runner-base
@@ -43,7 +43,7 @@ network-connectivity:
 
 storage-provisioning-test:
   extends: .oke-runner-base
-  image: bitnami/kubectl:latest
+  image: docker.io/bitnami/kubectl:latest
   script:
     - |
       cat <<EOF | kubectl apply -f -
@@ -81,7 +81,7 @@ storage-provisioning-test:
 
 cluster-autoscaler-check:
   extends: .oke-runner-base
-  image: bitnami/kubectl:latest
+  image: docker.io/bitnami/kubectl:latest
   script:
     - echo "Checking if Cluster Autoscaler is deployed..."
     - |
