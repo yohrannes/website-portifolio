@@ -50,7 +50,7 @@ storage-provisioning-test:
       apiVersion: v1
       kind: PersistentVolumeClaim
       metadata:
-        name: storage-test-pvc
+        name: storage-test-pvc-v2
         namespace: gitlab-runner
       spec:
         accessModes:
@@ -72,16 +72,16 @@ storage-provisioning-test:
           command: ["sh", "-c", "echo 'Volume works!' > /data/test.txt && sleep 30"]
           volumeMounts:
           - name: data
-            mount_path: /data
+            mountPath: /data
         volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: storage-test-pvc
+            claimName: storage-test-pvc-v2
       EOF
     - echo "Waiting for Pod and PVC to be ready..."
     - |
       for i in $(seq 1 30); do
-        PVC_STATUS=$(kubectl get pvc storage-test-pvc -n gitlab-runner -o jsonpath='{.status.phase}')
+        PVC_STATUS=$(kubectl get pvc storage-test-pvc-v2 -n gitlab-runner -o jsonpath='{.status.phase}')
         POD_STATUS=$(kubectl get pod storage-consumer-pod -n gitlab-runner -o jsonpath='{.status.phase}')
         echo "PVC: $PVC_STATUS | Pod: $POD_STATUS"
         if [ "$PVC_STATUS" = "Bound" ] && [ "$POD_STATUS" = "Running" ]; then
@@ -92,13 +92,13 @@ storage-provisioning-test:
       done
       if [ "$PVC_STATUS" != "Bound" ]; then
         echo "FAILED: Storage test failed."
-        kubectl describe pvc storage-test-pvc -n gitlab-runner
+        kubectl describe pvc storage-test-pvc-v2 -n gitlab-runner
         kubectl describe pod storage-consumer-pod -n gitlab-runner
         exit 1
       fi
     - echo "Cleaning up..."
     - kubectl delete pod storage-consumer-pod -n gitlab-runner
-    - kubectl delete pvc storage-test-pvc -n gitlab-runner
+    - kubectl delete pvc storage-test-pvc-v2 -n gitlab-runner
 
 cluster-autoscaler-check:
   extends: .oke-runner-base
