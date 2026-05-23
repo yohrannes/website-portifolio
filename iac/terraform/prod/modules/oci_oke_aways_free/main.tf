@@ -10,3 +10,10 @@ terraform {
     }
   }
 }
+
+module "storage" {
+  source         = "./storage"
+  compartment_id = var.compartment_id
+  tenancy_id     = var.tenancy_id
+  namespace      = var.namespace
+}

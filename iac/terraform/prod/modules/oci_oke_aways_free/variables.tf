@@ -116,3 +116,14 @@ variable "user_ocid" {
 variable "oci_profile" {
   type = string
 }
+
+variable "compartment_id" {
+  type = string
+}
+
+  type    = string
+}
+
+variable "tenancy_id" {
+  type = string
+}
