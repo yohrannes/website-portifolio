@@ -1,7 +1,7 @@
 gitlabUrl: https://gitlab.com
 
 ## Concurrency and global settings
-concurrent: 10
+concurrent: 3
 checkInterval: 30
 
 rbac:
@@ -22,10 +22,10 @@ runners:
         namespace = "{{.Release.Namespace}}"
         image = "ubuntu:22.04"
         privileged = true
-        cpu_request = "500m"
-        memory_request = "512Mi"
+        cpu_request = "100m"
+        memory_request = "128Mi"
         cpu_limit = "1000m"
-        memory_limit = "1Gi"
+        memory_limit = "512Mi"
         # OKE Performance Fix for DinD
         [[runners.kubernetes.volumes.empty_dir]]
           name = "docker-data"
