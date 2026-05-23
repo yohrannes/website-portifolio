@@ -34,6 +34,10 @@ include:
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner3"
 
+  - local: 'pipelines/gitlab-ci-cd/exploration.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "exploration/oke-capabilities"
+
 ### WEBAPP INFRASTRUCTURE
 
   - local: 'pipelines/gitlab-ci-cd/infra-webapp/infra-webapp-failover.yml'
@@ -130,19 +134,6 @@ deploy-app-k8s-cluster:
   script:
     - cd ${CI_PROJECT_DIR}
     - kubectl apply -f kubernetes/gateway
-    - |
-      helm repo add jetstack https://charts.jetstack.io
-      helm repo update
-      
-      helm upgrade --install cert-manager jetstack/cert-manager \
-        --namespace cert-manager \
-        --create-namespace \
-        --version 1.19.2 \
-        --set config.apiVersion="controller.config.cert-manager.io/v1alpha1" \
-        --set config.kind="ControllerConfiguration" \
-        --set config.enableGatewayAPI=true \
-        --set crds.enabled=true
-
     - kubectl apply -k kubernetes/app-manifest
 
 set-failover-healthcheck-dns-update:
