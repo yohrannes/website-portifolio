@@ -42,21 +42,17 @@ network-connectivity:
 
 object-storage-connectivity-test:
   extends: .oke-runner-base
-  image: docker.io/library/alpine:latest
   script:
     - echo "Testing connectivity to OCI Object Storage (Cache Endpoint)..."
     - apk add --no-cache curl
-    - # Testing connectivity to the S3 compatibility endpoint
     - curl -vI https://idgpfu0abvtk.compat.objectstorage.us-ashburn-1.oraclecloud.com
     - echo "Connectivity test successful."
-
 
 cluster-autoscaler-check:
   extends: .oke-runner-base
   image: docker.io/bitnami/kubectl:latest
   script:
     - echo "Checking if Cluster Autoscaler is deployed..."
-    - |
-      kubectl get pods -n kube-system | grep cluster-autoscaler || echo "Autoscaler not found in kube-system"
+    - kubectl get pods -n kube-system | grep cluster-autoscaler || echo "Autoscaler not found in kube-system"
     - echo "Node count:"
     - kubectl get nodes
