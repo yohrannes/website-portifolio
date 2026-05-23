@@ -22,6 +22,7 @@ runners:
         namespace = "{{.Release.Namespace}}"
         image = "ubuntu:22.04"
         privileged = true
+        helper_image = "registry.gitlab.com/gitlab-org/gitlab-runner/gitlab-runner-helper:arm64-v18.11.3"
         cpu_request = "100m"
         memory_request = "128Mi"
         cpu_limit = "1000m"
