@@ -10,7 +10,6 @@ check-node-architecture:
   extends: .oke-runner-base
   script:
     - uname -a
-    - lscpu
     - echo "Verifying ARM64 architecture..."
     - |
       if [ "$(uname -m)" != "aarch64" ]; then 
@@ -45,6 +44,7 @@ storage-provisioning-test:
   extends: .oke-runner-base
   image: docker.io/bitnami/kubectl:latest
   script:
+    - echo "Starting Storage Test (OCI Always Free compliance)..."
     - |
       cat <<EOF | kubectl apply -f -
       apiVersion: v1
@@ -57,26 +57,47 @@ storage-provisioning-test:
           - ReadWriteOnce
         resources:
           requests:
-            storage: 1Gi
-        storageClassName: oci-bv # Standard OKE block volume storage class
+            storage: 50Gi
+        storageClassName: oci-bv
+      ---
+      apiVersion: v1
+      kind: Pod
+      metadata:
+        name: storage-consumer-pod
+        namespace: gitlab-runner
+      spec:
+        containers:
+        - name: app
+          image: docker.io/library/alpine:latest
+          command: ["sh", "-c", "echo 'Volume works!' > /data/test.txt && sleep 30"]
+          volumeMounts:
+          - name: data
+            mount_path: /data
+        volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: storage-test-pvc
       EOF
-    - echo "Waiting for PVC to be bound..."
+    - echo "Waiting for Pod and PVC to be ready..."
     - |
-      for i in $(seq 1 20); do
-        STATUS=$(kubectl get pvc storage-test-pvc -n gitlab-runner -o jsonpath='{.status.phase}')
-        if [ "$STATUS" = "Bound" ]; then
-          echo "PVC Bound successfully!"
+      for i in $(seq 1 30); do
+        PVC_STATUS=$(kubectl get pvc storage-test-pvc -n gitlab-runner -o jsonpath='{.status.phase}')
+        POD_STATUS=$(kubectl get pod storage-consumer-pod -n gitlab-runner -o jsonpath='{.status.phase}')
+        echo "PVC: $PVC_STATUS | Pod: $POD_STATUS"
+        if [ "$PVC_STATUS" = "Bound" ] && [ "$POD_STATUS" = "Running" ]; then
+          echo "SUCCESS: Volume provisioned and Pod is running!"
           break
         fi
-        echo "Current status: $STATUS. Waiting..."
         sleep 10
       done
-      if [ "$STATUS" != "Bound" ]; then
-        echo "FAILED: PVC did not bind in time."
+      if [ "$PVC_STATUS" != "Bound" ]; then
+        echo "FAILED: Storage test failed."
         kubectl describe pvc storage-test-pvc -n gitlab-runner
+        kubectl describe pod storage-consumer-pod -n gitlab-runner
         exit 1
       fi
     - echo "Cleaning up..."
+    - kubectl delete pod storage-consumer-pod -n gitlab-runner
     - kubectl delete pvc storage-test-pvc -n gitlab-runner
 
 cluster-autoscaler-check:
