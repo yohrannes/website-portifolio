@@ -40,65 +40,16 @@ network-connectivity:
         ping -c 4 $PROD_RUNNER2_IP
       fi
 
-storage-provisioning-test:
+object-storage-connectivity-test:
   extends: .oke-runner-base
-  image: docker.io/bitnami/kubectl:latest
+  image: docker.io/library/alpine:latest
   script:
-    - echo "Starting Storage Test (OCI Always Free compliance)..."
-    - |
-      cat <<EOF | kubectl apply -f -
-      apiVersion: v1
-      kind: PersistentVolumeClaim
-      metadata:
-        name: storage-test-pvc-v2
-        namespace: gitlab-runner
-      spec:
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: 50Gi
-        storageClassName: oci-bv
-      ---
-      apiVersion: v1
-      kind: Pod
-      metadata:
-        name: storage-consumer-pod
-        namespace: gitlab-runner
-      spec:
-        containers:
-        - name: app
-          image: docker.io/library/alpine:latest
-          command: ["sh", "-c", "echo 'Volume works!' > /data/test.txt && sleep 30"]
-          volumeMounts:
-          - name: data
-            mountPath: /data
-        volumes:
-        - name: data
-          persistentVolumeClaim:
-            claimName: storage-test-pvc-v2
-      EOF
-    - echo "Waiting for Pod and PVC to be ready..."
-    - |
-      for i in $(seq 1 30); do
-        PVC_STATUS=$(kubectl get pvc storage-test-pvc-v2 -n gitlab-runner -o jsonpath='{.status.phase}')
-        POD_STATUS=$(kubectl get pod storage-consumer-pod -n gitlab-runner -o jsonpath='{.status.phase}')
-        echo "PVC: $PVC_STATUS | Pod: $POD_STATUS"
-        if [ "$PVC_STATUS" = "Bound" ] && [ "$POD_STATUS" = "Running" ]; then
-          echo "SUCCESS: Volume provisioned and Pod is running!"
-          break
-        fi
-        sleep 10
-      done
-      if [ "$PVC_STATUS" != "Bound" ]; then
-        echo "FAILED: Storage test failed."
-        kubectl describe pvc storage-test-pvc-v2 -n gitlab-runner
-        kubectl describe pod storage-consumer-pod -n gitlab-runner
-        exit 1
-      fi
-    - echo "Cleaning up..."
-    - kubectl delete pod storage-consumer-pod -n gitlab-runner
-    - kubectl delete pvc storage-test-pvc-v2 -n gitlab-runner
+    - echo "Testing connectivity to OCI Object Storage (Cache Endpoint)..."
+    - apk add --no-cache curl
+    - # Testing connectivity to the S3 compatibility endpoint
+    - curl -vI https://idgpfu0abvtk.compat.objectstorage.us-ashburn-1.oraclecloud.com
+    - echo "Connectivity test successful."
+
 
 cluster-autoscaler-check:
   extends: .oke-runner-base
