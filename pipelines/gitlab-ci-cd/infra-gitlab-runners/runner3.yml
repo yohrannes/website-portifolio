@@ -96,6 +96,9 @@ deploy-runner:
       # RBAC
       kubectl apply -f kubernetes/gitlab-runner-outdated/cluster-role-binding.yaml
       
+      # Inject OCI Namespace into values file (Security: keep namespace out of repo)
+      sed -i "s/OCI_NAMESPACE_PLACEHOLDER/$OCI_NAMESPACE/g" kubernetes/gitlab-runner-outdated/values-new.yaml
+
       # Helm Install
       helm repo add gitlab https://charts.gitlab.io
       helm repo update gitlab
