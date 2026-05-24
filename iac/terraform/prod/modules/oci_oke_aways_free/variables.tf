@@ -29,7 +29,7 @@ variable "memory_in_gbs_per_node" {
 
 variable "image_id" {
   type = string
-#  default = "ocid1.image.oc1.iad.aaaaaaaarkexs7ijdqffxvy6dyzepizvuzm25zijwp2nkv3nifbcvywzufsq"
+  #  default = "ocid1.image.oc1.iad.aaaaaaaarkexs7ijdqffxvy6dyzepizvuzm25zijwp2nkv3nifbcvywzufsq"
   default = "ocid1.image.oc1.iad.aaaaaaaah5rlwh66gryhozaktxi7kptk57h2lyua6v3ggngqzwtfrkj2xqaa"
 }
 # Link to a list of available images (Be sure to select the correct region and CPU architecture. We are using Oracle-Linux-8.10-aarch64-2026.02.28-0-OKE-1.35.2-1402)
@@ -117,13 +117,3 @@ variable "oci_profile" {
   type = string
 }
 
-variable "compartment_id" {
-  type = string
-}
-
-  type    = string
-}
-
-variable "tenancy_id" {
-  type = string
-}

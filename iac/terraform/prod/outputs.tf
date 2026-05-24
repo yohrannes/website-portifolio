@@ -36,7 +36,7 @@ output "webapp_compartment_id" {
 
 output "webapp_cluster_id" {
   description = "The OCID of the OKE cluster"
-  value      = module.webapp.cluster_id
+  value       = module.webapp.cluster_id
 }
 
 #output "todas_as_vnics" {

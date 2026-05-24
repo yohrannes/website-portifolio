@@ -46,7 +46,7 @@ resource "oci_containerengine_node_pool" "k8s_node_pool" {
   compartment_id     = var.compartment_id
   kubernetes_version = var.k8s_version
   name               = "k8s-node-pool"
-  
+
   depends_on = [time_sleep.wait_cluster_creation]
 
   node_config_details {
@@ -96,8 +96,8 @@ resource "time_sleep" "wait_node_pool_creation" {
 }
 
 data "oci_core_boot_volumes" "k8s_boot_volumes" {
-  depends_on         = [time_sleep.wait_node_pool_creation]
-  compartment_id     = var.compartment_id
+  depends_on          = [time_sleep.wait_node_pool_creation]
+  compartment_id      = var.compartment_id
   availability_domain = data.oci_identity_availability_domains.ads.availability_domains[0].name
 
   filter {

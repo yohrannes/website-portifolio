@@ -65,13 +65,6 @@ oci-oke-auth:
   needs:
     - get-webapp-cluster-id
 
-### destroy and provision ok
-### gateway-api need to be removed before descriction process
-### implement this using terraform, or garant that gateway-api will be destroyed before the cluster.
-
-##    for more info check README.md at cluster module folder.
-##
-##
 
 install-gateway:
   tags:
@@ -85,6 +78,29 @@ install-gateway:
       kubectl kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.2" 2>/dev/null | kubectl apply -f -
       kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/crds.yaml
       kubectl apply -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/default/deploy.yaml
+
+install-cert-manager:
+  stage: check-infra
+  needs:
+    - install-gateway
+    - oci-oke-auth
+  tags:
+    - runner2
+  extends: .oci-oke-auth
+  script:
+    - cd ${CI_PROJECT_DIR}
+    - |
+      helm repo add jetstack https://charts.jetstack.io
+      helm repo update
+      helm upgrade --install cert-manager jetstack/cert-manager \
+        --namespace cert-manager \
+        --create-namespace \
+        --version 1.19.2 \
+        --set config.apiVersion="controller.config.cert-manager.io/v1alpha1" \
+        --set config.kind="ControllerConfiguration" \
+        --set config.enableGatewayAPI=true \
+        --set crds.enabled=true
+    - kubectl apply -f kubernetes/cert-manager
 
 get-cluster-ip:
   tags:
@@ -103,7 +119,11 @@ get-cluster-ip:
         --form "value=$WEBAPP_CLUSTER_IP" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_WEBAPP_CLUSTER_IP") >  /dev/null 2>&1
 
-destroy-gateway:
+
+####################
+### implement this using terraform, or garant that gateway-api will be destroyed before the cluster.
+##    for more info check README.md at cluster module folder.
+pre-destroy:
   when: manual
   stage: check-infra
   tags:
@@ -112,10 +132,14 @@ destroy-gateway:
     - oci-oke-auth
   extends: .oci-oke-auth
   script:
+  ## Gareway
     - kubectl delete -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/default/deploy.yaml
     - kubectl delete -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/crds.yaml
     - kubectl kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.2" 2>/dev/null | kubectl delete -f -
-
+  ## Cert manager
+    - helm uninstall cert-manager --namespace cert-manager
+    - kubectl delete namespace cert-manager --wait=true
+    - kubectl get crd | grep cert-manager | awk '{print $1}' | xargs kubectl delete crd
 
 #set-lb-shape: # This job doesn't works imediately after the cluster creation, it needs to be run manually. Implement a check to ensure the load balancer is ready to be updated.
 #  when: manual

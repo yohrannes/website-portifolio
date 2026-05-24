@@ -9,10 +9,10 @@ terraform {
   required_providers {
 
     oci = {
-      source  = "oracle/oci"
-#      version = ">= 6.31.0"
+      source = "oracle/oci"
+      #      version = ">= 6.31.0"
       version = ">= 8.9.0"
-#      version = ">= 8.11.0" need to be updated to that version at least.
+      #      version = ">= 8.11.0" need to be updated to that version at least.
     }
     hcp = {
       source  = "hashicorp/hcp"
