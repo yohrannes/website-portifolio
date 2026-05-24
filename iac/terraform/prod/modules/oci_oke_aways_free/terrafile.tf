@@ -72,5 +72,4 @@ module "kubeconfig" {
 module "storage" {
   source         = "./storage"
   compartment_id = module.compartment.compartment_id
-  tenancy_ocid     = var.tenancy_ocid
 }
