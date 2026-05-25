@@ -3,43 +3,36 @@
   tags:
     - runner2
   before_script:
-    - whoami
-    - pwd
-    - echo $HOME
-
     - |
-      export OCI_CONFIG="$(echo $OCI_CONFIG_BASE64 | base64 -d)"
-      export OCI_PRIVATE_KEY="$(echo $OCI_PRIVATE_KEY_BASE64 | base64 -d)"
+      set +x
+      echo "Initializing OCI Authentication..."
+      mkdir -p "$HOME/.oci"
+      echo "$OCI_CONFIG_BASE64" | base64 -d > "$HOME/.oci/config"
+      echo "$OCI_PRIVATE_KEY_BASE64" | base64 -d > "$HOME/.oci/oci_api_key.pem"
+      chmod 600 "$HOME/.oci/oci_api_key.pem"
       export OCI_CLI_SUPPRESS_FILE_PERMISSIONS_WARNING=True
       export PYTHONWARNINGS=ignore
-
-    - mkdir -p "$HOME/.oci"
-    - printf '%s' "$OCI_CONFIG" > "$HOME/.oci/config"
-    - printf '%s' "$OCI_PRIVATE_KEY" > "$HOME/.oci/oci_api_key.pem"
-    - chmod 600 "$HOME/.oci/oci_api_key.pem"
-    - oci setup repair-file-permissions --file /home/gitlab-runner/.oci/config
-
-    - mkdir -p $HOME/.kube
-    - chmod 700 $HOME/.kube
-    - export KUBECONFIG="${HOME}/.kube/config"
-
-# Check oci authentication
-    - |
+      
+      mkdir -p $HOME/.kube
+      chmod 700 $HOME/.kube
+      export KUBECONFIG="${HOME}/.kube/config"
+      
       USER_ID=$(oci iam user list --query 'data[0].id' --raw-output)
       if [ -z "$USER_ID" ]; then
-        echo "ERROR: OCI user ID not found" >&2
+        echo "ERROR: OCI authentication failed" >&2
         exit 1
       fi
-      oci iam user get --user-id "$USER_ID" --output json | jq -r '.data.name' > /home/gitlab-runner/oci-log.txt
+      echo "OCI Authentication verified."
 
   script:
-    - rm -f $HOME/.kube/config
     - |
+      set +x
+      echo "Configuring Kubernetes context..."
+      rm -f $HOME/.kube/config
       oci ce cluster create-kubeconfig \
         --cluster-id $PROD_WEBAPP_CLUSTER_ID \
         --file $HOME/.kube/config \
         --token-version 2.0.0 \
         --kube-endpoint PUBLIC_ENDPOINT \
-        --profile DEFAULT
-    - kubectl version
-    - kubectl version --client
+        --profile DEFAULT > /dev/null
+      echo "Kubernetes context configured successfully."
