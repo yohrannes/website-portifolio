@@ -116,7 +116,7 @@ set-failover-healthcheck-dns-update:
 
       echo "Ensuring idempotent crontab configuration..."
       CRON_JOB="*/1 * * * * /bin/bash -c '. /home/gitlab-runner/.gitlab-runner-env && /home/gitlab-runner/webapp-failover-checker.sh > /tmp/webapp-failover-checker.log 2>&1'"
-      (crontab -l 2>/dev/null | grep -v "webapp-failover-checker" ; echo "$CRON_JOB") | crontab -
+      (crontab -l 2>/dev/null | grep -v "webapp-failover-checker" || true ; echo "$CRON_JOB") | crontab -
       echo "Failover mechanism configured and scheduled successfully."
 
 deploy-app-dkcmpose:
