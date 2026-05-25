@@ -72,7 +72,7 @@ deploy-runner:
     - oci-oke-auth
   script:
     - |
-      # Auth with OKE (as defined in .oci-oke-auth template script)
+      rm -f $HOME/.kube/config
       oci ce cluster create-kubeconfig \
         --cluster-id $PROD_WEBAPP_CLUSTER_ID \
         --file $HOME/.kube/config \
@@ -80,12 +80,10 @@ deploy-runner:
         --kube-endpoint PUBLIC_ENDPOINT \
         --profile DEFAULT
       
-      # Get the token from variable
       RUNNER_TOKEN=$(curl -s --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER3_TOKEN_CREATED" \
         | jq -r '.value')
       
-      # Setup Kubernetes
       kubectl create namespace gitlab-runner || true
       kubectl delete secret gitlab-runner-secret -n gitlab-runner --ignore-not-found
       kubectl create secret generic gitlab-runner-secret \
@@ -93,13 +91,10 @@ deploy-runner:
         --from-literal=runner-token="$RUNNER_TOKEN" \
         --from-literal=runner-registration-token=""
       
-      # RBAC
       kubectl apply -f kubernetes/gitlab-runner/cluster-role-binding.yaml
       
-      # Inject OCI Namespace into values file (Security: keep namespace out of repo)
       sed -i "s/OCI_NAMESPACE_PLACEHOLDER/$OCI_NAMESPACE/g" kubernetes/gitlab-runner/values-new.yaml
 
-      # Helm Install
       helm repo add gitlab https://charts.gitlab.io
       helm repo update gitlab
       helm upgrade --install gitlab-runner gitlab/gitlab-runner \

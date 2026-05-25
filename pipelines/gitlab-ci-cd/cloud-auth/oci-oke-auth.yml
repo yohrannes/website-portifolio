@@ -21,8 +21,6 @@
 
     - mkdir -p $HOME/.kube
     - chmod 700 $HOME/.kube
-    - touch $HOME/.kube/config
-    - chmod 600 $HOME/.kube/config
     - export KUBECONFIG="${HOME}/.kube/config"
 
 # Check oci authentication
@@ -35,6 +33,7 @@
       oci iam user get --user-id "$USER_ID" --output json | jq -r '.data.name' > /home/gitlab-runner/oci-log.txt
 
   script:
+    - rm -f $HOME/.kube/config
     - |
       oci ce cluster create-kubeconfig \
         --cluster-id $PROD_WEBAPP_CLUSTER_ID \
