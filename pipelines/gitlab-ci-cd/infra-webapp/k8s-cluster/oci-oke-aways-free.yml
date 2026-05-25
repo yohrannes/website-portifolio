@@ -132,10 +132,14 @@ pre-destroy:
     - oci-oke-auth
   extends: .oci-oke-auth
   script:
-  ## Gareway
+  ## Gateway
     - kubectl delete -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/default/deploy.yaml
     - kubectl delete -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/crds.yaml
     - kubectl kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.2" 2>/dev/null | kubectl delete -f -
+  ## Check LB deletion
+    - |
+      export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
+      oci lb load-balancer list --compartment-id $COMPARTMENT_ID
   ## Cert manager
     - helm uninstall cert-manager --namespace cert-manager
     - kubectl delete namespace cert-manager --wait=true

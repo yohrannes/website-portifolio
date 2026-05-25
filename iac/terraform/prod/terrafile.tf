@@ -51,7 +51,7 @@ module "webapp" {
   source           = "./modules/oci_oke_aways_free"
   fingerprint      = null
   private_key_path = null
-  tenancy_ocid     = null
+  tenancy_ocid     = var.oci_tenancy_ocid
   user_ocid        = null
   oci_profile      = "DEFAULT"
 

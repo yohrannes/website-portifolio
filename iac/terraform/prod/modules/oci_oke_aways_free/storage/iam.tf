@@ -1,9 +1,5 @@
-data "oci_identity_compartment" "current_infra_compartment" {
-  id = var.compartment_id
-}
-
 resource "oci_identity_dynamic_group" "cluster_nodes" {
-  compartment_id = data.oci_identity_compartment.current_infra_compartment.compartment_id
+  compartment_id = var.tenancy_ocid
   name           = "OKE-Cluster-Nodes"
   description    = "Dynamic group for OKE worker nodes"
   matching_rule  = "instance.compartment.id = '${var.compartment_id}'"
