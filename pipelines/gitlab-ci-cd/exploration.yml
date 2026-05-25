@@ -24,9 +24,9 @@ resource-benchmark-cpu:
     - |
       set +x
       apk add --no-cache sysbench > /dev/null
-      echo "Running HEAVY CPU stress test (8 threads)..."
-      sysbench cpu --cpu-max-prime=50000 --threads=8 run > /dev/null
-      echo "CPU benchmark completed."
+      echo "--- CPU BENCHMARK RESULTS (8 threads) ---"
+      sysbench cpu --cpu-max-prime=50000 --threads=8 run | grep -E "events per second|total time"
+      echo "----------------------------------------"
 
 resource-benchmark-memory:
   extends: .oke-runner-base
@@ -34,9 +34,9 @@ resource-benchmark-memory:
     - |
       set +x
       apk add --no-cache sysbench > /dev/null
-      echo "Running HEAVY Memory stress test (Parallel I/O)..."
-      sysbench memory --memory-block-size=1M --memory-total-size=10G --threads=4 run > /dev/null
-      echo "Memory benchmark completed."
+      echo "--- MEMORY BENCHMARK RESULTS (Parallel I/O) ---"
+      sysbench memory --memory-block-size=1M --memory-total-size=10G --threads=4 run | grep -E "transferred|total time"
+      echo "----------------------------------------------"
 
 network-connectivity:
   extends: .oke-runner-base
@@ -68,7 +68,7 @@ cluster-autoscaler-check:
     - |
       set +x
       echo "Auditing cluster state..."
-      kubectl get pods -n kube-system | grep cluster-autoscaler > /dev/null || echo "- Autoscaler: Not detected (expected for current quota)"
+      kubectl get pods -n kube-system | grep cluster-autoscaler > /dev/null || echo "- Autoscaler: Not detected"
       NODE_COUNT=$(kubectl get nodes --no-headers | wc -l)
       echo "- Active worker nodes: $NODE_COUNT"
       echo "Cluster state audit completed."
