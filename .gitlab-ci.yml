@@ -158,8 +158,6 @@ oci-oke-auth:
     - runner2
   stage: check-infra
   extends: .oci-oke-auth
-  needs:
-    - get-webapp-cluster-id
 
 deploy-app-k8s-cluster:
   tags:
