@@ -23,3 +23,27 @@ argocd app create yohapp \
 ```
 ![CD completed!](argocd-notes/RUNNING(°-°)b.webp)
 ```
+
+## GitLab Runner Management
+
+### Local Installation & Registration
+```bash
+curl -L "https://packages.gitlab.com/install/repositories/runner/gitlab-runner/script.rpm.sh" | sudo bash
+sudo apt-get install gitlab-runner
+gitlab-runner register --url https://gitlab.com --token <REGISTRATION_TOKEN>
+```
+
+### Kubernetes (OKE) Runner Deployment
+Manual steps (if not using pipeline):
+```bash
+helm repo add gitlab https://charts.gitlab.io
+kubectl create ns gitlab-runner
+kubectl create rolebinding --namespace=gitlab-runner gitlab-runner-binding --role=gitlab-runner --serviceaccount=gitlab-runner:default
+helm install --namespace gitlab-runner gitlab-runner -f values-new.yaml gitlab/gitlab-runner
+```
+
+### Troubleshooting
+Check runner pod image:
+```bash
+kubectl get po -n gitlab-runner <pod-name> -o jsonpath='{.spec.containers[0].image}'
+```
