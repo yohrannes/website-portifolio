@@ -12,6 +12,7 @@ delete-old-runner:
     - runner2
   script:
     - |
+      set +x
       RUNNERS=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/runners")
       
@@ -44,6 +45,7 @@ create-runner:
     - delete-old-runner
   script:
     - |
+      set +x
       RESPONSE=$(curl -s --request POST --url "https://gitlab.com/api/v4/user/runners" \
         --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
         --data "runner_type=project_type" \
@@ -51,13 +53,17 @@ create-runner:
         --data "tag_list=runner3" \
         --data "description=oke-k8s-runner" \
         --data "run_untagged=true")
+      
       RUNNER_TOKEN=$(echo "$RESPONSE" | jq -r '.token')
+      
       if [ -z "$RUNNER_TOKEN" ] || [ "$RUNNER_TOKEN" = "null" ]; then
-        echo "Failed to create runner"
-        echo "$RESPONSE"
+        echo "Error: Failed to create runner. Please check admin token permissions."
         exit 1
       fi
-      curl -s --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
+      
+      echo "Runner registered successfully. Updating CI variable..."
+      
+      curl -s --output /dev/null --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
         --request PUT \
         --form "value=$RUNNER_TOKEN" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER3_TOKEN_CREATED"
@@ -72,13 +78,15 @@ deploy-runner:
     - oci-oke-auth
   script:
     - |
+      set +x
       rm -f $HOME/.kube/config
+      
       oci ce cluster create-kubeconfig \
         --cluster-id $PROD_WEBAPP_CLUSTER_ID \
         --file $HOME/.kube/config \
         --token-version 2.0.0 \
         --kube-endpoint PUBLIC_ENDPOINT \
-        --profile DEFAULT
+        --profile DEFAULT > /dev/null
       
       RUNNER_TOKEN=$(curl -s --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER3_TOKEN_CREATED" \
@@ -86,17 +94,20 @@ deploy-runner:
       
       kubectl create namespace gitlab-runner || true
       kubectl delete secret gitlab-runner-secret -n gitlab-runner --ignore-not-found
+      
       kubectl create secret generic gitlab-runner-secret \
         --namespace gitlab-runner \
         --from-literal=runner-token="$RUNNER_TOKEN" \
-        --from-literal=runner-registration-token=""
+        --from-literal=runner-registration-token="" > /dev/null
       
       kubectl apply -f kubernetes/gitlab-runner/cluster-role-binding.yaml
       
       sed -i "s/OCI_NAMESPACE_PLACEHOLDER/$OCI_NAMESPACE/g" kubernetes/gitlab-runner/values-new.yaml
 
-      helm repo add gitlab https://charts.gitlab.io
-      helm repo update gitlab
+      helm repo add gitlab https://charts.gitlab.io > /dev/null
+      helm repo update gitlab > /dev/null
+      
+      echo "Deploying GitLab Runner via Helm..."
       helm upgrade --install gitlab-runner gitlab/gitlab-runner \
         --namespace gitlab-runner \
         -f kubernetes/gitlab-runner/values-new.yaml
