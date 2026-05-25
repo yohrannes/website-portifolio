@@ -18,17 +18,25 @@ check-node-architecture:
         exit 1
       fi
 
-resource-benchmark:
+resource-benchmark-cpu:
   extends: .oke-runner-base
   script:
     - |
       set +x
       apk add --no-cache sysbench > /dev/null
-      echo "Running CPU benchmark (ARM64 Optimized)..."
-      sysbench cpu --cpu-max-prime=20000 run > /dev/null
-      echo "Running Memory benchmark..."
-      sysbench memory run > /dev/null
-      echo "Resource benchmark completed successfully."
+      echo "Running HEAVY CPU stress test (8 threads)..."
+      sysbench cpu --cpu-max-prime=50000 --threads=8 run > /dev/null
+      echo "CPU benchmark completed."
+
+resource-benchmark-memory:
+  extends: .oke-runner-base
+  script:
+    - |
+      set +x
+      apk add --no-cache sysbench > /dev/null
+      echo "Running HEAVY Memory stress test (Parallel I/O)..."
+      sysbench memory --memory-block-size=1M --memory-total-size=10G --threads=4 run > /dev/null
+      echo "Memory benchmark completed."
 
 network-connectivity:
   extends: .oke-runner-base
@@ -50,7 +58,6 @@ object-storage-connectivity-test:
       set +x
       echo "Testing OCI Object Storage access..."
       apk add --no-cache curl > /dev/null
-      # Using variable to hide namespace from public logs and code
       curl -sI https://${OCI_NAMESPACE}.compat.objectstorage.us-ashburn-1.oraclecloud.com > /dev/null
       echo "Connectivity to Object Storage verified."
 
