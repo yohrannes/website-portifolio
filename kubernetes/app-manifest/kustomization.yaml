@@ -6,4 +6,4 @@ resources:
   - reference-grant.yaml
   - service.yaml
   - deployment.yaml
-  - gateway-rule.yaml
+  - httproute.yaml
