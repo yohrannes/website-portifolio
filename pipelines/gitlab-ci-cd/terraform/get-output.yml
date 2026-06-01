@@ -1,0 +1,32 @@
+.get-output:
+  stage: check-infra
+  needs:
+    - terraform-apply
+  before_script:
+    - |
+      WORKSPACE_ID=$(curl -s \
+        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+        --header "Content-Type: application/vnd.api+json" \
+        "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_WORKSPACE" \
+        | jq -r '.data.id')
+
+    - |
+      STATE_VERSION_ID=$(curl -s \
+        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+        --header "Content-Type: application/vnd.api+json" \
+        "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_WORKSPACE" \
+        | jq -r '.data.relationships["current-state-version"].data.id')
+      
+    - |
+      OUTPUT=$(curl -s \
+        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+        --header "Content-Type: application/vnd.api+json" \
+        "https://app.terraform.io/api/v2/state-versions/$STATE_VERSION_ID/outputs" \
+        | jq -r '.data[] | select(.attributes.name == "${OUTPUT_NAME}") | .attributes.value')
+
+      RESPONSE=$(curl -s --write-out "\n%{http_code}" \
+        --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
+        --request PUT \
+        --form "value=$OUTPUT" \
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/${OUTPUT_GLAB_VAR_NAME}") \
+        >  /dev/null 2>&1 || true

@@ -2,6 +2,7 @@
 include:
   - local: 'pipelines/gitlab-ci-cd/terraform/trigger-run.yml'
   - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
+  - local: 'pipelines/gitlab-ci-cd/terraform/get-output.yml'
   - local: 'pipelines/gitlab-ci-cd/cloud-auth/oci-oke-auth.yml'
 
 variables:
@@ -126,11 +127,15 @@ get-cluster-ip:
 pre-destroy:
 #  when: manual
   stage: check-infra
+  variables:
+    OUTPUT_NAME: "webapp_compartment_id"
   tags:
     - runner2
   needs:
     - oci-oke-auth
-  extends: .oci-oke-auth
+  extends:
+    - .oci-oke-auth
+    - .get-output
   script:
   ## Gateway
     - |
@@ -145,11 +150,7 @@ pre-destroy:
   ## Check LB deletion
 #      export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
     - |
-      COMPARTMENT_ID=$(curl -s \
-        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
-        --header "Content-Type: application/vnd.api+json" \
-        "https://app.terraform.io/api/v2/state-versions/$STATE_VERSION_ID/outputs" \
-        | jq -r '.data[] | select(.attributes.name == "webapp_compartment_id") | .attributes.value') || true
+      COMPARTMENT_ID=$OUTPUT
       oci lb load-balancer list --compartment-id $COMPARTMENT_ID || true
   ## Cert manager
     - helm uninstall cert-manager --namespace cert-manager || true
