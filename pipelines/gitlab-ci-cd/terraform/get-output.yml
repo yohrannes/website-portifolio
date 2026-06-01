@@ -26,6 +26,7 @@
 
       echo "DEBUG: OUTPUT_NAME=$OUTPUT_NAME" > /tmp/get-output-debug.log
       echo "DEBUG: OUTPUT=$OUTPUT" >> /tmp/get-output-debug.log
+      echo "OUTPUT=$OUTPUT" > tfout.env
 
       RESPONSE=$(curl -s --write-out "\n%{http_code}" \
         --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
@@ -33,3 +34,6 @@
         --form "value=$OUTPUT" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/${OUTPUT_GLAB_VAR_NAME}") \
         >  /dev/null 2>&1 || true
+  artifacts:
+    reports:
+      dotenv: tfout.env
