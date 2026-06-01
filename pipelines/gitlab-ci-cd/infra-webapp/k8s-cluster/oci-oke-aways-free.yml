@@ -133,9 +133,15 @@ pre-destroy:
   extends: .oci-oke-auth
   script:
   ## Gateway
-    - kubectl delete -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/default/deploy.yaml
-    - kubectl delete -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/crds.yaml
-    - kubectl kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.2" 2>/dev/null | kubectl delete -f -
+    - |
+      kubectl delete -f\
+       https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/default/deploy.yaml || true
+    - |
+      kubectl delete -f\
+       https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/crds.yaml || true
+    - |
+      kubectl kustomize -f\
+       "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.2" 2>/dev/null | kubectl delete -f - || true
   ## Check LB deletion
 #      export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
     - |
@@ -143,12 +149,12 @@ pre-destroy:
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
         "https://app.terraform.io/api/v2/state-versions/$STATE_VERSION_ID/outputs" \
-        | jq -r '.data[] | select(.attributes.name == "oci_oke_cluster_arm_compartment_id") | .attributes.value')
-      oci lb load-balancer list --compartment-id $COMPARTMENT_ID
+        | jq -r '.data[] | select(.attributes.name == "webapp_compartment_id") | .attributes.value') || true
+      oci lb load-balancer list --compartment-id $COMPARTMENT_ID || true
   ## Cert manager
-    - helm uninstall cert-manager --namespace cert-manager
-    - kubectl delete namespace cert-manager --wait=true
-    - kubectl get crd | grep cert-manager | awk '{print $1}' | xargs kubectl delete crd
+    - helm uninstall cert-manager --namespace cert-manager || true
+    - kubectl delete namespace cert-manager --wait=true || true
+    - kubectl get crd | grep cert-manager | awk '{print $1}' | xargs kubectl delete crd || true
 
 #set-lb-shape: # This job doesn't works imediately after the cluster creation, it needs to be run manually. Implement a check to ensure the load balancer is ready to be updated.
 #  when: manual
