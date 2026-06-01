@@ -67,3 +67,7 @@ module "webapp" {
   #kubectl delete namespace nginx-gateway
   ##
 }
+
+#module "cluster_services" {
+#  source = "./modules/cluster-services"
+#}

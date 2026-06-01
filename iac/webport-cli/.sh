@@ -25,17 +25,18 @@ if $(docker ps -a --format '{{.Names}}' | grep -Eq "^cloud-cli\$"); then
 fi
 
 docker run $INTERACTOR --name cloud-cli $REMOVE\
+  -e LOCAL_UID=$(id -u) \
+  -e LOCAL_GID=$(id -g) \
   -e HCP_CLIENT_ID="$HCP_CLIENT_ID" \
   -e HCP_CLIENT_SECRET="$HCP_CLIENT_SECRET" \
-  -v ~/.oci:/root/.oci \
-  -v ~/.aws:/root/.aws \
-  -v ~/.ssh:/root/.ssh \
-  -v ~/.config/gcloud:/root/.config/gcloud \
-  -v ~/.kube/config:/root/.kube/config \
+  -v ~/.oci:/home/clouduser/.oci \
+  -v ~/.ssh:/home/clouduser/.ssh \
+  -v ~/.config/gcloud:/home/clouduser/.config/gcloud \
+  -v ~/.kube/config:/home/clouduser/.kube/config \
   -v $PWD:/app \
-  -v ~/.terraform.d/credentials.tfrc.json:/root/.terraform.d/credentials.tfrc.json \
-  -e PACKER_PLUGIN_PATH=~/.packer.d/plugins \
+  -v ~/.terraform.d/credentials.tfrc.json:/home/clouduser/.terraform.d/credentials.tfrc.json \
+  -e PACKER_PLUGIN_PATH=/home/clouduser/.packer.d/plugins \
 cloud-cli $COMMAND
 
 ## Coment this line bellow if you want to manage the infra just using docker.
-sudo chown $USER: ../* && echo "Repo user permissions reloaded to current user."
+#sudo chown $USER: ../* && echo "Repo user permissions reloaded to current user."

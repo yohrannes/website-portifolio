@@ -72,6 +72,7 @@ install-gateway:
   stage: check-infra
   needs:
     - oci-oke-auth
+  when: manual
   extends: .oci-oke-auth
   script:
     - |
@@ -84,6 +85,7 @@ install-cert-manager:
   needs:
     - install-gateway
     - oci-oke-auth
+  when: manual
   tags:
     - runner2
   extends: .oci-oke-auth
@@ -122,7 +124,7 @@ get-cluster-ip:
 ### implement this using terraform, or garant that gateway-api will be destroyed before the cluster.
 ##    for more info check README.md at cluster module folder.
 pre-destroy:
-  when: manual
+#  when: manual
   stage: check-infra
   tags:
     - runner2
@@ -135,8 +137,13 @@ pre-destroy:
     - kubectl delete -f https://raw.githubusercontent.com/nginx/nginx-gateway-fabric/v1.6.2/deploy/crds.yaml
     - kubectl kustomize "https://github.com/nginx/nginx-gateway-fabric/config/crd/gateway-api/standard?ref=v1.6.2" 2>/dev/null | kubectl delete -f -
   ## Check LB deletion
+#      export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
     - |
-      export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
+      export COMPARTMENT_ID=$(curl -s \
+        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
+        --header "Content-Type: application/vnd.api+json" \
+        "https://app.terraform.io/api/v2/state-versions/$STATE_VERSION_ID/outputs" \
+        | jq -r '.data[] | select(.attributes.name == "oci_oke_cluster_arm_compartment_id") | .attributes.value')
       oci lb load-balancer list --compartment-id $COMPARTMENT_ID
   ## Cert manager
     - helm uninstall cert-manager --namespace cert-manager

@@ -7,16 +7,21 @@ terraform {
   }
 
   required_providers {
-
     oci = {
       source = "oracle/oci"
-      #      version = ">= 6.31.0"
       version = ">= 8.9.0"
-      #      version = ">= 8.11.0" need to be updated to that version at least.
     }
     hcp = {
       source  = "hashicorp/hcp"
       version = "~> 0.106.0"
+    }
+    kubernetes = {
+      source  = "hashicorp/kubernetes"
+      version = ">= 2.27.0"
+    }
+    helm = {
+      source  = "hashicorp/helm"
+      version = ">= 2.13.0"
     }
   }
 }
@@ -33,3 +38,22 @@ provider "hcp" {
   client_id     = var.hcp_client_id
   client_secret = var.hcp_client_secret
 }
+
+data "oci_containerengine_cluster_kube_config" "kubeconfig" {
+  cluster_id = module.webapp.cluster_id
+}
+
+provider "kubernetes" {
+  host                   = data.oci_containerengine_cluster_kube_config.kubeconfig.host
+  cluster_ca_certificate = base64decode(data.oci_containerengine_cluster_kube_config.kubeconfig.certificate_authority_data)
+  token                  = data.oci_containerengine_cluster_kube_config.kubeconfig.token
+}
+
+provider "helm" {
+  kubernetes {
+    host                   = data.oci_containerengine_cluster_kube_config.kubeconfig.host
+    cluster_ca_certificate = base64decode(data.oci_containerengine_cluster_kube_config.kubeconfig.certificate_authority_data)
+    token                  = data.oci_containerengine_cluster_kube_config.kubeconfig.token
+  }
+}
+
