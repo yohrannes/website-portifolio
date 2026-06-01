@@ -22,7 +22,10 @@
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
         "https://app.terraform.io/api/v2/state-versions/$STATE_VERSION_ID/outputs" \
-        | jq -r '.data[] | select(.attributes.name == "${OUTPUT_NAME}") | .attributes.value')
+        | jq -r '.data[] | select(.attributes.name == "'"$OUTPUT_NAME"'") | .attributes.value')
+
+      echo "DEBUG: OUTPUT_NAME=$OUTPUT_NAME" > /tmp/get-output-debug.log
+      echo "DEBUG: OUTPUT=$OUTPUT" >> /tmp/get-output-debug.log
 
       RESPONSE=$(curl -s --write-out "\n%{http_code}" \
         --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
