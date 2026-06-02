@@ -151,7 +151,9 @@ pre-destroy:
 #      export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
     - |
       COMPARTMENT_ID=$OUTPUT
-      oci lb load-balancer list --compartment-id $COMPARTMENT_ID || true
+    - echo "DEBUG - COMPARTMENT_ID vale ${COMPARTMENT_ID}" >> /tmp/pre-destroy-debug.log
+    - oci lb load-balancer list --compartment-id "${COMPARTMENT_ID}" >> /tmp/pre-destroy-debug.log || true
+    - oci lb load-balancer list --compartment-id $COMPARTMENT_ID || true
   ## Cert manager
     - helm uninstall cert-manager --namespace cert-manager || true
     - kubectl delete namespace cert-manager --wait=true || true
