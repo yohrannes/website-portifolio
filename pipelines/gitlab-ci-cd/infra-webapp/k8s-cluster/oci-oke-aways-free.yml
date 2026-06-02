@@ -152,6 +152,7 @@ pre-destroy:
     - |
       COMPARTMENT_ID=$OUTPUT
     - echo "DEBUG - COMPARTMENT_ID vale ${COMPARTMENT_ID}" >> /tmp/pre-destroy-debug.log
+    - export PYTHONWARNINGS="ignore"
     - oci lb load-balancer list --compartment-id "${COMPARTMENT_ID}" >> /tmp/pre-destroy-debug.log || true
     - oci lb load-balancer list --compartment-id $COMPARTMENT_ID || true
   ## Cert manager
