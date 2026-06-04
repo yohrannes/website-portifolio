@@ -24,16 +24,9 @@
         "https://app.terraform.io/api/v2/state-versions/$STATE_VERSION_ID/outputs" \
         | jq -r '.data[] | select(.attributes.name == "'"$OUTPUT_NAME"'") | .attributes.value')
 
-      echo "DEBUG: OUTPUT_NAME=$OUTPUT_NAME" > /tmp/get-output-debug.log
-      echo "DEBUG: OUTPUT=$OUTPUT" >> /tmp/get-output-debug.log
-      echo "OUTPUT=$OUTPUT" > tfout.env
-
       RESPONSE=$(curl -s --write-out "\n%{http_code}" \
         --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
         --request PUT \
         --form "value=$OUTPUT" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/${OUTPUT_GLAB_VAR_NAME}") \
         >  /dev/null 2>&1 || true
-#  artifacts:
-#    reports:
-#      dotenv: tfout.env

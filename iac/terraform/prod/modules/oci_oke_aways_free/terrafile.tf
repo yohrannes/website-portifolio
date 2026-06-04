@@ -63,12 +63,13 @@ module "loadbalancer" {
   listener_port_https = var.listener_port_https
 }
 
-module "kubeconfig" {
-  source      = "./kubeconfig"
-  depends_on  = [module.loadbalancer]
-  cluster_id  = module.cluster.cluster_id
-  oci_profile = var.oci_profile
-}
+#module "kubeconfig" {
+#  source      = "./kubeconfig"
+#  depends_on  = [module.loadbalancer]
+#  cluster_id  = module.cluster.cluster_id
+#  oci_profile = var.oci_profile
+#}
+
 module "storage" {
   source         = "./storage"
   compartment_id = module.compartment.compartment_id

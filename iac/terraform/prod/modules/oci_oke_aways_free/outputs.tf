@@ -22,6 +22,7 @@ output "oci_core_instances_3" {
   value = module.loadbalancer.oci_core_instances_3
 }
 
-#output "todas_as_vnics" {
-#  value = module.cluster.todas_as_vnics
-#
+output "tfc_admin_token" {
+  value     = module.cluster.tfc_admin_token
+  sensitive = true
+}

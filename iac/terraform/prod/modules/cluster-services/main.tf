@@ -1,10 +1,10 @@
-resource "kubernetes_namespace" "cert_manager" {
+resource "kubernetes_namespace_v1" "cert_manager" {
   metadata {
     name = var.kubernetes_namespace_cert_manager
   }
 }
 
-resource "kubernetes_namespace" "nginx_gateway" {
+resource "kubernetes_namespace_v1" "nginx_gateway" {
   metadata {
     name = var.kubernetes_namespace_nginx_gateway
   }

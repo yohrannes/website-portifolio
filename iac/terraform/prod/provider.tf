@@ -8,8 +8,8 @@ terraform {
 
   required_providers {
     oci = {
-      source = "oracle/oci"
-      version = ">= 8.9.0"
+      source  = "oracle/oci"
+      version = ">= 8.16.0"
     }
     hcp = {
       source  = "hashicorp/hcp"
@@ -40,20 +40,30 @@ provider "hcp" {
 }
 
 data "oci_containerengine_cluster_kube_config" "kubeconfig" {
-  cluster_id = module.webapp.cluster_id
+  cluster_id    = module.webapp.cluster_id
+  token_version = "2.0.0"
+}
+
+variable "oke_token" {
+  type    = string
+  default = ""
+}
+
+locals {
+  # Extração manual do YAML para evitar o erro de 'Unsupported attribute'
+  k8s_config = yamldecode(data.oci_containerengine_cluster_kube_config.kubeconfig.content)
 }
 
 provider "kubernetes" {
-  host                   = data.oci_containerengine_cluster_kube_config.kubeconfig.host
-  cluster_ca_certificate = base64decode(data.oci_containerengine_cluster_kube_config.kubeconfig.certificate_authority_data)
-  token                  = data.oci_containerengine_cluster_kube_config.kubeconfig.token
+  host                   = local.k8s_config["clusters"][0]["cluster"]["server"]
+  cluster_ca_certificate = base64decode(local.k8s_config["clusters"][0]["cluster"]["certificate-authority-data"])
+  token                  = var.oke_token
 }
 
 provider "helm" {
   kubernetes {
-    host                   = data.oci_containerengine_cluster_kube_config.kubeconfig.host
-    cluster_ca_certificate = base64decode(data.oci_containerengine_cluster_kube_config.kubeconfig.certificate_authority_data)
-    token                  = data.oci_containerengine_cluster_kube_config.kubeconfig.token
+    host                   = local.k8s_config["clusters"][0]["cluster"]["server"]
+    cluster_ca_certificate = base64decode(local.k8s_config["clusters"][0]["cluster"]["certificate-authority-data"])
+    token                  = var.oke_token
   }
 }
-

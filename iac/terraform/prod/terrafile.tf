@@ -68,6 +68,6 @@ module "webapp" {
   ##
 }
 
-#module "cluster_services" {
-#  source = "./modules/cluster-services"
-#}
+module "cluster_services" {
+  source = "./modules/cluster-services"
+}
