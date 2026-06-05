@@ -89,7 +89,7 @@
               "is-destroy": false,
               message: "Triggered by GitLab CI",
               "plan-only": false,
-              "target-addrs": [$target_addrs]
+              "target-addrs": ($target_addrs | split(",") | map(select(. != "")))
             },
             relationships: {
               workspace: {

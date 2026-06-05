@@ -1,3 +1,5 @@
+[![Pipeline Status](https://gitlab.com/yohrannes/website-portifolio/badges/main/pipeline.svg)](https://gitlab.com/yohrannes/website-portifolio/-/commits/main)
+
 # Website Portfolio - Multi-cloud Infrastructure Lab - Zero Costs
 
 This repository is a functional, production-level blueprint for building, deploying, and observing a modern web application ecosystem. The project was designed to demonstrate software engineering and DevOps practices in a real-world scenario, with a focus on automation, resilience, and security.

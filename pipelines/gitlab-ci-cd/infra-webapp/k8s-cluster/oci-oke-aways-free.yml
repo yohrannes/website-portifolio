@@ -9,18 +9,31 @@ variables:
   TF_WORKSPACE: "webapp_prod"
 
 ### task soo crasy
-#  TF_TARGET_ADDRS: 'module.webapp,module.cluster_services'
+  TF_TARGET_ADDRS: 'module.webapp,module.cluster_services'
 ### trigger-run.yml .....
 ###"target-addrs": ($target_addrs | split(",") | map(select(. != "")))
 ###......
 
-  TF_TARGET_ADDRS: 'module.webapp'
+#  TF_TARGET_ADDRS: 'module.webapp'
 
 trigger-terraform-run:
 #  when: manual
   stage: tf-run
+  variables:
+    OUTPUT_NAME: "webapp_cluster_id"
   extends:
     - .trigger-terraform-run
+### task soo crasy
+    - .get-output
+    - .oci-oke-auth
+### task soo crasy
+  before_script:
+    - !reference [.get-output, before_script]
+    - !reference [.oci-oke-auth, before_script]
+#    - echo "curl...$TOKEN >>>> TF_VAR_oke_token"
+  script:
+    - !reference [.trigger-terraform-run, script]
+    - !reference [.oci-oke-auth, script]
 
 ### task soo crasy
 ### implement this job before clusten creation
@@ -31,26 +44,17 @@ trigger-terraform-run:
 ### implement using oci-oke-auth.yml at this job bellow
 
 terraform-apply:
-### task soo crasy
 #  when: manual
   tags:
     - runner2
   stage: tf-apply
   variables:
-### task soo crasy
-#    OUTPUT_NAME: "webapp_cluster_id"
     APPLY_TIMEOUT: 8000
     PLAN_TIMEOUT: 8000
   extends:
-### task soo crasy
-#    - .oci-oke-auth
     - .terraform-apply
   needs:
     - trigger-terraform-run
-### task soo crasy
-#  before_script:
-#    - |
-#      echo "curl...$TOKEN >>>> TF_VAR_oke_token
 
 get-webapp-cluster-id:
   stage: check-infra
