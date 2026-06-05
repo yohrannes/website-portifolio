@@ -17,6 +17,8 @@ include:
 ### OCI AND CLUSTER AUTHENTICATION
 
   - local: 'pipelines/gitlab-ci-cd/cloud-auth/oci-oke-auth.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "main"
 
 ### GITLAB RUNNERS CONTROLER AND SETUP
 
