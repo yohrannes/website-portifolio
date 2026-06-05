@@ -54,9 +54,15 @@ include:
 #    rules:
 #      - if: $CI_COMMIT_BRANCH == "infra-webapp-oci-amd-packer"
 
+## PROD PIPELINES
+
+  - local: 'pipelines/gitlab-ci-cd/prod.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "main"
+
 ## DEVELOPMENT PIPELINES
 
-  - local: 'pipelines/gitlab-ci-cd/develop.yml'
+  - local: 'pipelines/gitlab-ci-cd/dev.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "dev"
 
@@ -89,94 +95,4 @@ stages:
   - deploy-image
   - deploy
 
-set-failover-healthcheck-dns-update:
-  stage: pre-deploy
-  tags:
-    - runner2
-#  when: manual
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-  script:
-    - |
-      set +x
-      ENV_FILE="/home/gitlab-runner/.gitlab-runner-env"
-      echo "Configuring failover environment variables..."
-      printf "export CLOUDFARE_ZONE_ID=\"%s\"\n" "$CLOUDFARE_ZONE_ID" > "$ENV_FILE"
-      printf "export CLOUDFARE_API_TOKEN=\"%s\"\n" "$CLOUDFARE_API_TOKEN" >> "$ENV_FILE"
-      printf "export CLFR_DNS_ID_OCI_INST_YO_COM=\"%s\"\n" "$CLFR_DNS_ID_OCI_INST_YO_COM" >> "$ENV_FILE"
-      printf "export PROD_WEBAPP_FAILOVER_IP=\"%s\"\n" "$PROD_WEBAPP_FAILOVER_IP" >> "$ENV_FILE"
-      printf "export PROD_WEBAPP_CLUSTER_IP=\"%s\"\n" "$PROD_WEBAPP_CLUSTER_IP" >> "$ENV_FILE"
-      printf "export GL_TOKEN_VARS_ADMIN=\"%s\"\n" "$GL_TOKEN_VARS_ADMIN" >> "$ENV_FILE"
-      printf "export CI_PROJECT_ID=\"%s\"\n" "$CI_PROJECT_ID" >> "$ENV_FILE"
-      chmod 600 "$ENV_FILE"
 
-      echo "Downloading failover script..."
-      FAILOVER_SCRIPT="/home/gitlab-runner/webapp-failover-checker.sh"
-      wget -q -O "$FAILOVER_SCRIPT" \
-        https://raw.githubusercontent.com/yohrannes/website-portifolio/infra-webapp-failover/usefull-scripts/webapp-failover-checker.sh
-      chmod +x "$FAILOVER_SCRIPT"
-
-      echo "Ensuring idempotent crontab configuration..."
-      CRON_JOB="*/1 * * * * /bin/bash -c '. /home/gitlab-runner/.gitlab-runner-env && /home/gitlab-runner/webapp-failover-checker.sh > /tmp/webapp-failover-checker.log 2>&1'"
-      (crontab -l 2>/dev/null | grep -v "webapp-failover-checker" || true ; echo "$CRON_JOB") | crontab -
-      echo "Failover mechanism configured and scheduled successfully."
-
-deploy-app-dkcmpose:
-  tags:
-    - runner1
-  stage: deploy
-  when: manual
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-  before_script:
-    - |
-      set +x
-      echo "Preparing SSH authentication..."
-      mkdir -p ~/.ssh
-      echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
-      chmod 600 ~/.ssh/id_rsa
-      echo "Synchronizing repository on failover instance..."
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP "
-        mkdir -p repos-git && cd repos-git
-        if [ ! -d website-portifolio ]; then
-          git clone https://gitlab.com/yohrannes/website-portifolio.git
-        fi
-        cd website-portifolio
-        git checkout main && git pull origin main
-        cd docker-compose
-        sudo docker compose down
-        sudo docker system prune -a -f
-      "
-  script:
-    - |
-      set +x
-      echo "Deploying application via Docker Compose..."
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP "
-        sudo docker compose -f repos-git/website-portifolio/docker-compose/docker-compose.yml up -d
-      "
-      echo "Deployment on failover instance completed."
-
-oci-oke-auth:
-  tags:
-    - runner2
-  stage: check-infra
-  extends: .oci-oke-auth
-
-deploy-app-k8s-cluster:
-  tags:
-    - runner2
-  needs:
-    - oci-oke-auth
-  extends: .oci-oke-auth
-  stage: deploy
-  rules:
-    - if: $CI_COMMIT_BRANCH == "main"
-  script:
-    - |
-      set +x
-      cd ${CI_PROJECT_DIR}
-      echo "Deploying Gateway resources..."
-      kubectl apply -f kubernetes/nginx-gateway-fabric
-      echo "Deploying application manifests..."
-      kubectl apply -k kubernetes/app-manifest
-      echo "K8s Cluster deployment completed."
