@@ -31,8 +31,6 @@ dkhub-img-sec-dkscout:
     - |
       set +e
       export XDG_CACHE_HOME=/tmp/.cache
-#      mkdir -p "$XDG_CACHE_HOME/fanal"
-#     chmod 0777 "$XDG_CACHE_HOME/fanal"
       docker scout cves --format gitlab -o /tmp/dk-scout-output.json $IMAGE_NAME:$IMAGE_TAG
       scout_exit=$?
       set -e
