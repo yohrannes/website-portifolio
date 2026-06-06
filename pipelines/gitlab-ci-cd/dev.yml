@@ -3,6 +3,7 @@ variables:
   IMAGE_NAME: yohrannes/website-portifolio
   NGINX_IMAGE_NAME: yohrannes/nginx
   IMAGE_TAG: latest
+  DOCKERFILE_DIR: ./docker-compose/webport
 
 docker-build-test:
   tags:
@@ -16,7 +17,7 @@ docker-build-test:
       cd repos-gitlab
       git clone https://gitlab.com/yohrannes/website-portifolio.git
       cd website-portifolio
-      docker build -qf ./docker-compose/webport/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG ./docker-compose/webport/.
+      docker build -qf $DOCKERFILE_DIR/Dockerfile -t $IMAGE_NAME:$IMAGE_TAG $DOCKERFILE_DIR/.
 
 dkhub-img-sec-dkscout:
   tags:
