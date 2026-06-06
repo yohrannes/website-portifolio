@@ -71,6 +71,11 @@ function install-helm () {
     sudo apt-get install helm
 }
 
+function install-docker-scout () {
+    curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
+    sh install-scout.sh
+}
+
 if [[ $1 == "install-docker" ]]; then
     install-docker-engine
 else
@@ -82,6 +87,7 @@ else
     install-kubectl
     install-oci-cli
     install-helm
+    install-docker-scout
 
     # Leave this command bellow by least (used for pipeline checks)
     echo "startup-script-finished"
