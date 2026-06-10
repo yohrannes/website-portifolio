@@ -57,6 +57,8 @@ get-instance-ip-from-tf-cloud:
 ### Task - implement startup script check method used on webapp_failover_pipeline
 check-startup-script:
   stage: check-infra
+  tags:
+    - runner2
   needs:
     - get-instance-ip-from-tf-cloud
   script:
@@ -90,6 +92,8 @@ check-startup-script:
 
 delete-old-runner-gl-api:
   stage: check-infra
+  tags:
+    - runner2
   script:
     - |
       RUNNERS=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
@@ -118,6 +122,8 @@ delete-old-runner-gl-api:
 
 create-runner-gl-api:
   stage: check-infra
+  tags:
+    - runner2
   needs:
     - delete-old-runner-gl-api
   script:
@@ -136,6 +142,8 @@ create-runner-gl-api:
 
 authorize-runner:
   stage: check-infra
+  tags:
+    - runner2
   needs:
     - check-startup-script
   script:
