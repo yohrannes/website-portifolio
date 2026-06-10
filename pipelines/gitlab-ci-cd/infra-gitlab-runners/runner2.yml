@@ -9,11 +9,13 @@ variables:
 
 trigger-terraform-run:
   stage: tf-run
+  when: manual
   extends:
     - .trigger-terraform-run
 
 terraform-apply:
   stage: tf-apply
+  when: manual
   extends: .terraform-apply
   needs:
     - trigger-terraform-run
