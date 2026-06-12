@@ -37,8 +37,8 @@ trigger-terraform-run:
 
 ### task soo crasy
 ### implement this job before clusten creation
-### CLUSTER_ID=$(terraform output -raw webapp_cluster_id)^C
-### TOKEN=$(oci ce cluster generate-token --cluster-id $CLUSTER_ID | jq -r '.status.token')^C
+### CLUSTER_ID=$(terraform output -raw webapp_cluster_id)
+### TOKEN=$(oci ce cluster generate-token --cluster-id $CLUSTER_ID | jq -r '.status.token')
 ### the new cluster apply process need to be like that ....
 ### terraform plan -out plan -target=module.webapp -target=module.cluster_services -var="oke_token=$TOKEN"
 ### implement using oci-oke-auth.yml at this job bellow
@@ -187,25 +187,25 @@ pre-destroy:
     - kubectl delete namespace cert-manager --wait=true || true
     - kubectl get crd | grep cert-manager | awk '{print $1}' | xargs kubectl delete crd || true
 
-#set-lb-shape: # This job doesn't works imediately after the cluster creation, it needs to be run manually. Implement a check to ensure the load balancer is ready to be updated.
-#  when: manual
-#  needs:
-#    - install-gateway
-#  stage: check-infra
-#  script:
-#    - |
-#      export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
-#      export LOAD_BALANCER_ID=$(oci lb load-balancer list --compartment-id \$COMPARTMENT_ID | jq '.data[0].id' | sed 's/"//g')
-#      OUTPUT=\$(oci lb load-balancer update-load-balancer-shape --load-balancer-id $LOAD_BALANCER_ID --shape-name flexible --shape-details '{"maximum-bandwidth-in-mbps":10,"minimum-bandwidth-in-mbps":10}' --force 2>&1)
-#      EXIT_CODE=$?
-#      if [ $EXIT_CODE -ne 0 ] && echo "$OUTPUT" | grep -q 'same values'; then
-#          echo "No changes made, the load balancer is already using the specified shape and bandwidth."
-#          exit 0
-#      elif [ $EXIT_CODE -ne 0 ]; then
-#          echo "$OUTPUT"
-#          exit 1
-#      fi
-#
+set-lb-shape: # This job doesn't works imediately after the cluster creation, it needs to be run manually. Implement a check to ensure the load balancer is ready to be updated.
+  when: manual
+  needs:
+    - install-gateway
+  stage: check-infra
+  script:
+    - |
+      export COMPARTMENT_ID=$(terraform output oci_oke_cluster_arm_compartment_id | sed 's/"//g')
+      export LOAD_BALANCER_ID=$(oci lb load-balancer list --compartment-id \$COMPARTMENT_ID | jq '.data[0].id' | sed 's/"//g')
+      OUTPUT=\$(oci lb load-balancer update-load-balancer-shape --load-balancer-id $LOAD_BALANCER_ID --shape-name flexible --shape-details '{"maximum-bandwidth-in-mbps":10,"minimum-bandwidth-in-mbps":10}' --force 2>&1)
+      EXIT_CODE=$?
+      if [ $EXIT_CODE -ne 0 ] && echo "$OUTPUT" | grep -q 'same values'; then
+          echo "No changes made, the load balancer is already using the specified shape and bandwidth."
+          exit 0
+      elif [ $EXIT_CODE -ne 0 ]; then
+          echo "$OUTPUT"
+          exit 1
+      fi
+
 
 ### Verify Load Balancer (not network load balancer) destruction on terraform...
 ---
