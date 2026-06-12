@@ -175,7 +175,7 @@ pause-local-runner:
     - authorize-runner
   stage: check-infra
   tags:
-    - runner2
+    - runner1
   script:
     - |
       RUNNERS=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \

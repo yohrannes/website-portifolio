@@ -9,15 +9,16 @@ function install-docker-engine () {
     sudo apt-get install -y ca-certificates curl qemu binfmt-support qemu-user-static
     sudo install -m 0755 -d /etc/apt/keyrings
     sudo curl -fsSL https://get.docker.com/ | sudo bash
-    sudo newgrp docker
-    sudo groupadd docker
+    sudo groupadd docker || true
     sudo usermod -aG docker $USER
-    sudo mkdir $HOME/.docker
+    sudo mkdir -p $HOME/.docker
     sudo chown "$USER":"$USER" /home/"$USER"/.docker -R
     sudo chmod g+rwx "$HOME/.docker" -R
     sudo systemctl enable docker
     sudo systemctl start docker
-    docker buildx create --use --name multiarch-builder
+    if command -v docker >/dev/null 2>&1; then
+        docker buildx create --use --name multiarch-builder
+    fi
 }
 
 function allow-ports () {
@@ -72,11 +73,10 @@ function install-helm () {
 }
 
 function install-docker-scout () {
-    whoami
-    pwd
-    ls -la
-    curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
-    sh install-scout.sh
+    if command -v docker >/dev/null 2>&1; then
+        curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
+        sh install-scout.sh
+    fi
 }
 
 if [[ $1 == "install-docker" ]]; then
