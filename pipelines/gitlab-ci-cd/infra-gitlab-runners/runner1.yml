@@ -62,6 +62,7 @@ authorize-runner:
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER1_TOKEN_CREATED" \
         | jq -r '.value')
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP "
+        sudo gitlab-runner unregister --all-runners || true
         sudo gitlab-runner register \
           --non-interactive \
           --url 'https://gitlab.com/' \
