@@ -77,8 +77,11 @@ function install-docker-scout () {
         sleep 2
     done
     mkdir -p /root/.docker/cli-plugins
-    curl -fsSL https://raw.githubusercontent.com/docker/scout-cli/main/install.sh -o install-scout.sh
-    sh install-scout.sh
+    curl -L https://github.com/docker/scout-cli/releases/download/v1.21.0/docker-scout_1.21.0_linux_amd64.tar.gz -o scout.tar.gz
+    tar -xzf scout.tar.gz
+    mv docker-scout /root/.docker/cli-plugins/docker-scout
+    chmod +x /root/.docker/cli-plugins/docker-scout
+    rm -f scout.tar.gz install-scout.sh
 }
 
 if [[ $1 == "install-docker" ]]; then

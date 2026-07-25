@@ -73,6 +73,8 @@ def whoami():
 def websitespecs():
     return render_template('devops.html')
 
+
+
 #@app.route('/books')
 #def biblic_readings():
 #    return render_template('books.html')
@@ -102,6 +104,10 @@ def github_redirect():
 @app.route('/gitlab')
 def gitlab_redirect():
     return redirect('https://gitlab.com/yohrannes')
+
+@app.route('/episoden')
+def episoden_redirect():
+    return redirect('https://link-talk.episoden.com/t/08cfff80abfa4a')
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=False, port="5000")

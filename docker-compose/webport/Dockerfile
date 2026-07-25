@@ -18,13 +18,11 @@ COPY --from=dev /app/app.py /app/app.py
 COPY --from=dev /app/healthcheck.py /app/healthcheck.py
 COPY --from=dev /app/venv /app/venv
 COPY --from=dev /app/static /app/static
-# ENV STATIC_URL="https://meu-bucket.s3.amazonaws.com/static/"
+# ENV STATIC_URL="https://my-bucket.s3.amazonaws.com/static/"
 COPY --from=dev /app/templates /app/templates
 COPY --from=dev /app/fonts /app/fonts
-# ENV FONTS_URL="https://meu-bucket.s3.amazonaws.com/fonts/"
+# ENV FONTS_URL="https://my-bucket.s3.amazonaws.com/fonts/"
 COPY --from=dev /app/venv /app/venv
-
-
 
 ENTRYPOINT ["gunicorn", "--bind", "0.0.0.0:5000", "--workers", "1", "--threads", "1", "app:app"]
 HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 CMD ["python3", "/app/healthcheck.py"]
