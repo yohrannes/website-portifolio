@@ -1,5 +1,5 @@
-FROM hashicorp/packer:full AS packer
-FROM hashicorp/terraform:latest
+FROM hashicorp/packer:full-1.15.1 AS packer
+FROM hashicorp/terraform:1.15.0
 
 COPY --from=packer /bin/packer /bin/packer
 
