@@ -129,3 +129,16 @@ main > #getintouch {
   color: #ffffffb2;
   cursor: pointer;
 }
+
+a#meeting {
+  font-family: 'Raleway';
+  color: white;
+  font-weight: 300;
+  font-size: 1.1em;
+}
+
+a#meeting:hover {
+  color: #6aff65c9;
+  animation: glitch1 1s;
+  font-weight: bold;
+}

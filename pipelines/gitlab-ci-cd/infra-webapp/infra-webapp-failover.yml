@@ -1,5 +1,5 @@
 
-### Need to implement a way to build tha instance OCID using packer and
+### Need to implement a way to build that instance OCID using packer and
 # get the OCID of this instance using TERRAFORM CLOUD to be used in this
 # terraform pipeline. .
 
@@ -162,7 +162,7 @@ run-containers:
       " > /dev/null
 
 
-## dns updated method chaned to cron script at runner2 <<-- review and update
+## dns updated method changed to cron script at runner2 <<-- review and update
 #update-dns:
 #  stage: deploy-webapp
 #  needs:

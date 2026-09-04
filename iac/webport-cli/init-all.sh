@@ -39,7 +39,10 @@ export PATH=$PATH:/app/packer/prod/ansible/venv/bin
 
 ansible --version
 ansible-playbook --version
+touch /tmp/cli-init-finished.log
 
 cd /app
 
 exec env ENV=/home/clouduser/.shrc sh
+
+clear
