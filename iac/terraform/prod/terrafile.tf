@@ -1,11 +1,11 @@
 
 # Google cloud provider
-#module "service-account" {
-#  source             = "yohrannes/service-account/google"
-#  version            = "0.2.0"
-#  enable_sa_resource = true
-# print_credentials  = true
-#  project_id         = var.project_id # Required
+
+#module "service-accounts" {
+#  source  = "terraform-google-modules/service-accounts/google"
+#  version = "4.7.0"
+
+  # insert the 1 required variable here
 #}
 
 module "runner2" {
@@ -17,20 +17,7 @@ module "runner2" {
   instance_name       = "runner2"
 }
 
-#module "webport_bucket" {
-#  source     = "./modules/bucket_gcp"
-#  project_id = var.project_id # Required
-#}
-
 #Oracle cloud provider
-
-# Discontinued module (made available on tf modules, and then exclude from here).
-#module "runner1" {
-#  ssh_public_key = var.ssh_public_key
-#  source         = "./modules/st-e2-1-micro-aways-free"
-#  compartment_id = var.oci_tenancy_ocid
-#  compartment_name = "runner1-comp"
-#}
 
 module "webapp_failover" {
   ssh_public_key      = var.ssh_public_key
@@ -58,14 +45,6 @@ module "webapp" {
   ## Activate -parallelism=1 on terraform Cloud
   ## Workspace settings > General > Advanced options > Terraform CLI Arguments
 
-  ##
-  # Implement this commands at the destroyment process
-  #kubectl delete namespace website-portifolio
-  #kubectl delete namespace cert-manager
-  #kubectl delete -f kubernetes/gateway
-  #helm uninstall cert-manager -n cert-manager
-  #kubectl delete namespace nginx-gateway
-  ##
 }
 
 module "cluster_services" {
