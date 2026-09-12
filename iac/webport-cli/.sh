@@ -34,6 +34,7 @@ docker run $INTERACTOR --name cloud-cli $REMOVE\
   -v ~/.config/gcloud:/home/clouduser/.config/gcloud \
   -v ~/.kube/config:/home/clouduser/.kube/config \
   -v $PWD:/app \
+  -v $PWD/../.env:/home/clouduser/.env \
   -v ~/.terraform.d/credentials.tfrc.json:/home/clouduser/.terraform.d/credentials.tfrc.json \
   -e PACKER_PLUGIN_PATH=/home/clouduser/.packer.d/plugins \
 cloud-cli $COMMAND

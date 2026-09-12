@@ -62,6 +62,9 @@ terraform/modules/cluster_oracle_oracle/plan
 terraform/modules/cluster_oracle/*.tfstate*
 terraform/modules/cluster_oracle/*.tfstate.*
 
+#Ignore env file
+.env
+
 # Ignore package instalation
 venv
 __pycache__
