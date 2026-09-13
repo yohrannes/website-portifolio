@@ -12,6 +12,8 @@ ENV OCI_CONFIG_FILE_PATH=/home/clouduser/.oci/packer/oci_config
 ENV OCI_CONFIG_PROFILE=DEFAULT
 ENV OCI_CLI_SUPPRESS_FILE_PERMISSIONS_WARNING=True
 
+ENV TF_IN_AUTOMATION=true
+
 RUN mkdir -p ${PACKER_CONFIG_DIR} \
     && mkdir -p ${PACKER_CACHE_DIR} \
     && mkdir -p ${PACKER_CONFIG_DIR}/plugins \
@@ -23,11 +25,7 @@ RUN apk add --no-cache oci-cli jq shadow curl nano --quiet && curl -LO https://d
 
 RUN adduser -D clouduser
 
-#RUN curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-x86_64.tar.gz && tar -xf google-cloud-cli-linux-x86_64.tar.gz && rm google-cloud-cli-linux-x86_64.tar.gz
-#RUN yes | ./google-cloud-sdk/install.sh
-
 ENV CLOUDSDK_INSTALL_DIR=/usr/lib
-
 ENV CLOUDSDK_CONFIG=/home/clouduser/.config/gcloud
 
 RUN curl -O https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/google-cloud-cli-linux-x86_64.tar.gz && \
@@ -43,9 +41,6 @@ RUN apk add --no-cache python3 py3-pip --quiet
 RUN python3 -m venv venv
 
 WORKDIR /app
-
-#USER clouduser
-#ARG HOME
 
 COPY webport-cli/.shrc /home/clouduser/.shrc
 COPY webport-cli/init-all.sh /home/clouduser/init-all.sh

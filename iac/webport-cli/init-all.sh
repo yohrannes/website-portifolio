@@ -37,8 +37,8 @@ ansible-galaxy role install -r requirements.yml
 packer plugins install github.com/hashicorp/ansible 2>/dev/null || true
 export PATH=$PATH:/app/packer/prod/ansible/venv/bin
 
-ansible --version
-ansible-playbook --version
+#ansible --version
+#ansible-playbook --version
 touch /tmp/cli-init-finished.log
 
 cd /app

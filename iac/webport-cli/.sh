@@ -1,21 +1,43 @@
 #!/bin/bash
-docker build -t cloud-cli . -f webport-cli/Dockerfile
+spinner() {
+  local pid=$1
+  local msg="${2:-Building image...}"
+  local spin=("⠋" "⠙" "⠹" "⠸" "⠼" "⠴" "⠦" "⠧" "⠇" "⠏")
+  tput civis 2>/dev/null || true
+  trap "tput cnorm 2>/dev/null; kill -TERM $pid 2>/dev/null; exit 1" INT TERM
+  while kill -0 "$pid" 2>/dev/null; do
+    for s in "${spin[@]}"; do
+      printf "\r\033[K\033[36m%s\033[0m %s" "$s" "$msg"
+      sleep 0.08
+      if ! kill -0 "$pid" 2>/dev/null; then break; fi
+    done
+  done
+  trap - INT TERM
+  tput cnorm 2>/dev/null || true
+}
 
-### check --build-arg HOME="$HOME" maybe can be usable.
+BUILD_LOG=$(mktemp)
+docker build -q -t cloud-cli . -f webport-cli/Dockerfile > "$BUILD_LOG" 2>&1 &
+BUILD_PID=$!
+
+spinner $BUILD_PID "Building cloud-cli image..."
+wait $BUILD_PID
+BUILD_STATUS=$?
+if [ $BUILD_STATUS -eq 0 ]; then
+  printf "\r\033[K\033[32m✔\033[0m cloud-cli image built successfully!\n"
+  rm -f "$BUILD_LOG"
+else
+  printf "\r\033[K\033[31m✖\033[0m Failed to build Docker image (exit code: %d):\n" "$BUILD_STATUS"
+  cat "$BUILD_LOG"
+  rm -f "$BUILD_LOG"
+  exit $BUILD_STATUS
+fi
 
 if [ "$1" == "pipe" ]; then
   INTERACTOR="-d"
   REMOVE=""
   COMMAND="sleep infinity"
 else
-  export HCP_CLIENT_SECRET=$(glab var get PACKER_WEBPORT_CLIENT_SECRET)
-  export HCP_CLIENT_ID=$(glab var get PACKER_WEBPORT_CLIENT_ID)
-  if [ -z "$HCP_CLIENT_ID" ] || [ -z "$HCP_CLIENT_SECRET" ]; then
-      echo "Error: GitLab var not found"
-      exit 1
-  else
-      echo "GitLab var found"
-  fi
   INTERACTOR="-it"
   REMOVE="--rm"
 fi
@@ -25,10 +47,9 @@ if $(docker ps -a --format '{{.Names}}' | grep -Eq "^cloud-cli\$"); then
 fi
 
 docker run $INTERACTOR --name cloud-cli $REMOVE\
+  --env-file $PWD/../.env \
   -e LOCAL_UID=$(id -u) \
   -e LOCAL_GID=$(id -g) \
-  -e HCP_CLIENT_ID="$HCP_CLIENT_ID" \
-  -e HCP_CLIENT_SECRET="$HCP_CLIENT_SECRET" \
   -v ~/.oci:/home/clouduser/.oci \
   -v ~/.ssh:/home/clouduser/.ssh \
   -v ~/.config/gcloud:/home/clouduser/.config/gcloud \
