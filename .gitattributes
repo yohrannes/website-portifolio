@@ -1,6 +1,33 @@
 .gitlab-ci.yml linguist-language=YAML
 gitlab-ci-cd/* linguist-language=YAML
+
+# Enforce LF line endings for all text files
 * text=auto eol=lf
-*.yml text eol=lf
+*.yml  text eol=lf
 *.yaml text eol=lf
-*.sh text eol=lf
+*.sh   text eol=lf
+*.py   text eol=lf
+*.html text eol=lf
+*.css  text eol=lf
+*.js   text eol=lf
+*.md   text eol=lf
+*.txt  text eol=lf
+*.json text eol=lf
+*.conf text eol=lf
+*.tf   text eol=lf
+
+# Explicitly declare binary file types to prevent corruption
+*.png   binary
+*.jpg   binary
+*.jpeg  binary
+*.webp  binary
+*.ico   binary
+*.pdf   binary
+*.TTF   binary
+*.otf   binary
+*.ttf   binary
+*.woff  binary
+*.woff2 binary
+*.eot   binary
+*.gif   binary
+*.pyc   binary
