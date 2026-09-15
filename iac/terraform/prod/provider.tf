@@ -50,7 +50,7 @@ variable "oke_token" {
 }
 
 locals {
-  # Extração manual do YAML para evitar o erro de 'Unsupported attribute'
+  # Manual YAML extraction to avoid 'Unsupported attribute' error
   k8s_config = yamldecode(data.oci_containerengine_cluster_kube_config.kubeconfig.content)
 }
 

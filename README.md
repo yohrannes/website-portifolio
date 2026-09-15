@@ -77,8 +77,7 @@ The repository supports two deployment models, demonstrating flexibility for dif
 ├── iac/                # Infrastructure as Code (Terraform, Packer)
 ├── kubernetes/         # Manifests for deployment in Kubernetes
 ├── pipelines/          # GitLab CI/CD pipeline definitions
-├── usefull-scripts/    # Utility scripts for automation and troubleshooting
-└── docker-compose/webport/ # Flask application source code and Dockerfile
+└── usefull-scripts/    # Utility scripts for automation and troubleshooting
 ```
 
 ---
