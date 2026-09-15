@@ -1,0 +1,3 @@
+[submodule "yohrannes-com"]
+	path = yohrannes-com
+	url = https://github.com/yohrannes/yohrannes.com.git

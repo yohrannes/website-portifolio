@@ -1,9 +1,9 @@
 ---
 variables:
-  APP_DIR: docker-compose/webport
+  APP_DIR: yohrannes-com/docker-compose/webport
   IMAGE_NAME: yohrannes/website-portifolio
 
-  NGINX_DIR: docker-compose/nginx
+  NGINX_DIR: yohrannes-com/docker-compose/nginx
   NGINX_IMAGE_NAME: yohrannes/nginx
   
   IMAGE_TAG: latest
@@ -47,10 +47,11 @@ deploy-dk-hub-amd:
   script:
     - mkdir -p repos-gitlab
     - cd repos-gitlab
-    - git clone https://gitlab.com/yohrannes/website-portifolio.git
+    - git clone --recurse-submodules https://gitlab.com/yohrannes/website-portifolio.git
     - cd website-portifolio
     - git checkout docker-registry
     - git pull origin docker-registry
+    - git submodule update --init --recursive
 
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
 
@@ -62,7 +63,7 @@ deploy-dk-hub-amd:
     - cd $APP_DIR
     - docker buildx build --platform linux/amd64 -t $IMAGE_NAME:$NEW_TAG-amd64 --load .
 
-    - cd ../../$NGINX_DIR
+    - cd ../../../$NGINX_DIR
     - docker buildx build --platform linux/amd64 -t $NGINX_IMAGE_NAME:$NEW_TAG-amd64 --load .
 
     - docker push $IMAGE_NAME:$NEW_TAG-amd64
@@ -79,17 +80,18 @@ deploy-dk-hub-arm:
   script:
     - mkdir -p repos-gitlab
     - cd repos-gitlab
-    - git clone https://gitlab.com/yohrannes/website-portifolio.git
+    - git clone --recurse-submodules https://gitlab.com/yohrannes/website-portifolio.git
     - cd website-portifolio
     - git checkout docker-registry
     - git pull origin docker-registry
+    - git submodule update --init --recursive
 
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
 
     - cd $APP_DIR
     - docker build -t $IMAGE_NAME:$NEW_TAG-arm64 .
     
-    - cd ../../$NGINX_DIR
+    - cd ../../../$NGINX_DIR
     - docker build -t $NGINX_IMAGE_NAME:$NEW_TAG-arm64 .  
 
     - docker push $IMAGE_NAME:$NEW_TAG-arm64

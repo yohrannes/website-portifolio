@@ -44,11 +44,12 @@ deploy-app-dkcmpose:
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP "
         mkdir -p repos-git && cd repos-git
         if [ ! -d website-portifolio ]; then
-          git clone https://gitlab.com/yohrannes/website-portifolio.git
+          git clone --recurse-submodules https://gitlab.com/yohrannes/website-portifolio.git
         fi
         cd website-portifolio
         git checkout main && git pull origin main
-        cd docker-compose
+        git submodule update --init --recursive
+        cd yohrannes-com/docker-compose
         sudo docker compose down
         sudo docker system prune -a -f
       "
@@ -57,7 +58,7 @@ deploy-app-dkcmpose:
       set +x
       echo "Deploying application via Docker Compose..."
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP "
-        sudo docker compose -f repos-git/website-portifolio/docker-compose/docker-compose.yml up -d
+        sudo docker compose -f repos-git/website-portifolio/yohrannes-com/docker-compose/docker-compose.yml up -d
       "
       echo "Deployment on failover instance completed."
 
