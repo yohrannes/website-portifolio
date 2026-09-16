@@ -1,3 +1,6 @@
-[submodule "yohrannes-com"]
-	path = yohrannes-com
-	url = https://github.com/yohrannes/yohrannes.com.git
+[submodule "docker-compose"]
+    path = docker-compose
+    url = https://github.com/yohrannes/yohrannes.com.git
+[submodule "kubernetes"]
+    path = kubernetes
+    url = https://github.com/yohrannes/yohrannes.com.git
