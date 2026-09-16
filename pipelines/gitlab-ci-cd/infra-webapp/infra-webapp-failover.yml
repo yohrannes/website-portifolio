@@ -131,17 +131,11 @@ run-containers:
         cd repos-git
         git clone https://gitlab.com/yohrannes/website-portifolio.git
         cd website-portifolio
-        git submodule add -b main https://github.com/yohrannes/yohrannes.com.git docker-compose
-        git submodule add -b main https://github.com/yohrannes/yohrannes.com.git kubernetes
-        cd docker-compose
-        git sparse-checkout init --cone
-        git sparse-checkout set docker-compose
-        cd ..
-        cd kubernetes
-        git sparse-checkout init --cone
-        git sparse-checkout set kubernetes
-        cd ..
         git checkout infra-webapp-failover
+        curl -L https://github.com/yohrannes/yohrannes.com/archive/refs/heads/main.tar.gz | \
+        tar -xz --strip-components=1 "yohrannes.com-main/docker-compose"
+        curl -L https://github.com/yohrannes/yohrannes.com/archive/refs/heads/main.tar.gz | \
+        tar -xz --strip-components=1 "yohrannes.com-main/kubernetes"
         git fetch origin infra-webapp-failover
         git pull origin infra-webapp-failover
 
