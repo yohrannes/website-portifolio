@@ -47,9 +47,11 @@ plan
 
 # Website docker-compose environment
 docker-compose/*
+!docker-compose/.gitkeep
 
 # Website kubernetes environment
 kubernetes/*
+!kubernetes/.gitkeep
 
 .terraform.d
 terraform/modules/instance_oracle/.terraform.d
