@@ -45,6 +45,11 @@ terraform/.terraform.lock.hcl
 *.key
 plan
 
+# Website docker-compose environment
+docker-compose/*
+
+# Website kubernetes environment
+kubernetes/*
 
 .terraform.d
 terraform/modules/instance_oracle/.terraform.d
