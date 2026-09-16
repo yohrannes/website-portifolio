@@ -129,8 +129,10 @@ run-containers:
         sudo rm -rf repos-git
         mkdir -p repos-git
         cd repos-git
-        git clone --recurse-submodules https://gitlab.com/yohrannes/website-portifolio.git
+        git clone https://gitlab.com/yohrannes/website-portifolio.git
         cd website-portifolio
+        git submodule add -b main https://github.com/yohrannes/yohrannes.com.git docker-compose
+        git submodule add -b main https://github.com/yohrannes/yohrannes.com.git kubernetes
         git checkout infra-webapp-failover
         git fetch origin infra-webapp-failover
         git pull origin infra-webapp-failover
