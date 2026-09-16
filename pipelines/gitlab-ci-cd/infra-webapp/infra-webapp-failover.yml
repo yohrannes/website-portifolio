@@ -133,10 +133,17 @@ run-containers:
         cd website-portifolio
         git submodule add -b main https://github.com/yohrannes/yohrannes.com.git docker-compose
         git submodule add -b main https://github.com/yohrannes/yohrannes.com.git kubernetes
+        cd docker-compose
+        git sparse-checkout init --cone
+        git sparse-checkout set docker-compose
+        cd ..
+        cd kubernetes
+        git sparse-checkout init --cone
+        git sparse-checkout set kubernetes
+        cd ..
         git checkout infra-webapp-failover
         git fetch origin infra-webapp-failover
         git pull origin infra-webapp-failover
-        git submodule update --init --recursive
 
         export F2B_HTTP_INJ_FILTER_B64=${F2B_HTTP_INJ_FILTER_B64}
         export COMPOSE_BAKE=true
@@ -159,7 +166,7 @@ run-containers:
 
         echo ${F2B_HTTP_INJ_FILTER_DECODED} >> /tmp/export.txt
 
-        cd yohrannes-com/docker-compose
+        cd docker-compose
         sudo docker compose down --remove-orphans
         sudo -E docker compose up -d --build --force-recreate --remove-orphans --quiet-pull
       " > /dev/null
