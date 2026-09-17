@@ -28,8 +28,6 @@ delete-old-runner-gl-api:
         exit 1
       fi
 
-## ITLAB_TOKEN_RUNNER_ADMIN crompromised!!!! RE_CREATE IT
-
 create-runner-gl-api:
   stage: check-infra
   needs:

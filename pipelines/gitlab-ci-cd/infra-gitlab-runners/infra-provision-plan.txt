@@ -1,0 +1,5 @@
+pipeline reconfiguration process
+
+1 - create runner1 (actual runner2.yml).
+2 - create infra-webapp-failover and also runner2 (actual runner1.yml), using runner1.
+3 - create oci-oke-aways-free.yml and also runner3 (actual runner3.yml), using runner1.
