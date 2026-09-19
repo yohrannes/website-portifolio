@@ -10,7 +10,7 @@ include:
   - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
 
 variables:
-  TF_WORKSPACE: "webapp_failover_prod"
+  TF_WORKSPACE: "webapp_prod"
   TF_TARGET_ADDRS: 'module.webapp_failover'
 
 trigger-terraform-run:
