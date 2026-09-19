@@ -42,7 +42,7 @@ get-instance-ip-from-tf-cloud:
         --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
         --header "Content-Type: application/vnd.api+json" \
         "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_WORKSPACE" \
-        | jq -r '.data[0].id')
+        | jq -r '.data.id')
     
     - |
       STATE_VERSION_ID=$(curl -s \
