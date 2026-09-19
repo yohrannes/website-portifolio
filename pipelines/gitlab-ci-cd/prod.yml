@@ -66,9 +66,9 @@ deploy-app-k8s-cluster:
   tags:
     - runner2
   when: manual
-  needs:
-    - oci-oke-auth
-  extends: .oci-oke-auth
+#  needs:
+#    - oci-oke-auth
+#  extends: .oci-oke-auth
   stage: deploy
   script:
     - |
