@@ -1,7 +1,7 @@
 set-failover-healthcheck-dns-update:
   stage: pre-deploy
   tags:
-    - runner2
+    - runner1
   when: manual
   script:
     - |
