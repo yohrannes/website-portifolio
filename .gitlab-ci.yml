@@ -36,7 +36,7 @@ include:
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner3"
 
-  - local: 'pipelines/gitlab-ci-cd/exploration.yml'
+  - local: 'pipelines/gitlab-ci-cd/tests/exploration.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "exploration/oke-capabilities"
 

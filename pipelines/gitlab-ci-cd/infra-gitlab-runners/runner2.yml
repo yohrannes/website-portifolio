@@ -1,96 +1,4 @@
 ---
-include:
-  - local: 'pipelines/gitlab-ci-cd/terraform/trigger-run.yml'
-  - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
-
-variables:
-  TF_WORKSPACE: "runner2_prod"
-  TF_TARGET_ADDRS: 'module.runner2'
-
-trigger-terraform-run:
-  stage: tf-run
-#  when: manual
-  extends:
-    - .trigger-terraform-run
-
-terraform-apply:
-  stage: tf-apply
-#  when: manual
-  extends: .terraform-apply
-  needs:
-    - trigger-terraform-run
-
-get-instance-ip-from-tf-cloud:
-  stage: check-infra
-  script:
-    - |
-      WORKSPACE_ID=$(curl -s \
-        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
-        --header "Content-Type: application/vnd.api+json" \
-        "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_CLOUD_WORKSPACE" \
-        | jq -r '.data[0].id')
-    
-    - |
-      STATE_VERSION_ID=$(curl -s \
-        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
-        --header "Content-Type: application/vnd.api+json" \
-        "https://app.terraform.io/api/v2/organizations/$TF_CLOUD_ORG/workspaces/$TF_CLOUD_WORKSPACE" \
-        | jq -r '.data[0].relationships["current-state-version"].data.id')
-    
-    - |
-      INSTANCE_PUBLIC_IP=$(curl -s \
-        --header "Authorization: Bearer $TF_CLOUD_TOKEN" \
-        --header "Content-Type: application/vnd.api+json" \
-        "https://app.terraform.io/api/v2/state-versions/$STATE_VERSION_ID/outputs" \
-        | jq -r '.data[] | select(.attributes.name == "runner2_pub_ip") | .attributes.value')
-    
-      if [ -z "$INSTANCE_PUBLIC_IP" ] || [ "$INSTANCE_PUBLIC_IP" = "null" ]; then
-        echo "ERROR: Failed to extract IP address"
-        exit 1
-      fi
-
-    - |
-      curl --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
-        --request PUT \
-        --form "value=$INSTANCE_PUBLIC_IP" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_RUNNER2_IP" \
-        > /dev/null 2>&1
-
-### Task - implement startup script check method used on webapp_failover_pipeline
-check-startup-script:
-  stage: check-infra
-  tags:
-    - runner1
-  needs:
-    - get-instance-ip-from-tf-cloud
-  script:
-    - mkdir -p ~/.ssh
-    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
-    - chmod 600 ~/.ssh/id_rsa
-    - |
-      sleep 15
-      while true; do
-        ssh -o StrictHostKeyChecking=no \
-            -o UserKnownHostsFile=/dev/null \
-            -o ConnectTimeout=10 \
-            -o ServerAliveInterval=30 \
-            -i ~/.ssh/id_rsa \
-            ubuntu@$PROD_RUNNER2_IP \
-            "timeout 300 bash -c '
-              while true; do
-                if [ -f /var/log/startup-script.log ] && [ -r /var/log/startup-script.log ]; then
-                  if tail -n1 /var/log/startup-script.log 2>/dev/null | grep \"startup-script-finished\"; then
-                    echo \"Startup script finished!\"
-                    exit 0
-                  fi
-                else
-                  echo \"Waiting for startup script log...\"
-                fi
-                sleep 3
-              done
-            '" && break || echo 'Retrying connection in 5 seconds...'
-        sleep 5
-      done
 
 delete-old-runner-gl-api:
   stage: check-infra
@@ -141,13 +49,13 @@ create-runner-gl-api:
         --request PUT \
         --form "value=$RUNNER_TOKEN" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER2_TOKEN_CREATED"
-
+ 
 authorize-runner:
   stage: check-infra
   tags:
     - runner1
   needs:
-    - check-startup-script
+    - create-runner-gl-api
   script:
     - |
       mkdir -p ~/.ssh
@@ -157,45 +65,16 @@ authorize-runner:
         --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
         "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/GITLAB_RUNNER2_TOKEN_CREATED" \
         | jq -r '.value')
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_RUNNER2_IP "
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP "
+        sudo gitlab-runner unregister --all-runners || true
         sudo gitlab-runner register \
           --non-interactive \
-          --url "https://gitlab.com/" \
-          --token "$RUNNER_TOKEN" \
-          --executor "shell" \
-          --description "shell-runner2-gcp-e2-micro"
+          --url 'https://gitlab.com/' \
+          --token '$RUNNER_TOKEN' \
+          --executor 'shell' \
+          --description 'shell-runner2-oci-a1-flex'
         sudo usermod -a -G sudo gitlab-runner
         sudo usermod -aG docker gitlab-runner
         sudo gitlab-runner restart
         exit
       "
-
-pause-local-runner:
-  needs:
-    - authorize-runner
-  stage: check-infra
-  tags:
-    - runner1
-  script:
-    - |
-      RUNNERS=$(curl -s --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/runners?tag_list=local-runner-shell")
-
-      RUNNER_ID=$(echo "$RUNNERS" | jq -r '.[].id')
-
-      if [ -z "$RUNNER_ID" ] || [ "$RUNNER_ID" = "null" ]; then
-        echo "Runner not found "
-        exit 1
-      fi
-
-      echo "Runner found"
-
-      HTTP_CODE=$(curl -s --output /dev/null --write-out "%{http_code}" \
-        --request PUT \
-        --header "PRIVATE-TOKEN: $GITLAB_TOKEN_RUNNER_ADMIN" \
-        --form "paused=true" \
-        "https://gitlab.com/api/v4/runners/$RUNNER_ID")
-
-      if [ "$HTTP_CODE" = "200" ]; then
-        echo "Runner paused with success"
-      fi

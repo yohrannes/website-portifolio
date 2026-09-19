@@ -1,0 +1,100 @@
+================================================================================
+REVISED INFRASTRUCTURE PROVISIONING & RUNNER RECONFIGURATION GUIDE
+================================================================================
+Target Repository: website-portifolio
+Directory: pipelines/gitlab-ci-cd/infra-gitlab-runners/
+Context & Directives:
+  1. Bootstrap Scope: SPECIFICALLY AND EXCLUSIVELY `runner1.yml` is executed by
+     the initial local runner (`local-runner-shell`).
+  2. Handover: Once Runner 1 (GCP) is registered, `local-runner-shell` is paused.
+     The local runner performs NO other provisioning or deployments.
+  3. Cloud Execution: Runner 1 (GCP) takes over 100% of cloud CI/CD execution,
+     provisioning OCI failover (`infra-webapp-failover.yml`) and Runner 2 (`runner2.yml`).
+  4. OKE Cluster provisioning is DEFERRED (not provisioned at this stage).
+  5. Brief website downtime is ACCEPTABLE during failover stack redeployment.
+  6. ZERO extra or parallel cloud resources (re-utilizes existing GCP and OCI VMs).
+================================================================================
+
+1. NEW ARCHITECTURAL ROLE MATRIX
+--------------------------------------------------------------------------------
++------------------+-----------------------+-----------------------+-----------------------+
+| Attribute        | Local Bootstrap Runner| Runner 1 (GCP)        | Runner 2 (OCI)        |
++------------------+-----------------------+-----------------------+-----------------------+
+| Host Location    | Local Workstation     | Google Cloud Platform | Oracle Cloud (OCI)    |
+| Compute Type     | Local Host / ThinkPad | e2-micro (Free Tier)  | VM.Standard.A1.Flex   |
+| CPU Architecture | Local Architecture    | AMD64 (x86_64)        | ARM64 (aarch64)       |
+| GitLab Tag       | `local-runner-shell`  | `runner1`             | `runner2`             |
+| Execution Scope  | EXCLUSIVELY executes  | Primary Cloud Runner: | Workload Host Runner: |
+|                  | `runner1.yml`. Paused | - Executes IaC/SSH    | - Runs ARM64 builds   |
+|                  | immediately after.    | - Provisions OCI      | - Hosts Docker Compose|
+|                  |                       | - Registers Runner 2  | - Local container ops |
++------------------+-----------------------+-----------------------+-----------------------+
+
+
+2. STEP-BY-STEP RECONFIGURATION ROADMAP
+--------------------------------------------------------------------------------
+
+[STAGE 0: LOCAL BOOTSTRAP RUNNER ACTIVATION]
+Goal: Ensure `local-runner-shell` is registered and online to run `runner1.yml`.
+1. Verify `local-runner-shell` is running on the local workstation.
+2. If registration token is needed:
+   `glab api -X POST user/runners -F "runner_type=project_type" -F "tag_list=local-runner-shell" -F "description=local-runner-shell"`
+3. Register locally:
+   `sudo gitlab-runner register --url "https://gitlab.com/" --token "<TOKEN>" --executor "shell" --tag-list "local-runner-shell"`
+4. Verify `local-runner-shell` is online in GitLab CI.
+
+
+[STAGE 1: RUNNER 1 (GCP) PROVISIONING VIA LOCAL RUNNER]
+Goal: `local-runner-shell` executes `runner1.yml` to provision/register Runner 1 and pause itself.
+1. Trigger pipeline on branch `infra-runner1`.
+2. Pipeline jobs execute EXCLUSIVELY on `tags: [ local-runner-shell ]`:
+   a) `trigger-terraform-run`: Triggers HCP Terraform workspace `runner2_prod`.
+   b) `terraform-apply`: Ensures GCP VM state is consistent.
+   c) `get-instance-ip-from-tf-cloud`: Retrieves GCP public IP and updates `PROD_RUNNER1_IP`.
+   d) `check-startup-script`: Verifies SSH reachability to GCP VM.
+   e) `delete-old-runner-gl-api`: Cleans old runner1 tokens if present.
+   f) `create-runner-gl-api`: Generates new token with tag `runner1`, stores in `GITLAB_RUNNER1_TOKEN_CREATED`.
+   g) `authorize-runner`: SSHs to GCP VM and registers `shell-runner1-gcp-e2-micro`.
+   h) `pause-local-runner`: Calls GitLab API to pause `local-runner-shell`.
+3. Handover Complete: `local-runner-shell` is now paused; `runner1` is live and online in GitLab.
+
+
+[STAGE 2: PROVISION OCI FAILOVER & ESTABLISH RUNNER 2 (VIA RUNNER 1)]
+Goal: Runner 1 (GCP) synchronizes OCI failover VM and registers Runner 2.
+*Notice: `local-runner-shell` is NOT involved in this stage.*
+
+Step 2.1: Synchronize OCI Failover Stack (`infra-webapp-failover.yml`)
+- Trigger pipeline on branch `infra-webapp-failover`.
+- Executed on `tags: runner1` (GCP e2-micro):
+  1. `trigger-terraform-run` & `terraform-apply`: Synchronizes OCI VM via Terraform Cloud.
+  2. `get-instance-ip`: Retrieves OCI public IP and updates `PROD_RUNNER2_IP` and `PROD_WEBAPP_FAILOVER_IP`.
+  3. `check-startup-script`: Verifies SSH reachability to OCI VM.
+  4. `run-containers`: Pulls repo and deploys Docker Compose webapp stack.
+
+Step 2.2: Register Runner 2 on OCI A1-Flex (`runner2.yml`)
+- Trigger pipeline on branch `infra-runner2`.
+- Executed on `tags: runner1` (GCP e2-micro):
+  1. Generates runner token with tag `runner2` via GitLab API.
+  2. Connects to OCI VM via SSH (`ubuntu@$PROD_WEBAPP_FAILOVER_IP`).
+  3. Registers `gitlab-runner` as `shell-runner2-oci-a1-flex` with tag `runner2`.
+- Verify in GitLab UI that `runner2` is online with tag `runner2`.
+
+
+[STAGE 3: PIPELINE CROSS-TAG ALIGNMENT]
+Goal: Route cloud workloads according to CPU architecture.
+- `dev.yml`: ARM64 builds and security scans -> `tags: - runner2` (OCI ARM64).
+- `docker-registry.yml`:
+  * `deploy-dk-hub-amd` -> `tags: [ runner1 ]` (GCP AMD64).
+  * `deploy-dk-hub-arm` -> `tags: [ runner2 ]` (OCI ARM64).
+- `prod.yml`:
+  * `set-failover-healthcheck-dns-update` -> `tags: [ runner1 ]` (GCP AMD64).
+  * `deploy-app-dkcmpose` -> `tags: [ runner2 ]` (OCI ARM64).
+
+
+[STAGE 4: DEFERRED OKE CLUSTER & RUNNER 3 (FUTURE ROADMAP)]
+Goal: Provision OKE Kubernetes cluster and Runner 3 when required.
+- `pipelines/gitlab-ci-cd/infra-webapp/k8s-cluster/oci-oke-aways-free.yml` and
+  `pipelines/gitlab-ci-cd/infra-gitlab-runners/runner3.yml` remain dormant.
+- When activated, Runner 1 (GCP) will orchestrate the OKE cluster creation and
+  deploy Runner 3 (Helm) into Kubernetes.
+================================================================================

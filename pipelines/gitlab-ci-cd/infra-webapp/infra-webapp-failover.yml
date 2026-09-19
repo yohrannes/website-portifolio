@@ -15,17 +15,23 @@ variables:
 
 trigger-terraform-run:
   stage: tf-run
+  tags:
+    - runner1
   extends:
     - .trigger-terraform-run
 
 terraform-apply:
   stage: tf-apply
+  tags:
+    - runner1
   extends: .terraform-apply
   needs:
     - trigger-terraform-run
 
 get-instance-ip:
   stage: check-infra
+  tags:
+    - runner1
   script:
     - |
       WORKSPACE_ID=$(curl -s \
@@ -73,7 +79,7 @@ get-instance-ip:
         --header "PRIVATE-TOKEN: $GL_TOKEN_VARS_ADMIN" \
         --request PUT \
         --form "value=$INSTANCE_PUBLIC_IP" \
-        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_RUNNER1_IP") >  /dev/null 2>&1
+        "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/PROD_RUNNER2_IP") >  /dev/null 2>&1
       
       HTTP_CODE=$(echo "$RESPONSE" | tail -n1)
       echo "HTTP Status: $HTTP_CODE"
@@ -85,6 +91,8 @@ get-instance-ip:
 
 check-startup-script:
   stage: check-infra
+  tags:
+    - runner1
   needs:
     - get-instance-ip
   script:
@@ -117,6 +125,8 @@ check-startup-script:
 
 run-containers:
   stage: deploy-webapp
+  tags:
+    - runner1
   needs:
     - check-startup-script
   before_script:
