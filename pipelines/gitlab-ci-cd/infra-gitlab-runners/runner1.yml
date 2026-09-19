@@ -12,7 +12,7 @@ include:
   - local: 'pipelines/gitlab-ci-cd/terraform/apply.yml'
 
 variables:
-  TF_WORKSPACE: "default"
+  TF_WORKSPACE: "webapp_prod"
   TF_TARGET_ADDRS: 'module.runner1'
 
 trigger-terraform-run:
