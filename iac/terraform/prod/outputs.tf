@@ -15,9 +15,9 @@ output "availability_domain" {
 
 ## RUNNER2 OUTPUTS
 
-output "runner2_pub_ip" {
+output "runner1_pub_ip" {
   description = "The public IP address of the GCP FREE TIER MICRO AMD (Gitlab Runner instance)"
-  value       = module.runner2.instance_public_ip
+  value       = module.runner1.instance_public_ip
 }
 
 ## WEBAPP FAILOVER OUTPUTS

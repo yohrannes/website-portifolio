@@ -8,7 +8,7 @@
   # insert the 1 required variable here
 #}
 
-module "runner2" {
+module "runner1" {
   project_id          = var.project_id                        # Required
   source              = "yohrannes/e2-micro-free-tier/google" # Check if there exist an instance image with gitlab-runner already installed.
   version             = "v8.6.13"
