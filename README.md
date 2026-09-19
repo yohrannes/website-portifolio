@@ -82,29 +82,14 @@ The repository supports two deployment models, demonstrating flexibility for dif
 
 ---
 
-## Running the Environment Locally
+## Running the Environment
 
-### Prerequisites
-- Docker & Docker Compose
-- Git
+### Requiring tools
+#### Obrigatory tools
+#### Recomended tools
 
-### Steps
-1.  **Clone the repository:**
-    ```bash
-    git clone https://gitlab.com/yohrannes/website-portifolio.git
-    cd website-portifolio
-    ```
+### Authentication requirements steps
 
-2.  **Bring up the containers:**
-    ```bash
-    docker compose up -d --build
-    ```
-    This command will build the images and start all services in the background.
-
-3.  **Access the services:**
-    - **Website**: `http://localhost`
-    - **Grafana**: `http://localhost:3000`
-    - **Nginx Metrics**: `http://localhost/status`
 
 ---
 

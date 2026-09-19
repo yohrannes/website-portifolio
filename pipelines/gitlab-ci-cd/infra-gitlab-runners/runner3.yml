@@ -2,14 +2,14 @@
 
 oci-oke-auth:
   tags:
-    - runner2
+    - runner1
   stage: check-infra
   extends: .oci-oke-auth
 
 delete-old-runner:
   stage: check-infra
   tags:
-    - runner2
+    - runner1
   script:
     - |
       set +x
@@ -40,7 +40,7 @@ delete-old-runner:
 create-runner:
   stage: check-infra
   tags:
-    - runner2
+    - runner1
   needs:
     - delete-old-runner
   script:
@@ -71,7 +71,7 @@ create-runner:
 deploy-runner:
   stage: check-infra
   tags:
-    - runner2
+    - runner1
   extends: .oci-oke-auth
   needs:
     - create-runner
