@@ -53,18 +53,17 @@ deploy-app-dkcmpose:
         sudo docker ps -aq | xargs -r sudo docker rm -f
         sudo docker system prune -a -f
 
-        cat <<EOF > .env
-COMPOSE_BAKE=true
-MY_UID=\$(id -u)
-MY_GID=\$(id -g)
-PUID=\$(id -u)
-PGID=\$(id -g)
-F2B_HTTP_INJ_FILTER_B64=${F2B_HTTP_INJ_FILTER_B64}
-EOF
+        echo "Generating .env file for Docker Compose..."
+        printf "COMPOSE_BAKE=true\n" > .env
+        printf "MY_UID=\$(id -u)\n" >> .env
+        printf "MY_GID=\$(id -g)\n" >> .env
+        printf "PUID=\$(id -u)\n" >> .env
+        printf "PGID=\$(id -g)\n" >> .env
+        printf "F2B_HTTP_INJ_FILTER_B64=%s\n" "${F2B_HTTP_INJ_FILTER_B64}" >> .env
 
-        if [ -n \"${F2B_HTTP_INJ_FILTER_B64}\" ]; then
-          F2B_DECODED=\$(echo \"${F2B_HTTP_INJ_FILTER_B64}\" | base64 --decode 2>/dev/null || true)
-          echo \"F2B_HTTP_INJ_FILTER_DECODED=\\\"\$F2B_DECODED\\\"\" >> .env
+        if [ -n "${F2B_HTTP_INJ_FILTER_B64}" ]; then
+          F2B_DECODED=\$(echo "${F2B_HTTP_INJ_FILTER_B64}" | base64 --decode 2>/dev/null || true)
+          printf "F2B_HTTP_INJ_FILTER_DECODED=\"%%s\"\n" "\$F2B_DECODED" >> .env
         fi
         chmod 600 .env
       "
