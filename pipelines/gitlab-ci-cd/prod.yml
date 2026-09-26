@@ -32,7 +32,10 @@ deploy-app-dkcmpose:
   tags:
     - runner1
   stage: deploy
-  when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH == "infra-webapp-failover"
+      when: manual
+    - if: $CI_COMMIT_BRANCH == "main"
   before_script:
     - |
       set +x
@@ -65,7 +68,10 @@ deploy-app-dkcmpose:
 deploy-app-k8s-cluster:
   tags:
     - runner1
-  when: manual
+  rules:
+    - if: $CI_COMMIT_BRANCH == "infra-webapp-failover"
+      when: manual
+    - if: $CI_COMMIT_BRANCH == "main"
 #  needs:
 #    - oci-oke-auth
 #  extends: .oci-oke-auth
