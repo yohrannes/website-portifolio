@@ -123,9 +123,6 @@ check-startup-script:
         sleep 5
       done
 
-
-      " > /dev/null
-
       
       
 
