@@ -46,7 +46,7 @@ include:
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-webapp-failover"
 
-  - local: 'pipelines/gitlab-ci-cd/infra-webapp/k8s-cluster/oci-oke-aways-free.yml'
+  - local: 'pipelines/gitlab-ci-cd/infra-webapp/infra-webapp.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-webapp"
 
