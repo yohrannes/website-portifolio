@@ -44,11 +44,11 @@ deploy-app-dkcmpose:
         fi
         cd website-portifolio
         git checkout main && git pull origin main
-        git submodule update --init --recursive
+        curl -L https://github.com/yohrannes/yohrannes.com/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 "yohrannes.com-main/docker-compose"
         ls
         cd docker-compose
         sudo docker ps -aq | xargs -r sudo docker rm -f
-        sudo docker system prune -a -f
+        sudo docker system prune -af
       "
 
 #        echo COMPOSE_BAKE=true > .env
@@ -64,7 +64,7 @@ deploy-app-dkcmpose:
       set +x
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP '
         cd repos-git/website-portifolio/docker-compose
-        whoami && pwd
+        whoami && pwd && ls
         sudo docker compose up -d --quiet-pull
       '
 
