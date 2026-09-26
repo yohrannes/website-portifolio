@@ -41,7 +41,7 @@ deploy-dk-hub-amd:
   stage: deploy-image
   needs:
     - get-image-tag
-  tags: [ "runner2" ]
+  tags: [ "runner1" ]
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
@@ -63,7 +63,8 @@ deploy-dk-hub-amd:
     - cd $APP_DIR
     - docker buildx build --platform linux/amd64 -t $IMAGE_NAME:$NEW_TAG-amd64 --load .
 
-    - cd ../../../$NGINX_DIR
+    - cd -
+    - cd $NGINX_DIR
     - docker buildx build --platform linux/amd64 -t $NGINX_IMAGE_NAME:$NEW_TAG-amd64 --load .
 
     - docker push $IMAGE_NAME:$NEW_TAG-amd64
@@ -74,7 +75,7 @@ deploy-dk-hub-arm:
   stage: deploy-image
   needs:
     - get-image-tag
-  tags: [ "runner1" ]
+  tags: [ "runner2" ]
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
@@ -102,7 +103,7 @@ deploy-dk-hub-arm:
 
 deploy-dk-hub:
   stage: deploy-image
-  tags: [ "runner1" ]
+  tags: [ "runner2" ]
   needs:
     - deploy-dk-hub-amd
     - deploy-dk-hub-arm

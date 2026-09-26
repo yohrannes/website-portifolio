@@ -1,5 +1,16 @@
-.gitlab-ci.yml linguist-language=YAML
-gitlab-ci-cd/* linguist-language=YAML
+# GitHub language detection: ensure YAML files are recognized and counted in repo stats.
+**/*.yml linguist-detectable=true
+**/*.yaml linguist-detectable=true
+**/*.yml linguist-language=YAML
+**/*.yaml linguist-language=YAML
+
+# Keep the CI pipeline YAML explicitly recognized even when nested in subdirectories.
+pipelines/**/*.yml linguist-language=YAML
+pipelines/**/*.yaml linguist-language=YAML
+kubernetes/**/*.yml linguist-language=YAML
+kubernetes/**/*.yaml linguist-language=YAML
+docker-compose/**/*.yml linguist-language=YAML
+docker-compose/**/*.yaml linguist-language=YAML
 
 # Enforce LF line endings for all text files
 * text=auto eol=lf
