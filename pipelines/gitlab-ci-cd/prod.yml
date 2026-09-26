@@ -1,7 +1,7 @@
 set-failover-healthcheck-dns-update:
   stage: pre-deploy
   tags:
-    - runner2
+    - runner1
   when: manual
   script:
     - |
@@ -64,11 +64,11 @@ deploy-app-dkcmpose:
 
 deploy-app-k8s-cluster:
   tags:
-    - runner2
+    - runner1
   when: manual
-  needs:
-    - oci-oke-auth
-  extends: .oci-oke-auth
+#  needs:
+#    - oci-oke-auth
+#  extends: .oci-oke-auth
   stage: deploy
   script:
     - |

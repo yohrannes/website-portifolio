@@ -14,7 +14,7 @@ module "runner1" {
   version             = "v8.6.13"
   startup_script_path = "./startup-files/startup-script.sh"
   ssh_key_path        = var.ssh_public_key #Required
-  instance_name       = "runner2"
+  instance_name       = "runner1"
 }
 
 #Oracle cloud provider
