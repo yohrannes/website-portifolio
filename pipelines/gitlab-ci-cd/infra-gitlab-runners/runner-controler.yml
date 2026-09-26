@@ -17,3 +17,30 @@ runner2-docker-prune:
   script:
     - docker volume prune -af
     - docker system prune -af
+
+set-failover-healthcheck-dns-update:
+  stage: pre-deploy
+  tags:
+    - runner1
+  when: manual
+  script:
+    - |
+      set +x
+      ENV_FILE="/home/gitlab-runner/.gitlab-runner-env"
+      echo "Configuring failover environment variables..."
+      printf "export CLOUDFARE_ZONE_ID=\"%s\"\n" "$CLOUDFARE_ZONE_ID" > "$ENV_FILE"
+      printf "export CLOUDFARE_API_TOKEN=\"%s\"\n" "$CLOUDFARE_API_TOKEN" >> "$ENV_FILE"
+      printf "export CLFR_DNS_ID_OCI_INST_YO_COM=\"%s\"\n" "$CLFR_DNS_ID_OCI_INST_YO_COM" >> "$ENV_FILE"
+      printf "export PROD_WEBAPP_FAILOVER_IP=\"%s\"\n" "$PROD_WEBAPP_FAILOVER_IP" >> "$ENV_FILE"
+      printf "export PROD_WEBAPP_CLUSTER_IP=\"%s\"\n" "$PROD_WEBAPP_CLUSTER_IP" >> "$ENV_FILE"
+      printf "export GL_TOKEN_VARS_ADMIN=\"%s\"\n" "$GL_TOKEN_VARS_ADMIN" >> "$ENV_FILE"
+      printf "export CI_PROJECT_ID=\"%s\"\n" "$CI_PROJECT_ID" >> "$ENV_FILE"
+      chmod 600 "$ENV_FILE"
+
+      FAILOVER_SCRIPT="/home/gitlab-runner/webapp-failover-checker.sh"
+      wget -q -O "$FAILOVER_SCRIPT" \
+        https://raw.githubusercontent.com/yohrannes/website-portifolio/infra-webapp-failover/usefull-scripts/webapp-failover-checker.sh
+      chmod +x "$FAILOVER_SCRIPT"
+
+      CRON_JOB="*/1 * * * * /bin/bash -c '. /home/gitlab-runner/.gitlab-runner-env && /home/gitlab-runner/webapp-failover-checker.sh > /tmp/webapp-failover-checker.log 2>&1'"
+      (crontab -l 2>/dev/null | grep -v "webapp-failover-checker" || true ; echo "$CRON_JOB") | crontab -

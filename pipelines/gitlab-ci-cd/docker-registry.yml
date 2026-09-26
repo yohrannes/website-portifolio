@@ -111,7 +111,6 @@ deploy-dk-hub:
   script:
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
 
-    # Cria manifest multi-arch para website-portifolio
     - |
       docker buildx imagetools create \
         -t $IMAGE_NAME:$NEW_TAG \
@@ -119,7 +118,6 @@ deploy-dk-hub:
         $IMAGE_NAME:$NEW_TAG-amd64 \
         $IMAGE_NAME:$NEW_TAG-arm64
 
-    # Cria manifest multi-arch para nginx
     - |
       docker buildx imagetools create \
         -t $NGINX_IMAGE_NAME:$NEW_TAG \
