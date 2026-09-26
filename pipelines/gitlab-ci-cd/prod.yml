@@ -50,29 +50,23 @@ deploy-app-dkcmpose:
         git submodule update --init --recursive
         ls
         cd docker-compose
-        sudo docker ps -aq | xargs -r docker rm -f
+        sudo docker ps -aq | xargs -r sudo docker rm -f
         sudo docker system prune -a -f
 
-        export F2B_HTTP_INJ_FILTER_B64=${F2B_HTTP_INJ_FILTER_B64}
-        export COMPOSE_BAKE=true
-        export MY_UID=$(id -u)
-        export MY_GID=$(id -g)
+        cat <<EOF > .env
+COMPOSE_BAKE=true
+MY_UID=\$(id -u)
+MY_GID=\$(id -g)
+PUID=\$(id -u)
+PGID=\$(id -g)
+F2B_HTTP_INJ_FILTER_B64=${F2B_HTTP_INJ_FILTER_B64}
+EOF
 
-        touch /tmp/export.txt
-
-        echo ${F2B_HTTP_INJ_FILTER_B64} >> /tmp/export.txt
-        echo >> /tmp/export.txt
-        echo ${MY_UID} >> /tmp/export.txt
-        echo >> /tmp/export.txt
-        echo ${MY_GID} >> /tmp/export.txt
-        echo >> /tmp/export.txt
-        echo ${COMPOSE_BAKE} >> /tmp/export.txt
-        
-        if [ -n \"\$F2B_HTTP_INJ_FILTER_B64\" ]; then
-          export F2B_HTTP_INJ_FILTER_DECODED=\"\$(echo \$F2B_HTTP_INJ_FILTER_B64 | base64 --decode)\"
+        if [ -n \"${F2B_HTTP_INJ_FILTER_B64}\" ]; then
+          F2B_DECODED=\$(echo \"${F2B_HTTP_INJ_FILTER_B64}\" | base64 --decode 2>/dev/null || true)
+          echo \"F2B_HTTP_INJ_FILTER_DECODED=\\\"\$F2B_DECODED\\\"\" >> .env
         fi
-
-        echo ${F2B_HTTP_INJ_FILTER_DECODED} >> /tmp/export.txt
+        chmod 600 .env
       "
   script:
     - |
@@ -82,7 +76,7 @@ deploy-app-dkcmpose:
         cd repos-git/website-portifolio/docker-compose
         whoami
         pwd
-        sudo docker compose -f repos-git/website-portifolio/docker-compose/docker-compose.yml up -d --quiet-pull
+        sudo docker compose --env-file .env up -d --quiet-pull
       "
       echo "Deployment on failover instance completed."
 
