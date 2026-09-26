@@ -175,61 +175,6 @@ run-containers:
         sudo -E docker compose up -d --build --force-recreate --remove-orphans --quiet-pull
       " > /dev/null
 
-
-## dns updated method changed to cron script at runner2 <<-- review and update
-#update-dns:
-#  stage: deploy-webapp
-#  needs:
-#    - run-containers
-#  script:
-#    - |
-#      curl --request PUT \
-#        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_YO_COM \
-#        --header "Content-Type: application/json" \
-#        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
-#        --data '{
-#          "comment": "Domain verification record",
-#          "name": "yohrannes.com",
-#          "proxied": true,
-#          "settings": {},
-#          "tags": [],
-#          "ttl": 1,
-#          "content": "'"$PROD_WEBAPP_FAILOVER_IP"'",
-#          "type": "A"
-#        }' | jq '.'
-
-#    - |
-#      curl --request PUT \
-#        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_YO_COM \
-#        --header "Content-Type: application/json" \
-#        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
-#        --data '{
-#          "comment": "Domain verification record",
-#          "name": "yohrannes.com",
-#          "proxied": true,
-#          "settings": {},
-#          "tags": [],
-#          "ttl": 1,
-#          "content": "'"$PROD_WEBAPP_FAILOVER_IP"'",
-#          "type": "A"
-#        }' | jq '.'
-
-#    - |
-#      curl --request PUT \
-#        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_GRAF_YO_COM \
-#        --header "Content-Type: application/json" \
-#        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
-#        --data '{
-#          "comment": "Domain verification record",
-#          "name": "grafana.yohrannes.com",
-#          "proxied": true,
-#          "settings": {},
-#          "tags": [],
-#          "ttl": 1,
-#          "content": "yohrannes.com",
-#          "type": "CNAME"
-#        }' | jq '.'
-
       
       
 

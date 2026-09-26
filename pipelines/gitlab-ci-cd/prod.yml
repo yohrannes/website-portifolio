@@ -36,12 +36,11 @@ deploy-app-dkcmpose:
   before_script:
     - |
       set +x
-      echo "Preparing SSH authentication..."
       mkdir -p ~/.ssh
       echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
       chmod 600 ~/.ssh/id_rsa
-      echo "Synchronizing repository on failover instance..."
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP "
+        sudo rm -rf repos-git
         mkdir -p repos-git && cd repos-git
         if [ ! -d website-portifolio ]; then
           git clone --recurse-submodules https://gitlab.com/yohrannes/website-portifolio.git
@@ -50,15 +49,38 @@ deploy-app-dkcmpose:
         git checkout main && git pull origin main
         git submodule update --init --recursive
         cd yohrannes-com/docker-compose
-        sudo docker compose down
+        docker rm -vf $(docker ps -aq)
         sudo docker system prune -a -f
+
+        export F2B_HTTP_INJ_FILTER_B64=${F2B_HTTP_INJ_FILTER_B64}
+        export COMPOSE_BAKE=true
+        export MY_UID=$(id -u)
+        export MY_GID=$(id -g)
+
+        touch /tmp/export.txt
+
+        echo ${F2B_HTTP_INJ_FILTER_B64} >> /tmp/export.txt
+        echo >> /tmp/export.txt
+        echo ${MY_UID} >> /tmp/export.txt
+        echo >> /tmp/export.txt
+        echo ${MY_GID} >> /tmp/export.txt
+        echo >> /tmp/export.txt
+        echo ${COMPOSE_BAKE} >> /tmp/export.txt
+        
+        if [ -n \"\$F2B_HTTP_INJ_FILTER_B64\" ]; then
+          export F2B_HTTP_INJ_FILTER_DECODED=\"\$(echo \$F2B_HTTP_INJ_FILTER_B64 | base64 --decode)\"
+        fi
+
+        echo ${F2B_HTTP_INJ_FILTER_DECODED} >> /tmp/export.txt
       "
   script:
     - |
       set +x
       echo "Deploying application via Docker Compose..."
       ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP "
-        sudo docker compose -f repos-git/website-portifolio/yohrannes-com/docker-compose/docker-compose.yml up -d
+        whoami
+        pwd
+        sudo docker compose -f repos-git/website-portifolio/yohrannes-com/docker-compose/docker-compose.yml up -d --quiet-pull
       "
       echo "Deployment on failover instance completed."
 
