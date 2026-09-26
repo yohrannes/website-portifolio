@@ -50,7 +50,7 @@ deploy-app-dkcmpose:
         git submodule update --init --recursive
         ls
         cd docker-compose
-        docker rm -vf $(docker ps -aq)
+        docker ps -aq | xargs -r docker rm -f
         sudo docker system prune -a -f
 
         export F2B_HTTP_INJ_FILTER_B64=${F2B_HTTP_INJ_FILTER_B64}
