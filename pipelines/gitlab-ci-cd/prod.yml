@@ -39,7 +39,7 @@ deploy-app-dkcmpose:
       mkdir -p ~/.ssh
       echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
       chmod 600 ~/.ssh/id_rsa
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP "
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP '
         sudo rm -rf repos-git
         mkdir -p repos-git && cd repos-git
         if [ ! -d website-portifolio ]; then
@@ -53,30 +53,26 @@ deploy-app-dkcmpose:
         sudo docker ps -aq | xargs -r sudo docker rm -f
         sudo docker system prune -a -f
 
-        echo "Generating .env file for Docker Compose..."
-        printf "COMPOSE_BAKE=true\n" > .env
-        printf "MY_UID=\$(id -u)\n" >> .env
-        printf "MY_GID=\$(id -g)\n" >> .env
-        printf "PUID=\$(id -u)\n" >> .env
-        printf "PGID=\$(id -g)\n" >> .env
-        printf "F2B_HTTP_INJ_FILTER_B64=%s\n" "${F2B_HTTP_INJ_FILTER_B64}" >> .env
-
-        if [ -n "${F2B_HTTP_INJ_FILTER_B64}" ]; then
-          F2B_DECODED=\$(echo "${F2B_HTTP_INJ_FILTER_B64}" | base64 --decode 2>/dev/null || true)
-          printf "F2B_HTTP_INJ_FILTER_DECODED=\"%%s\"\n" "\$F2B_DECODED" >> .env
-        fi
+        echo Generating .env file for Docker Compose...
+        echo COMPOSE_BAKE=true > .env
+        echo MY_UID=$(id -u) >> .env
+        echo MY_GID=$(id -g) >> .env
+        echo PUID=$(id -u) >> .env
+        echo PGID=$(id -g) >> .env
         chmod 600 .env
+      # Append GitLab CI variables that must be injected from the runner context
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP "
+        echo F2B_HTTP_INJ_FILTER_B64=$F2B_HTTP_INJ_FILTER_B64 >> repos-git/website-portifolio/docker-compose/.env
       "
   script:
     - |
       set +x
       echo "Deploying application via Docker Compose..."
-      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP "
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP '
         cd repos-git/website-portifolio/docker-compose
-        whoami
-        pwd
+        whoami && pwd
         sudo docker compose --env-file .env up -d --quiet-pull
-      "
+      '
       echo "Deployment on failover instance completed."
 
 deploy-app-k8s-cluster:
