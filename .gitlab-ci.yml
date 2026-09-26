@@ -36,7 +36,9 @@ include:
     rules:
       - if: $CI_COMMIT_BRANCH == "infra-runner3"
 
-  - local: 'pipelines/gitlab-ci-cd/tests/exploration.yml'
+### INFRASTRUCTURE TESTS
+
+  - local: 'pipelines/gitlab-ci-cd/tests/infra-webapp/infra-webapp.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "exploration/oke-capabilities"
 
@@ -85,7 +87,6 @@ stages:
   - tf-apply
 
   - check-infra
-  - deploy-webapp
 
 ## Development pipeline Steps, to be used for Devs (main, develop).
   - check

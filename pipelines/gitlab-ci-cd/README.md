@@ -1,11 +1,17 @@
 
+1st step - runner1.yml - create google cloud instance and configure as a gitlab-runner.
+2nd step - infra-webapp-failover.yml - create webapp instance to be used as a failover if cluster goes down.
+3rd step - runner2.yml - configure webapp instance also as a gitlab-runner.
+4th step - infra-webapp.yml - create webapp cluster to host portifolio website.
+5th step - runner3.yml - configure webapp cluster also as a gitlab-runner.
 
 pipelines
 └── gitlab-ci-cd
     ├── cloud-auth
     │   └── oci-oke-auth.yml
     ├── dev.yml
-    ├── docker-registry.yml
+    ├── docker-images
+    │   └── docker-registry.yml
     ├── infra-gitlab-runners
     │   ├── runner1.yml
     │   ├── runner2.yml
@@ -13,8 +19,7 @@ pipelines
     │   └── runner-controler.yml
     ├── infra-webapp
     │   ├── infra-webapp-failover.yml
-    │   └── k8s-cluster
-    │       └── infra-webapp.yml
+    │   └── infra-webapp.yml
     ├── packer
     │   └── build-instance-image.yml
     ├── prod.yml
@@ -25,10 +30,7 @@ pipelines
     │   ├── note.txt
     │   └── trigger-run.yml
     └── tests
-        └── exploration.yml
+        └── infra-webapp
+            └── infra-webapp.yml
 
-1st step - runner1.yml - create google cloud instance and configure as a gitlab-runner.
-2nd step - infra-webapp-failover.yml - create webapp instance to be used as a failover if cluster goes down.
-3rd step - runner2.yml - configure webapp instance also as a gitlab-runner.
-4th step - infra-webapp.yml - create webapp cluster to host portifolio website.
-5th step - runner3.yml - configure webapp cluster also as a gitlab-runner.
+10 directories, 17 files
