@@ -123,6 +123,113 @@ check-startup-script:
         sleep 5
       done
 
+run-containers:
+  stage: deploy-webapp
+  tags:
+    - runner1
+  needs:
+    - check-startup-script
+  before_script:
+    - mkdir -p ~/.ssh
+    - echo "$SSH_PRIVATE_KEY_BASE64" | base64 -d > ~/.ssh/id_rsa
+    - chmod 600 ~/.ssh/id_rsa
+  script:
+    - |
+      ssh -o StrictHostKeyChecking=no -i ~/.ssh/id_rsa ubuntu@$PROD_WEBAPP_FAILOVER_IP "
+        sudo rm -rf repos-git
+        mkdir -p repos-git
+        cd repos-git
+        git clone https://gitlab.com/yohrannes/website-portifolio.git
+        cd website-portifolio
+        git checkout infra-webapp-failover
+        curl -L https://github.com/yohrannes/yohrannes.com/archive/refs/heads/main.tar.gz | \
+        tar -xz --strip-components=1 "yohrannes.com-main/docker-compose"
+        curl -L https://github.com/yohrannes/yohrannes.com/archive/refs/heads/main.tar.gz | \
+        tar -xz --strip-components=1 "yohrannes.com-main/kubernetes"
+        git fetch origin infra-webapp-failover
+        git pull origin infra-webapp-failover
+
+        export F2B_HTTP_INJ_FILTER_B64=${F2B_HTTP_INJ_FILTER_B64}
+        export COMPOSE_BAKE=true
+        export MY_UID=$(id -u)
+        export MY_GID=$(id -g)
+
+        touch /tmp/export.txt
+
+        echo ${F2B_HTTP_INJ_FILTER_B64} >> /tmp/export.txt
+        echo >> /tmp/export.txt
+        echo ${MY_UID} >> /tmp/export.txt
+        echo >> /tmp/export.txt
+        echo ${MY_GID} >> /tmp/export.txt
+        echo >> /tmp/export.txt
+        echo ${COMPOSE_BAKE} >> /tmp/export.txt
+        
+        if [ -n \"\$F2B_HTTP_INJ_FILTER_B64\" ]; then
+          export F2B_HTTP_INJ_FILTER_DECODED=\"\$(echo \$F2B_HTTP_INJ_FILTER_B64 | base64 --decode)\"
+        fi
+
+        echo ${F2B_HTTP_INJ_FILTER_DECODED} >> /tmp/export.txt
+
+        cd docker-compose
+        sudo docker compose down --remove-orphans
+        sudo -E docker compose up -d --build --force-recreate --remove-orphans --quiet-pull
+      " > /dev/null
+
+
+## dns updated method changed to cron script at runner2 <<-- review and update
+#update-dns:
+#  stage: deploy-webapp
+#  needs:
+#    - run-containers
+#  script:
+#    - |
+#      curl --request PUT \
+#        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_YO_COM \
+#        --header "Content-Type: application/json" \
+#        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
+#        --data '{
+#          "comment": "Domain verification record",
+#          "name": "yohrannes.com",
+#          "proxied": true,
+#          "settings": {},
+#          "tags": [],
+#          "ttl": 1,
+#          "content": "'"$PROD_WEBAPP_FAILOVER_IP"'",
+#          "type": "A"
+#        }' | jq '.'
+
+#    - |
+#      curl --request PUT \
+#        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_YO_COM \
+#        --header "Content-Type: application/json" \
+#        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
+#        --data '{
+#          "comment": "Domain verification record",
+#          "name": "yohrannes.com",
+#          "proxied": true,
+#          "settings": {},
+#          "tags": [],
+#          "ttl": 1,
+#          "content": "'"$PROD_WEBAPP_FAILOVER_IP"'",
+#          "type": "A"
+#        }' | jq '.'
+
+#    - |
+#      curl --request PUT \
+#        --url https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_GRAF_YO_COM \
+#        --header "Content-Type: application/json" \
+#        --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
+#        --data '{
+#          "comment": "Domain verification record",
+#          "name": "grafana.yohrannes.com",
+#          "proxied": true,
+#          "settings": {},
+#          "tags": [],
+#          "ttl": 1,
+#          "content": "yohrannes.com",
+#          "type": "CNAME"
+#        }' | jq '.'
+
       
       
 
