@@ -1,13 +1,13 @@
 ## Infrastructure and Deployment provison - full cycle.
 
 
-1st step - runner1.yml - create google cloud instance and configure as a gitlab-runner.
-2nd step - infra-webapp-failover.yml - create webapp instance to be used as a failover if cluster goes down.
-3rd step - runner2.yml - configure webapp instance also as a gitlab-runner.
-4th step - infra-webapp.yml - create webapp cluster to host portifolio website.
-5th step - runner3.yml - configure webapp cluster also as a gitlab-runner.
-6th step - dev.yml - develop website and deploy docker images to your registry.
-7th step - prod.yml - deploy website to instance (docker compose) and cluster (kubernetes).
+- 1st step - runner1.yml - create google cloud instance and configure as a gitlab-runner.
+- 2nd step - infra-webapp-failover.yml - create webapp instance to be used as a failover if cluster goes down.
+- 3rd step - runner2.yml - configure webapp instance also as a gitlab-runner.
+- 4th step - infra-webapp.yml - create webapp cluster to host portifolio website.
+- 5th step - runner3.yml - configure webapp cluster also as a gitlab-runner.
+- 6th step - dev.yml - develop website and deploy docker images to your registry.
+- 7th step - prod.yml - deploy website to instance (docker compose) and cluster (kubernetes).
 
 
 ```
