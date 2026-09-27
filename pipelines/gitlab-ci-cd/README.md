@@ -1,5 +1,12 @@
-## Infrastructure and Deployment provison - full cycle.
+## Autentication needed
+ - google cloud + locally cli - instance creation
+ - oracle cloud + locally cli - instance + cluster creation
+ - terraform cloud + locally cli - provision token + workspace config
+ - gitlab + locally cli + tokens for manage variables and create gitlab runners
+ - hashicorp (packer) + locally binary - authenticate with oci, google and hashicorp
+ - cloudfare (if needed) - token to to update your domain DNS
 
+## Infrastructure and Deployment provison - full cycle.
 
 - 1st step - runner1.yml - create google cloud instance and configure as a gitlab-runner.
 - 2nd step - infra-webapp-failover.yml - create oracle cloud instance to be used as a failover if cluster goes down.
