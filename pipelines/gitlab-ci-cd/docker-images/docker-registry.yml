@@ -3,10 +3,14 @@ variables:
   DOCKER_BUILDKIT: "1"
   IMAGE_TAG: latest
 
+## Example
+## dockerfile-dir|docker-image-name
+
   BUILD_TARGETS: |
     docker-compose/webport|yohrannes/website-portifolio
     docker-compose/nginx|yohrannes/nginx
-## dockerfile-dir|docker-image-name
+    docker-compose/observability|yohrannes/grafana
+
 
 get-image-tag:
   stage: pre-deploy
