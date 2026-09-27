@@ -4,8 +4,8 @@ variables:
   IMAGE_TAG: latest
 
   BUILD_TARGETS: |
-    yohrannes-com/docker-compose/webport|yohrannes/website-portifolio
-    yohrannes-com/docker-compose/nginx|yohrannes/nginx
+    docker-compose/webport|yohrannes/website-portifolio
+    docker-compose/nginx|yohrannes/nginx
 ## dockerfile-dir|docker-image-name
 
 get-image-tag:
@@ -32,6 +32,7 @@ get-image-tag:
     while IFS='|' read -r CTX_DIR IMG_NAME; do
       [ -z "$CTX_DIR" ] && continue
       echo "=== Build $IMG_NAME ($CTX_DIR) [$ARCH] ==="
+
       pushd "$CI_PROJECT_DIR/repos-gitlab/website-portifolio/$CTX_DIR" > /dev/null
       docker pull "$IMG_NAME:latest" || true
       docker build \
@@ -57,8 +58,7 @@ deploy-dk-hub-amd:
     - git clone https://gitlab.com/yohrannes/website-portifolio.git
     - cd website-portifolio
     - curl -L https://github.com/yohrannes/yohrannes.com/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 "yohrannes.com-main/docker-compose"
-    - git checkout docker-registry && git pull origin docker-registry
-    - git submodule update --init --recursive
+    - git checkout docker-registry
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
     - *build-all-targets
 
@@ -76,8 +76,7 @@ deploy-dk-hub-arm:
     - git clone https://gitlab.com/yohrannes/website-portifolio.git
     - cd website-portifolio
     - curl -L https://github.com/yohrannes/yohrannes.com/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 "yohrannes.com-main/docker-compose"
-    - git checkout docker-registry && git pull origin docker-registry
-    - git submodule update --init --recursive
+    - git checkout docker-registry
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
     - *build-all-targets
 
