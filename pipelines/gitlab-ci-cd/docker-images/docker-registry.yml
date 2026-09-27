@@ -6,12 +6,13 @@ variables:
   BUILD_TARGETS: |
     yohrannes-com/docker-compose/webport|yohrannes/website-portifolio
     yohrannes-com/docker-compose/nginx|yohrannes/nginx
+## dockerfile-dir|docker-image-name
 
 get-image-tag:
   stage: pre-deploy
   tags: [ "runner2" ]
   script:
-    - OLD_TAG=$(./usefull-scripts/old-dk-img-version.sh)
+    - OLD_TAG=$(./usefull-scripts/old-dk-img-version.sh yohrannes/website-portifolio)
     - NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh $OLD_TAG patch)
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
@@ -53,8 +54,9 @@ deploy-dk-hub-amd:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
     - mkdir -p repos-gitlab && cd repos-gitlab
-    - git clone --recurse-submodules https://gitlab.com/yohrannes/website-portifolio.git
+    - git clone https://gitlab.com/yohrannes/website-portifolio.git
     - cd website-portifolio
+    - curl -L https://github.com/yohrannes/yohrannes.com/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 "yohrannes.com-main/docker-compose"
     - git checkout docker-registry && git pull origin docker-registry
     - git submodule update --init --recursive
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
@@ -71,8 +73,9 @@ deploy-dk-hub-arm:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
     - mkdir -p repos-gitlab && cd repos-gitlab
-    - git clone --recurse-submodules https://gitlab.com/yohrannes/website-portifolio.git
+    - git clone https://gitlab.com/yohrannes/website-portifolio.git
     - cd website-portifolio
+    - curl -L https://github.com/yohrannes/yohrannes.com/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 "yohrannes.com-main/docker-compose"
     - git checkout docker-registry && git pull origin docker-registry
     - git submodule update --init --recursive
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
