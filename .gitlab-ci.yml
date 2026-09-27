@@ -86,7 +86,9 @@ stages:
   - tf-run
   - tf-apply
 
+## Post deploy infra Steps
   - check-infra
+  - failover
 
 ## Development pipeline Steps, to be used for Devs (main, develop).
   - check
