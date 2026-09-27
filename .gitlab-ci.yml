@@ -70,7 +70,7 @@ include:
 
 ## DOCKER IMAGES PIPELINES
 
-  - local: 'pipelines/gitlab-ci-cd/docker-registry.yml'
+  - local: 'pipelines/gitlab-ci-cd/docker-images/docker-registry.yml'
     rules:
       - if: $CI_COMMIT_BRANCH == "docker-registry"
 
