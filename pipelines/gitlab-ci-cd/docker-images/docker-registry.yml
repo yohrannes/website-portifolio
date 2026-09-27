@@ -1,34 +1,24 @@
 ---
 variables:
-  APP_DIR: yohrannes-com/docker-compose/webport
-  IMAGE_NAME: yohrannes/website-portifolio
-
-  NGINX_DIR: yohrannes-com/docker-compose/nginx
-  NGINX_IMAGE_NAME: yohrannes/nginx
-  
+  DOCKER_BUILDKIT: "1"
   IMAGE_TAG: latest
-  
-#docker-controler-deploy:
-#  stage: pre-deploy
-#  parallel: 2
-#  script:
-#    - docker system prune -a -f
+
+  BUILD_TARGETS: |
+    yohrannes-com/docker-compose/webport|yohrannes/website-portifolio
+    yohrannes-com/docker-compose/nginx|yohrannes/nginx
 
 get-image-tag:
   stage: pre-deploy
   tags: [ "runner2" ]
-
   script:
     - OLD_TAG=$(./usefull-scripts/old-dk-img-version.sh)
     - NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh $OLD_TAG patch)
-
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
       --request PUT \
       --form "value=$OLD_TAG" \
       "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/DOCKER_IMAGE_ACTUAL_TAG" \
       > /dev/null 2>&1
-
     - |
       curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
       --request PUT \
@@ -36,70 +26,58 @@ get-image-tag:
       "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/DOCKER_IMAGE_NEW_TAG" \
       > /dev/null 2>&1
 
+.build-all-targets: &build-all-targets
+  - |
+    while IFS='|' read -r CTX_DIR IMG_NAME; do
+      [ -z "$CTX_DIR" ] && continue
+      echo "=== Build $IMG_NAME ($CTX_DIR) [$ARCH] ==="
+      pushd "$CI_PROJECT_DIR/repos-gitlab/website-portifolio/$CTX_DIR" > /dev/null
+      docker pull "$IMG_NAME:latest" || true
+      docker build \
+        --build-arg BUILDKIT_INLINE_CACHE=1 \
+        --cache-from "$IMG_NAME:latest" \
+        -t "$IMG_NAME:$NEW_TAG-$ARCH" \
+        .
+      docker push "$IMG_NAME:$NEW_TAG-$ARCH"
+      popd > /dev/null
+    done <<< "$BUILD_TARGETS"
+
 
 deploy-dk-hub-amd:
   stage: deploy-image
-  needs:
-    - get-image-tag
+  needs: [ "get-image-tag" ]
   tags: [ "runner1" ]
+  variables:
+    ARCH: amd64
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
-    - mkdir -p repos-gitlab
-    - cd repos-gitlab
+    - mkdir -p repos-gitlab && cd repos-gitlab
     - git clone --recurse-submodules https://gitlab.com/yohrannes/website-portifolio.git
     - cd website-portifolio
-    - git checkout docker-registry
-    - git pull origin docker-registry
+    - git checkout docker-registry && git pull origin docker-registry
     - git submodule update --init --recursive
-
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
-
-    - docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-    
-    - docker buildx rm multiarchbuilder 2>/dev/null || true
-    - docker buildx create --use --name multiarchbuilder
-    
-    - cd $APP_DIR
-    - docker buildx build --platform linux/amd64 -t $IMAGE_NAME:$NEW_TAG-amd64 --load .
-
-    - cd -
-    - cd $NGINX_DIR
-    - docker buildx build --platform linux/amd64 -t $NGINX_IMAGE_NAME:$NEW_TAG-amd64 --load .
-
-    - docker push $IMAGE_NAME:$NEW_TAG-amd64
-    - docker push $NGINX_IMAGE_NAME:$NEW_TAG-amd64
+    - *build-all-targets
 
 
 deploy-dk-hub-arm:
   stage: deploy-image
-  needs:
-    - get-image-tag
+  needs: [ "get-image-tag" ]
   tags: [ "runner2" ]
+  variables:
+    ARCH: arm64
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
-    - mkdir -p repos-gitlab
-    - cd repos-gitlab
+    - mkdir -p repos-gitlab && cd repos-gitlab
     - git clone --recurse-submodules https://gitlab.com/yohrannes/website-portifolio.git
     - cd website-portifolio
-    - git checkout docker-registry
-    - git pull origin docker-registry
+    - git checkout docker-registry && git pull origin docker-registry
     - git submodule update --init --recursive
-
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
+    - *build-all-targets
 
-    - cd $APP_DIR
-    - docker build -t $IMAGE_NAME:$NEW_TAG-arm64 .
-    
-    - cd ../../../$NGINX_DIR
-    - docker build -t $NGINX_IMAGE_NAME:$NEW_TAG-arm64 .  
-
-    - docker push $IMAGE_NAME:$NEW_TAG-arm64
-    - docker push $NGINX_IMAGE_NAME:$NEW_TAG-arm64
-
-# Assign image with cosign job
-#  cosign sign -key ../../cosign-keys/cosign.key yohrannes/website-portifolio
 
 deploy-dk-hub:
   stage: deploy-image
@@ -111,19 +89,18 @@ deploy-dk-hub:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
   script:
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
-
     - |
-      docker buildx imagetools create \
-        -t $IMAGE_NAME:$NEW_TAG \
-        -t $IMAGE_NAME:latest \
-        $IMAGE_NAME:$NEW_TAG-amd64 \
-        $IMAGE_NAME:$NEW_TAG-arm64
-
-    - |
-      docker buildx imagetools create \
-        -t $NGINX_IMAGE_NAME:$NEW_TAG \
-        -t $NGINX_IMAGE_NAME:latest \
-        $NGINX_IMAGE_NAME:$NEW_TAG-amd64 \
-        $NGINX_IMAGE_NAME:$NEW_TAG-arm64
-
+      while IFS='|' read -r CTX_DIR IMG_NAME; do
+        [ -z "$CTX_DIR" ] && continue
+        docker buildx imagetools create \
+          -t "$IMG_NAME:$NEW_TAG" \
+          -t "$IMG_NAME:latest" \
+          "$IMG_NAME:$NEW_TAG-amd64" \
+          "$IMG_NAME:$NEW_TAG-arm64"
+      done <<< "$BUILD_TARGETS"
     - echo "Old version $DOCKER_IMAGE_ACTUAL_TAG changed to the new version $NEW_TAG"
+
+# Develop a method to define tag versioning
+# Assign image with cosign job
+#  cosign sign -key ../../cosign-keys/cosign.key yohrannes/website-portifolio
+
