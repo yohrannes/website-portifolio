@@ -9,7 +9,7 @@ variables:
   BUILD_TARGETS: |
     docker-compose/webport|yohrannes/website-portifolio
     docker-compose/nginx|yohrannes/nginx
-    docker-compose/observability|yohrannes/grafana
+    docker-compose/fail2ban|yohrannes/fail2ban
 
 
 get-image-tag:
