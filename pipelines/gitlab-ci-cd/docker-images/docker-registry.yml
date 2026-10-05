@@ -6,9 +6,9 @@ variables:
 ## Example
 ## dockerfile-dir|docker-image-name
 
-IMAGE_TARGETS: |
-  docker-compose/webport|yohrannes/website-portifolio
-  docker-compose/nginx|yohrannes/nginx
+  IMAGE_TARGETS: |
+    docker-compose/webport|yohrannes/website-portifolio
+    docker-compose/nginx|yohrannes/nginx
 
 .build-all-targets: &build-all-targets
   - |
