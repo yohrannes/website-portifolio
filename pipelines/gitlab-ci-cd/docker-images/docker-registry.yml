@@ -97,6 +97,8 @@ deploy-dk-hub:
           "$IMG_NAME:${DOCKER_IMAGE_NEW_TAG}-amd64" \
           "$IMG_NAME:${DOCKER_IMAGE_NEW_TAG}-arm64"
       done <<< "$IMAGE_TARGETS"
+    - docker buildx imagetools inspect "${IMG_NAME}:${DOCKER_IMAGE_NEW_TAG}-amd64" || { echo "missing amd64 image"; exit 1; }
+    - docker buildx imagetools inspect "${IMG_NAME}:${DOCKER_IMAGE_NEW_TAG}-arm64" || { echo "missing arm64 image"; exit 1; }
     - echo "Old version $DOCKER_IMAGE_ACTUAL_TAG changed to the new version $DOCKER_IMAGE_NEW_TAG"
 
 # Assign image with cosign job
