@@ -86,17 +86,19 @@ deploy-dk-hub:
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u "$DOCKER_REG_USER" --password-stdin
   script:
-    - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
     - |
       while IFS='|' read -r CTX_DIR IMG_NAME; do
         [ -z "$CTX_DIR" ] && continue
+        docker pull "$IMG_NAME:$DOCKER_IMAGE_NEW_TAG-amd64"
+        docker pull "$IMG_NAME:$DOCKER_IMAGE_NEW_TAG-arm64"
         docker buildx imagetools create \
-          -t "$IMG_NAME:$NEW_TAG" \
+          -t "$IMG_NAME:$DOCKER_IMAGE_NEW_TAG" \
           -t "$IMG_NAME:latest" \
-          "$IMG_NAME:$NEW_TAG-amd64" \
-          "$IMG_NAME:$NEW_TAG-arm64"
+          "$IMG_NAME:$DOCKER_IMAGE_NEW_TAG-amd64" \
+          "$IMG_NAME:$DOCKER_IMAGE_NEW_TAG-arm64"
+        docker image ls
       done <<< "$IMAGE_TARGETS"
-    - echo "Old version $DOCKER_IMAGE_ACTUAL_TAG changed to the new version $NEW_TAG"
+    - echo "Old version $DOCKER_IMAGE_ACTUAL_TAG changed to the new version $DOCKER_IMAGE_NEW_TAG"
 
 # Assign image with cosign job
 #  cosign sign -key ../../cosign-keys/cosign.key yohrannes/website-portifolio
