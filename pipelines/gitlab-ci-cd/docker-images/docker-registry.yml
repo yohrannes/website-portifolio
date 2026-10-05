@@ -90,7 +90,7 @@ deploy-dk-hub:
       while IFS='|' read -r CTX_DIR IMG_NAME; do
         [ -z "$CTX_DIR" ] && continue
         docker image ls
-        docker pull "$IMG_NAME:${DOCKER_IMAGE_NEW_TAG}-amd64" || { echo "missing amd64 image"; exit 1; }
+        docker pull --platform linux/amd64 "$IMG_NAME:${DOCKER_IMAGE_NEW_TAG}-amd64" || { echo "missing amd64 image"; exit 1; }
         docker buildx imagetools create \
           -t "$IMG_NAME:${DOCKER_IMAGE_NEW_TAG}" \
           -t "$IMG_NAME:latest" \
