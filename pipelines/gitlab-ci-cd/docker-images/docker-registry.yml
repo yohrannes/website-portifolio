@@ -6,34 +6,35 @@ variables:
 ## Example
 ## dockerfile-dir|docker-image-name
 
-  BUILD_TARGETS: |
-    docker-compose/webport|yohrannes/website-portifolio
-    docker-compose/nginx|yohrannes/nginx
-
-get-image-tag:
-  stage: pre-deploy
-  tags: [ "runner2" ]
-  script:
-    - OLD_TAG=$(./usefull-scripts/old-dk-img-version.sh yohrannes/website-portifolio)
-    - NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh $OLD_TAG patch) # major | minor | patch | v0.0.0
-    - |
-      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-      --request PUT \
-      --form "value=$OLD_TAG" \
-      "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/DOCKER_IMAGE_ACTUAL_TAG" \
-      > /dev/null 2>&1
-    - |
-      curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-      --request PUT \
-      --form "value=$NEW_TAG" \
-      "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/DOCKER_IMAGE_NEW_TAG" \
-      > /dev/null 2>&1
+IMAGE_TARGETS: |
+  docker-compose/webport|yohrannes/website-portifolio
+  docker-compose/nginx|yohrannes/nginx
 
 .build-all-targets: &build-all-targets
   - |
+    VERSION_LOCKED=false
     while IFS='|' read -r CTX_DIR IMG_NAME; do
       [ -z "$CTX_DIR" ] && continue
       echo "=== Build $IMG_NAME ($CTX_DIR) [$ARCH] ==="
+
+      if [ "$VERSION_LOCKED" = false ]; then
+        OLD_TAG=$(./usefull-scripts/old-dk-img-version.sh $IMG_NAME)
+        NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh $OLD_TAG patch) # major | minor | patch | v0.0.0
+
+        curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+          --request PUT \
+          --form "value=$OLD_TAG" \
+          "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/DOCKER_IMAGE_ACTUAL_TAG" \
+          > /dev/null 2>&1
+
+        curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
+          --request PUT \
+          --form "value=$NEW_TAG" \
+          "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/DOCKER_IMAGE_NEW_TAG" \
+          > /dev/null 2>&1
+
+        VERSION_LOCKED=true
+      fi
 
       pushd "$CI_PROJECT_DIR/repos-gitlab/website-portifolio/$CTX_DIR" > /dev/null
       docker pull "$IMG_NAME:latest" || true
@@ -44,8 +45,7 @@ get-image-tag:
         .
       docker push "$IMG_NAME:$NEW_TAG-$ARCH"
       popd > /dev/null
-    done <<< "$BUILD_TARGETS"
-
+    done <<< "$IMAGE_TARGETS"
 
 deploy-dk-hub-amd:
   stage: deploy-image
@@ -54,16 +54,14 @@ deploy-dk-hub-amd:
   variables:
     ARCH: amd64
   before_script:
-    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
+    - echo "$DOCKER_REG_PASSWORD" | docker login -u "$DOCKER_REG_USER" --password-stdin
   script:
     - mkdir -p repos-gitlab && cd repos-gitlab
-    - git clone https://gitlab.com/yohrannes/website-portifolio.git
+    - git clone $CI_REPOSITORY_URL
     - cd website-portifolio
     - curl -L https://github.com/yohrannes/yohrannes.com/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 "yohrannes.com-main/docker-compose"
     - git checkout docker-registry
-    - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
     - *build-all-targets
-
 
 deploy-dk-hub-arm:
   stage: deploy-image
@@ -72,16 +70,14 @@ deploy-dk-hub-arm:
   variables:
     ARCH: arm64
   before_script:
-    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
+    - echo "$DOCKER_REG_PASSWORD" | docker login -u "$DOCKER_REG_USER" --password-stdin
   script:
     - mkdir -p repos-gitlab && cd repos-gitlab
-    - git clone https://gitlab.com/yohrannes/website-portifolio.git
+    - git clone $CI_REPOSITORY_URL
     - cd website-portifolio
     - curl -L https://github.com/yohrannes/yohrannes.com/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 "yohrannes.com-main/docker-compose"
     - git checkout docker-registry
-    - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
     - *build-all-targets
-
 
 deploy-dk-hub:
   stage: deploy-image
@@ -90,7 +86,7 @@ deploy-dk-hub:
     - deploy-dk-hub-amd
     - deploy-dk-hub-arm
   before_script:
-    - echo "$DOCKER_REG_PASSWORD" | docker login -u yohrannes --password-stdin
+    - echo "$DOCKER_REG_PASSWORD" | docker login -u "$DOCKER_REG_USER" --password-stdin
   script:
     - NEW_TAG=$DOCKER_IMAGE_NEW_TAG
     - |
@@ -101,10 +97,9 @@ deploy-dk-hub:
           -t "$IMG_NAME:latest" \
           "$IMG_NAME:$NEW_TAG-amd64" \
           "$IMG_NAME:$NEW_TAG-arm64"
-      done <<< "$BUILD_TARGETS"
+      done <<< "$IMAGE_TARGETS"
     - echo "Old version $DOCKER_IMAGE_ACTUAL_TAG changed to the new version $NEW_TAG"
 
-# Develop a method to define tag versioning
 # Assign image with cosign job
 #  cosign sign -key ../../cosign-keys/cosign.key yohrannes/website-portifolio
 
