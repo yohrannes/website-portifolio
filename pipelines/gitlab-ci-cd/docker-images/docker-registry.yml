@@ -89,14 +89,13 @@ deploy-dk-hub:
     - |
       while IFS='|' read -r CTX_DIR IMG_NAME; do
         [ -z "$CTX_DIR" ] && continue
-        docker pull "$IMG_NAME:$DOCKER_IMAGE_NEW_TAG-amd64"
-        docker pull "$IMG_NAME:$DOCKER_IMAGE_NEW_TAG-arm64"
+        docker pull "$IMG_NAME:${DOCKER_IMAGE_NEW_TAG}-$AMD64" || { echo "missing amd64 image"; exit 1; }
+        docker pull "$IMG_NAME:${DOCKER_IMAGE_NEW_TAG}-$ARM64" || { echo "missing arm64 image"; exit 1; }
         docker buildx imagetools create \
           -t "$IMG_NAME:$DOCKER_IMAGE_NEW_TAG" \
           -t "$IMG_NAME:latest" \
           "$IMG_NAME:$DOCKER_IMAGE_NEW_TAG-amd64" \
           "$IMG_NAME:$DOCKER_IMAGE_NEW_TAG-arm64"
-        docker image ls
       done <<< "$IMAGE_TARGETS"
     - echo "Old version $DOCKER_IMAGE_ACTUAL_TAG changed to the new version $DOCKER_IMAGE_NEW_TAG"
 
