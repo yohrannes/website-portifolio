@@ -49,7 +49,6 @@ variables:
 
 deploy-dk-hub-amd:
   stage: deploy-image
-  needs: [ "get-image-tag" ]
   tags: [ "runner1" ]
   variables:
     ARCH: amd64
@@ -65,7 +64,6 @@ deploy-dk-hub-amd:
 
 deploy-dk-hub-arm:
   stage: deploy-image
-  needs: [ "get-image-tag" ]
   tags: [ "runner2" ]
   variables:
     ARCH: arm64
