@@ -36,7 +36,7 @@ variables:
         VERSION_LOCKED=true
       fi
 
-      pushd "$CI_PROJECT_DIR/repos-gitlab/website-portifolio/$CTX_DIR" > /dev/null
+      pushd "$CI_PROJECT_DIR/repos-git/$CI_PROJECT_NAME/$CTX_DIR" > /dev/null
       docker pull "$IMG_NAME:latest" || true
       docker build \
         --build-arg BUILDKIT_INLINE_CACHE=1 \
@@ -55,9 +55,9 @@ deploy-dk-hub-amd:
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u "$DOCKER_REG_USER" --password-stdin
   script:
-    - mkdir -p repos-gitlab && cd repos-gitlab
+    - mkdir -p repos-git && cd repos-git
     - git clone $CI_REPOSITORY_URL
-    - cd website-portifolio
+    - cd $CI_PROJECT_NAME
     - curl -L https://github.com/yohrannes/yohrannes.com/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 "yohrannes.com-main/docker-compose"
     - git checkout docker-registry
     - *build-all-targets
@@ -70,9 +70,9 @@ deploy-dk-hub-arm:
   before_script:
     - echo "$DOCKER_REG_PASSWORD" | docker login -u "$DOCKER_REG_USER" --password-stdin
   script:
-    - mkdir -p repos-gitlab && cd repos-gitlab
+    - mkdir -p repos-git && cd repos-git
     - git clone $CI_REPOSITORY_URL
-    - cd website-portifolio
+    - cd $CI_PROJECT_NAME
     - curl -L https://github.com/yohrannes/yohrannes.com/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 "yohrannes.com-main/docker-compose"
     - git checkout docker-registry
     - *build-all-targets
