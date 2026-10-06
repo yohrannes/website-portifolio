@@ -5,13 +5,10 @@ variables:
   APP_REP: https://github.com/yohrannes/yohrannes.com
   APP_REP_NAME: yohrannes.com
   APP_REP_BRANCH: main
-
-## Example
-## dockerfile-dir|docker-image-name
-
   IMAGE_TARGETS: |
     docker-compose/webport|yohrannes/website-portifolio
     docker-compose/nginx|yohrannes/nginx
+  ## dockerfile-dir|docker-image-name
 
 .build-all-targets: &build-all-targets
   - |
@@ -82,10 +79,11 @@ deploy-dk-hub:
     - |
       while IFS='|' read -r CTX_DIR IMG_NAME; do
         [ -z "$CTX_DIR" ] && continue
-        docker image ls
         ACTUAL_TAG=v$(./usefull-scripts/old-dk-img-version.sh $IMG_NAME)
         docker pull --platform linux/amd64 "$IMG_NAME:${ACTUAL_TAG}-amd64"
+        docker image ls | grep ${ACTUAL_TAG}
         docker pull --platform linux/arm64 "$IMG_NAME:${ACTUAL_TAG}-arm64"
+        docker image ls | grep ${ACTUAL_TAG}
         docker buildx imagetools create \
           -t "$IMG_NAME:${ACTUAL_TAG}" \
           -t "$IMG_NAME:latest" \
