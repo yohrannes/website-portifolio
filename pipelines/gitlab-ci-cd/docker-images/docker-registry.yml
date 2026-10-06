@@ -13,25 +13,15 @@ variables:
 .build-all-targets: &build-all-targets
   - |
     VERSION_LOCKED=false
+
     while IFS='|' read -r CTX_DIR IMG_NAME; do
       [ -z "$CTX_DIR" ] && continue
+
       echo "=== Build $IMG_NAME ($CTX_DIR) [$ARCH] ==="
 
       if [ "$VERSION_LOCKED" = false ]; then
         OLD_TAG=$(./usefull-scripts/old-dk-img-version.sh $IMG_NAME)
         NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh $OLD_TAG patch) # major | minor | patch | v0.0.0
-
-        curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-          --request PUT \
-          --form "value=$OLD_TAG" \
-          "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/DOCKER_IMAGE_ACTUAL_TAG" \
-          > /dev/null 2>&1
-
-        curl --header "PRIVATE-TOKEN: $GITLAB_TOKEN" \
-          --request PUT \
-          --form "value=$NEW_TAG" \
-          "https://gitlab.com/api/v4/projects/$CI_PROJECT_ID/variables/DOCKER_IMAGE_NEW_TAG" \
-          > /dev/null 2>&1
 
         VERSION_LOCKED=true
       fi
@@ -91,17 +81,16 @@ deploy-dk-hub:
         [ -z "$CTX_DIR" ] && continue
         docker image ls
         ACTUAL_TAG=$(./usefull-scripts/old-dk-img-version.sh $IMG_NAME)
-        docker pull --platform linux/amd64 "$IMG_NAME:${ACTUAL_TAG}-amd64" || { echo "missing amd64 image"; exit 1; }
         docker buildx imagetools create \
           -t "$IMG_NAME:${ACTUAL_TAG}" \
           -t "$IMG_NAME:latest" \
           "$IMG_NAME:${ACTUAL_TAG}-amd64" \
           "$IMG_NAME:${ACTUAL_TAG}-arm64"
-          docker buildx imagetools inspect "${IMG_NAME}:${ACTUAL_TAG}-amd64" || { echo "missing amd64 image"; exit 1; } || true
-          docker buildx imagetools inspect "${IMG_NAME}:${ACTUAL_TAG}-arm64" || { echo "missing arm64 image"; exit 1; } || true
       done <<< "$IMAGE_TARGETS"
+      docker buildx imagetools inspect "${IMG_NAME}:${ACTUAL_TAG}-amd64"
+      docker buildx imagetools inspect "${IMG_NAME}:${ACTUAL_TAG}-arm64"
     - echo "Old version $DOCKER_IMAGE_ACTUAL_TAG changed to the new version $ACTUAL_TAG"
-## if ACTUAL_TAG works.. delete curls...
+#        docker pull --platform linux/amd64 "$IMG_NAME:${ACTUAL_TAG}-amd64" || { echo "missing amd64 image"; exit 1; }
 
 # Assign image with cosign job
 #  cosign sign -key ../../cosign-keys/cosign.key yohrannes/website-portifolio
