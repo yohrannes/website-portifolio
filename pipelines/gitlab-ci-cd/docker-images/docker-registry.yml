@@ -2,6 +2,9 @@
 variables:
   DOCKER_BUILDKIT: "1"
   IMAGE_TAG: latest
+  APP_REP: https://github.com/yohrannes/yohrannes.com
+  APP_REP_NAME: yohrannes.com
+  APP_REP_BRANCH: main
 
 ## Example
 ## dockerfile-dir|docker-image-name
@@ -48,7 +51,7 @@ deploy-dk-hub-amd:
     - mkdir -p repos-git && cd repos-git
     - git clone $CI_REPOSITORY_URL
     - cd $CI_PROJECT_NAME
-    - curl -L https://github.com/yohrannes/yohrannes.com/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 "yohrannes.com-main/docker-compose"
+    - curl -L ${APP_REP}/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 "${APP_REP_NAME}-${APP_REP_BRANCH}/docker-compose"
     - git checkout docker-registry
     - *build-all-targets
 
@@ -63,7 +66,7 @@ deploy-dk-hub-arm:
     - mkdir -p repos-git && cd repos-git
     - git clone $CI_REPOSITORY_URL
     - cd $CI_PROJECT_NAME
-    - curl -L https://github.com/yohrannes/yohrannes.com/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 "yohrannes.com-main/docker-compose"
+    - curl -L ${APP_REP}/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 "${APP_REP_NAME}-${APP_REP_BRANCH}/docker-compose"
     - git checkout docker-registry
     - *build-all-targets
 
