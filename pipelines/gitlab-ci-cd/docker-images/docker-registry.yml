@@ -81,6 +81,7 @@ deploy-dk-hub:
         [ -z "$CTX_DIR" ] && continue
         docker image ls
         ACTUAL_TAG=$(./usefull-scripts/old-dk-img-version.sh $IMG_NAME)
+        docker pull "$IMG_NAME:${ACTUAL_TAG}-amd64" || { echo "missing amd64 image"; exit 1; }
         docker buildx imagetools create \
           -t "$IMG_NAME:${ACTUAL_TAG}" \
           -t "$IMG_NAME:latest" \
@@ -90,7 +91,6 @@ deploy-dk-hub:
       docker buildx imagetools inspect "${IMG_NAME}:${ACTUAL_TAG}-amd64"
       docker buildx imagetools inspect "${IMG_NAME}:${ACTUAL_TAG}-arm64"
     - echo "Old version $DOCKER_IMAGE_ACTUAL_TAG changed to the new version $ACTUAL_TAG"
-#        docker pull --platform linux/amd64 "$IMG_NAME:${ACTUAL_TAG}-amd64" || { echo "missing amd64 image"; exit 1; }
 
 # Assign image with cosign job
 #  cosign sign -key ../../cosign-keys/cosign.key yohrannes/website-portifolio
