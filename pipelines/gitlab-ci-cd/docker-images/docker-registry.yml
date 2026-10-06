@@ -81,7 +81,7 @@ deploy-dk-hub:
         [ -z "$CTX_DIR" ] && continue
         docker image ls
         ACTUAL_TAG=v$(./usefull-scripts/old-dk-img-version.sh $IMG_NAME)
-        docker pull "$IMG_NAME:${ACTUAL_TAG}-amd64" || { echo "missing amd64 image"; exit 1; }
+        docker pull --platform linux/amd64 "$IMG_NAME:${ACTUAL_TAG}-amd64" || { echo "missing amd64 image"; exit 1; }
         docker buildx imagetools create \
           -t "$IMG_NAME:${ACTUAL_TAG}" \
           -t "$IMG_NAME:latest" \
