@@ -90,8 +90,9 @@ deploy-dk-hub:
           "$IMG_NAME:${ACTUAL_TAG}-arm64"
       done <<< "$IMAGE_TARGETS"
 
-    - echo "Old version $DOCKER_IMAGE_ACTUAL_TAG changed to the new version $ACTUAL_TAG"
+    - echo "New version $ACTUAL_TAG"
 
+# Feature task
 # Assign image with cosign job
-#  cosign sign -key ../../cosign-keys/cosign.key yohrannes/website-portifolio
+# ex: cosign sign -key ../../cosign-keys/cosign.key $IMG_NAME
 
