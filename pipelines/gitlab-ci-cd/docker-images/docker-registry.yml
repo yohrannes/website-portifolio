@@ -27,20 +27,13 @@ variables:
       fi
 
       pushd "$CI_PROJECT_DIR/repos-git/$CI_PROJECT_NAME/$CTX_DIR" > /dev/null
-      # Use buildx with registry cache to avoid local pulls and support cross-arch runners
-      case "$ARCH" in
-        amd64) PLATFORM="linux/amd64" ;;
-        arm64) PLATFORM="linux/arm64" ;;
-        *) PLATFORM="linux/$ARCH" ;;
-      esac
-      docker buildx build \
-        --platform "$PLATFORM" \
+      docker pull "$IMG_NAME:latest" || true
+      docker build \
         --build-arg BUILDKIT_INLINE_CACHE=1 \
-        --cache-from type=registry,ref="$IMG_NAME:latest" \
-        --cache-to type=registry,ref="$IMG_NAME:buildcache-$ARCH",mode=max \
+        --cache-from "$IMG_NAME:latest" \
         -t "$IMG_NAME:$NEW_TAG-$ARCH" \
-        --push \
         .
+      docker push "$IMG_NAME:$NEW_TAG-$ARCH"
       popd > /dev/null
     done <<< "$IMAGE_TARGETS"
 
