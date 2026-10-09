@@ -1,13 +1,9 @@
 ---
 variables:
   DOCKER_BUILDKIT: "1"
-  IMAGE_TAG: latest
-  APP_REP: https://github.com/yohrannes/yohrannes.com
-  APP_REP_NAME: yohrannes.com
-  APP_REP_BRANCH: main
-  IMAGE_TARGETS: |
-    docker-compose/webport|yohrannes/website-portifolio
-    docker-compose/nginx|yohrannes/nginx
+#  IMAGE_TARGETS: |
+#    docker-compose/webport|yohrannes/website-portifolio
+#    docker-compose/nginx|yohrannes/nginx
   ## dockerfile-dir|docker-image-name
 
 .build-all-targets: &build-all-targets
@@ -35,7 +31,7 @@ variables:
         .
       docker push "$IMG_NAME:$NEW_TAG-$ARCH"
       popd > /dev/null
-    done <<< "$IMAGE_TARGETS"
+    done <<< "$(echo "$IMAGE_TARGETS" | tr -d '\r')"
 
 deploy-dk-hub-amd:
   stage: deploy-image
@@ -48,7 +44,7 @@ deploy-dk-hub-amd:
     - mkdir -p repos-git && cd repos-git
     - git clone $CI_REPOSITORY_URL
     - cd $CI_PROJECT_NAME
-    - curl -L ${APP_REP}/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 "${APP_REP_NAME}-${APP_REP_BRANCH}/docker-compose"
+    - curl -L ${APP_REP}/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 "${APP_REP_NAME}-main/docker-compose"
     - git checkout docker-registry
     - *build-all-targets
 
@@ -63,7 +59,7 @@ deploy-dk-hub-arm:
     - mkdir -p repos-git && cd repos-git
     - git clone $CI_REPOSITORY_URL
     - cd $CI_PROJECT_NAME
-    - curl -L ${APP_REP}/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 "${APP_REP_NAME}-${APP_REP_BRANCH}/docker-compose"
+    - curl -L ${APP_REP}/archive/refs/heads/main.tar.gz | tar -xz --strip-components=1 "${APP_REP_NAME}-main/docker-compose"
     - git checkout docker-registry
     - *build-all-targets
 
@@ -89,7 +85,7 @@ deploy-dk-hub:
           -t "$IMG_NAME:latest" \
           "$IMG_NAME:${ACTUAL_TAG}-amd64" \
           "$IMG_NAME:${ACTUAL_TAG}-arm64"
-      done <<< "$IMAGE_TARGETS"
+      done <<< "$(echo "$IMAGE_TARGETS" | tr -d '\r')"
 
     - echo "New version $ACTUAL_TAG"
 
