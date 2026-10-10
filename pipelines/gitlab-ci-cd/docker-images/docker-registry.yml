@@ -1,10 +1,6 @@
 ---
 variables:
   DOCKER_BUILDKIT: "1"
-#  IMAGE_TARGETS: |
-#    docker-compose/webport|yohrannes/website-portifolio
-#    docker-compose/nginx|yohrannes/nginx
-  ## dockerfile-dir|docker-image-name
 
 .build-all-targets: &build-all-targets
   - |

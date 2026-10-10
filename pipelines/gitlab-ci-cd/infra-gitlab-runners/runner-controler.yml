@@ -39,8 +39,8 @@ set-failover-healthcheck-dns-update:
 
       FAILOVER_SCRIPT="/home/gitlab-runner/webapp-failover-checker.sh"
       wget -q -O "$FAILOVER_SCRIPT" \
-        https://raw.githubusercontent.com/yohrannes/website-portifolio/infra-webapp-failover/usefull-scripts/webapp-failover-checker.sh
+        "$FAILOVER_SCRIPT_URL"
       chmod +x "$FAILOVER_SCRIPT"
 
-      CRON_JOB="*/1 * * * * /bin/bash -c '. /home/gitlab-runner/.gitlab-runner-env && /home/gitlab-runner/webapp-failover-checker.sh > /tmp/webapp-failover-checker.log 2>&1'"
+      CRON_JOB="*/1 * * * * /bin/bash -c '. /home/gitlab-runner/.gitlab-runner-env && $FAILOVER_SCRIPT > /tmp/webapp-failover-checker.log 2>&1'"
       (crontab -l 2>/dev/null | grep -v "webapp-failover-checker" || true ; echo "$CRON_JOB") | crontab -
