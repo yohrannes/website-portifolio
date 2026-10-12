@@ -53,6 +53,9 @@ deploy-dk-hub-amd:
 
 deploy-dk-hub-arm:
   stage: deploy-image
+  needs:
+    - job: define-version
+      artifacts: true
   tags: [ "runner2" ]
   variables:
     ARCH: arm64
