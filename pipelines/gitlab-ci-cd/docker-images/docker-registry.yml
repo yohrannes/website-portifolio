@@ -2,8 +2,12 @@
 variables:
   DOCKER_BUILDKIT: "1"
 
+### Task: implement CI_COMMIT_MESSAGE ci var to be used in new tag version.
+
 .build-all-targets: &build-all-targets
   - |
+    OLD_TAG=$(./usefull-scripts/old-dk-img-version.sh $IMG_NAME)
+    echo $OLD_TAG
     VERSION_LOCKED=false
 
     while IFS='|' read -r CTX_DIR IMG_NAME; do
