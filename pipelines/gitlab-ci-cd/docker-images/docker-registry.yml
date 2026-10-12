@@ -74,8 +74,8 @@ deploy-dk-hub:
   stage: deploy-image
   tags: [ "runner2" ]
   needs:
-  - job: define-version
-    artifacts: true
+    - job: define-version
+      artifacts: true
     - deploy-dk-hub-amd
     - deploy-dk-hub-arm
   before_script:
