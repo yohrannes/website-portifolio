@@ -10,6 +10,7 @@ define-version:
     - OLD_TAG=$(./usefull-scripts/old-dk-img-version.sh "$IMG_NAME")
     - NEW_TAG=v$(./usefull-scripts/nx-dk-img-version.sh "$OLD_TAG" patch)
     - echo "NEW_TAG=$NEW_TAG" >> version.env
+    - echo "NEW_TAG=$NEW_TAG"
   artifacts:
     reports:
       dotenv: version.env
