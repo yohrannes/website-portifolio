@@ -1,3 +1,8 @@
 #!/bin/bash
-current_version=$(curl -s "https://registry.hub.docker.com/v2/repositories/$1/tags?page_size=100" | jq -r '.results[].name' | grep -vE "latest|-" | head -n 1 | sed 's/^v//'| sed 's/-.*//')
+current_version=$(curl -s "https://registry.hub.docker.com/v2/repositories/$1/tags?page_size=100" \
+  | jq -r '.results[].name' \
+  | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+$' \
+  | head -n 1 \
+  | sed 's/^v//' \
+  | sed 's/-.*//')
 echo "$current_version"
