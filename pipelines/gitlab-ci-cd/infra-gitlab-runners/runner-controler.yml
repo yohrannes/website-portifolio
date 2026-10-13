@@ -30,7 +30,7 @@ set-failover-healthcheck-dns-update:
       echo "Configuring failover environment variables..."
       printf "export CLOUDFARE_ZONE_ID=\"%s\"\n" "$CLOUDFARE_ZONE_ID" > "$ENV_FILE"
       printf "export CLOUDFARE_API_TOKEN=\"%s\"\n" "$CLOUDFARE_API_TOKEN" >> "$ENV_FILE"
-      printf "export CLFR_DNS_ID_OCI_INST_YO_COM=\"%s\"\n" "$CLFR_DNS_ID_OCI_INST_YO_COM" >> "$ENV_FILE"
+      printf "export CLFR_DNS_ID_WEBSITE=\"%s\"\n" "$CLFR_DNS_ID_WEBSITE" >> "$ENV_FILE"
       printf "export PROD_WEBAPP_FAILOVER_IP=\"%s\"\n" "$PROD_WEBAPP_FAILOVER_IP" >> "$ENV_FILE"
       printf "export PROD_WEBAPP_CLUSTER_IP=\"%s\"\n" "$PROD_WEBAPP_CLUSTER_IP" >> "$ENV_FILE"
       printf "export GL_TOKEN_VARS_ADMIN=\"%s\"\n" "$GL_TOKEN_VARS_ADMIN" >> "$ENV_FILE"
