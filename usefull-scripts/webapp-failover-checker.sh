@@ -40,7 +40,7 @@ webapp_failover_instance_status=$(\
 actual_webapp_ip=$(\
   curl \
     --request GET \
-    --url "https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_YO_COM" \
+    --url "https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_WEBSITE" \
     --header "Content-Type: application/json" \
     --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" | jq -r '.result.content'\
 ) ### cluster ip or failover ip
@@ -48,7 +48,7 @@ actual_webapp_ip=$(\
 if [[ $webapp_cluster_status == "200" ]]; then
   echo "Cluster online - 200 - DNS re-configured"
   curl --request PUT \
-    --url "https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_YO_COM" \
+    --url "https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_WEBSITE" \
     --header "Content-Type: application/json" \
     --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
     --data '{
@@ -65,7 +65,7 @@ else
   if [[ $webapp_failover_instance_status == "200" ]]; then
     echo "Failover instance online - 200 - DNS re-configured"
     curl --request PUT \
-      --url "https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_OCI_INST_YO_COM" \
+      --url "https://api.cloudflare.com/client/v4/zones/$CLOUDFARE_ZONE_ID/dns_records/$CLFR_DNS_ID_WEBSITE" \
       --header "Content-Type: application/json" \
       --header "Authorization: Bearer $CLOUDFARE_API_TOKEN" \
       --data '{

@@ -1,5 +1,7 @@
 ---
+########################################################################################
 # Local gitlab runner Ubuntu instalation comment steps...
+########################################################################################
 # sudo apt-get install gitlab-runner
 # sudo gitlab-runner status
 # sudo visudo
@@ -8,6 +10,7 @@
 # sudo gitlab-runner verify --delete
 # sudo gitlab-runner register ....
 # conf file in /etc/gitlab-runner/config.toml OR /etc/gitlab-runner/config.toml
+########################################################################################
 
 include:
   - local: 'pipelines/gitlab-ci-cd/terraform/trigger-run.yml'
