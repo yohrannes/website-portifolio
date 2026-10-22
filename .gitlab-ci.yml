@@ -75,6 +75,11 @@ include:
     rules:
       - if: $CI_COMMIT_BRANCH == "docker-registry"
 
+## CLOUDFARE PIPELINES
+
+  - local: 'pipelines/gitlab-ci-cd/cloudfare/dns-failover.yml'
+    rules:
+      - if: $CI_COMMIT_BRANCH == "dns-failover"
 
 stages:
 ## Runner Preparation Steps
@@ -87,7 +92,7 @@ stages:
   - tf-run
   - tf-apply
 
-## Post deploy infra Steps
+## Post infra deploy Steps
   - check-infra
   - failover
 
