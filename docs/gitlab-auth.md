@@ -31,7 +31,7 @@ The project uses the following pattern in CI and shell scripts:
 - `GITLAB_TOKEN_RUNNER_ADMIN`
 - `DOCKER_REG_PASSWORD`
 - `PRIVATE-TOKEN` in API requests
-- additional project variables required by CI jobs
+- additional project variables required by CI jobs (see the complete [Pipeline Environment Variables Specification](./pipeline-environment-variables.md))
 
 ## Official documentation
 

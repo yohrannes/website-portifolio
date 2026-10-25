@@ -15,6 +15,10 @@ The required providers are:
 - HashiCorp Packer
 - Cloudflare
 
+## Architecture specifications & guides
+
+- [Pipeline Environment Variables Specification](./pipeline-environment-variables.md) — Comprehensive technical reference catalog and provisioning guide for all 29 required GitLab CI/CD environment variables across all pipeline tiers.
+
 ## Provider-specific guides
 
 - [Google Cloud authentication](./google-cloud-auth.md)
@@ -160,23 +164,17 @@ Official docs:
 
 ## Variables and secrets that the project expects
 
-The repository and pipeline reference the following values as part of the deployment lifecycle:
+The repository and pipeline workflows rely on a strictly audited set of 29 repository-level environment variables to handle multi-cloud infrastructure provisioning, container builds, Kubernetes ingress, and automated DNS failover:
 
-- `GITLAB_TOKEN`
-- `GITLAB_TOKEN_RUNNER_ADMIN`
-- `DOCKER_REG_PASSWORD`
-- `TF_CLOUD_ORG`
-- `TF_CLOUD_API`
-- `TF_API_TOKEN`
-- `CLOUDFARE_API_TOKEN`
-- `CLOUDFARE_ZONE_ID`
-- `CLFR_DNS_ID_OCI_INST_YO_COM`
-- `PROD_WEBAPP_FAILOVER_IP`
-- `PROD_WEBAPP_CLUSTER_IP`
-- `PACKER_WEBPORT_CLIENT_ID`
-- `PACKER_WEBPORT_CLIENT_SECRET`
+- **Cloud Infrastructure & HCP:** `OCI_CONFIG_BASE64`, `OCI_PRIVATE_KEY_BASE64`, `OCI_COMPARTMENT_OCID`, `OCI_REGION`, `OCI_NAMESPACE`, `PACKER_WEBPORT_CLIENT_ID`, `PACKER_WEBPORT_CLIENT_SECRET`, `TF_CLOUD_TOKEN`
+- **Cloudflare & DNS Failover:** `CLOUDFARE_API_TOKEN`, `CLOUDFARE_ZONE_ID`, `CLFR_DNS_ID_WEBSITE`, `FAILOVER_SCRIPT_URL`
+- **GitLab Automation & Runners:** `GL_TOKEN_VARS_ADMIN`, `GITLAB_TOKEN_RUNNER_ADMIN`, `GITLAB_RUNNER1_TOKEN_CREATED`, `GITLAB_RUNNER2_TOKEN_CREATED`, `GITLAB_RUNNER3_TOKEN_CREATED`
+- **Host Connectivity & Network Endpoints:** `SSH_PRIVATE_KEY_BASE64`, `PROD_RUNNER1_IP`, `PROD_RUNNER2_IP`, `PROD_WEBAPP_CLUSTER_ID`, `PROD_WEBAPP_CLUSTER_IP`, `PROD_WEBAPP_FAILOVER_IP`
+- **Docker Registry & App Packaging:** `DOCKER_REG_USER`, `DOCKER_REG_PASSWORD`, `IMAGE_TARGETS`, `APP_REP`, `APP_REP_NAME`
+- **Security & Host Hardening:** `F2B_HTTP_INJ_FILTER_B64`
 
-These are expected to be provided by the user or by GitLab CI/CD variables, rather than embedded directly in source code.
+> [!NOTE]
+> For the complete, authoritative specification of each variable (including description, format, masking requirements, consuming jobs, and `glab` CLI provisioning commands), refer to the **[Pipeline Environment Variables Specification](./pipeline-environment-variables.md)**. Static pipeline defaults (such as `TZ` and `TF_CLOUD_ORG`) are defined directly in `.gitlab-ci.yml` and do not require repository settings.
 
 ---
 
@@ -256,7 +254,7 @@ Before starting the full infrastructure flow, confirm that all of the following 
 - [ ] GitLab project access and runner registration are complete
 - [ ] Packer credentials are configured for OCI and related providers
 - [ ] Cloudflare token and DNS records are configured
-- [ ] required GitLab CI variables are already defined
+- [ ] required GitLab CI variables are already defined (see [Pipeline Environment Variables Specification](./pipeline-environment-variables.md))
 - [ ] Docker, Git, Terraform, and cloud CLIs are installed locally
 
 This checklist is the minimum requirement before the project can be safely executed end-to-end.

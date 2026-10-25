@@ -1,6 +1,6 @@
 # GitLab CI/CD Pipeline Environment Variables Specification
 
-**File:** `docs/full-env-var-config.md`  
+**File:** `docs/pipeline-environment-variables.md`  
 **Scope:** Complete technical reference and operational guide for all GitLab CI/CD environment variables required to run the automated infrastructure, testing, and deployment pipelines.
 
 ---
